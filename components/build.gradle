@@ -1,0 +1,42 @@
+plugins {
+    id("java-library")
+    id("checkstyle")
+    id("jacoco")
+    id("pmd")
+}
+
+group = "de.hhn.it.devtools.components"
+version = "1.0"
+
+
+dependencies {
+    implementation project(":apis")
+    // see also the dependencies in build.gradle (root)
+}
+
+test {
+    useJUnitPlatform()
+}
+
+pmd {
+    ignoreFailures = true
+    sourceSets = [ project.sourceSets.main ]
+    ruleSetFiles = rootProject.files("etc/pmd-devtools-ruleset.xml")
+    ruleSets = []
+}
+
+
+checkstyle {
+    toolVersion = '10.14.2'
+    //    Configuration now lies by default under config/checkstyle/checkstyle.xml, the config files for the different
+    // versions can be found under
+    // https://github.com/checkstyle/checkstyle/blob/master/src/main/resources/google_checks.xml
+    showViolations = false
+    checkstyleTest.enabled = false
+}
+
+
+task myJavadocs(type: Javadoc) {
+    source = sourceSets.main.allJava
+    failOnError = false
+}

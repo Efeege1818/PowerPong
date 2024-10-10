@@ -1,0 +1,4 @@
+rootProject.name = 'devtools-24-ss'
+
+
+include ':apis', ':components', ':javafx'

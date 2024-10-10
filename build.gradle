@@ -1,0 +1,43 @@
+group = "de.hhn.it.devtools"
+version = "1.0"
+
+
+allprojects {
+
+    wrapper {
+        gradleVersion = "8.10"
+    }
+
+    apply plugin: "java"
+
+    tasks.withType(JavaCompile) {
+        options.encoding = "UTF-8"
+    }
+
+    // New gradle 8 specific configuration
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(21)
+        }
+    }
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        // use slf versions with module-info information inside
+        implementation ("org.slf4j:slf4j-api:2.0.9") {
+            because "we need the SimpleLoggingFacade with module information"
+        }
+        implementation ("org.slf4j:slf4j-simple:2.0.9")
+        // use JUnit 5
+        testImplementation ("org.junit.jupiter:junit-jupiter-api:5.9.1")
+        testRuntimeOnly ("org.junit.jupiter:junit-jupiter-engine:5.9.1")
+    }
+    javadoc {
+        options.encoding = "UTF-8"
+        source = project(':apis').sourceSets.main.allJava
+    }
+
+}
