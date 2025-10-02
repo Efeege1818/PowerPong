@@ -1,30 +1,39 @@
 package de.hhn.it.devtools.apis.examples.fourconnect;
 
-public record GameRules(int rows, int columns) {
+public class GameRules {
 
-    
-    public boolean checkWinner(char[][] board, char player) {
-        return false;
-        
+    private final int rows;
+    private final int columns;
+
+    public GameRules(int rows, int columns) {
+        this.rows = rows;
+        this.columns = columns;
     }
 
     
-    private boolean checkHorizontal(char[][] board, char player) {
-        return false;
+    public boolean checkWinner(Player[][] board, Player player) {
+        return checkHorizontal(board, player)
+            || checkVertical(board, player)
+            || checkDiagonal(board, player);
+    }
+
+    
+    private boolean checkHorizontal(Player[][] board, Player player) {
        
+        return false;
     }
 
     
-    private boolean checkVertical(char[][] board, char player) {
-        return false;
-     
-    }
-
-    
-    private boolean checkDiagonal(char[][] board, char player) {
-        return false;
+    private boolean checkVertical(Player[][] board, Player player) {
       
+        return false;
     }
 
-  
+   
+    private boolean checkDiagonal(Player[][] board, Player player) {
+      
+        return false;
+    }
+
+    
 }
