@@ -3,7 +3,7 @@ package de.hhn.it.devtools.apis.spaceinvaders;
 /**
  * Generic GameLoop interface.
  */
-public interface Gameloop extends Runnable{
+public interface GameLoop extends Runnable{
   @Override
   void run();
 
