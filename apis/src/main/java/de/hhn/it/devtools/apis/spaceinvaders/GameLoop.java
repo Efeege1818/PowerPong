@@ -1,4 +1,15 @@
 package de.hhn.it.devtools.apis.spaceinvaders;
 
-public interface GameLoop {
+/**
+ * Generic GameLoop interface.
+ */
+public interface Gameloop extends Runnable{
+  @Override
+  void run();
+
+  void pauseGame();
+
+  void resumeGame();
+
+  void stopGame();
 }
