@@ -1,4 +1,8 @@
 package de.hhn.it.devtools.apis.spaceinvaders;
 
-public record Coordinate() {
+/**
+ * Used for 2D coordinates. Coordinates are immutable.
+ */
+
+public record Coordinate(int row, int column) {
 }
