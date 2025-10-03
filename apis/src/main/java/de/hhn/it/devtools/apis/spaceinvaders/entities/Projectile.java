@@ -1,4 +1,4 @@
 package de.hhn.it.devtools.apis.spaceinvaders.entities;
 
-public interface Projectile extends Entity{
+public interface Projectile extends Entity {
 }
