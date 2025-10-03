@@ -7,7 +7,7 @@ import de.hhn.it.devtools.apis.spaceinvaders.exceptions.IllegalConfigurationExce
  */
 public interface GameService {
   int DEFAULT_SIZE = 20;
-  int DEFAULT_VELOCITY = 250;
+  int DEFAULT_DELAY = 1;
   int DEFAULT_NUMBER_OF_BARRIER = 1;
   int DEFAULT_PROJECTILE_DELAY = 1;
 
