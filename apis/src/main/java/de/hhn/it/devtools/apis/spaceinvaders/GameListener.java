@@ -10,7 +10,7 @@ public interface GameListener {
    *
    * @param field field with the actual position of Entities elements
    */
-  void updateBoard(Field field);
+  void updateField(Field field);
 
   /**
    * Informs the listener that the game state has changed.

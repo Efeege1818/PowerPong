@@ -45,6 +45,13 @@ public interface GameService {
   void resume();
 
   /**
+   * Reset game field if all aliens destroyed.
+   *
+   * @throws IllegalStateException is the GameState is not RUNNING
+   */
+  void resetField();
+
+  /**
    * Change the Spaceship direction by turning left if the GameState is RUNNING.
    *
    * @throws IllegalStateException is the GameState is not appropriate
