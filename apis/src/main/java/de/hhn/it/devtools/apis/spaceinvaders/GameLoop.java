@@ -8,9 +8,18 @@ public interface GameLoop extends Runnable {
   @Override
   void run();
 
+  /**
+   * Pauses the game.
+   */
   void pauseGame();
 
+  /**
+   * resumes a paused game.
+   */
   void resumeGame();
 
-  void stopGame();
+  /**
+   * Aborts a running game.
+   */
+  void abortGame();
 }
