@@ -59,6 +59,13 @@ public interface GameService {
   void moveRight();
 
   /**
+   * Shoot Projectile from Spaceship.
+   *
+   * @throws IllegalStateException is the GameState is not appropriate
+   */
+  void shoot();
+
+  /**
    * Adds a listener for game updates.
    *
    * @param listener listener to be added
