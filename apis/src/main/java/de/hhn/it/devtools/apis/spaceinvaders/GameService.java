@@ -9,6 +9,7 @@ public interface GameService {
   int DEFAULT_SIZE = 20;
   int DEFAULT_VELOCITY = 250;
   int DEFAULT_NUMBER_OF_BARRIER = 1;
+  int DEFAULT_PROJECTILE_DELAY = 1;
 
   /**
    * Reset the game. Switch the GameState to PREPARED.
