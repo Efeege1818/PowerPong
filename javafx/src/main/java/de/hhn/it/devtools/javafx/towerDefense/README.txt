@@ -1,1 +1,1 @@
-https://teamcharlie.atlassian.net/wiki/x/cYAC
+https://git.it.hs-heilbronn.de/it/courses/seb/devtools/25ws/gaming-dvtls-25-ws/-/wikis/Towerdefense
