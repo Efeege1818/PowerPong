@@ -1,6 +1,6 @@
 package de.hhn.it.devtools.apis.examples.fourconnect;
 import de.hhn.it.devtools.apis.exceptions.IllegalParameterException;
-import de.hhn.it.devtools.apis.exceptions.OperationNotSupportedException;
+
 
 public interface ConnectFourService {
 
