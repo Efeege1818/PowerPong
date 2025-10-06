@@ -4,7 +4,7 @@ package de.hhn.it.devtools.apis.spaceinvaders;
  * Models the capabilities of a GameListener.
  */
 public interface GameListener {
-
+// benötigen update alien, Sound is noch nicht drinne.
   /**
    * Informs the listener that the field has changed.
    *

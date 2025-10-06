@@ -1,7 +1,5 @@
 package de.hhn.it.devtools.apis.spaceinvaders;
 
-import de.hhn.it.devtools.apis.examples.coffeemakerservice.CoffeeMakerServiceUsageDemo;
-
 public class DemoSpaceInvadersUsage {
   private static final org.slf4j.Logger logger =
           org.slf4j.LoggerFactory.getLogger(DemoSpaceInvadersUsage.class);

@@ -23,3 +23,4 @@ public interface Entity {
   void takeDamage(Integer damage);
 
 }
+// needs a Bounding box/ Hitbox.

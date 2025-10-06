@@ -10,3 +10,4 @@ public record GameConfiguration(int numberOfBarriers, Difficulty difficulty) {
   private static final org.slf4j.Logger logger =
           org.slf4j.LoggerFactory.getLogger(GameConfiguration.class);
 }
+// es fehlt information über die größe der enemies

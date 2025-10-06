@@ -6,3 +6,6 @@ package de.hhn.it.devtools.apis.spaceinvaders;
 
 public record Coordinate(int row, int column) {
 }
+// benötigt Pixel coordinaten.
+//Stage oder Fenster ?
+// x und y statt row collumn

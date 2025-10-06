@@ -19,3 +19,4 @@ public interface Alien extends Entity {
    */
   Projectile shootProjectile();
 }
+//Sollte Records sein.
