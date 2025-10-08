@@ -1,5 +1,8 @@
 package de.hhn.it.devtools.apis.turnbasedbattle;
 
+/**
+ * Abstract class representing a move in the turn-based battle system.
+ */
 public abstract class Move {
 
     /**
@@ -8,12 +11,12 @@ public abstract class Move {
     private Element element;
 
     /**
-     * The Category the move belongs to
+     * The category the move belongs to.
      */
     private MoveCategory moveCategory;
 
     /**
-     * The amount of damage the move dose
+     * The amount of damage the move does.
      */
     private int damage;
 }
