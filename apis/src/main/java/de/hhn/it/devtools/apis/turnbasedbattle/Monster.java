@@ -5,6 +5,7 @@ package de.hhn.it.devtools.apis.turnbasedbattle;
  * This class acts as a customizable parent class for the different monsters.
  */
 public abstract class Monster {
+
   /**
    * The total amount of HP the monster can have.
    */
