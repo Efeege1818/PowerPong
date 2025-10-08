@@ -1,7 +1,9 @@
 package de.hhn.it.devtools.apis.turnbasedbattle;
 
-import java.util.Random;
-
+/**
+ * The monster object contains all stats of a monster.
+ * This class acts as a customizable parent class for the different monsters.
+ */
 public abstract class Monster {
   /**
    * The total amount of HP the monster can have.
