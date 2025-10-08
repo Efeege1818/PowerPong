@@ -1,24 +1,25 @@
 package de.hhn.it.devtools.apis.turnbasedbattle;
+
 /**
- * Enum to represent different the Category of a move.
+ * Enum to represent the different categories of a move.
  */
 public enum MoveCategory {
 
     /**
-     *The Move is in the Category ATTACK
-     * ATTACK moves do damage
+     * The move is in the ATTACK category.
+     * ATTACK moves deal damage.
      */
     ATTACK,
 
     /**
-     *The Move is in the Category BUFF
-     * BUFF moves increase a stat of the one Monster
+     * The move is in the BUFF category.
+     * BUFF moves increase one of the user's monster's stats.
      */
     BUFF,
 
     /**
-     *The Move is in the Category DEBUFF
-     * DEBUFF moves decrease a stat of the enemy Monster
+     * The move is in the DEBUFF category.
+     * DEBUFF moves decrease one of the enemy monster's stats.
      */
     DEBUFF
 }
