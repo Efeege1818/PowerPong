@@ -7,6 +7,11 @@ package de.hhn.it.devtools.apis.turnbasedbattle;
 public abstract class Monster {
 
   /**
+   * Number of the player this creature belongs to
+   */
+  private int currentPlayer = 0;
+
+  /**
    * The total amount of HP the monster can have.
    */
   private int maxHp;
