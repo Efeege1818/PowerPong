@@ -65,15 +65,6 @@ public abstract class Monster {
 
   }
 
-  /**
-   * Assigns this monster to a player.
-   *
-   * @param playerNumber number of the player assigned to the monster, can only be 1 or 2
-   */
-  public void assignPlayer(int playerNumber) {
-
-  }
-
   public int getCurrentPlayer() {
     return currentPlayer;
   }
