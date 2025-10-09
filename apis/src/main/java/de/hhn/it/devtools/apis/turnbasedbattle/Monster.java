@@ -52,7 +52,7 @@ public abstract class Monster {
    * @param damage flat amount of damage a move will do
    * @param element multiplier that can increase or decrease damage when the element is effective against the opponent's
    */
-  private void damage(int damage, Element element) {
+  void damage(int damage, Element element) {
 
   }
 
@@ -61,7 +61,7 @@ public abstract class Monster {
    *
    * @param damage amount of HP to be subtracted
    */
-  private void takeDamage(int damage) {
+  public void takeDamage(int damage) {
 
   }
 
@@ -70,7 +70,71 @@ public abstract class Monster {
    *
    * @param playerNumber number of the player assigned to the monster, can only be 1 or 2
    */
-  private void assignPlayer(int playerNumber) {
+  public void assignPlayer(int playerNumber) {
 
+  }
+
+  public int getCurrentPlayer() {
+    return currentPlayer;
+  }
+
+  public void setCurrentPlayer(int currentPlayer) {
+    this.currentPlayer = currentPlayer;
+  }
+
+  public int getMaxHp() {
+    return maxHp;
+  }
+
+  public void setMaxHp(int maxHp) {
+    this.maxHp = maxHp;
+  }
+
+  public int getCurrentHp() {
+    return currentHp;
+  }
+
+  public void setCurrentHp(int currentHp) {
+    this.currentHp = currentHp;
+  }
+
+  public int getAttack() {
+    return attack;
+  }
+
+  public void setAttack(int attack) {
+    this.attack = attack;
+  }
+
+  public int getDefense() {
+    return defense;
+  }
+
+  public void setDefense(int defense) {
+    this.defense = defense;
+  }
+
+  public double getEvasionChance() {
+    return evasionChance;
+  }
+
+  public void setEvasionChance(double evasionChance) {
+    this.evasionChance = evasionChance;
+  }
+
+  public double getCritChance() {
+    return critChance;
+  }
+
+  public void setCritChance(double critChance) {
+    this.critChance = critChance;
+  }
+
+  public Element getElement() {
+    return element;
+  }
+
+  public void setElement(Element element) {
+    this.element = element;
   }
 }
