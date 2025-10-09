@@ -29,7 +29,7 @@ public class FireMonster extends Monster {
   }
 
   @Override
-  public void debuff(String stat, int value) {
-
+  public void debuff() {
+    inflictDebuff(DEFENSE, 1); //TODO: replace Placeholder value
   }
 }

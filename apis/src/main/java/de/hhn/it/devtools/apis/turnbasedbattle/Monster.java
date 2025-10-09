@@ -9,7 +9,6 @@ public abstract class Monster {
   public static final String ATTACK = "attack";
   public static final String DEFENSE = "defense";
   public static final String EVASION = "evasion";
-  public static final String CRIT = "crit";
 
   /**
    * The total amount of HP the monster can have.
@@ -66,6 +65,16 @@ public abstract class Monster {
   }
 
   /**
+   * Stores the values used for a debuff on the opponent's monster.
+   *
+   * @param stat name of stat to be reduced (should use one of the constant Strings in this class)
+   * @param value amount by which the stat will be reduced
+   */
+  public void inflictDebuff(String stat, int value) {
+
+  }
+
+  /**
    * Reduces a stat of this monster when being debuffed by the opponent.
    *
    * @param stat name of stat to be reduced (should use one of the constant Strings in this class)
@@ -98,11 +107,8 @@ public abstract class Monster {
 
   /**
    * Decreases one of the opponent's monster's stats.
-   *
-   * @param stat name of stat to be reduced (should use one of the constant Strings in this class)
-   * @param value amount by which the stat will be reduced
    */
-  public void debuff(String stat, int value) {
+  public void debuff() {
 
   }
 
