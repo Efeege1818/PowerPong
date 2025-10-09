@@ -64,4 +64,13 @@ public abstract class Monster {
   private void takeDamage(int damage) {
 
   }
+
+  /**
+   * Assigns this monster to a player.
+   *
+   * @param playerNumber number of the player assigned to the monster, can only be 1 or 2
+   */
+  private void assignPlayer(int playerNumber) {
+
+  }
 }
