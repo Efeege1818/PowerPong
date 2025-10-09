@@ -6,10 +6,7 @@ package de.hhn.it.devtools.apis.turnbasedbattle;
  */
 public abstract class Monster {
 
-  /**
-   * Number of the player this creature belongs to
-   */
-  private int currentPlayer = 0;
+  String
 
   /**
    * The total amount of HP the monster can have.
@@ -52,7 +49,7 @@ public abstract class Monster {
    * @param damage flat amount of damage a move will do
    * @param element multiplier that can increase or decrease damage when the element is effective against the opponent's
    */
-  void damage(int damage, Element element) {
+  public void damage(int damage, Element element) {
 
   }
 
@@ -65,12 +62,30 @@ public abstract class Monster {
 
   }
 
-  public int getCurrentPlayer() {
-    return currentPlayer;
+  /**
+   * Reduces a stat of this monster when being debuffed by the opponent
+   *
+   * @param stat
+   * @param value
+   */
+  public void takeDebuff(String stat, int value) {
+
   }
 
-  public void setCurrentPlayer(int currentPlayer) {
-    this.currentPlayer = currentPlayer;
+  public void normalAttack() {
+
+  }
+
+  public void elementalAttack() {
+
+  }
+
+  public void buff() {
+
+  }
+
+  public void debuff(String stat, int value) {
+
   }
 
   public int getMaxHp() {

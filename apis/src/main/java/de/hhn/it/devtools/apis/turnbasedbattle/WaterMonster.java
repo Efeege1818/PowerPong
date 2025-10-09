@@ -1,13 +1,11 @@
 package de.hhn.it.devtools.apis.turnbasedbattle;
 
 public class WaterMonster extends Monster {
-  public WaterMonster(int currentPlayer) {
-    setMaxHp(500);
+  public WaterMonster() {
+    setMaxHp(500);  //TODO: replace Placeholder value
     setCurrentHp(getMaxHp());
     setAttack(0);
     setDefense(0);
     setElement(Element.WATER);
-
-    setCurrentPlayer(currentPlayer);
   }
 }
