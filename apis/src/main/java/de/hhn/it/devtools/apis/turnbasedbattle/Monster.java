@@ -6,7 +6,10 @@ package de.hhn.it.devtools.apis.turnbasedbattle;
  */
 public abstract class Monster {
 
-  String
+  public static final String ATTACK = "attack";
+  public static final String DEFENSE = "defense";
+  public static final String EVASION = "evasion";
+  public static final String CRIT = "crit";
 
   /**
    * The total amount of HP the monster can have.
@@ -34,7 +37,7 @@ public abstract class Monster {
   private double evasionChance = 0.1;
 
   /**
-   * A chance for the monster's attack to deal double the normal amount of damage
+   * A chance for the monster's attack to deal double the normal amount of damage.
    */
   private double critChance = 0.05;
 
@@ -44,7 +47,7 @@ public abstract class Monster {
   private Element element;
 
   /**
-   * Calculates the damage a move will do to the opposing monster
+   * Calculates the damage a move will do to the opposing monster.
    *
    * @param damage flat amount of damage a move will do
    * @param element multiplier that can increase or decrease damage when the element is effective against the opponent's
@@ -54,7 +57,7 @@ public abstract class Monster {
   }
 
   /**
-   * Reduces the HP of this monster when being hit
+   * Reduces the HP of this monster when being hit.
    *
    * @param damage amount of HP to be subtracted
    */
@@ -63,27 +66,42 @@ public abstract class Monster {
   }
 
   /**
-   * Reduces a stat of this monster when being debuffed by the opponent
+   * Reduces a stat of this monster when being debuffed by the opponent.
    *
-   * @param stat
-   * @param value
+   * @param stat name of stat to be reduced (should use one of the constant Strings in this class)
+   * @param value amount by which the stat will be reduced
    */
   public void takeDebuff(String stat, int value) {
 
   }
 
+  /**
+   * A normal, pure damaging attack without elemental properties.
+   */
   public void normalAttack() {
 
   }
 
+  /**
+   * An elemental attack, which can do more or less damage depending on the opponent's element.
+   */
   public void elementalAttack() {
 
   }
 
+  /**
+   * Increases one of this monster's stats.
+   */
   public void buff() {
 
   }
 
+  /**
+   * Decreases one of the opponent's monster's stats.
+   *
+   * @param stat name of stat to be reduced (should use one of the constant Strings in this class)
+   * @param value amount by which the stat will be reduced
+   */
   public void debuff(String stat, int value) {
 
   }
