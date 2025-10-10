@@ -3,14 +3,31 @@ package de.hhn.it.devtools.apis.spaceinvaders;
 /**
  * Models the capabilities of a GameListener.
  */
-public interface GameListener {
-// benötigen update alien, Sound is noch nicht drinne.
+public interface SpaceInvadersListener {
+
   /**
    * Informs the listener that the field has changed.
    *
    * @param field field with the actual position of Entities elements
    */
   void updateField(Field field);
+
+  /**
+   * Informs the listener when an alien is updated.
+   */
+  void updateAlien();
+
+  /**
+   * Informs the listener when an alien takes damage.
+   */
+  void damageAlien();
+
+  /**
+   * Informs the listener when a sound is updated.
+   *
+   * @param sound the name of the updated sound
+   */
+  void updateSound(String sound);
 
   /**
    * Informs the listener that the game state has changed.
@@ -37,4 +54,5 @@ public interface GameListener {
    * @param configuration new game configuration
    */
   void updateGameConfiguration(GameConfiguration configuration);
+
 }

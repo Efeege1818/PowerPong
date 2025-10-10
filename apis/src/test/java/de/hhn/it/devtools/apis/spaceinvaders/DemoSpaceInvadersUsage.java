@@ -5,10 +5,10 @@ public class DemoSpaceInvadersUsage {
           org.slf4j.LoggerFactory.getLogger(DemoSpaceInvadersUsage.class);
 
   public static void main(String[] args) {
-    GameService service = null;
+    SpaceInvadersService service = null;
 
     //added Listeners for the service.
-    GameListener listener = null;
+    SpaceInvadersListener listener = null;
     service.addListener(listener);
 
     //first thing we will add a new Configuration that will contain our desired difficulty and number of Barriers
