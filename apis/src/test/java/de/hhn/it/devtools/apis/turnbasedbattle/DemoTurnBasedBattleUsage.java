@@ -17,8 +17,11 @@ public class DemoTurnBasedBattleUsage {
         battle.startBattle();
 
         // Demo Battle Loop
-        // We'll simulate a few turns manually for the demo
-        while (!battle.isBattleOver()) {
+        // We'll simulate a limited number of turns
+        int maxTurns = 20;
+        int turnCount = 0;
+
+        while (!battle.isBattleOver() && turnCount < maxTurns) {
 
             Monster current = battle.getcurrentMonster();
 
@@ -30,10 +33,12 @@ public class DemoTurnBasedBattleUsage {
             }
 
             // Player decides what their monster does
-            controllingPlayer.commandMonster(); // this should call attack/buff/debuff on the monster
+            controllingPlayer.commandMonster(); // demo action
 
             // Let BattleManager handle switching turns
             battle.nextTurn();
+
+            turnCount++;
         }
 
         // Announce Winner
