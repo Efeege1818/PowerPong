@@ -3,31 +3,40 @@ package de.hhn.it.devtools.apis.turnbasedbattle;
 public class DemoTurnBasedBattleUsage {
 
     public static void main(String[] args) {
-        TurnBasedBattleService service = null;
 
-        TurnBasedBattleListener listener = null;
+        // Create Monsters
+        Monster fireMonster = new FireMonster();
+        Monster waterMonster = new WaterMonster(); // assume WaterMonster exists
 
+        // Create Players and assign monsters
+        Player player1 = new Player(1, fireMonster);
+        Player player2 = new Player(2, waterMonster);
 
-        //Two monsters are created
-        FireMonster player1 = new FireMonster();
-        WaterMonster player2 = new WaterMonster();
-
-        BattleManager battle = new BattleManager(player1, player2);
+        // Create Battle Manager
+        BattleManager battle = new BattleManager(player1.getMonster(), player2.getMonster());
         battle.startBattle();
 
-        //Player 1 executes an elemental attack
-        int dmg = player1.elementalAttack();
-        player2.takeDamage(dmg);
+        // Demo Battle Loop
+        // We'll simulate a few turns manually for the demo
+        while (!battle.isBattleOver()) {
 
-        //Player 2 uses a buff on themselves
-        player2.buff();
+            Monster current = battle.getcurrentMonster();
 
-        //Player 1 inflicts a debuff on player 2
-        Debuff dbf = player1.debuff();
-        player2.takeDebuff(dbf.stat(), dbf.value());
+            Player controllingPlayer;
+            if (current == player1.getMonster()) {
+                controllingPlayer = player1;
+            } else {
+                controllingPlayer = player2;
+            }
 
-        //Player 2 damages player 1 with a normal attack
-        dmg = player2.normalAttack();
-        player1.takeDamage(dmg);
+            // Player decides what their monster does
+            controllingPlayer.commandMonster(); // this should call attack/buff/debuff on the monster
+
+            // Let BattleManager handle switching turns
+            battle.nextTurn();
+        }
+
+        // Announce Winner
+        Player winner = battle.getWinner();
     }
 }

@@ -45,4 +45,9 @@ public class Player {
     public boolean isMonsterAlive(Monster monster){
         return false;
     }
+
+
+    public Monster getMonster() {
+        return monster;
+    }
 }
