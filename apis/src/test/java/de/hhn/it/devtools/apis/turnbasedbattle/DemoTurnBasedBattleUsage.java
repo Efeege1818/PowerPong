@@ -20,7 +20,7 @@ public class DemoTurnBasedBattleUsage {
 
         //Player 1 inflicts a debuff on player 2
         Debuff dbf = player1.debuff();
-        player2.takeDebuff(dbf.getStat(), dbf.getValue());
+        player2.takeDebuff(dbf.stat(), dbf.value());
 
         //Player 2 damages player 1 with a normal attack
         dmg = player2.normalAttack();
