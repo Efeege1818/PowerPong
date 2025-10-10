@@ -22,9 +22,9 @@ public class Player {
     }
 
     /**
-     * Oders the Monster what to do
+     * Orders the Monster what to do
      */
-    public void comandMonster(){
+    public void commandMonster(){
         //call Move Methods in monster class based on the input of the player
     }
 

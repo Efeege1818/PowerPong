@@ -7,17 +7,22 @@ public class DemoTurnBasedBattleUsage {
 
         TurnBasedBattleListener listener = null;
 
+        //Two monsters are created
         FireMonster player1 = new FireMonster();
         WaterMonster player2 = new WaterMonster();
 
+        //Player 1 executes an elemental attack
         int dmg = player1.elementalAttack();
-        player1.takeDamage(dmg);
+        player2.takeDamage(dmg);
 
+        //Player 2 uses a buff on themselves
         player2.buff();
 
+        //Player 1 inflicts a debuff on player 2
         player1.debuff();
         player2.takeDebuff("test", 1); //TODO: How to get value from player1 input
 
+        //Player 2 damages player 1 with a normal attack
         dmg = player2.normalAttack();
         player1.takeDamage(dmg);
     }
