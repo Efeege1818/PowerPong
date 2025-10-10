@@ -41,7 +41,7 @@ public class WaterMonster extends Monster {
    * Reduces the enemy monster's attack.
    */
   @Override
-  public void debuff() {
-    inflictDebuff(ATTACK, 1); //TODO: replace Placeholder value
+  public Debuff debuff() {
+    return inflictDebuff(ATTACK, 1); //TODO: replace Placeholder value
   }
 }
