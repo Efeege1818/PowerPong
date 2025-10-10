@@ -2,6 +2,7 @@ package de.hhn.it.devtools.apis.spaceinvaders;
 
 import de.hhn.it.devtools.apis.spaceinvaders.entities.Alien;
 import de.hhn.it.devtools.apis.spaceinvaders.entities.Barrier;
+import de.hhn.it.devtools.apis.spaceinvaders.entities.Projectile;
 import de.hhn.it.devtools.apis.spaceinvaders.entities.Ship;
 
 /**
@@ -29,6 +30,13 @@ public interface SpaceInvadersListener {
    * @param ship the updated ship
    */
   void updateShip(Ship ship);
+
+  /**
+   * Informs the listener when a projectile is updated.
+   *
+   * @param projectile the updated projectile's position
+   */
+  void updateProjectile(Projectile projectile);
 
   /**
    * Informs the listener when an alien takes damage.
