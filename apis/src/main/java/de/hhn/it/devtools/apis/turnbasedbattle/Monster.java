@@ -70,8 +70,8 @@ public abstract class Monster {
    * @param stat name of stat to be reduced (should use one of the constant Strings in this class)
    * @param value amount by which the stat will be reduced
    */
-  public void inflictDebuff(String stat, int value) {
-
+  public Debuff inflictDebuff(String stat, int value) {
+    return new Debuff(stat, value);
   }
 
   /**
@@ -108,8 +108,8 @@ public abstract class Monster {
   /**
    * Decreases one of the opponent's monster's stats.
    */
-  public void debuff() {
-
+  public Debuff debuff() {
+    return null;
   }
 
   public int getMaxHp() {

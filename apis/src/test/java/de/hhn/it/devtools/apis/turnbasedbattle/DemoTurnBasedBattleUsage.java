@@ -19,8 +19,8 @@ public class DemoTurnBasedBattleUsage {
         player2.buff();
 
         //Player 1 inflicts a debuff on player 2
-        player1.debuff();
-        player2.takeDebuff("test", 1); //TODO: How to get value from player1 input
+        Debuff dbf = player1.debuff();
+        player2.takeDebuff(dbf.getStat(), dbf.getValue());
 
         //Player 2 damages player 1 with a normal attack
         dmg = player2.normalAttack();

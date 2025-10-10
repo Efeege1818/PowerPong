@@ -41,7 +41,7 @@ public class FireMonster extends Monster {
    * Reduces the enemy monster's defense.
    */
   @Override
-  public void debuff() {
-    inflictDebuff(DEFENSE, 1); //TODO: replace Placeholder value
+  public Debuff debuff() {
+    return inflictDebuff(DEFENSE, 1); //TODO: replace Placeholder value
   }
 }

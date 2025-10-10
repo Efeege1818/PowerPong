@@ -41,7 +41,7 @@ public class GrassMonster extends Monster {
    * Reduces the enemy monster's evasion chance.
    */
   @Override
-  public void debuff() {
-    inflictDebuff(EVASION, 1); //TODO: replace Placeholder value
+  public Debuff debuff() {
+    return inflictDebuff(EVASION, 1); //TODO: replace Placeholder value
   }
 }
