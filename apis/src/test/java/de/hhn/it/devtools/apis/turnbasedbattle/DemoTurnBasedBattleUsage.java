@@ -7,9 +7,13 @@ public class DemoTurnBasedBattleUsage {
 
         TurnBasedBattleListener listener = null;
 
+
         //Two monsters are created
         FireMonster player1 = new FireMonster();
         WaterMonster player2 = new WaterMonster();
+
+        BattleManager battle = new BattleManager(player1, player2);
+        battle.startBattle();
 
         //Player 1 executes an elemental attack
         int dmg = player1.elementalAttack();

@@ -5,14 +5,14 @@ package de.hhn.it.devtools.apis.turnbasedbattle;
  */
 public class BattleManager {
 
-    private Player player1;
-    private Player player2;
-    private Player currentPlayer;
-    private Player opponentPlayer;
+    private Monster player1Monster;
+    private Monster player2Monster;
+    private Monster currentMonster;
+    private Monster opponentMonster;
     private boolean battleOver;
 
     //constructor
-    public BattleManager(Player player1, Player player2, Player opponentPlayer) {}
+    public BattleManager(Monster player1Monster, Monster player2Monster) {}
 
     /**
      * starts the battle.
@@ -45,15 +45,15 @@ public class BattleManager {
         return null;
     }
 
-    public Player getCurrentPlayer(){
-        return currentPlayer;
+    public Monster getcurrentMonster(){
+        return currentMonster;
     }
-    public Player getOpponentPlayer(){
-        return opponentPlayer;
+    public Monster getopponentMonster(){
+        return opponentMonster;
     }
 
     /**
-     * switches the current Player and the opponent Player.
+     * switches the current Player/Monster and the opponent Player.
      */
     private void switchTurns(){}
 }
