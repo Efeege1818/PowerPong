@@ -51,8 +51,8 @@ public abstract class Monster {
    * @param damage flat amount of damage a move will do
    * @param element multiplier that can increase or decrease damage when the element is effective against the opponent's
    */
-  public void damage(int damage, Element element) {
-
+  public int damage(int damage, Element element) {
+    return 0;
   }
 
   /**
@@ -87,15 +87,15 @@ public abstract class Monster {
   /**
    * A normal, pure damaging attack without elemental properties.
    */
-  public void normalAttack() {
-
+  public int normalAttack() {
+    return 0;
   }
 
   /**
    * An elemental attack, which can do more or less damage depending on the opponent's element.
    */
-  public void elementalAttack() {
-
+  public int elementalAttack() {
+    return 0;
   }
 
   /**

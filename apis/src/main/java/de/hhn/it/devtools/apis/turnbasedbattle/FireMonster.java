@@ -17,16 +17,16 @@ public class FireMonster extends Monster {
    * Normal attack that inflicts 50 damage.
    */
   @Override
-  public void normalAttack() {
-    damage(50, Element.NORMAL); //TODO: replace Placeholder value
+  public int normalAttack() {
+    return damage(50, Element.NORMAL); //TODO: replace Placeholder value
   }
 
   /**
    * Elemental attack that inflicts 50 damage with fire element.
    */
   @Override
-  public void elementalAttack() {
-    damage(50, Element.FIRE); //TODO: replace Placeholder value
+  public int elementalAttack() {
+    return damage(50, Element.FIRE); //TODO: replace Placeholder value
   }
 
   /**
