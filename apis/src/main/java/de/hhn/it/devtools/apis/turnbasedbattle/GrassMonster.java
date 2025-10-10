@@ -17,31 +17,39 @@ public class GrassMonster extends Monster {
    * Normal attack that inflicts 50 damage.
    */
   @Override
-  public int normalAttack() {
-    return damage(50, Element.NORMAL); //TODO: replace Placeholder value
+  public void normalAttack(Monster monster) {
+    monster.takeDamage(damage(50, Element.NORMAL)); //TODO: replace Placeholder value
   }
 
   /**
    * Elemental attack that inflicts 50 damage with grass element.
    */
   @Override
-  public int elementalAttack() {
-    return damage(50, Element.GRASS); //TODO: replace Placeholder value
+  public void elementalAttack(Monster monster) {
+    int damage= 50; //TODO: replace Placeholder value
+
+    if(monster.getElement() == Element.GRASS) {
+      monster.takeDamage(damage);
+    } else if(monster.getElement() == Element.FIRE) {
+      monster.takeDamage(damage / 2);
+    } else if(monster.getElement() == Element.WATER) {
+      monster.takeDamage(damage * 2);
+    }
   }
 
   /**
    * Increases this monster's crit chance.
    */
   @Override
-  public void buff() {
-    setCritChance(getCritChance() + 0.1); //TODO: replace Placeholder value
+  public void buff(Monster monster) {
+    monster.setCritChance(monster.getCritChance() + 0.1); //TODO: replace Placeholder value
   }
 
   /**
    * Reduces the enemy monster's evasion chance.
    */
   @Override
-  public Debuff debuff() {
-    return inflictDebuff(EVASION, 1); //TODO: replace Placeholder value
+  public void debuff(Monster monster) {
+    monster.takeDebuff(EVASION, 1); //TODO: replace Placeholder value
   }
 }

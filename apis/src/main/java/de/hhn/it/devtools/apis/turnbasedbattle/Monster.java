@@ -87,29 +87,29 @@ public abstract class Monster {
   /**
    * A normal, pure damaging attack without elemental properties.
    */
-  public int normalAttack() {
-    return 0;
+  public void normalAttack(Monster monster) {
+
   }
 
   /**
    * An elemental attack, which can do more or less damage depending on the opponent's element.
    */
-  public int elementalAttack() {
-    return 0;
+  public void elementalAttack(Monster monster) {
+
   }
 
   /**
    * Increases one of this monster's stats.
    */
-  public void buff() {
+  public void buff(Monster monster) {
 
   }
 
   /**
    * Decreases one of the opponent's monster's stats.
    */
-  public Debuff debuff() {
-    return null;
+  public void debuff(Monster monster) {
+
   }
 
   public int getMaxHp() {

@@ -17,31 +17,39 @@ public class FireMonster extends Monster {
    * Normal attack that inflicts 50 damage.
    */
   @Override
-  public int normalAttack() {
-    return damage(50, Element.NORMAL); //TODO: replace Placeholder value
+  public void normalAttack(Monster monster) {
+    monster.takeDamage(damage(50, Element.NORMAL)); //TODO: replace Placeholder value
   }
 
   /**
    * Elemental attack that inflicts 50 damage with fire element.
    */
   @Override
-  public int elementalAttack() {
-    return damage(50, Element.FIRE); //TODO: replace Placeholder value
+  public void elementalAttack(Monster monster) {
+    int damage= 50; //TODO: replace Placeholder value
+
+    if(monster.getElement() == Element.FIRE) {
+      monster.takeDamage(damage);
+    } else if(monster.getElement() == Element.WATER) {
+      monster.takeDamage(damage / 2);
+    } else if(monster.getElement() == Element.GRASS) {
+      monster.takeDamage(damage * 2);
+    }
   }
 
   /**
    * Increases this monster's attack.
    */
   @Override
-  public void buff() {
-    setAttack(getAttack() + 1); //TODO: replace Placeholder value
+  public void buff(Monster monster) {
+    monster.setAttack(monster.getAttack() + 1); //TODO: replace Placeholder value
   }
 
   /**
    * Reduces the enemy monster's defense.
    */
   @Override
-  public Debuff debuff() {
-    return inflictDebuff(DEFENSE, 1); //TODO: replace Placeholder value
+  public void debuff(Monster monster) {
+    monster.takeDebuff(DEFENSE, 1); //TODO: replace Placeholder value
   }
 }
