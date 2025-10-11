@@ -8,5 +8,6 @@ public interface GameBoard {
     boolean dropChip(int column, Player player) throws IllegalParameterException; // Spieler wirft einen Stein in eine Spalte
     void resetBoard();                           // Setzt das Spielfeld zurück
     boolean isFull();                            // Prüft, ob das Board voll ist
+    void placeRandomToxicFields();               // zwei zufällige ToxicFelder festlegen
 }
 

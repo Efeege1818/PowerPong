@@ -1,25 +1,15 @@
 package de.hhn.it.devtools.apis.examples.fourconnect;
 
-public class ToxicField {
-    private final int row;
-    private final int column;
-    private int age = 0;
+public interface ToxicField {
 
-    public ToxicField(int row, int column) {
-        this.row = row;
-        this.column = column;
-    }
+    void incrementTurn();          // Runde erhöhen
 
-    public void incrementAge() {
-        
-    }
+    boolean isExpired();           // Prüfen, ob das Runde abgelaufen ist (basierend auf Turn)
 
-    public boolean isExpired() {
-        return false;
-    }
+    int getRow();                  // Zeile des Feldes
+    int getColumn();               // Spalte des Feldes
+    int getTurn();                 // Aktuelle Runde des Feldes
 
-    
-    public int getRow() { return row; }
-    public int getColumn() { return column; }
-    public int getAge() { return age; }
+    int resetTurn();               // Aktuelle Runde zurücksetzen
 }
+
