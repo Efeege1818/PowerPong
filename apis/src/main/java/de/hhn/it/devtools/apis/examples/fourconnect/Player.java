@@ -6,7 +6,7 @@ public interface Player {
     void setName(String name);
 
     String getColor();         // Farbe des Spielers
-    void setColor(String color);
+    void setColor(PlayerColor color);
 
     int getScore();            // Punktestand des Spielers
     void setScore(int score);
