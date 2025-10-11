@@ -1,11 +1,83 @@
 package de.hhn.it.devtools.apis.spaceinvaders;
 
+import de.hhn.it.devtools.apis.spaceinvaders.exceptions.IllegalConfigurationException;
+
 public class DemoSpaceInvadersUsage {
   private static final org.slf4j.Logger logger =
           org.slf4j.LoggerFactory.getLogger(DemoSpaceInvadersUsage.class);
 
   public static void main(String[] args) {
-    SpaceInvadersService service = null;
+    SpaceInvadersService service = new SpaceInvadersService() {
+      @Override
+      public void reset() {
+
+      }
+
+      @Override
+      public void start() throws IllegalStateException {
+
+      }
+
+      @Override
+      public void abort() throws IllegalStateException {
+
+      }
+
+      @Override
+      public void pause() throws IllegalStateException {
+
+      }
+
+      @Override
+      public void resume() throws IllegalStateException {
+
+      }
+
+      @Override
+      public void nextRound() throws IllegalStateException {
+
+      }
+
+      @Override
+      public void move(Direction direction) throws IllegalStateException {
+
+      }
+
+      @Override
+      public void shoot() throws IllegalStateException {
+
+      }
+
+      @Override
+      public void playSound(String sound) throws IllegalStateException {
+
+      }
+
+      @Override
+      public boolean addListener(SpaceInvadersListener listener) {
+        return false;
+      }
+
+      @Override
+      public boolean removeListener(SpaceInvadersListener listener) {
+        return false;
+      }
+
+      @Override
+      public void configure(GameConfiguration configuration) throws IllegalStateException, IllegalConfigurationException {
+
+      }
+
+      @Override
+      public GameConfiguration getConfiguration() {
+        return null;
+      }
+    }
+
+    SpaceInvadersService service2 = Singleton.service
+
+    service.reset();
+
 
     //added Listeners for the service.
     SpaceInvadersListener listener = null;

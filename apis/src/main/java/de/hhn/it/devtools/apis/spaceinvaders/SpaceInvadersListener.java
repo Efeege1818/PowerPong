@@ -1,14 +1,18 @@
 package de.hhn.it.devtools.apis.spaceinvaders;
 
-import de.hhn.it.devtools.apis.spaceinvaders.entities.Alien;
-import de.hhn.it.devtools.apis.spaceinvaders.entities.Barrier;
-import de.hhn.it.devtools.apis.spaceinvaders.entities.Projectile;
-import de.hhn.it.devtools.apis.spaceinvaders.entities.Ship;
+import de.hhn.it.devtools.apis.spaceinvaders.entities.*;
 
 /**
  * Models the capabilities of a GameListener.
  */
 public interface SpaceInvadersListener {
+
+  /**
+   * Informs the listener when aliens are updated.
+   *
+   * @param entities the array of all entities
+   */
+  void updateEntities(Entity[] entities);
 
   /**
    * Informs the listener that the barrier has changed.
