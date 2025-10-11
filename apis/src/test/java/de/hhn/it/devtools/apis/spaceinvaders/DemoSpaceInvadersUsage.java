@@ -23,11 +23,11 @@ public class DemoSpaceInvadersUsage {
     logger.debug(">>>> Start");
 
     //the player now moves left and right a bit and tries to shoot the Aliens.
-    service.moveLeft();
+    service.move(Direction.LEFT);
     logger.debug(">>>> Left");
-    service.moveRight();
+    service.move(Direction.RIGHT);
     logger.debug(">>>> Right");
-    service.moveRight();
+    service.move(Direction.RIGHT);
     logger.debug(">>>> Right");
     service.shoot();
     logger.debug(">>>> Shoot");
@@ -36,7 +36,7 @@ public class DemoSpaceInvadersUsage {
      * After Fighting for hours the Player destroyed all the Aliens and after getting notified by the Field
      * wipes the Field and starts the next round
      */
-    service.resetField();
+    service.nextRound();
 
     //Afterward the player gets so bored that he paused the game and resumes before restarting the game.
     service.pause();
