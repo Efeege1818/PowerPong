@@ -1,15 +1,17 @@
 package de.hhn.it.devtools.apis.examples.fourconnect;
 
+/**
+ * Definiert den Zustand eines Chips, der von der Toxizität betroffen ist.
+ * Dieses Interface ist strikt Read-Only (nur lesbar).
+ * Die aktive Steuerung des Turns muss in der Service-Implementierung liegen.
+ */
 public interface ToxicField {
 
-    void incrementTurn();          // Runde erhöhen
+    boolean isExpired();
 
-    boolean isExpired();           // Prüfen, ob das Runde abgelaufen ist (basierend auf Turn)
+    int getRow();
 
-    int getRow();                  // Zeile des Feldes
-    int getColumn();               // Spalte des Feldes
-    int getTurn();                 // Aktuelle Runde des Feldes
+    int getColumn();
 
-    int resetTurn();               // Aktuelle Runde zurücksetzen
+    int getTurn();
 }
-

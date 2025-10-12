@@ -1,15 +1,16 @@
 package de.hhn.it.devtools.apis.examples.fourconnect;
 
+/**
+ * Definiert den Zustand (State) eines Spielers.
+ * Dieses Interface ist strikt Read-Only (nur lesbar).
+ * Die Änderung des Punktestands muss durch den ConnectFourService erfolgen.
+ */
 public interface Player {
 
-    String getName();          // Name des Spielers
-    void setName(String name);
 
-    String getColor();         // Farbe des Spielers
-    void setColor(PlayerColor color);
+    String getName();
 
-    int getScore();            // Punktestand des Spielers
-    void setScore(int score);
-    void incrementScore();     // Punktestand erhöhen
-    void resetScore();         // Punktestand zurücksetzen
+    String getColor();
+
+    int getScore();
 }
