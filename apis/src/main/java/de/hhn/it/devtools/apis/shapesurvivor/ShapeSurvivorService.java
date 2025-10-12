@@ -43,7 +43,7 @@ public interface ShapeSurvivorService {
     /**
      * Moves the player in the specified direction.
      *
-     * @param direction the direction to move (UP, DOWN, LEFT, RIGHT)
+     * @param direction the direction to move
      * @throws IllegalStateException if the GameState is not RUNNING
      * @throws IllegalArgumentException if direction is null
      */
@@ -61,7 +61,7 @@ public interface ShapeSurvivorService {
     /**
      * Upgrades a specific player attribute when leveling up.
      *
-     * @param attribute the attribute to upgrade (HEALTH, MOVEMENT_SPEED, DAMAGE, etc.)
+     * @param attribute the attribute to upgrade
      * @throws IllegalStateException if the GameState is not RUNNING or if no level up is pending
      * @throws IllegalArgumentException if attribute is null or invalid
      */
