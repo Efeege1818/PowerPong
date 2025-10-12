@@ -8,13 +8,6 @@ import de.hhn.it.devtools.apis.spaceinvaders.entities.*;
 public interface SpaceInvadersListener {
 
   /**
-   * Informs the listener when aliens are updated.
-   *
-   * @param entities the array of all entities
-   */
-  void updateEntities(Entity[] entities);
-
-  /**
    * Informs the listener that the barrier has changed.
    *
    * @param barrier the barrier with its current health state
