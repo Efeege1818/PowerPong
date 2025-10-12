@@ -1,6 +1,6 @@
 package de.hhn.it.devtools.apis.shapesurvivor;
 
-import de.hhn.it.devtools.apis.shapesurvivor.exeptions.IllegalConfigurationException;
+import de.hhn.it.devtools.apis.shapesurvivor.exceptions.IllegalConfigurationException;
 
 /**
  * Interface for the ShaperSurvivor game service
