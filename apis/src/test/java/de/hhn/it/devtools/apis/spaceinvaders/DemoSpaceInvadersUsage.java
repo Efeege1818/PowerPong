@@ -8,10 +8,6 @@ public class DemoSpaceInvadersUsage {
 
   public static void main(String[] args) {
     SpaceInvadersService service = null;
-    SpaceInvadersListener listener = null;
-
-    // Listener hinzufügen
-    service.addListener(listener);
 
     //Laden der Spielkonfiguration
     GameConfiguration configuration = new GameConfiguration(2, Difficulty.NORMAL);
@@ -26,8 +22,6 @@ public class DemoSpaceInvadersUsage {
     SpaceInvadersListener listener = null;
     service.addListener(listener);
 
-    //first thing we will add a new Configuration that will contain our desired difficulty and number of Barriers
-    GameConfiguration configuration = new GameConfiguration(3, Difficulty.NORMAL);
 
     //now the GameService will configure the game based on this selection and start the game
     service.configure(configuration);
