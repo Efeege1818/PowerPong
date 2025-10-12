@@ -9,7 +9,7 @@ import de.hhn.it.devtools.apis.spaceinvaders.Coordinate;
  * @param coordinate The Position of the Projectile.
  * @param damage     How much damage this Projectile does.
  */
-public record Projectile(Coordinate coordinate, Integer damage) implements Entity {
+public record Projectile(Coordinate coordinate, Integer damage) {
 
   @Override
   public Integer damage() {
