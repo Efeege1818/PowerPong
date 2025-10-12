@@ -38,7 +38,7 @@ public class BattleManager {
     }
 
     /**
-     * cecks fi a Player has won the battle.
+     * checks if a Player has won the battle.
      * @return Player how has won.
      */
     public Player getWinner(){
