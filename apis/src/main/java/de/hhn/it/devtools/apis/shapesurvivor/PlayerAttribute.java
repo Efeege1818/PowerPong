@@ -1,5 +1,8 @@
 package de.hhn.it.devtools.apis.shapesurvivor;
 
+/**
+ * Player attributes that can be upgraded when leveling up.
+ */
 public enum PlayerAttribute {
     MAX_HEALTH,
     MOVEMENT_SPEED,
