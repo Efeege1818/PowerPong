@@ -10,7 +10,7 @@ public interface Player {
 
     String getName();
 
-    String getColor();
+    PlayerColor getColor();
 
     int getScore();
 }
