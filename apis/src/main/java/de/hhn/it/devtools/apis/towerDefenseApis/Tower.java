@@ -1,6 +1,9 @@
 package de.hhn.it.devtools.apis.towerDefenseApis;
 
 public interface Tower {
+  int attack_speed();
+  int cost();
+  int range();
 
   /**
    * Attacks the enemy in range, that has advanced the furthest on the path
