@@ -78,7 +78,7 @@ public interface TowerDefenseService {
   TowerBoard getTowerBoard();
 
   /**
-   * Returns the enemies in this round.
+   * Returns the enemies in this round (wave).
    *
    * @return the enemies in this round.
    * @throws IllegalStateException if there are no enemies active
