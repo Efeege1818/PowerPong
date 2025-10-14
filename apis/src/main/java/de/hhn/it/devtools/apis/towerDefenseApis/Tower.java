@@ -1,6 +1,7 @@
 package de.hhn.it.devtools.apis.towerDefenseApis;
 
 public interface Tower {
+  int id();
   int attack_speed();
   int cost();
   int range();

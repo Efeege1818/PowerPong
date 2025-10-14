@@ -2,6 +2,11 @@ package de.hhn.it.devtools.apis.towerDefenseApis;
 
 public class Tower_MoneyMaker implements Tower{
 	@Override
+	public int id() {
+		return 0;
+	}
+
+	@Override
 	public int attack_speed() {
 		return 0;
 	}

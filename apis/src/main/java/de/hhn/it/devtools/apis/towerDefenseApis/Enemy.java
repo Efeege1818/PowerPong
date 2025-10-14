@@ -7,6 +7,8 @@ public interface Enemy {
 
 	Path path();
 
+	int id();
+
 	/**
 	 * Reduces the health of the enemy by the given amount and markes the enemy as dead,
 	 * if the health has reached zero.
@@ -18,4 +20,6 @@ public interface Enemy {
 	public boolean getDamage(int amount);
 
 	public Coordinates move();
+
+	public void endReached();
 }
