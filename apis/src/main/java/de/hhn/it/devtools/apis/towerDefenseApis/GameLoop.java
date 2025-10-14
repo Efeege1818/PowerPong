@@ -6,4 +6,8 @@ public interface GameLoop extends Runnable {
     void run();
 
     void endGame();
+
+    void retry();
+
+    void pauseGame();
 }
