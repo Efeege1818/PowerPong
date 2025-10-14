@@ -1,4 +1,6 @@
 package de.hhn.it.devtools.apis.towerDefenseApis;
 
-public interface Koordinaten {
+public interface Path {
+
+    double[][] path();
 }

@@ -1,7 +1,9 @@
 package de.hhn.it.devtools.apis.towerDefenseApis;
 
 public interface Enemy {
-
+    int health();
+    int speed();
+    Path path();
 
     /**
      * Reduces the health of the enemy by the given amount and markes the enemy as dead,
@@ -12,4 +14,5 @@ public interface Enemy {
      */
     public boolean getDamage(int amount);
 
+    public Coordinates move();
 }
