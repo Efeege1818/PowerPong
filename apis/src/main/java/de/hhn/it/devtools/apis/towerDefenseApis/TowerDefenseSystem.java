@@ -4,10 +4,10 @@ package de.hhn.it.devtools.apis.towerDefenseApis;
  * Interface for the TowerDefenseSystem
  */
 public interface TowerDefenseSystem {
-int DEFAULT_SIZE = 10;
-int DEFAULT_HEALTH = 50;
-double DEFAULT_ENEMY_POWER_MULTIPLIER = 1.5;    //Shouldn't this be of type float?
-int DEFAULT_ENERGY_RATE = 1;
+int DEFAULT_MAP_SIZE = 10;
+int DEFAULT_PLAYER_HEALTH = 50;
+double DEFAULT_ENEMY_POWER_MULTIPLIER = 1.5;
+int DEFAULT_MONEY_RATE = 1; //how much money per enemy kill
 
     /**
      * Provides the number of the last round that has been started
