@@ -2,5 +2,6 @@ package de.hhn.it.devtools.apis.towerDefenseApis;
 
 public interface Coordinates {
 
-    double[] coordinate();
+    int getX();
+    int getY();
 }
