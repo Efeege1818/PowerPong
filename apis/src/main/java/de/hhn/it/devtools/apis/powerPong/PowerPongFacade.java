@@ -6,8 +6,8 @@ import java.util.List;
 public class PowerPongFacade {
 
     // Player-Paddles
-    private PaddleParams player1;
-    private PaddleParams player2;
+    private Player player1;
+    private Player player2;
 
     // Ball
     private BallParams ball;
@@ -21,36 +21,30 @@ public class PowerPongFacade {
     // Optional: AI Controller for Spieler2
     private AIController aiController;
 
-    // Scores
-    private int scorePlayer1;
-    private int scorePlayer2;
-
     // Needed Score to win
     private int winningScore;
 
     public PowerPongFacade() {
-        this.player1 = new PaddleParams(10, 100, 5);  // x, y, speed
-        this.player2 = new PaddleParams(580, 100, 5);
+        this.player1 = new Player("Player1", PlayerType.HUMAN, new PaddleParams(10,100,5));  // x, y, speed
+        this.player2 = new Player("Player2",PlayerType.HUMAN,new PaddleParams(580,100,5));
         this.ball = new BallParams(5, 10, 1, 1);    // speed, radius, directionX, directionY
         this.powerUps = new ArrayList<>();
         this.currentMode = GameMode.CLASSIC;
-        this.scorePlayer1 = 0;
-        this.scorePlayer2 = 0;
         this.winningScore = 10;
         this.aiController = null; // optional
     }
 
     // Getter & Setter
-    public PaddleParams getPlayer1() { return player1; }
-    public PaddleParams getPlayer2() { return player2; }
+    public Player getPlayer1() { return player1; }
+    public Player getPlayer2() { return player2; }
     public BallParams getBall() { return ball; }
     public List<PowerUpParams> getPowerUps() { return powerUps; }
     public GameMode getCurrentMode() { return currentMode; }
     public void setCurrentMode(GameMode mode) { this.currentMode = mode; }
     public AIController getAiController() { return aiController; }
     public void setAiController(AIController aiController) { this.aiController = aiController; }
-    public int getScorePlayer1() { return scorePlayer1; }
-    public int getScorePlayer2() { return scorePlayer2; }
+    public int getScorePlayer1() { return player1.getScore(); }
+    public int getScorePlayer2() { return player2.getScore(); }
     public void setWinningScore(int score) { this.winningScore = score; }
     public int getWinningScore() { return winningScore; }
 
@@ -58,20 +52,18 @@ public class PowerPongFacade {
     // Punkte-Methoden
     // -----------------------
     public void addPointPlayer1() {
-        scorePlayer1++;
+        player1.addScore(1);
         resetBall();
     }
     public void addPointPlayer2() {
-        scorePlayer2++;
+        player2.addScore(2);
         resetBall();
     }
     public boolean isGameOver() {
-        return scorePlayer1 >= winningScore || scorePlayer2 >= winningScore;
+        return player1.getScore() >= winningScore || player2.getScore() >= winningScore;
     }
 
-    // -----------------------
-    // Ball & PowerUp Methoden
-    // -----------------------
+    // Ball & PowerUp Methods
     public void resetBall() {
 
         ball.setSpeed(5);
@@ -86,14 +78,12 @@ public class PowerPongFacade {
         powerUps.remove(powerUp);
     }
 
-    // -----------------------
-    // Utility-Methoden
-    // -----------------------
+
+    // Utility-Methods
     public void resetGame() {
-        scorePlayer1 = 0;
-        scorePlayer2 = 0;
+        player1.resetScore();
+        player2.resetScore();
         resetBall();
         powerUps.clear();
     }
-
 }

@@ -28,4 +28,5 @@ public class Player {
     public void addScore(int points) { score += points; }
     public void activateShield() { hasShield = true; }
     public void deactivateShield() { hasShield = false; }
+    public void resetScore() {this.score = 0;}
 }
