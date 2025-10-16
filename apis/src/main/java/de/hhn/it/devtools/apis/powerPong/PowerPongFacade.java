@@ -25,8 +25,8 @@ public class PowerPongFacade {
     private int winningScore;
 
     public PowerPongFacade() {
-        this.player1 = new Player("Player1", PlayerType.HUMAN, new PaddleParams(10,100,5));  // x, y, speed
-        this.player2 = new Player("Player2",PlayerType.HUMAN,new PaddleParams(580,100,5));
+        this.player1 = new Player("Player1", PlayerType.HUMAN, new PaddleParams(10,100,5));
+        this.player2 = new Player("Player2",PlayerType.HUMAN,new PaddleParams(10,100,5));
         this.ball = new BallParams(5, 10, 1, 1);    // speed, radius, directionX, directionY
         this.powerUps = new ArrayList<>();
         this.currentMode = GameMode.CLASSIC;
