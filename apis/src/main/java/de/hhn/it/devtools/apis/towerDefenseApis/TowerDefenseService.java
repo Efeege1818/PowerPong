@@ -8,8 +8,13 @@ import java.util.HashMap;
 public interface TowerDefenseService {
   int DEFAULT_MAP_SIZE = 10;
   int DEFAULT_PLAYER_HEALTH = 50;
-  double DEFAULT_ENEMY_POWER_MULTIPLIER = 1.5;
+  float DEFAULT_ENEMY_POWER_MULTIPLIER = 1.5f;
   int DEFAULT_MONEY_RATE = 1; // how much money per enemy kill
+
+  /**
+   * @return the GameState that is currently active
+   */
+  public GameState getCurrentGameState();
 
   /**
    * Adds a listener to the list.
@@ -67,7 +72,7 @@ public interface TowerDefenseService {
    * @return the current Map.
    * @throws IllegalStateException if the game has not been initialized
    */
-  Map getMap();
+  Grid getMap();
 
   /**
    * Returns the current tower configuration.

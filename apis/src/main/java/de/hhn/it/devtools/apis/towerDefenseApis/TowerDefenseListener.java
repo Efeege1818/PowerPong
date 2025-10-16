@@ -2,9 +2,9 @@ package de.hhn.it.devtools.apis.towerDefenseApis;
 
 public interface TowerDefenseListener {
 
-  void updateHealth();
-  void updateMoney();
-  void gameEnded();
-  void updateMap();
-  void updateScreen();
+  public void updateHealth();
+  public void updateMoney();
+  public void gameEnded();
+  public void updateMap();
+  public void updateScreen();
 }

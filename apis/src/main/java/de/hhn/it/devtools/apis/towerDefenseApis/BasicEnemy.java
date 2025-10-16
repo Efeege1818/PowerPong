@@ -1,23 +1,24 @@
 package de.hhn.it.devtools.apis.towerDefenseApis;
 
-public class Enemy_Medium implements Enemy{
+public class BasicEnemy implements Enemy{
+
 	@Override
-	public int health() {
+	public int getHealth() {
 		return 0;
 	}
 
 	@Override
-	public int speed() {
+	public int getSpeed() {
 		return 0;
 	}
 
 	@Override
-	public Path path() {
+	public Path getPath() {
 		return null;
 	}
 
 	@Override
-	public int id() {
+	public int getId() {
 		return 0;
 	}
 

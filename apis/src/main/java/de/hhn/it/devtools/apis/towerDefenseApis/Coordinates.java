@@ -1,6 +1,14 @@
 package de.hhn.it.devtools.apis.towerDefenseApis;
 
-public interface Coordinates {
+public record Coordinates(float x, float y) {
 
-    double[] coordinate();
+    @Override
+    public float x() {
+        return x;
+    }
+
+    @Override
+    public float y() {
+        return y;
+    }
 }
