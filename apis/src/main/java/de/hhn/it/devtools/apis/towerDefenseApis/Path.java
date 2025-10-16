@@ -5,5 +5,6 @@ import java.util.LinkedList;
 
 public interface Path {
 
+    //TODO Kommentare adden
     public ArrayList<Coordinates> getPath();
 }

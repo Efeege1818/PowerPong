@@ -1,5 +1,7 @@
 package de.hhn.it.devtools.apis.towerDefenseApis;
 
+//TODO Kommentare adden
+
 public interface Enemy {
 	int getHealth();
 

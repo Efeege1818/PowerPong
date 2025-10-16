@@ -2,6 +2,8 @@ package de.hhn.it.devtools.apis.towerDefenseApis;
 
 public class BasicEnemy implements Enemy{
 
+	//TODO Kommentare adden
+
 	@Override
 	public int getHealth() {
 		return 0;
