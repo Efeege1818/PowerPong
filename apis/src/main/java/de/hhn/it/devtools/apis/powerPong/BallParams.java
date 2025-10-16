@@ -1,22 +1,26 @@
 package de.hhn.it.devtools.apis.powerPong;
 
 public class BallParams {
-    private double geschwindigkeit;
+    //Fields
+    private double speed;
     private double radius;
-    private double richtungX;
-    private double richtungY;
+    private double directionX;
+    private double directionY;
 
-    public BallParams(double geschwindigkeit, double radius, double richtungX, double richtungY) {
-        this.geschwindigkeit = geschwindigkeit;
+    //Constructor
+    public BallParams(double speed, double radius, double directionX, double directionY) {
+        this.speed = speed;
         this.radius = radius;
-        this.richtungX = richtungX;
-        this.richtungY = richtungY;
+        this.directionX = directionX;
+        this.directionY = directionY;
     }
 
-    public double getGeschwindigkeit() { return geschwindigkeit; }
+    //Getter
+    public double getSpeed() { return speed; }
     public double getRadius() { return radius; }
-    public double getRichtungX() { return richtungX; }
-    public double getRichtungY() { return richtungY; }
+    public double getDirectionX() { return directionX; }
+    public double getDirectionY() { return directionY; }
 
-    public void setGeschwindigkeit(double geschwindigkeit) { this.geschwindigkeit = geschwindigkeit; }
+    //Setter
+    public void setSpeed(double speed) { this.speed = speed; }
 }

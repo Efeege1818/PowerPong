@@ -40,9 +40,7 @@ public class PowerPongFacade {
         this.aiController = null; // optional
     }
 
-    // -----------------------
     // Getter & Setter
-    // -----------------------
     public PaddleParams getPlayer1() { return player1; }
     public PaddleParams getPlayer2() { return player2; }
     public BallParams getBall() { return ball; }
@@ -76,7 +74,7 @@ public class PowerPongFacade {
     // -----------------------
     public void resetBall() {
 
-        ball.setGeschwindigkeit(5);
+        ball.setSpeed(5);
         // Richtung kann man nur ändern, wenn Setter hinzugefügt werden
     }
 
