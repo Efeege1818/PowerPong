@@ -134,13 +134,4 @@ public interface TowerDefenseService {
    * @return the last round number as a positive integer
    */
   int getCurrentRound();
-
-  /**
-   * Calculates the total enemy power for a given wave.
-   *
-   * @param wave the wave number to calculate the power for
-   * @return the corresponding amount of enemy power
-   * @throws IllegalArgumentException if wave number is less than or equal to zero
-   */
-  int getEnemyPower(int wave);
 }
