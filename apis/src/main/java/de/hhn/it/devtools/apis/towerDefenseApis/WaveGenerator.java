@@ -14,7 +14,7 @@ public interface WaveGenerator {
 	 * @return the corresponding amount of enemy power
 	 * @throws IllegalArgumentException if wave number is less than or equal to zero
 	 */
-	int getEnemyPower(int wave);
+	int getEnemyPower(int wave, int multiplier);
 
 	/**
 	 * Generates a wave of enemies with the enemyPower
