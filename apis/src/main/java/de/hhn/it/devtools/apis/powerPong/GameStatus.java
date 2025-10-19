@@ -1,5 +1,9 @@
 package de.hhn.it.devtools.apis.powerPong;
 
+/**
+ * Defines the global state of the game.
+ */
+
 public enum GameStatus {
     /**  The game is in the main menu (or has not yet started) */
     MENU,

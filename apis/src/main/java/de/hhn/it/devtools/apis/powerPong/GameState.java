@@ -1,5 +1,10 @@
 package de.hhn.it.devtools.apis.powerPong;
 
+/**
+ * An (immutable) snapshot of the entire game state. The UI uses this object to render itself.
+ * Here we use Java 'record' for compact, immutable data classes.
+ */
+
 public record GameState(
     /** The current state of the game (e.g., Running, Paused, Won). */
     GameStatus status,
