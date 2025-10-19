@@ -1,5 +1,7 @@
 package de.hhn.it.devtools.apis.powerPong;
 
+import java.util.List;
+
 /**
  * An (immutable) snapshot of the entire game state. The UI uses this object to render itself.
  * Here we use Java 'record' for compact, immutable data classes.
