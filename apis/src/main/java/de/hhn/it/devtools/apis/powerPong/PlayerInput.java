@@ -1,7 +1,7 @@
 package de.hhn.it.devtools.apis.powerPong;
 
 /**
- A data object that encapsulates the actions (key presses) of both players for a single frame.
+ * A data object that encapsulates the actions (key presses) of both players for a single frame.
  */
 public class PlayerInput {
 
