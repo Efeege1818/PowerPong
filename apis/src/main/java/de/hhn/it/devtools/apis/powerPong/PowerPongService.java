@@ -35,5 +35,28 @@ public interface PowerPongService {
      */
     void setPaused(boolean isPaused);
 
+    /**
+     * Updates the position of both paddles based on player input.
+     * Called once per frame during the game loop.
+     */
+    void updatePaddle();
+
+    /**
+     * Updates the position of the ball based on its current velocity and direction.
+     * Handles collisions with paddles and walls, and detects when a player scores.
+     * This method should be called once per frame as part of the game loop.
+     *
+     * @throws GameLogicException if the ball update fails due to invalid state.
+     */
+    void updateBall() throws GameLogicException;
+
+    /**
+     * Updates the current score based on the game state.
+     * Typically called when a player scores (e.g., the ball leaves the field).
+     * May also apply custom scoring rules depending on the game mode.
+     *
+     * @throws GameLogicException if the score cannot be updated due to an invalid state.
+     */
+    void updateScore() throws GameLogicException;
 }
 
