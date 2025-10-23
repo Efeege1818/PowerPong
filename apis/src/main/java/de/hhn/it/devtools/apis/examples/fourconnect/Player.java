@@ -1,29 +1,28 @@
 package de.hhn.it.devtools.apis.examples.fourconnect;
 
 /**
- * Definiert den Zustand (State) eines Spielers.
- * Dieses Interface ist strikt Read-Only (nur lesbar). Es dient dazu, der UI
- * Informationen über den Spieler zu liefern (z.B. Name, Farbe, Punktestand),
- * ohne dass die UI diese Werte direkt ändern kann. Die Änderung des Punktestands
- * muss zentral durch den ConnectFourService erfolgen.
+ * Defines the state of a player.
+ * This interface is strictly read-only. It provides information about the player
+ * (e.g., name, color, score) to the UI without allowing the UI to modify these values directly.
+ * Any changes to the score must be handled centrally through the ConnectFourService.
  */
 public interface Player {
 
     /**
-     * Liefert den Anzeigenamen des Spielers (z.B. "Spieler 1").
-     * @return Der Name des Spielers.
+     * Returns the display name of the player (e.g., "Player 1").
+     * @return The name of the player.
      */
     String getName();
 
     /**
-     * Liefert die Farbe des Spielers (z.B. BLAU oder GELB).
-     * @return Das PlayerColor-Objekt des Spielers.
+     * Returns the color of the player (e.g., BLUE or YELLOW).
+     * @return The PlayerColor object of the player.
      */
     PlayerColor getColor();
 
     /**
-     * Liefert den aktuellen Punktestand (Score) des Spielers.
-     * @return Der aktuelle Punktestand.
+     * Returns the current score of the player.
+     * @return The current score.
      */
     int getScore();
 }
