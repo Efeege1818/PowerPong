@@ -1,34 +1,27 @@
 package de.hhn.it.devtools.apis.examples.fourconnect;
 
 /**
- * Dient als reiner Zustands-Abfrager (Read-Only Datenmodell) des Spielfelds.
- * Es enthält nur Methoden zum Lesen (get).
+ * Immutable interface to query the game board state.
  */
 public interface GameBoard {
 
     /**
-     * Gibt ein Array aller Felder zurück. Dies ist der komplette Spielfeld-Zustand.
-     * @return Ein Array von Feld-Objekten.
+     * Returns all fields of the board as a 2D array.
      */
     Field[][] getFields();
 
     /**
-     * Gibt den Zustand eines einzelnen Feldes an der angegebenen Position zurück.
-     * @param row Die Zeile (Reihe).
-     * @param column Die Spalte.
-     * @return Das Feld-Objekt.
+     * Returns the field at the specified position.
      */
     Field getField(int row, int column);
 
     /**
-     * Liefert die Anzahl der Reihen (Höhe) des Spielfelds.
-     * @return Die Reihenanzahl.
+     * Returns number of rows.
      */
     int getRows();
 
     /**
-     * Liefert die Anzahl der Spalten (Breite) des Spielfelds.
-     * @return Die Spaltenanzahl.
+     * Returns number of columns.
      */
     int getColumns();
 }
