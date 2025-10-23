@@ -9,7 +9,7 @@ public class PlayerInput {
     private boolean player1Up;
     private boolean player1Down;
 
-    // State for player 1 (Up/Down)
+    // State for player 2 (Up/Down)
     private boolean player2Up;
     private boolean player2Down;
 
