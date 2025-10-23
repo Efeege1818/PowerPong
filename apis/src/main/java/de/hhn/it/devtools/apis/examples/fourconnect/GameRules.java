@@ -9,7 +9,7 @@ public class GameRules {
      * Checks whether the given player has won on the board.
      */
     public static boolean checkWinner(GameBoard board, Player player) {
-        // Implementiere hier Gewinnbedingungen (horizontal, vertikal, diagonal)
+
         return false;
     }
 }
