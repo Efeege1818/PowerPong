@@ -1,4 +1,7 @@
-package de.hhn.it.devtools.apis.turnbasedbattle;
+package de.hhn.it.devtools.components.turnbasedbattle;
+
+import de.hhn.it.devtools.apis.turnbasedbattle.Monster;
+import de.hhn.it.devtools.apis.turnbasedbattle.Player;
 
 /**
  *Manages the Battle

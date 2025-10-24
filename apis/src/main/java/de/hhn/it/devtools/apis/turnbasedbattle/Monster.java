@@ -12,4 +12,7 @@ package de.hhn.it.devtools.apis.turnbasedbattle;
  * @param element element of the monster
  */
 public record Monster(int maxHp,int currentHp, int attack, int defense, double evasionChance, double critChance, Element element) {
+    public int getCurrentHp() {
+        return currentHp;
+    }
 }
