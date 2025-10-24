@@ -47,7 +47,7 @@ public interface SpaceInvadersListener {
    *
    * @param sound the name of the updated sound
    */
-  void updateSound(String sound);
+  void updateSound(Sound sound);
 
   /**
    * Informs the listener that the game state has changed.
