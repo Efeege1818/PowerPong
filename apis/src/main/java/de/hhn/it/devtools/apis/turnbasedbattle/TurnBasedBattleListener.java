@@ -26,6 +26,7 @@ public interface TurnBasedBattleListener {
      *
      * @param player1 gives the Player object of the first player to get necessary values
      * @param player2 gives the Player object of the second player to get necessary values
+     *
      * @throws IllegalArgumentException if the provided player objects are null
      *
      */

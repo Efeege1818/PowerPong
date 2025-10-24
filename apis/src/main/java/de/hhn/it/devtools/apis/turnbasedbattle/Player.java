@@ -50,4 +50,13 @@ public class Player {
     public Monster getMonster() {
         return monster;
     }
+
+    /**
+     * Returns current health value of the monster that the player has
+     *
+     * @return current hp of monster
+     */
+    public int getMonsterCurrentHp() {
+        return monster.getCurrentHp();
+    }
 }
