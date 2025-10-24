@@ -1,5 +1,7 @@
 package de.hhn.it.devtools.apis.turnbasedbattle;
-
+/**
+ * The main service interface for managing a turn-based battle game.
+ */
 public interface TurnBasedBattleService {
 
     /**
@@ -27,8 +29,11 @@ public interface TurnBasedBattleService {
      *
      * @param listener listener to be added
      * @return true if the listener could be added. Otherwise, false.
+     * @throws IllegalArgumentException if the given listener is null.
+     * @throws IllegalStateException if the listener has already been added before.
      */
-    boolean addListener(TurnBasedBattleListener listener);
+    boolean addListener(TurnBasedBattleListener listener)
+            throws IllegalArgumentException, IllegalStateException;
 
     /**
      * Removes a listener from the list of listeners.
