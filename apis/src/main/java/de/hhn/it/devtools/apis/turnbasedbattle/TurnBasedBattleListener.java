@@ -22,9 +22,12 @@ public interface TurnBasedBattleListener {
     void gameEnded(int winnerPlayerNumber) throws IllegalArgumentException;
 
     /**
-     * Informs the listener that the health has changed.
+     * Informs the listener that the state has to be updated
      *
-     * @param health the updated health value of the affected monster
+     * @param player1 gives the Player object of the first player to get necessary values
+     * @param player2 gives the Player object of the second player to get necessary values
+     * @throws IllegalArgumentException if the provided player objects are null
+     *
      */
-    void updateHealth(int health);
+    void updateState(Player player1, Player player2) throws IllegalArgumentException;
 }
