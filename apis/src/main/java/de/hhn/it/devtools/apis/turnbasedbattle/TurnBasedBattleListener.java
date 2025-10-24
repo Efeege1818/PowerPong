@@ -13,12 +13,18 @@ public interface TurnBasedBattleListener {
     void newGameState(GameState gameState);
 
     /**
-     * Informs the players that the game has ended.
+     * Informs the listener that the game has ended.
+     *
+     * @param winnerPlayerNumber the number of the player who won the game.
+     *                           Must be 1 or 2.
+     * @throws IllegalArgumentException if the provided player number is not 1 or 2.
      */
-    void gameEnded();
+    void gameEnded(int winnerPlayerNumber) throws IllegalArgumentException;
 
     /**
      * Informs the listener that the health has changed.
+     *
+     * @param health the updated health value of the affected monster
      */
     void updateHealth(int health);
 }
