@@ -57,6 +57,6 @@ public class Player {
      * @return current hp of monster
      */
     public int getMonsterCurrentHp() {
-        return monster.getCurrentHp();
+        return monster.currentHp();
     }
 }
