@@ -22,5 +22,5 @@ public enum GameState {
     /**
      * The game has an error
      */
-    ERROR,
+    ERROR
 }
