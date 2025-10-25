@@ -17,7 +17,7 @@ public interface TurnBasedBattleListener {
      *
      * @param winnerPlayerNumber the number of the player who won the game.
      *                           Must be 1 or 2.
-     * @throws IllegalArgumentException if the provided player number is not 1 or 2.
+     * @throws IllegalArgumentException if the provided player number is not 1 or 2 or null.
      */
     void gameEnded(int winnerPlayerNumber) throws IllegalArgumentException;
 
