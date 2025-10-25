@@ -43,6 +43,20 @@ public interface TurnBasedBattleService {
      */
     boolean removeListener(TurnBasedBattleListener listener);
 
+    /**
+     * Notifies all registered listeners that the turn has changed.
+     * This method should be called whenever the active player/monster switches
+     * to update UI, logics, or other observers of the new turn state.
+     */
+    void notifyListenersTurnChanged();
+
+    /**
+     * Notifies all registered listeners that the battle has ended.
+     * This method should be called when the battle reaches a terminal state,
+     * for example when one monster has fainted, so listeners can update UI,
+     * declare a winner, or perform cleanup tasks.
+     */
+    void notifyListenersBattleEnded();
 
     /**
      * Returns the current game state.
@@ -91,6 +105,18 @@ public interface TurnBasedBattleService {
      * @return the Player whose turn it is.
      */
     Player getCurrentPlayer();
+
+    /**
+     * Returns the Player 1 Object
+     * @return PLayer 1
+     */
+    Player getPlayer1();
+
+    /**
+     * Returns the Player 3 Object
+     * @return PLayer 2
+     */
+    Player getPlayer2();
 
     /**
      * Checks whether the battle has ended.
