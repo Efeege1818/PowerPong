@@ -43,5 +43,12 @@ public class DemoTurnBasedBattleUsage {
 //
 //        // Announce Winner
 //        Player winner = battle.getWinner();
+//        try {
+//            Monster monster =  new Monster(100, 10, 5, 0.2, 0.1, Element.FIRE);
+//        } catch (Exception e) {
+//            System.out.println("Exception caught: " + e.getClass().getSimpleName());
+//            System.out.println("Message: " + e.getMessage());
+//            e.printStackTrace(); // optional: volle Stacktrace
+//        }
     }
 }

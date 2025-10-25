@@ -12,4 +12,52 @@ package de.hhn.it.devtools.apis.turnbasedbattle;
  * @param element element of the monster.
  */
 public record Monster(int maxHp,int currentHp, int attack, int defense, double evasionChance, double critChance, Element element) {
+
+    /**
+     * Checks if the monster's parameters are valid.
+     *
+     * @throws IllegalArgumentException if any parameter is invalid.
+     */
+    public Monster {
+        if (maxHp <= 0) {
+            throw new IllegalArgumentException("maxHp must be positive");
+        }
+        if (currentHp < 0 || currentHp > maxHp) {
+            throw new IllegalArgumentException("currentHp must be between 0 and maxHp");
+        }
+        if (attack < 0 || defense < 0) {
+            throw new IllegalArgumentException("attack and defense must be non-negative");
+        }
+        if (evasionChance < 0 || evasionChance > 1 || critChance < 0 || critChance > 1) {
+            throw new IllegalArgumentException("chances must be between 0 and 1");
+        }
+    }
+
+    /**
+     * Constructor for creating monsters without current health.
+     *
+     * @param maxHp maximum amount of health the monster has.
+     * @param attack increases damage dealt.
+     * @param defense reduces damage taken.
+     * @param evasionChance chance to not take any damage.
+     * @param critChance chance to inflict double damage.
+     * @param element element of the monster.
+     *
+     * @throws IllegalArgumentException if any parameter is invalid
+     */
+    public Monster(int maxHp, int attack, int defense, double evasionChance, double critChance, Element element) {
+        this(maxHp, maxHp, attack, defense, evasionChance, critChance, element);
+    }
+
+    public boolean isAlive() {
+        return currentHp > 0;
+    }
+
+    public boolean isAtFullHealth() {
+        return currentHp == maxHp;
+    }
+
+    public double getHealthPercentage() {
+        return (double) currentHp / maxHp;
+    }
 }
