@@ -27,7 +27,7 @@ public interface TurnBasedBattleService {
     /**
      * Adds a listener for game updates. Each listener can only be added once.
      *
-     * @param listener listener to be added
+     * @param listener listener to be added.
      * @return true if the listener could be added. Otherwise, false.
      * @throws IllegalArgumentException if the given listener is null.
      * @throws IllegalStateException if the listener has already been added before.

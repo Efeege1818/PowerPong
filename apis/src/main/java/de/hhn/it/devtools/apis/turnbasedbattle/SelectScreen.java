@@ -3,7 +3,7 @@ package de.hhn.it.devtools.apis.turnbasedbattle;
 import java.util.List;
 
 /**
- * This class is for selecting Monsters and assign them to a player
+ * This class is for selecting Monsters and assign them to a player.
  */
 public class SelectScreen {
 
@@ -39,7 +39,7 @@ public class SelectScreen {
 
     /**
      * Checks if both players have selected a monster.
-     * @return true if both players have selected a monster
+     * @return true if both players have selected a monster.
      */
     public boolean isSelectionFinished(){
         return false;

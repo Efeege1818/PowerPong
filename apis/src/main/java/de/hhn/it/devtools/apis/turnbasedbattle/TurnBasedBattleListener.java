@@ -8,7 +8,7 @@ public interface TurnBasedBattleListener {
     /**
      * Informs the listener that the game state has changed.
      *
-     * @param gameState new state of the game
+     * @param gameState new state of the game.
      */
     void newGameState(GameState gameState);
 
@@ -22,12 +22,12 @@ public interface TurnBasedBattleListener {
     void gameEnded(int winnerPlayerNumber) throws IllegalArgumentException;
 
     /**
-     * Informs the listener that the state has to be updated
+     * Informs the listener that the state has to be updated.
      *
-     * @param player1 gives the Player object of the first player to get necessary values
-     * @param player2 gives the Player object of the second player to get necessary values
+     * @param player1 gives the Player object of the first player to get necessary values.
+     * @param player2 gives the Player object of the second player to get necessary values.
      *
-     * @throws IllegalArgumentException if the provided player objects are null
+     * @throws IllegalArgumentException if the provided player objects are null.
      *
      */
     void updateState(Player player1, Player player2) throws IllegalArgumentException;

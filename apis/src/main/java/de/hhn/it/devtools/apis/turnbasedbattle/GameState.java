@@ -20,7 +20,7 @@ public enum GameState {
     END,
 
     /**
-     * The game has an error
+     * The game has an error.
      */
     ERROR
 }
