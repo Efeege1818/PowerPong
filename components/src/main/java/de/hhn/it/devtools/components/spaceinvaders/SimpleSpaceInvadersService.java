@@ -42,7 +42,7 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
   public void start() throws IllegalStateException {
     logger.debug("Service Start");
     checkIfGameStateIsLegal(GameState.PREPARED);
-    simpleGameLoop = new SimpleGameLoop(this, gameState);
+    simpleGameLoop = new SimpleGameLoop(this);
     simpleGameLoop.start();
     gameState = GameState.RUNNING;
     notifyListeners((l) -> l.changedGameState(gameState));
@@ -157,4 +157,7 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
     //TODO Spiel logik
   }
 
+  protected GameState getGameState() {
+    return gameState;
+  }
 }
