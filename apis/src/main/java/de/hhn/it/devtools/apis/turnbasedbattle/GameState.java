@@ -20,6 +20,11 @@ public enum GameState {
     END,
 
     /**
+     * The game is aborted.
+     */
+    ABORTED,
+
+    /**
      * The game has an error.
      */
     ERROR
