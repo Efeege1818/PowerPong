@@ -18,6 +18,20 @@ public interface TurnBasedBattleService {
     void start() throws IllegalStateException;
 
     /**
+     * Pauses the current game if the GameState is RUNNING. The new GameState is PAUSED.
+     *
+     * @throws IllegalStateException if the GameState is READY.
+     */
+    void pause() throws IllegalStateException;
+
+    /**
+     * Aborts the current game if the GameState is RUNNING. The new GameState is ABORTED.
+     *
+     * @throws IllegalStateException if the GameState is READY.
+     */
+    void abort() throws IllegalStateException;
+
+    /**
      * Ends the current game if the GameState is RUNNING. The new GameState is END.
      *
      * @throws IllegalStateException if the GameState is READY.
@@ -113,7 +127,7 @@ public interface TurnBasedBattleService {
     Player getPlayer1();
 
     /**
-     * Returns the Player 3 Object
+     * Returns the Player 2 Object
      * @return PLayer 2
      */
     Player getPlayer2();

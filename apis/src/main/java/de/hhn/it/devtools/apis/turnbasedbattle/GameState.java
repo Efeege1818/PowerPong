@@ -15,9 +15,14 @@ public enum GameState {
     READY,
 
     /**
-     * The game is finished.
+     * One player has won the game.
      */
     END,
+
+    /**
+     * The game is paused.
+     */
+    PAUSED,
 
     /**
      * The game is aborted.
