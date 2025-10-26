@@ -12,6 +12,8 @@ package de.hhn.it.devtools.apis.turnbasedbattle;
  * @param element element of the monster.
  */
 public record Monster(int maxHp,int currentHp, int attack, int defense, double evasionChance, double critChance, Element element) {
+    private static final org.slf4j.Logger logger =
+            org.slf4j.LoggerFactory.getLogger(Monster.class);
 
     /**
      * Checks if the monster's parameters are valid.

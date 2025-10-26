@@ -12,6 +12,8 @@ package de.hhn.it.devtools.apis.turnbasedbattle;
  * @param description a description of the move.
  */
 public record Move(MoveType type, int amount, String stat, int duration, int cooldown, boolean isSpecial, String description) {
+    private static final org.slf4j.Logger logger =
+            org.slf4j.LoggerFactory.getLogger(Move.class);
 
     /**
      * Checks if the move parameters are valid.

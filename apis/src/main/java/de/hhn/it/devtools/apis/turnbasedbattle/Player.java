@@ -7,6 +7,8 @@ package de.hhn.it.devtools.apis.turnbasedbattle;
 // Player only has a monster and a player ID and no methods,
 // methods are in BattleManager or service
 public class Player {
+    private static final org.slf4j.Logger logger =
+            org.slf4j.LoggerFactory.getLogger(Player.class);
 
     // Fields
     private int playerID; // Player1 oder Player 2
