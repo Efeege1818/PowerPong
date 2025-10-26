@@ -1,28 +1,70 @@
 package de.hhn.it.devtools.apis.powerPong;
 
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Set;
+import javafx.scene.input.KeyCode;
+
 /**
- * A data object that encapsulates the actions (key presses) of both players for a single frame.
+ * Thin facade around JavaFX input handling. Instead of keeping boolean flags per paddle we simply
+ * capture the currently pressed {@link KeyCode KeyCodes} reported by the JavaFX scene.
+ * <p>Example integration:</p>
+ * <pre>{@code
+ * PlayerInput input = new PlayerInput();
+ * scene.setOnKeyPressed(event -> input.keyPressed(event.getCode()));
+ * scene.setOnKeyReleased(event -> input.keyReleased(event.getCode()));
+ * animationTimer.handle(...) -> powerPongService.updateGame(input);
+ * }</pre>
+ *
+ * No game logic lives here—this class just mirrors what the JavaFX event system saw last frame.
  */
 public class PlayerInput {
 
-    // State for player 1 (W/S)
-    private boolean player1Up;
-    private boolean player1Down;
+    private final Set<KeyCode> pressedKeys = EnumSet.noneOf(KeyCode.class);
 
-    // State for player 2 (Up/Down)
-    private boolean player2Up;
-    private boolean player2Down;
+    /**
+     * Marks a key as pressed. Intended to be called directly from {@code Scene#setOnKeyPressed}.
+     *
+     * @param code JavaFX key code, ignored when null.
+     */
+    public void keyPressed(KeyCode code) {
+        if (code != null) {
+            pressedKeys.add(code);
+        }
+    }
 
-    // Getter and Setter
-    public boolean isPlayer1Up() { return player1Up; }
-    public void setPlayer1Up(boolean player1Up) { this.player1Up = player1Up; }
+    /**
+     * Marks a key as released. Intended to be wired to {@code Scene#setOnKeyReleased}.
+     *
+     * @param code JavaFX key code, ignored when null.
+     */
+    public void keyReleased(KeyCode code) {
+        if (code != null) {
+            pressedKeys.remove(code);
+        }
+    }
 
-    public boolean isPlayer1Down() { return player1Down; }
-    public void setPlayer1Down(boolean player1Down) { this.player1Down = player1Down; }
+    /**
+     * Checks whether the given key is currently held down.
+     *
+     * @param code JavaFX key code.
+     * @return true if the key is part of the tracked set.
+     */
+    public boolean isPressed(KeyCode code) {
+        return code != null && pressedKeys.contains(code);
+    }
 
-    public boolean isPlayer2Up() { return player2Up; }
-    public void setPlayer2Up(boolean player2Up) { this.player2Up = player2Up; }
+    /**
+     * Returns an immutable snapshot of the pressed key set for the current frame.
+     */
+    public Set<KeyCode> getPressedKeysSnapshot() {
+        return Collections.unmodifiableSet(EnumSet.copyOf(pressedKeys));
+    }
 
-    public boolean isPlayer2Down() { return player2Down; }
-    public void setPlayer2Down(boolean player2Down) { this.player2Down = player2Down; }
+    /**
+     * Clears all tracked key presses (useful if the scene loses focus).
+     */
+    public void clear() {
+        pressedKeys.clear();
+    }
 }

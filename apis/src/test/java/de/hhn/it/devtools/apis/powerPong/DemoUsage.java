@@ -1,5 +1,8 @@
 package de.hhn.it.devtools.apis.powerPong;
 
+import de.hhn.it.devtools.apis.exceptions.GameLogicException;
+import javafx.scene.input.KeyCode;
+
 /**
  * This class demonstrates the intended use of the PowerPongService interface.
  * This code cannot be executed yet because the interface implementation
@@ -29,10 +32,10 @@ public class DemoUsage {
     public void demonstrateGameLoopFrame() throws GameLogicException {
 
         // --- 1. Collect inputs (done by the UI) ---
-        // (Here we simulate that P1 presses 'W' and P2 presses 'Down')
+        // (Here we simulate that Player 1 presses 'W' and Player 2 presses 'ArrowDown')
         PlayerInput inputs = new PlayerInput();
-        inputs.setPlayer1Up(true);
-        inputs.setPlayer2Down(true);
+        inputs.keyPressed(KeyCode.W);
+        inputs.keyPressed(KeyCode.DOWN);
 
         // --- 2. Update game logic ---
         // The UI "ticks" the game logic and passes in the inputs.
@@ -72,4 +75,3 @@ public class DemoUsage {
         }
     }
 }
-

@@ -1,4 +1,4 @@
-package de.hhn.it.devtools.apis.powerPong;
+package de.hhn.it.devtools.apis.exceptions;
 
 /**
  * A custom exception for errors that occur within the game logic

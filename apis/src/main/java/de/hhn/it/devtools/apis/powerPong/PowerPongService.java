@@ -1,19 +1,23 @@
 package de.hhn.it.devtools.apis.powerPong;
 
+import de.hhn.it.devtools.apis.exceptions.GameLogicException;
+
 public interface PowerPongService {
     /**
      * Starts a new game or resets the current one.
      *
-    * @param mode The selected game mode (e.g., Classic, PowerUp).
-    * @throws GameLogicException if the game cannot be started.
-    */
+     * @param mode The selected game mode (e.g., Classic, PowerUp).
+     * @throws GameLogicException if the game cannot be started.
+     */
     void startGame(GameMode mode) throws GameLogicException;
+
     /**
      * Calculates the next game state (frame).
      * This method should ideally be called by the UI
-     * on every frame of the game loop.
+     * on every frame of the game loop (e.g., from a JavaFX AnimationTimer's handle method).
      *
-     * @param input The current player inputs (key presses) for both players.
+     * @param input The current player inputs (key presses) for both paddles, typically updated via
+     *              JavaFX {@code Scene#setOnKeyPressed} / {@code setOnKeyReleased} handlers.
      * @throws GameLogicException if an error occurs during game state calculation.
      */
     void updateGame(PlayerInput input) throws GameLogicException;
@@ -35,8 +39,17 @@ public interface PowerPongService {
      */
     void setPaused(boolean isPaused);
 
-    void addListener(Listener listener);
+    /**
+     * Registers a {@link PowerPongListener} so the UI can react to events (Observer pattern).
+     *
+     * @param listener listener instance; silently ignored when null or already registered.
+     */
+    void addListener(PowerPongListener listener);
 
-    void removeListener(Listener listener);
+    /**
+     * Removes a previously registered {@link PowerPongListener}.
+     *
+     * @param listener listener instance to remove.
+     */
+    void removeListener(PowerPongListener listener);
 }
-
