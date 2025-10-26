@@ -3,6 +3,9 @@ package de.hhn.it.devtools.apis.turnbasedbattle;
 /**
  * handles inputs and creates monster objects.
  */
+// TODO: Maybe change to record
+// Player only has a monster and a player ID and no methods,
+// methods are in BattleManager or service
 public class Player {
 
     // Fields
