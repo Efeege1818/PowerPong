@@ -5,7 +5,10 @@ plugins {
 group = "de.hhn.it.devtools.apis"
 version = "1.0"
 
+def javafxVersion = "21.0.3"
+
 dependencies {
+    api ("org.openjfx:javafx-graphics:${javafxVersion}")
     // see also the dependencies in build.gradle (root)
 }
 
