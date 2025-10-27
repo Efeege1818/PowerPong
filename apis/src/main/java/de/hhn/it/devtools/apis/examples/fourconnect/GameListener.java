@@ -22,13 +22,7 @@ public interface GameListener {
    * Called when the game has ended and a winner has been determined.
    *
    * @param winner The {@link Player} who won the game. Can be null if the game
-   * has ended but resulted in a draw (in which case {@link #onDraw()}
    * should also be called, or used exclusively for a draw).
    */
-  void onGameEnded(Player winner);
-
-  /**
-   * Called when the game has ended in a draw (a tie).
-   */
-  void onDraw();
+  void onGameEnded(Player winner, boolean isDraw );
 }
