@@ -40,6 +40,12 @@ public interface PowerPongService {
     void setPaused(boolean isPaused);
 
     /**
+     * Forces the game to stop immediately and transitions into a terminal {@link GameStatus}.
+     * Implementations should use this when the user quits from the menu or the application closes.
+     */
+    void endGame();
+
+    /**
      * Registers a {@link PowerPongListener} so the UI can react to events (Observer pattern).
      *
      * @param listener listener instance; silently ignored when null or already registered.
@@ -51,5 +57,5 @@ public interface PowerPongService {
      *
      * @param listener listener instance to remove.
      */
-    void removeListener(PowerPongListener listener);
+    void removeListener(PowerPongListener listener);    
 }

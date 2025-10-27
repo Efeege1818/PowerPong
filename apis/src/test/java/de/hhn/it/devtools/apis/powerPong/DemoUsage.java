@@ -73,5 +73,8 @@ public class DemoUsage {
             System.out.println("Player 1 wins!");
             // (Here the UI would show buttons like "Play again", etc.)
         }
+
+        // --- 5. Game gets terminated by the user (e.g., ESC in menu) ---
+        powerPongService.endGame();
     }
 }
