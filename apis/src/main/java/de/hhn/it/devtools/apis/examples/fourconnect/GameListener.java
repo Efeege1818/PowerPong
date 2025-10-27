@@ -16,7 +16,7 @@ public interface GameListener {
    * Called when the game board's state has changed, typically after a successful move.
    * Components should redraw or update their view of the board.
    */
-  void onBoardChanged();
+  void onBoardChanged(GameBoard board);
 
   /**
    * Called when the game has ended and a winner has been determined.
