@@ -5,10 +5,16 @@ package de.hhn.it.devtools.apis.fourconnect;
  */
 public record Player(
 
-    /** Liefert den Anzeigenamen des Spielers (z.B. "Spieler 1"). */
+    /**
+     * Gets the display name of the player (e.g., "Player 1").
+     * @return The player's name.
+     */
     String name,
 
-    /** Liefert die Farbe des Spielers (z.B. ROT oder GELB). */
+    /**
+     * Gets the color assigned to the player (e.g., RED or YELLOW).
+     * @return The PlayerColor object of the player.
+     */
     PlayerColor color
 ) {
 
