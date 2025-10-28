@@ -28,12 +28,9 @@ public interface ConnectFourService {
   int dropChip(int column) throws IllegalParameterException, OperationNotSupportedException;
 
   /**
-   * Returns the current state of the game board.
-   *
-   * @return A 2D array representing the board. The element at `[row][column]`
-   * contains the {@link Player} who occupies that spot, or {@code null} if the spot is empty.
+   * @return Das GameBoard-Interface, um den Zustand abzurufen.
    */
-  Player[][] getBoardState();
+  GameBoard getBoard();
 
   /**
    * Returns the player who is currently scheduled to make a move.
