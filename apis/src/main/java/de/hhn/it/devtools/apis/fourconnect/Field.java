@@ -1,4 +1,4 @@
-package de.hhn.it.devtools.apis.examples.fourconnect;
+package de.hhn.it.devtools.apis.fourconnect;
 
 /**
  * Interface representing a single field on the board.

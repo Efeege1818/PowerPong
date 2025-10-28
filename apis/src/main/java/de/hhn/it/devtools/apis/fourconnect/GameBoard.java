@@ -1,4 +1,4 @@
-package de.hhn.it.devtools.apis.examples.fourconnect;
+package de.hhn.it.devtools.apis.fourconnect;
 
 /**
  * Immutable interface to query the game board state.

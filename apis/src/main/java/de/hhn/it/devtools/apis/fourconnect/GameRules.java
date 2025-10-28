@@ -1,4 +1,4 @@
-package de.hhn.it.devtools.apis.examples.fourconnect;
+package de.hhn.it.devtools.apis.fourconnect;
 
 /**
  * Class containing static methods for game rule checks.

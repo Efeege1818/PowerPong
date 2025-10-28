@@ -1,4 +1,4 @@
-package de.hhn.it.devtools.apis.examples.fourconnect;
+package de.hhn.it.devtools.apis.fourconnect;
 
 import de.hhn.it.devtools.apis.exceptions.IllegalParameterException;
 import de.hhn.it.devtools.apis.exceptions.OperationNotSupportedException;

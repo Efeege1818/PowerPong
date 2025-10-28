@@ -1,4 +1,4 @@
-package de.hhn.it.devtools.apis.examples.fourconnect;
+package de.hhn.it.devtools.apis.fourconnect;
 
 /**
  * Configuration settings for a specific instance of a game, potentially Four Connect
