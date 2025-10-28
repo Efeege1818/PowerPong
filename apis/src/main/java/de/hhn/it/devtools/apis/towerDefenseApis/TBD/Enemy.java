@@ -1,6 +1,9 @@
-package de.hhn.it.devtools.apis.towerDefenseApis;
+package de.hhn.it.devtools.apis.towerDefenseApis.TBD;
 
 //TODO Kommentare adden
+
+import de.hhn.it.devtools.apis.towerDefenseApis.Coordinates;
+import de.hhn.it.devtools.apis.towerDefenseApis.Path;
 
 public interface Enemy {
 	int getHealth();

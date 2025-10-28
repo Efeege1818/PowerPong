@@ -1,6 +1,9 @@
-package de.hhn.it.devtools.apis.towerDefenseApis;
+package de.hhn.it.devtools.apis.towerDefenseApis.TBD;
 
-public class BasicEnemy implements Enemy{
+import de.hhn.it.devtools.apis.towerDefenseApis.Coordinates;
+import de.hhn.it.devtools.apis.towerDefenseApis.Path;
+
+public class BasicEnemy implements Enemy {
 
 	//TODO Kommentare adden
 

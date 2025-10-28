@@ -1,6 +1,5 @@
-package de.hhn.it.devtools.apis.towerDefenseApis;
+package de.hhn.it.devtools.apis.towerDefenseApis.TBD;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 public interface WaveGenerator {
@@ -23,5 +22,5 @@ public interface WaveGenerator {
 	 * @return Map filled with enemies and their id
 	 * @throws IllegalArgumentException if enemyPower number is less than or equal to zero
 	 */
-	Map<Integer,Enemy> generateWave(int enemyPower);
+	Map<Integer, Enemy> generateWave(int enemyPower);
 }
