@@ -7,14 +7,19 @@ import de.hhn.it.devtools.apis.towerDefenseApis.TowerType;
 
 /**
  * Represents a tower in the Tower Defense game.
- * <p>
- * A tower has a unique ID, an attack speed (how much time between shots),
+ *
+ * <p>A tower has a unique ID, an attack speed (how much time between shots),
  * a price (cost to place), a range (how far it can attack),
  * fixed coordinates on the map, and a specific tower type (e.g., MELEE, MONEYMAKER and RANGED).
- * <p>
- * This record is immutable – once created, the tower's properties cannot be changed.
+ *
+ * <p>This record is immutable – once created, the tower's properties cannot be changed.
  */
-public record Tower(int id, int attackSpeed, int price, int range, Coordinates coords, TowerType type) {
+public record Tower(int id,
+                    int attackSpeed,
+                    int price,
+                    int range,
+                    Coordinates coords,
+                    TowerType type) {
 
 
   /**
@@ -75,11 +80,15 @@ public record Tower(int id, int attackSpeed, int price, int range, Coordinates c
   }
 
   /**
-   * Attacks the enemy in range, that has advanced the furthest on the path
+   * Attacks the enemy in range, that has advanced the furthest on the path.
    *
-   * @return true, if the attack was successful, otherwise return false
+   * @param enemyId the ID of the targeted enemy
+   * @return {@code true} if attack was successful
+   *         {@code false} otherwise
+   * @throws IllegalArgumentException if enemyID does not exist or is out of range.
    */
-  public boolean attack() {
+  public boolean attack(int enemyId) throws IllegalArgumentException {
+    // TODO: need logic check and parser into enemyclass
     return false;
   }
 
