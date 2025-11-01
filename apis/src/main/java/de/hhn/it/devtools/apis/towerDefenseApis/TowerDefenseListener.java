@@ -2,11 +2,15 @@ package de.hhn.it.devtools.apis.towerDefenseApis;
 
 public interface TowerDefenseListener {
 
-  //TODO Kommentare adden
+  // TODO: Javadoc adden
 
-  public void updateHealth();
-  public void updateMoney();
-  public void gameEnded();
-  public void updateMap();
-  public void updateScreen();
+  void updateHealth();
+
+  void updateMoney();
+
+  void gameEnded();
+
+  void updateMap();
+
+  void updateScreen();
 }

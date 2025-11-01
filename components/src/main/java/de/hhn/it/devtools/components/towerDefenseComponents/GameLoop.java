@@ -1,14 +1,17 @@
 package de.hhn.it.devtools.components.towerDefenseComponents;
 
+/**
+ * Independent Thread, that manages everything that runs constantly,
+ * and isn't directly tied to user inputs.
+ */
 public interface GameLoop extends Runnable {
 
-    //TODO Kommentare adden
-    @Override
-    void run();
+  @Override
+  void run();
 
-    void endGame();
+  void endGame();
 
-    void retry();
+  void retry();
 
-    void pauseGame();
+  void pauseGame();
 }

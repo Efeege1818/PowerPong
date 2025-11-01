@@ -3,7 +3,7 @@ package de.hhn.it.devtools.apis.towerDefenseApis;
 import java.util.HashMap;
 
 /**
- * Interface for the TowerDefenseSystem
+ * Interface for the TowerDefenseSystem.
  */
 interface TowerDefenseService {
   int DEFAULT_MAP_SIZE = 10;
@@ -11,9 +11,7 @@ interface TowerDefenseService {
   float DEFAULT_ENEMY_POWER_MULTIPLIER = 1.5f;
   int DEFAULT_MONEY_RATE = 1; // how much money per enemy kill
 
-  /**
-   * @return the GameState that is currently active
-   */
+
   public GameState getCurrentGameState();
 
   /**
