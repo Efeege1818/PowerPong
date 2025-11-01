@@ -3,7 +3,7 @@ package de.hhn.it.devtools.components.towerDefenseComponents;
 import de.hhn.it.devtools.apis.towerDefenseApis.Coordinates;
 import de.hhn.it.devtools.apis.towerDefenseApis.TowerType;
 
-//TODO verify throwables
+//TODO verify throwable
 
 /**
  * Represents a tower in the Tower Defense game.
@@ -88,7 +88,7 @@ public record Tower(int id,
    * @throws IllegalArgumentException if enemyID does not exist or is out of range.
    */
   public boolean attack(int enemyId) throws IllegalArgumentException {
-    // TODO: need logic check and parser into enemyclass
+    // TODO: need logic check and parser into enemy class
     return false;
   }
 

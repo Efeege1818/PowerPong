@@ -4,7 +4,7 @@ import de.hhn.it.devtools.apis.towerDefenseApis.Coordinates;
 import de.hhn.it.devtools.apis.towerDefenseApis.EnemyType;
 import de.hhn.it.devtools.components.towerDefenseComponents.Path;
 
-//TODO verify throwables
+//TODO verify throwable
 
 /**
  * Represents an enemy in the Tower Defense game.
@@ -93,7 +93,7 @@ public record Enemy(int id,
    * @return the amount of damage dealt to the player
    */
   public int damagePlayer() {
-    // TODO: Check logic and add throable + params
+    // TODO: Check logic and add throwable + params
     // TODO: Implement logic for how much damage the enemy causes the player
     return 0;
   }
