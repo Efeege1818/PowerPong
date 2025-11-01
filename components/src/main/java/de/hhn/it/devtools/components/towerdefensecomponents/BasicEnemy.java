@@ -1,71 +1,14 @@
-package de.hhn.it.devtools.components.towerDefenseComponents;
+package de.hhn.it.devtools.components.towerdefensecomponents;
 
-import de.hhn.it.devtools.apis.towerDefenseApis.Coordinates;
-import de.hhn.it.devtools.apis.towerDefenseApis.EnemyType;
-import de.hhn.it.devtools.components.towerDefenseComponents.Path;
+import de.hhn.it.devtools.apis.towerdefenseapi.Coordinates;
+import de.hhn.it.devtools.apis.towerdefenseapi.EnemyType;
 
-//TODO verify throwable
+public class BasicEnemy {
 
-/**
- * Represents an enemy in the Tower Defense game.
- *
- * <p>Each enemy has a unique ID, a movement speed (how much time between movements),
- * a health value, a path it follows, and a type (e.g. SMALL, MEDIUM, LARGE).
- * Enemies move along their assigned path toward the player's base.
- *
- * <p>This record is immutable — once created, the enemy’s properties cannot change.
- */
-public record Enemy(int id,
-                    int speed,
-                    int health,
-                    Path path,
-                    EnemyType type) {
-
-  /**
-   * Returns the unique identifier of this enemy.
-   *
-   * @return the enemy ID
-   */
-  public int getId() {
-    return id;
-  }
-
-  /**
-   * Returns the movement speed of this enemy.
-   * A higher value means the time between movements is larger.
-   *
-   * @return the enemy speed
-   */
-  public int getSpeed() {
-    return speed;
-  }
-
-  /**
-   * Returns the current health of this enemy.
-   *
-   * @return the enemy's remaining health
-   */
-  public int getHealth() {
-    return health;
-  }
-
-  /**
-   * Returns the path this enemy follows to reach the player's base.
-   *
-   * @return the Path assigned to the enemy
-   */
-  public Path getPath() {
-    return path;
-  }
-
-  /**
-   * Returns the type of this enemy, e.g. SMALL, MEDIUM, or LARGE.
-   *
-   * @return the EnemyType of the enemy
-   */
-  public EnemyType getType() {
-    return type;
-  }
+  int id;
+  int speed;
+  int health;
+  EnemyType type;
 
   /**
    * Reduces the enemy’s health by the given amount and marks it as dead
@@ -121,4 +64,5 @@ public record Enemy(int id,
     // TODO: NEEDS FIXING IN LOGIC
     // Does it not just call damagePlayer(); ?
   }
+
 }

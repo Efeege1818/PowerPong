@@ -1,4 +1,4 @@
-package de.hhn.it.devtools.apis.towerDefenseApis;
+package de.hhn.it.devtools.apis.towerdefenseapi;
 
 /**
  * Enum for the Map to point to the next cell in the path order.

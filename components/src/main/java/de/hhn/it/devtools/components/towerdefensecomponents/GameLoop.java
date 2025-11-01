@@ -1,4 +1,4 @@
-package de.hhn.it.devtools.components.towerDefenseComponents;
+package de.hhn.it.devtools.components.towerdefensecomponents;
 
 /**
  * Independent Thread, that manages everything that runs constantly,

@@ -1,4 +1,4 @@
-package de.hhn.it.devtools.apis.towerDefenseApis;
+package de.hhn.it.devtools.apis.towerdefenseapi;
 
 public interface TowerDefenseListener {
 

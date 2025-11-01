@@ -1,6 +1,6 @@
-package de.hhn.it.devtools.components.towerDefenseComponents;
+package de.hhn.it.devtools.components.towerdefensecomponents;
 
-import de.hhn.it.devtools.apis.towerDefenseApis.Direction;
+import de.hhn.it.devtools.apis.towerdefenseapi.Direction;
 
 /**
  * Grid on wich the Path is generated and the Towers are placed.

@@ -1,6 +1,4 @@
-package de.hhn.it.devtools.apis.towerDefenseApis;
-
-import java.util.HashMap;
+package de.hhn.it.devtools.apis.towerdefenseapi;
 
 /**
  * Interface for the TowerDefenseSystem.
@@ -86,7 +84,7 @@ interface TowerDefenseService {
    * @return the enemies in this round.
    * @throws IllegalStateException if there are no enemies active
    */
-  HashMap<Enemy, Integer> getCurrentEnemies();
+  EnemyBoard getCurrentEnemies();
 
   /**
    * Triggers calculation of the next game-tick.
@@ -94,13 +92,6 @@ interface TowerDefenseService {
    * @throws IllegalStateException if game is not running
    */
   void triggeredByGameLoop();
-
-  /**
-   * Advances enemies along their paths.
-   *
-   * @throws IllegalStateException if no enemies are present or the game is not running
-   */
-  void advanceEnemies();
 
   /**
    * Places a tower on the map at its defined position.

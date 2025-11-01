@@ -1,4 +1,4 @@
-package de.hhn.it.devtools.apis.towerDefenseApis;
+package de.hhn.it.devtools.apis.towerdefenseapi;
 
 /**
  * This Enum represents the State of the game and
