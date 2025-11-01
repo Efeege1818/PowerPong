@@ -1,4 +1,6 @@
-package de.hhn.it.devtools.apis.towerDefenseApis;
+package de.hhn.it.devtools.components.towerDefenseComponents;
+
+import de.hhn.it.devtools.apis.towerDefenseApis.Coordinates;
 
 public interface Tower {
 

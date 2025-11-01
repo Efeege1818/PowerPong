@@ -1,4 +1,4 @@
-package de.hhn.it.devtools.apis.towerDefenseApis.TBD;
+package de.hhn.it.devtools.components.towerDefenseComponents;
 
 import java.util.Map;
 
