@@ -5,8 +5,9 @@ package de.hhn.it.devtools.apis.towerDefenseApis;
  */
 public enum TowerType {
 
-  MEELE,
+  MELEE,
   MONEYMAKER,
   RANGED
 
 }
+
