@@ -84,7 +84,7 @@ interface TowerDefenseService {
    * @return the enemies in this round.
    * @throws IllegalStateException if there are no enemies active
    */
-  EnemyBoard getCurrentEnemies();
+  EnemyList getCurrentEnemies();
 
   /**
    * Triggers calculation of the next game-tick.
