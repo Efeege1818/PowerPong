@@ -4,7 +4,7 @@ package de.hhn.it.devtools.apis.turnbasedbattle;
  * Allows creation of new moves with custom effects.
  *
  * @param type the type of the move.
- * @param element ----
+ * @param element element of the move. Affects the amount of damage done based one the targeted monster's element.
  * @param amount number by which the selected stat will be changed.
  * @param stat the stat that will be influenced by this move e.g. hp, attack, critChance,...
  * @param duration the number of turns the move will last. 0 means the move is instant.
