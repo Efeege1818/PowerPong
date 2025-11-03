@@ -97,10 +97,11 @@ public interface TurnBasedBattleService {
      * This method applies the chosen move or command, calculates its effects,
      * and updates the state of both monsters accordingly.
      *
+     * @param move which move is played.
      * @throws IllegalStateException if the game is not running or if the turn
      *                               cannot be executed at the current time.
      */
-    void executeTurn() throws IllegalStateException;
+    void executeTurn(int move) throws IllegalStateException;
 
     /**
      * Switches to the next player's turn.

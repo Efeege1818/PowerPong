@@ -1,5 +1,7 @@
 package de.hhn.it.devtools.apis.turnbasedbattle;
 
+import java.util.HashMap;
+
 public class DemoTurnBasedBattleUsage {
 
     public static void main(String[] args) {
@@ -18,9 +20,21 @@ public class DemoTurnBasedBattleUsage {
         Move move8 = new Move(MoveType.DEBUFF, Element.GRASS, 20, "defense", 5, 10, true, "Decrease defense");
 
         // Create Monsters
-        Move[] moves1 = {move1, move2, move3, move4, move5};
+
+        HashMap<Integer, Move> moves1 = new HashMap<>();
+        moves1.put(1, move1);
+        moves1.put(2, move2);
+        moves1.put(3, move3);
+        moves1.put(4, move4);
+        moves1.put(5, move5);
         Monster monster1 = new Monster(100, 10, 10, 0.1, 0.1, Element.FIRE, moves1);
-        Move[] moves2 = {move1, move6, move7, move4, move8};
+
+        HashMap<Integer, Move> moves2 = new HashMap<>();
+        moves2.put(1, move1);
+        moves2.put(2, move6);
+        moves2.put(3, move7);
+        moves2.put(4, move4);
+        moves2.put(5, move8);
         Monster monster2 = new Monster(120, 8, 8, 0.2, 0.2, Element.GRASS, moves2);
 
 
@@ -28,6 +42,20 @@ public class DemoTurnBasedBattleUsage {
 
 
         service.start();
+
+        int maxTurns = 20;
+        int turnCount = 0;
+
+        while (!service.isBattleOver() && turnCount < maxTurns) {
+
+            service.executeTurn(0);
+            service.nextTurn();
+
+            turnCount++;
+        }
+
+        // Announce Winner
+        service.getWinner();
 
 
 
