@@ -84,11 +84,11 @@ public interface TurnBasedBattleService {
      * Initializes the two players and their respective monsters for the battle.
      * Can only be called when the game is in the READY state.
      *
-     * @param monster1 the monster controlled by the first player.
-     * @param monster2 the monster controlled by the second player.
+     * @param player1 the first player.
+     * @param player2 the second player.
      * @throws IllegalStateException if the game is not in the READY state.
      */
-    void setupPlayers(Monster monster1, Monster monster2)
+    void setupPlayers(Player player1, Player player2)
             throws IllegalStateException;
 
 
