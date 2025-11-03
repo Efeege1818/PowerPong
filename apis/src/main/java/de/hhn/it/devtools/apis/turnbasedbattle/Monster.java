@@ -10,8 +10,9 @@ package de.hhn.it.devtools.apis.turnbasedbattle;
  * @param evasionChance chance to not take any damage.
  * @param critChance chance to inflict double damage.
  * @param element element of the monster.
+ * @param moves --
  */
-public record Monster(int maxHp,int currentHp, int attack, int defense, double evasionChance, double critChance, Element element) {
+public record Monster(int maxHp,int currentHp, int attack, int defense, double evasionChance, double critChance, Element element, Move[] moves) {
     private static final org.slf4j.Logger logger =
             org.slf4j.LoggerFactory.getLogger(Monster.class);
 
@@ -33,6 +34,9 @@ public record Monster(int maxHp,int currentHp, int attack, int defense, double e
         if (evasionChance < 0 || evasionChance > 1 || critChance < 0 || critChance > 1) {
             throw new IllegalArgumentException("chances must be between 0 and 1");
         }
+        if (moves.length < 5) {
+            throw new IllegalArgumentException("at least 5 moves should be specified");
+        }
     }
 
     /**
@@ -47,8 +51,8 @@ public record Monster(int maxHp,int currentHp, int attack, int defense, double e
      *
      * @throws IllegalArgumentException if any parameter is invalid
      */
-    public Monster(int maxHp, int attack, int defense, double evasionChance, double critChance, Element element) {
-        this(maxHp, maxHp, attack, defense, evasionChance, critChance, element);
+    public Monster(int maxHp, int attack, int defense, double evasionChance, double critChance, Element element,  Move[] moves) {
+        this(maxHp, maxHp, attack, defense, evasionChance, critChance, element,  moves);
     }
 
     public boolean isAlive() {
