@@ -5,6 +5,7 @@ package de.hhn.it.devtools.apis.towerdefenseapi;
  * is used by the Service to evaluate, which actions are allowed at the current time.
  */
 public enum GameState {
+  READY,
   RUNNING,
   PAUSED, // This State is used between waves, while the player can build new Towers
   GAME_OVER

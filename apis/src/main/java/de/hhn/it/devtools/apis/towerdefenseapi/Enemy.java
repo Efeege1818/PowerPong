@@ -1,7 +1,7 @@
 package de.hhn.it.devtools.apis.towerdefenseapi;
 
 
-//TODO verify throwable
+// TODO: verify throwable
 
 /**
  * Represents an enemy in the Tower Defense game.
@@ -14,18 +14,7 @@ package de.hhn.it.devtools.apis.towerdefenseapi;
  */
 public record Enemy(int id,
                     Coordinates coordinates,
-                    EnemyType type) {
-
-  public int getId() {
-    return id;
-  }
-
-  Coordinates getCoordinates() {
-    return coordinates;
-  }
-
-  EnemyType getEnemyType() {
-    return type;
-  }
-
-}
+                    EnemyType type,
+                    int speed,
+                    int health
+) {}
