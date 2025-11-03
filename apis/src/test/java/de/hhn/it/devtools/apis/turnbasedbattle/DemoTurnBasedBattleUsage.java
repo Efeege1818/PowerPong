@@ -4,13 +4,21 @@ public class DemoTurnBasedBattleUsage {
 
     public static void main(String[] args) {
 
-//        // Create Monsters
-//        Monster fireMonster = new FireMonster();
-//        Monster waterMonster = new WaterMonster(); // assume WaterMonster exists
-//
-//        // Create Players and assign monsters
-//        Player player1 = new Player(1, fireMonster);
-//        Player player2 = new Player(2, waterMonster);
+        // Create Service
+        TurnBasedBattleService service = null;
+
+        // Create Monsters
+        Monster monster1 = new Monster(100, 10, 10, 0.1, 0.1, Element.FIRE);
+        Monster monster2 = new Monster(120, 8, 8, 0.2, 0.2, Element.GRASS);
+
+
+        service.setupPlayers(monster1, monster2);
+
+
+        service.start();
+
+
+
 //
 //        // Create Battle Manager
 //        BattleManager battle = new BattleManager(player1.getMonster(), player2.getMonster());
