@@ -12,7 +12,7 @@ import java.util.HashMap;
  * @param evasionChance chance to not take any damage.
  * @param critChance chance to inflict double damage.
  * @param element element of the monster.
- * @param moves --
+ * @param moves array with all moves the monster is able to execute.
  */
 public record Monster(int maxHp,int currentHp, int attack, int defense, double evasionChance, double critChance, Element element, HashMap<Integer, Move> moves) {
     private static final org.slf4j.Logger logger =
