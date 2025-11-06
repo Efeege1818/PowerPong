@@ -4,35 +4,21 @@ import de.hhn.it.devtools.apis.turnbasedbattle.GameState;
 import de.hhn.it.devtools.apis.turnbasedbattle.Player;
 
 /**
- * Component-Implementierung des API-Listeners.
- *
- * Beobachtet den Zustand beider Spieler und merkt sich Lebenspunkte, Spielstatus
- * und Gewinner.
+ * Component implementation of the API listener.
+ * Observes the state of both players and keeps track of
+ * their health points, the overall game state, and the winner.
  */
 public class TurnBasedBattleListener implements de.hhn.it.devtools.apis.turnbasedbattle.TurnBasedBattleListener {
 
-    private final int playerNumber;
     private volatile GameState currentState = GameState.READY;
-
     private volatile int player1Health;
     private volatile int player2Health;
 
-    private volatile Integer winnerPlayerNumber = null;
-
     /**
-     * Erzeugt einen Listener für den angegebenen Spieler.
+     * Updates the current game state and logs the change.
      *
-     * @param playerNumber 1 oder 2 – bestimmt, welcher Spieler beobachtet wird
-     * @throws IllegalArgumentException wenn playerNumber nicht 1 oder 2 ist
+     * @param gameState the new game state.
      */
-    public TurnBasedBattleListener(final int playerNumber) {
-        if (playerNumber != 1 && playerNumber != 2) {
-            throw new IllegalArgumentException("playerNumber must be 1 or 2");
-        }
-        this.playerNumber = playerNumber;
-        System.out.println("Listener initialized for player " + playerNumber + " (state=" + currentState + ")");
-    }
-
     @Override
     public void newGameState(final GameState gameState) {
         this.currentState = gameState;
@@ -40,11 +26,12 @@ public class TurnBasedBattleListener implements de.hhn.it.devtools.apis.turnbase
     }
 
     /**
-     * Aktualisiert den Zustand beider Spieler (z. B. Lebenspunkte).
+     * Updates the state of both players, including their health points.
      *
-     * @param player1 Spieler 1 (nicht null)
-     * @param player2 Spieler 2 (nicht null)
-     * @throws IllegalArgumentException wenn einer der Player null ist
+     * @param player1 the first player
+     * @param player2 the second player
+     * @throws IllegalArgumentException if either player is null
+     *                                  or one of them has no assigned monster.
      */
     @Override
     public void updateState(final Player player1, final Player player2) throws IllegalArgumentException {
@@ -62,17 +49,16 @@ public class TurnBasedBattleListener implements de.hhn.it.devtools.apis.turnbase
     }
 
     /**
-     * Beendet das Spiel und setzt die Gewinner-Spielernummer.
+     * Marks the game as finished and stores the winner.
      *
-     * @param winnerPlayerNumber Gewinner (1 oder 2)
-     * @throws IllegalArgumentException wenn nicht 1 oder 2
+     * @param winnerPlayerNumber the number of the player who won (must be 1 or 2)
+     * @throws IllegalArgumentException if winnerPlayerNumber is not 1 or 2.
      */
     @Override
     public void gameEnded(final int winnerPlayerNumber) {
         if (winnerPlayerNumber != 1 && winnerPlayerNumber != 2) {
             throw new IllegalArgumentException("winnerPlayerNumber must be 1 or 2");
         }
-        this.winnerPlayerNumber = winnerPlayerNumber;
         System.out.println("Game ended. Winner = Player " + winnerPlayerNumber);
     }
 }
