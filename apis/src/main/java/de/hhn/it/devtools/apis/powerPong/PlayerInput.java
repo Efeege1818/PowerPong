@@ -58,7 +58,7 @@ public class PlayerInput {
      * Returns an immutable snapshot of the pressed key set for the current frame.
      */
     public Set<KeyCode> getPressedKeysSnapshot() {
-        return Collections.unmodifiableSet(EnumSet.copyOf(pressedKeys));
+        return Set.copyOf(pressedKeys);
     }
 
     /**
