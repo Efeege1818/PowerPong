@@ -21,6 +21,7 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
     private Monster opponentMonster;
     private List<TurnBasedBattleListener> listeners;
     private boolean battleOver;
+    private int turnCount;
 
     /**
      * Constructor initializes the service with default state.
@@ -209,7 +210,7 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
             currentMonster = player1Monster;
             opponentMonster = player2Monster;
         }
-
+        turnCount++;
         updatePlayersState();
     }
 
@@ -231,6 +232,10 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
     @Override
     public boolean isBattleOver() {
         return battleOver;
+    }
+
+    public int getTurnCount() {
+        return turnCount;
     }
 
     @Override
