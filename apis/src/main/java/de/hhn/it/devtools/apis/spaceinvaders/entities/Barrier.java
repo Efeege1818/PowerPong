@@ -9,10 +9,4 @@ import de.hhn.it.devtools.apis.spaceinvaders.Coordinate;
  * @param barrierId  ID for identification purposes.
  */
 public record Barrier(Coordinate coordinate, Integer barrierId) {
-
-
-  @Override
-  public Coordinate coordinate() {
-    return coordinate;
-  }
 }
