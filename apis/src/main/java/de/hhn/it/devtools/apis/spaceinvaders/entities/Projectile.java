@@ -7,15 +7,8 @@ import de.hhn.it.devtools.apis.spaceinvaders.Coordinate;
  * Represents the Projectiles in the SpaceInvaders game which can be shot by Ships or Aliens.
  *
  * @param coordinate The Position of the Projectile.
- * @param damage     How much damage this Projectile does.
- * @param projectileId  ID for identification purposes.
  */
-public record Projectile(Coordinate coordinate, Integer damage, Integer projectileId) {
-
-  @Override
-  public Integer damage() {
-    return damage;
-  }
+public record Projectile(Coordinate coordinate) {
 
   @Override
   public Coordinate coordinate() {
