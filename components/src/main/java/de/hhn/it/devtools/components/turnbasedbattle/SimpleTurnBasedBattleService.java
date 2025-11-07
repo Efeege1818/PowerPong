@@ -41,6 +41,7 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
         this.currentMonster = null;
         this.opponentMonster = null;
         this.battleOver = false;
+        notifyGameStateChanged(GameState.READY);
     }
 
     @Override
@@ -48,13 +49,31 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
         if (gameState != GameState.READY) {
             throw new IllegalStateException("Game must be in READY state to start");
         }
-        if (player1 == null || player2 == null || player1Monster == null || player2Monster == null) {
-            throw new IllegalStateException("Players and monsters must be set up before starting");
+        if (player1 == null || player2 == null) {
+            throw new IllegalStateException("Players must be set up before starting");
         }
         gameState = GameState.RUNNING;
         currentPlayer = player1;
-        currentMonster = player1Monster;
-        opponentMonster = player2Monster;
+        notifyGameStateChanged(GameState.RUNNING);
+        updatePlayersState();
+    }
+
+    @Override
+    public void pause() throws IllegalStateException {
+        if (gameState != GameState.RUNNING) {
+            throw new IllegalStateException("Game must be in RUNNING state to pause");
+        }
+        gameState = GameState.PAUSED;
+        notifyGameStateChanged(GameState.PAUSED);
+    }
+
+    @Override
+    public void abort() throws IllegalStateException {
+        if (gameState != GameState.RUNNING) {
+            throw new IllegalStateException("Game must be in RUNNING state to abort");
+        }
+        gameState = GameState.ABORTED;
+        notifyGameStateChanged(GameState.ABORTED);
     }
 
     @Override
@@ -63,47 +82,79 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
             throw new IllegalStateException("Game must be in RUNNING state to end");
         }
         gameState = GameState.END;
-        notifyListenersBattleEnded();
+        notifyGameStateChanged(GameState.END);
+
+        // Determine winner and notify listeners
+        if (player1Monster.currentHp() <= 0) {
+            notifyGameEnded(2);
+        } else if (player2Monster.currentHp() <= 0) {
+            notifyGameEnded(1);
+        }
     }
 
     @Override
-    public boolean addListener(TurnBasedBattleListener listener)
+    public boolean addListener(de.hhn.it.devtools.apis.turnbasedbattle.TurnBasedBattleListener listener)
             throws IllegalArgumentException, IllegalStateException {
         if (listener == null) {
-            throw new IllegalArgumentException("Listener cannot be null");
+            throw new IllegalArgumentException("listener must not be null");
         }
         if (listeners.contains(listener)) {
-            throw new IllegalStateException("Listener already registered");
+            throw new IllegalStateException("listener already exists");
         }
-        return listeners.add(listener);
-    }
+        return listeners.add((TurnBasedBattleListener) listener);    }
 
     @Override
-    public boolean removeListener(TurnBasedBattleListener listener) {
+    public boolean removeListener(de.hhn.it.devtools.apis.turnbasedbattle.TurnBasedBattleListener listener) {
         return listeners.remove(listener);
+    }
+
+
+    private void notifyGameStateChanged(GameState newState) {
+        for (TurnBasedBattleListener listener : listeners) {
+            listener.newGameState(newState);
+        }
+    }
+
+    private void updatePlayersState() {
+        for (TurnBasedBattleListener listener : listeners) {
+            listener.updateState(player1, player2);
+        }
+    }
+
+    private void notifyGameEnded(int winnerNumber) {
+        for (TurnBasedBattleListener listener : listeners) {
+            listener.gameEnded(winnerNumber);
+        }
     }
 
     @Override
     public void notifyListenersTurnChanged() {
-        /**
-        for (TurnBasedBattleListener listener : listeners) {
-            listener.onTurnChanged();
-        }
-         */
+        updatePlayersState();
     }
 
     @Override
     public void notifyListenersBattleEnded() {
-        /**
-        for (TurnBasedBattleListener listener : listeners) {
-            listener.onBattleEnded();
-        }
-         */
     }
 
     @Override
     public GameState getGameState() {
         return gameState;
+    }
+
+    @Override
+    public void setupPlayers(Player player1, Player player2) throws IllegalStateException {
+        if (gameState != GameState.READY) {
+            throw new IllegalStateException("Can only setup players when game is in READY state");
+        }
+        this.player1 = player1;
+        this.player2 = player2;
+        this.currentPlayer = player1;
+        updatePlayersState();
+    }
+
+    @Override
+    public void executeTurn(int move) throws IllegalStateException {
+
     }
 
     @Override
@@ -119,6 +170,7 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
         this.currentPlayer = player1;
         this.currentMonster = monster1;
         this.opponentMonster = monster2;
+        updatePlayersState();
     }
 
     @Override
@@ -130,12 +182,12 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
             throw new IllegalStateException("No active monsters set");
         }
 
-        // Execute the turn logic here (e.g., apply moves, calculate damage)
-        // Check if the battle is over after execution
+        // Execute the default turn logic
         if (opponentMonster.currentHp() <= 0) {
             battleOver = true;
             end();
         }
+        updatePlayersState();
     }
 
     @Override
@@ -158,7 +210,7 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
             opponentMonster = player2Monster;
         }
 
-        notifyListenersTurnChanged();
+        updatePlayersState();
     }
 
     @Override
@@ -186,7 +238,6 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
         if (!battleOver) {
             return null;
         }
-        // Determine winner based on monster HP
         if (player1Monster.currentHp() <= 0) {
             return player2;
         } else if (player2Monster.currentHp() <= 0) {

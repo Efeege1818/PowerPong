@@ -103,6 +103,11 @@ public interface TurnBasedBattleService {
      */
     void executeTurn(int move) throws IllegalStateException;
 
+    void setupPlayers(Player player1, Monster monster1, Player player2, Monster monster2)
+            throws IllegalStateException;
+
+    void executeTurn() throws IllegalStateException;
+
     /**
      * Switches to the next player's turn.
      * If a turn has ended successfully, this method sets the next player as the
