@@ -1,7 +1,6 @@
 package de.hhn.it.devtools.components.spaceinvaders.utils;
 
 import de.hhn.it.devtools.apis.spaceinvaders.Coordinate;
-
 import java.util.ArrayList;
 
 /**
