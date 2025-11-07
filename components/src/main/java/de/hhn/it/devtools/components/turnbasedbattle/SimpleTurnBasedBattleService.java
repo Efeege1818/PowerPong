@@ -11,6 +11,7 @@ import java.util.List;
 public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
 
     private GameState gameState;
+    private Player stertingPlayer;
     private Player player1;
     private Player player2;
     private Monster player1Monster;
@@ -148,7 +149,7 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
         }
         this.player1 = player1;
         this.player2 = player2;
-        this.currentPlayer = player1;
+        this.currentPlayer = stertingPlayer;
         updatePlayersState();
     }
 
@@ -182,7 +183,6 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
             throw new IllegalStateException("No active monsters set");
         }
 
-        // Execute the default turn logic
         if (opponentMonster.currentHp() <= 0) {
             battleOver = true;
             end();
@@ -245,4 +245,10 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
         }
         return null;
     }
+
+    public Player determineStartingPlayer() {
+        return player1;
+        //for later
+    }
+
 }
