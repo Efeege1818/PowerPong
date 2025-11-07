@@ -234,6 +234,7 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
         return battleOver;
     }
 
+    @Override
     public int getTurnCount() {
         return turnCount;
     }
@@ -251,6 +252,7 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
         return null;
     }
 
+    @Override
     public Player determineStartingPlayer() {
        if(isElementEffective(player1Monster, player2Monster)) {
            return player1;
@@ -258,8 +260,8 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
            return player2;
        }
     }
-
-    public boolean isElementEffective (Monster currentMonster, Monster opponentMonster ) {
+    @Override
+    public boolean isElementEffective(Monster currentMonster, Monster opponentMonster) {
         Element current = currentMonster.getElement();
         Element opponent = opponentMonster.getElement();
 

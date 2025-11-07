@@ -146,6 +146,12 @@ public interface TurnBasedBattleService {
     boolean isBattleOver();
 
     /**
+     * Returns teh current Turn count
+     * @return current Turn
+     */
+    int getTurnCount();
+
+    /**
      * Returns the winning player of the battle.
      * If the battle is not yet over, this method returns null.
      *
@@ -153,4 +159,18 @@ public interface TurnBasedBattleService {
      *         battle is still ongoing.
      */
     Player getWinner();
+
+    /**
+     * Returns the Player how starts the game based on elemental effectiveness.
+     * @return  the Starting Player.
+     */
+    Player determineStartingPlayer();
+
+    /**
+     *Checks the Element effectivity
+     * @param currentMonster the monster that is currently taking its turn.
+     * @param opponentMonster the monster that is not currently on turn.
+     * @return true if the Monster Element is Effective against this Opponent.
+     */
+    boolean isElementEffective(Monster currentMonster, Monster opponentMonster);
 }
