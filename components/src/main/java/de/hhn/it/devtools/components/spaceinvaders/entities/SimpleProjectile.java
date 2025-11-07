@@ -9,15 +9,17 @@ import de.hhn.it.devtools.apis.spaceinvaders.Direction;
 public class SimpleProjectile {
   private Direction direction;
   private Coordinate coordinate;
+  private Integer damage;
 
   /**
    * Basic Constructor for SimpleProjectile.
    *
    * @param coordinate coordinate from the Projectile.
    */
-  public SimpleProjectile(Coordinate coordinate, Direction direction) {
+  public SimpleProjectile(Coordinate coordinate, Direction direction, Integer damage) {
     this.direction = direction;
     this.coordinate = coordinate;
+    this.damage = damage;
   }
 
   /**
@@ -31,4 +33,15 @@ public class SimpleProjectile {
     }
   }
 
+  public Direction getDirection() {
+    return direction;
+  }
+
+  public Coordinate getCoordinate() {
+    return coordinate;
+  }
+
+  public Integer getDamage() {
+    return damage;
+  }
 }
