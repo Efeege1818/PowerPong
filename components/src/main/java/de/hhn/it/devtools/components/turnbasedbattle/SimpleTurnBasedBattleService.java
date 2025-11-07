@@ -54,7 +54,7 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
             throw new IllegalStateException("Players must be set up before starting");
         }
         gameState = GameState.RUNNING;
-        currentPlayer = player1;
+        currentPlayer = determineStartingPlayer();
         notifyGameStateChanged(GameState.RUNNING);
         updatePlayersState();
     }
@@ -247,8 +247,43 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
     }
 
     public Player determineStartingPlayer() {
-        return player1;
-        //for later
+       if(isElementEffective(player1Monster, player2Monster)) {
+           return player1;
+       } else {
+           return player2;
+       }
     }
 
+    public boolean isElementEffective (Monster currentMonster, Monster opponentMonster ) {
+        Element current = currentMonster.getElement();
+        Element opponent = opponentMonster.getElement();
+
+        //Fire
+        if (current==Element.FIRE) {
+            if (opponent == Element.GRASS) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        //Water
+        if (current==Element.WATER){
+            if (opponent==Element.FIRE){
+                return true;
+            } else{
+                return false;
+            }
+        }
+
+        //Grass
+        if (current==Element.GRASS){
+            if (opponent==Element.WATER){
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return false;
+    }
 }

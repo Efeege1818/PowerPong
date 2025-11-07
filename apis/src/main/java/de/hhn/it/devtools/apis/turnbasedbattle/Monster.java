@@ -68,4 +68,6 @@ public record Monster(int maxHp,int currentHp, int attack, int defense, double e
     public double getHealthPercentage() {
         return (double) currentHp / maxHp;
     }
+
+    public Element getElement() {return element; }
 }
