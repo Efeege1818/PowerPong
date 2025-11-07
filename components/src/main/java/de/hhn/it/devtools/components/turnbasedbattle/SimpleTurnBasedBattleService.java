@@ -254,16 +254,27 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
 
     @Override
     public Player determineStartingPlayer() {
-       if(isElementEffective(player1Monster, player2Monster)) {
-           return player1;
-       } else {
-           return player2;
-       }
+
+        //if monster elements ate the same
+        if (currentMonster.getElement() == opponentMonster.getElement()) {
+            if (Math.random() < 0.50) {
+                return player1;
+            } else {
+                return player2;
+            }
+        }
+        if (isElementEffective(player1Monster, player2Monster)) {
+            return player1;
+        } else {
+            return player2;
+        }
     }
+
     @Override
     public boolean isElementEffective(Monster currentMonster, Monster opponentMonster) {
         Element current = currentMonster.getElement();
         Element opponent = opponentMonster.getElement();
+
 
         //Fire
         if (current==Element.FIRE) {
