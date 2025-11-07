@@ -8,8 +8,9 @@ import de.hhn.it.devtools.apis.spaceinvaders.Coordinate;
  *
  * @param coordinate The Position of the Projectile.
  * @param damage     How much damage this Projectile does.
+ * @param projectileId  ID for identification purposes.
  */
-public record Projectile(Coordinate coordinate, Integer damage) {
+public record Projectile(Coordinate coordinate, Integer damage, Integer projectileId) {
 
   @Override
   public Integer damage() {
