@@ -11,11 +11,11 @@ import java.util.ArrayList;
  * SimpleAlien contains all Information and can create an Immutable Record of all Information.
  */
 public class SimpleAlien {
-  Coordinate coordinate;
-  Integer hitPoints;
-  AlienType alienType;
-  Integer alienId;
-  ArrayList<Coordinate> hitbox;
+  private Coordinate coordinate;
+  private int hitPoints;
+  private AlienType alienType;
+  private int alienId;
+  private ArrayList<Coordinate> hitbox;
 
   /**
    * Creates a SimpleAlien Object automatically creates a Hitbox for the Alien.
@@ -24,7 +24,7 @@ public class SimpleAlien {
    * @param alienType the Type of Alien.
    * @param alienId the ID to identify the Alien.
    */
-  public SimpleAlien(Coordinate coordinate, AlienType alienType, Integer alienId) {
+  public SimpleAlien(Coordinate coordinate, AlienType alienType, int alienId) {
     this.coordinate = coordinate;
     hitbox = EntityProvider.fillHitBox(coordinate, 10, 10);
     this.alienType = alienType;
@@ -38,7 +38,7 @@ public class SimpleAlien {
    * @param damage the amount of Damage to take.
    * @return a boolean true if the alien is still alive after the hit.
    */
-  public boolean getHit(Integer damage) {
+  public boolean getHit(int damage) {
     this.hitPoints = this.hitPoints - damage;
     return hitPoints > 0;
   }
