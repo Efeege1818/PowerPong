@@ -8,15 +8,19 @@ import java.util.List;
 public class SimpleSelectScreen implements SelectScreen {
     private boolean selected1 = false;
     private boolean selected2 = false;
+    private Monster p1Monster;
+    private Monster p2Monster;
 
     @Override
-    public boolean MonsterForP1(Monster monster) {
-        return selected1 = true;
+    public void MonsterForP1(Monster monster) {
+        p1Monster = monster;
+        selected1 = true;
     }
 
     @Override
-    public boolean MonsterForP2(Monster monster) {
-        return selected2 = true;
+    public void MonsterForP2(Monster monster) {
+        p2Monster = monster;
+        selected2 = true;
     }
 
     @Override
@@ -27,5 +31,15 @@ public class SimpleSelectScreen implements SelectScreen {
     @Override
     public boolean isSelectionFinished() {
         return selected1 && selected2;
+    }
+
+    @Override
+    public Monster getP1Monster() {
+        return p1Monster;
+    }
+
+    @Override
+    public Monster getP2Monster() {
+        return p2Monster;
     }
 }

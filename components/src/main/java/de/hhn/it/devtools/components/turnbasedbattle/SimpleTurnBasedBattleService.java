@@ -22,6 +22,7 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
     private List<TurnBasedBattleListener> listeners;
     private boolean battleOver;
     private int turnCount;
+    private SimpleSelectScreen selectScreen = new SimpleSelectScreen();
 
     /**
      * Constructor initializes the service with default state.
@@ -143,16 +144,16 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
         return gameState;
     }
 
-    @Override
-    public void setupPlayers(Player player1, Player player2) throws IllegalStateException {
-        if (gameState != GameState.READY) {
-            throw new IllegalStateException("Can only setup players when game is in READY state");
-        }
-        this.player1 = player1;
-        this.player2 = player2;
-        this.currentPlayer = stertingPlayer;
-        updatePlayersState();
-    }
+//    @Override
+//    public void setupPlayers(Player player1, Player player2) throws IllegalStateException {
+//        if (gameState != GameState.READY) {
+//            throw new IllegalStateException("Can only setup players when game is in READY state");
+//        }
+//        this.player1 = player1;
+//        this.player2 = player2;
+//        this.currentPlayer = stertingPlayer;
+//        updatePlayersState();
+//    }
 
     @Override
     public void executeTurn(int move) throws IllegalStateException {
@@ -160,18 +161,18 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
     }
 
     @Override
-    public void setupPlayers(Player player1, Monster monster1, Player player2, Monster monster2)
+    public void setupPlayers(Player player1, Player player2)
             throws IllegalStateException {
         if (gameState != GameState.READY) {
             throw new IllegalStateException("Can only setup players when game is in READY state");
         }
         this.player1 = player1;
         this.player2 = player2;
-        this.player1Monster = monster1;
-        this.player2Monster = monster2;
+        this.player1Monster = selectScreen.getP1Monster();
+        this.player2Monster = selectScreen.getP2Monster();
         this.currentPlayer = player1;
-        this.currentMonster = monster1;
-        this.opponentMonster = monster2;
+        this.currentMonster = selectScreen.getP1Monster();
+        this.opponentMonster = selectScreen.getP2Monster();
         updatePlayersState();
     }
 

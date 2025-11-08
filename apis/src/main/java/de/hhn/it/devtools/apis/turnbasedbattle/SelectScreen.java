@@ -10,13 +10,13 @@ public interface SelectScreen {
      * Player 1 selects a monster.
      * @param monster
      */
-    public boolean MonsterForP1(Monster monster);
+    public void MonsterForP1(Monster monster);
 
     /**
      * Player 2 selects a monster.
      * @param monster
      */
-    public boolean MonsterForP2(Monster monster);
+    public void MonsterForP2(Monster monster);
 
     public List<Monster> getAvailableMonsters(List<Monster> monsters);
 
@@ -26,4 +26,7 @@ public interface SelectScreen {
      */
     public boolean isSelectionFinished();
 
+    public Monster getP1Monster();
+
+    public Monster getP2Monster();
 }
