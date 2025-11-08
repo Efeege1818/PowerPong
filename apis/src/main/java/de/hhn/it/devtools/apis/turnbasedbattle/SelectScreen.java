@@ -10,15 +10,15 @@ public interface SelectScreen {
      * Player 1 selects a monster.
      * @param monster
      */
-    public void MonsterForP1(Monster monster);
+    public boolean MonsterForP1(Monster monster);
 
     /**
      * Player 2 selects a monster.
      * @param monster
      */
-    public void MonsterForP2(Monster monster);
+    public boolean MonsterForP2(Monster monster);
 
-    public List<Monster> getAvailableMonsters();
+    public List<Monster> getAvailableMonsters(List<Monster> monsters);
 
     /**
      * Checks if both players have selected a monster.
