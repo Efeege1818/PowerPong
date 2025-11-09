@@ -11,10 +11,92 @@ package de.hhn.it.devtools.apis.towerdefenseapi;
  * Enemies move along their assigned path toward the player's base.
  *
  * <p>This record is immutable — once created, the enemy’s properties cannot change.
+ *
+ * @param id a unique Identifier
+ * @param coordinates the position of this enemy on the Board
+ * @param type the EnemyType of this Enemy
+ * @param speed the Speed of this Enemy. A faster enemy has a higher speed value
+ * @param health the current Health of this enemy
+ * @param damage the amount by witch this enemy reduces the players health, if it comes through
  */
 public record Enemy(int id,
                     Coordinates coordinates,
                     EnemyType type,
                     int speed,
-                    int health
-) {}
+                    int health,
+                    int damage
+) {
+
+  /**
+   * Returns the default maximum Heath values for different enemy types.
+   *
+   * @param type the EnemyType of the Enemy
+   * @return the maximum health for an enemy of the given type
+   * @throws IllegalArgumentException if the given EnemyType isn't supported
+   */
+  public int getMaxHealth(EnemyType type) throws IllegalArgumentException {
+    switch (type) {
+      case SMALL -> {
+        return 50;
+      }
+      case MEDIUM -> {
+        return 100;
+      }
+      case LARGE -> {
+        return 150;
+      }
+      default -> {
+        throw new IllegalArgumentException();
+      }
+    }
+  }
+
+  /**
+   * Returns the default speed values for different enemy types.
+   *
+   * @param type the EnemyType of the Enemy
+   * @return the speed for an enemy of the given type
+   * @throws IllegalArgumentException if the given EnemyType isn't supported
+   */
+  public int getSpeed(EnemyType type) throws IllegalArgumentException {
+    switch (type) {
+      case SMALL -> {
+        return 10;
+      }
+      case MEDIUM -> {
+        return 8;
+      }
+      case LARGE -> {
+        return 5;
+      }
+      default -> {
+        throw new IllegalArgumentException();
+      }
+    }
+  }
+
+  /**
+   * Returns the default damage values for different enemy types.
+   *
+   * @param type the EnemyType of the Enemy
+   * @return the damage for an enemy of the given type
+   * @throws IllegalArgumentException if the given EnemyType isn't supported
+   */
+  public int getDamage(EnemyType type) throws IllegalArgumentException {
+    switch (type) {
+      case SMALL -> {
+        return 1;
+      }
+      case MEDIUM -> {
+        return 2;
+      }
+      case LARGE -> {
+        return 3;
+      }
+      default -> {
+        throw new IllegalArgumentException();
+      }
+    }
+  }
+
+}
