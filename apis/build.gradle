@@ -8,7 +8,3 @@ version = "1.0"
 dependencies {
     // see also the dependencies in build.gradle (root)
 }
-
-test {
-    useJUnitPlatform()
-}
