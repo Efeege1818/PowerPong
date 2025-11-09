@@ -57,17 +57,6 @@ public record Monster(int maxHp,int currentHp, int attack, int defense, double e
         this(maxHp, maxHp, attack, defense, evasionChance, critChance, element,  moves);
     }
 
-    public boolean isAlive() {
-        return currentHp > 0;
-    }
-
-    public boolean isAtFullHealth() {
-        return currentHp == maxHp;
-    }
-
-    public double getHealthPercentage() {
-        return (double) currentHp / maxHp;
-    }
 
     public Element getElement() {return element; }
 }
