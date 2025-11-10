@@ -1,7 +1,5 @@
 package de.hhn.it.devtools.apis.towerdefenseapi;
 
-//TODO verify throwable
-
 /**
  * Represents a tower in the Tower Defense game.
  *
@@ -14,17 +12,4 @@ package de.hhn.it.devtools.apis.towerdefenseapi;
 public record Tower(int id,
                     Coordinates coordinates,
                     TowerType type) {
-
-  int getId() {
-    return id;
-  }
-
-  Coordinates getCoordinates() {
-    return coordinates;
-  }
-
-  TowerType getTowerType() {
-    return type;
-  }
-
 }

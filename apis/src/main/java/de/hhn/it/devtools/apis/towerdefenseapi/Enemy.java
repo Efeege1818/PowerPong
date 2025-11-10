@@ -1,8 +1,6 @@
 package de.hhn.it.devtools.apis.towerdefenseapi;
 
 
-// TODO: verify throwable
-
 import java.util.NoSuchElementException;
 
 /**
