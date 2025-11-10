@@ -114,6 +114,43 @@ public interface ShapeSurvivorService {
     GameState getGameState();
 
     /**
+     * Returns the current player state.
+     *
+     * @return the current Player record
+     */
+    Player getPlayer();
+
+    /**
+     * Returns the current enemies in the game.
+     *
+     * @return array of current Enemy records
+     */
+    Enemy[] getEnemies();
+
+    /**
+     * Checks if a level-up is pending and requires player action.
+     *
+     * @return true if the player has leveled up and needs to select an upgrade, false otherwise
+     */
+    boolean isLevelUpPending();
+
+    /**
+     * Returns the available weapon types that can be selected or upgraded.
+     *
+     * @return array of WeaponType that are available for selection
+     * @throws IllegalStateException if no level up is pending
+     */
+    WeaponType[] getAvailableWeaponUpgrades() throws IllegalStateException;
+
+    /**
+     * Returns the available player attributes that can be upgraded.
+     *
+     * @return array of PlayerAttribute that are available for upgrade
+     * @throws IllegalStateException if no level up is pending
+     */
+    PlayerAttribute[] getAvailableAttributeUpgrades() throws IllegalStateException;
+
+    /**
      * Returns the current game statistics.
      *
      * @return the current GameStatistics record
