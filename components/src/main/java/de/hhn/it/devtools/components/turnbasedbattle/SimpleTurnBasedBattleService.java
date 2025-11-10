@@ -11,7 +11,7 @@ import java.util.List;
 public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
 
     private GameState gameState;
-    private Player stertingPlayer;
+    private Player startingPlayer;
     private Player player1;
     private Player player2;
     private Monster player1Monster;
@@ -19,7 +19,7 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
     private Player currentPlayer;
     private Monster currentMonster;
     private Monster opponentMonster;
-    private List<TurnBasedBattleListener> listeners;
+    private List<SimpleTurnBasedBattleListener> listeners;
     private boolean battleOver;
     private int turnCount;
     private SimpleSelectScreen selectScreen = new SimpleSelectScreen();
@@ -104,7 +104,7 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
         if (listeners.contains(listener)) {
             throw new IllegalStateException("listener already exists");
         }
-        return listeners.add((TurnBasedBattleListener) listener);    }
+        return listeners.add((SimpleTurnBasedBattleListener) listener);    }
 
     @Override
     public boolean removeListener(de.hhn.it.devtools.apis.turnbasedbattle.TurnBasedBattleListener listener) {
@@ -113,19 +113,19 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
 
 
     private void notifyGameStateChanged(GameState newState) {
-        for (TurnBasedBattleListener listener : listeners) {
+        for (SimpleTurnBasedBattleListener listener : listeners) {
             listener.newGameState(newState);
         }
     }
 
     private void updatePlayersState() {
-        for (TurnBasedBattleListener listener : listeners) {
+        for (SimpleTurnBasedBattleListener listener : listeners) {
             listener.updateState(player1, player2);
         }
     }
 
     private void notifyGameEnded(int winnerNumber) {
-        for (TurnBasedBattleListener listener : listeners) {
+        for (SimpleTurnBasedBattleListener listener : listeners) {
             listener.gameEnded(winnerNumber);
         }
     }

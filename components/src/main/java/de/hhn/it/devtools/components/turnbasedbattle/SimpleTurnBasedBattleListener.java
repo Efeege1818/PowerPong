@@ -8,7 +8,7 @@ import de.hhn.it.devtools.apis.turnbasedbattle.Player;
  * Observes the state of both players and keeps track of
  * their health points, the overall game state, and the winner.
  */
-public class TurnBasedBattleListener implements de.hhn.it.devtools.apis.turnbasedbattle.TurnBasedBattleListener {
+public class SimpleTurnBasedBattleListener implements de.hhn.it.devtools.apis.turnbasedbattle.TurnBasedBattleListener {
 
     private volatile GameState currentState = GameState.READY;
     private volatile int player1Health;
