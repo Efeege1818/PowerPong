@@ -57,7 +57,7 @@ public class DemoShapeSurvivorUsage {
             listener.updateExperience(10,10);
 
             //player levels up
-            service.upgradeAttribute(PlayerAttribute.MAX_HEALTH);
+            service.upgradeAttribute(PlayerAttribute.MAX_HEALTH, 1.2, true);
 
             //player levels up to level 5
             service.selectWeapon(WeaponType.SWORD);

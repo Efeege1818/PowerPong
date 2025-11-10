@@ -47,7 +47,7 @@ public interface ShapeSurvivorService {
      * @throws IllegalStateException if the GameState is not RUNNING
      * @throws IllegalArgumentException if direction is null
      */
-    void movePlayer(Direction direction) throws IllegalStateException;
+    void movePlayer(Direction direction) throws IllegalStateException, IllegalArgumentException;
 
     /**
      * Selects a weapon upgrade when the player levels up.
@@ -56,16 +56,19 @@ public interface ShapeSurvivorService {
      * @throws IllegalStateException if the GameState is not RUNNING or if no level up is pending
      * @throws IllegalArgumentException if weaponType is null or invalid
      */
-    void selectWeapon(WeaponType weaponType) throws IllegalStateException;
+    void selectWeapon(WeaponType weaponType) throws IllegalStateException, IllegalArgumentException;
 
     /**
      * Upgrades a specific player attribute when leveling up.
      *
      * @param attribute the attribute to upgrade
+     * @param value the value to apply (either multiplier or fixed increase)
+     * @param isMultiplier if true, applies value as multiplier; if false, applies as fixed increase
      * @throws IllegalStateException if the GameState is not RUNNING or if no level up is pending
-     * @throws IllegalArgumentException if attribute is null or invalid
+     * @throws IllegalArgumentException if attribute is null or invalid, or if value is invalid
      */
-    void upgradeAttribute(PlayerAttribute attribute) throws IllegalStateException;
+    void upgradeAttribute(PlayerAttribute attribute, double value, boolean isMultiplier) 
+            throws IllegalStateException, IllegalArgumentException;
 
     /**
      * Adds a listener for game updates and events.
@@ -74,7 +77,7 @@ public interface ShapeSurvivorService {
      * @return true if the listener was successfully added, false otherwise
      * @throws IllegalArgumentException if listener is null
      */
-    boolean addListener(ShapeSurvivorListener listener);
+    boolean addListener(ShapeSurvivorListener listener) throws IllegalArgumentException;
 
     /**
      * Removes a listener from the list of listeners.
@@ -83,7 +86,7 @@ public interface ShapeSurvivorService {
      * @return true if the listener was successfully removed, false otherwise
      * @throws IllegalArgumentException if listener is null
      */
-    boolean removeListener(ShapeSurvivorListener listener);
+    boolean removeListener(ShapeSurvivorListener listener) throws IllegalArgumentException;
 
     /**
      * Configures the game with specific parameters if GameState is PREPARED or ABORTED.
@@ -116,4 +119,20 @@ public interface ShapeSurvivorService {
      * @return the current GameStatistics record
      */
     GameStatistics getStatistics();
+
+    /**
+     * Returns the elapsed game time in seconds.
+     *
+     * @return the elapsed time since the game started in seconds
+     * @throws IllegalStateException if the GameState is PREPARED or ABORTED
+     */
+    int getElapsedTime() throws IllegalStateException;
+
+    /**
+     * Returns the remaining game time in seconds.
+     *
+     * @return the remaining time until the game ends in seconds
+     * @throws IllegalStateException if the GameState is PREPARED or ABORTED
+     */
+    int getRemainingTime() throws IllegalStateException;
 }

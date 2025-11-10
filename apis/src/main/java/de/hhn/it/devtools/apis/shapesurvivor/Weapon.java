@@ -11,6 +11,7 @@ package de.hhn.it.devtools.apis.shapesurvivor;
  */
 public record Weapon(
         WeaponType type,
+        String description,
         int level,
         int damage,
         double attackSpeed,
