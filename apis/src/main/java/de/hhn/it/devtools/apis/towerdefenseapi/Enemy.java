@@ -38,7 +38,7 @@ public record Enemy(int id,
    * @return the maximum health for an enemy of the given type
    * @throws NoSuchElementException if the given EnemyType isn't supported
    */
-  public int getMaxHealth(EnemyType type) throws NoSuchElementException {
+  public static int getMaxHealth(EnemyType type) throws NoSuchElementException {
     switch (type) {
       case SMALL -> {
         return 50;
@@ -62,7 +62,7 @@ public record Enemy(int id,
    * @return the speed for an enemy of the given type
    * @throws NoSuchElementException if the given EnemyType isn't supported
    */
-  public int getSpeed(EnemyType type) throws NoSuchElementException {
+  public static int getSpeed(EnemyType type) throws NoSuchElementException {
     switch (type) {
       case SMALL -> {
         return 10;
@@ -86,7 +86,7 @@ public record Enemy(int id,
    * @return the damage for an enemy of the given type
    * @throws NoSuchElementException if the given EnemyType isn't supported
    */
-  public int getDamage(EnemyType type) throws NoSuchElementException {
+  public static int getDamage(EnemyType type) throws NoSuchElementException {
     switch (type) {
       case SMALL -> {
         return 1;
@@ -110,7 +110,7 @@ public record Enemy(int id,
    * @return the default money for an enemy of the given type
    * @throws NoSuchElementException if the given EnemyType isn't supported
    */
-  public int getMoney(EnemyType type) throws NoSuchElementException {
+  public static int getMoney(EnemyType type) throws NoSuchElementException {
     switch (type) {
       case SMALL -> {
         return 1;
