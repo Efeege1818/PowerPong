@@ -1,8 +1,11 @@
+//SimTBBService
 package de.hhn.it.devtools.components.turnbasedbattle;
 
 import de.hhn.it.devtools.apis.turnbasedbattle.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import static de.hhn.it.devtools.apis.turnbasedbattle.MoveType.*;
 
 /**
  * A simple implementation of the TurnBasedBattleService interface.
@@ -11,15 +14,19 @@ import java.util.List;
 public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
 
     private GameState gameState;
-    private Player startingPlayer;
     private Player player1;
     private Player player2;
+    //for UI
     private Monster player1Monster;
     private Monster player2Monster;
+    //for logic
+    private SimpleMonster p1SimpleMonster;
+    private SimpleMonster p2SimpleMonster;
+
     private Player currentPlayer;
-    private Monster currentMonster;
-    private Monster opponentMonster;
-    private List<SimpleTurnBasedBattleListener> listeners;
+    private SimpleMonster currentMonster;
+    private SimpleMonster opponentMonster;
+    private List<TurnBasedBattleListener> listeners;
     private boolean battleOver;
     private int turnCount;
     private SimpleSelectScreen selectScreen = new SimpleSelectScreen();
@@ -31,6 +38,7 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
         this.gameState = GameState.READY;
         this.listeners = new ArrayList<>();
         this.battleOver = false;
+        this.turnCount = 0;
     }
 
     @Override
@@ -44,6 +52,7 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
         this.currentMonster = null;
         this.opponentMonster = null;
         this.battleOver = false;
+        this.turnCount = 0;
         notifyGameStateChanged(GameState.READY);
     }
 
@@ -55,8 +64,21 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
         if (player1 == null || player2 == null) {
             throw new IllegalStateException("Players must be set up before starting");
         }
+
+        p1SimpleMonster = new SimpleMonster(player1Monster);
+        p2SimpleMonster = new SimpleMonster(player2Monster);
+
         gameState = GameState.RUNNING;
         currentPlayer = determineStartingPlayer();
+
+        if (currentPlayer == player1) {
+            currentMonster = p1SimpleMonster;
+            opponentMonster = p2SimpleMonster;
+        } else {
+            currentMonster = p2SimpleMonster;
+            opponentMonster = p1SimpleMonster;
+        }
+
         notifyGameStateChanged(GameState.RUNNING);
         updatePlayersState();
     }
@@ -88,15 +110,15 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
         notifyGameStateChanged(GameState.END);
 
         // Determine winner and notify listeners
-        if (player1Monster.currentHp() <= 0) {
+        if (p1SimpleMonster.getCurrentHp() <= 0) {
             notifyGameEnded(2);
-        } else if (player2Monster.currentHp() <= 0) {
+        } else if (p2SimpleMonster.getCurrentHp() <= 0) {
             notifyGameEnded(1);
         }
     }
 
     @Override
-    public boolean addListener(de.hhn.it.devtools.apis.turnbasedbattle.TurnBasedBattleListener listener)
+    public boolean addListener(TurnBasedBattleListener listener)
             throws IllegalArgumentException, IllegalStateException {
         if (listener == null) {
             throw new IllegalArgumentException("listener must not be null");
@@ -107,25 +129,25 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
         return listeners.add((SimpleTurnBasedBattleListener) listener);    }
 
     @Override
-    public boolean removeListener(de.hhn.it.devtools.apis.turnbasedbattle.TurnBasedBattleListener listener) {
+    public boolean removeListener(TurnBasedBattleListener listener) {
         return listeners.remove(listener);
     }
 
 
     private void notifyGameStateChanged(GameState newState) {
-        for (SimpleTurnBasedBattleListener listener : listeners) {
+        for (TurnBasedBattleListener listener : listeners) {
             listener.newGameState(newState);
         }
     }
 
     private void updatePlayersState() {
-        for (SimpleTurnBasedBattleListener listener : listeners) {
+        for (TurnBasedBattleListener listener : listeners) {
             listener.updateState(player1, player2);
         }
     }
 
     private void notifyGameEnded(int winnerNumber) {
-        for (SimpleTurnBasedBattleListener listener : listeners) {
+        for (TurnBasedBattleListener listener : listeners) {
             listener.gameEnded(winnerNumber);
         }
     }
@@ -144,53 +166,74 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
         return gameState;
     }
 
-//    @Override
-//    public void setupPlayers(Player player1, Player player2) throws IllegalStateException {
-//        if (gameState != GameState.READY) {
-//            throw new IllegalStateException("Can only setup players when game is in READY state");
-//        }
-//        this.player1 = player1;
-//        this.player2 = player2;
-//        this.currentPlayer = stertingPlayer;
-//        updatePlayersState();
-//    }
-
     @Override
-    public void executeTurn(int move) throws IllegalStateException {
-
-    }
-
-    @Override
-    public void setupPlayers(Player player1, Player player2)
-            throws IllegalStateException {
+    public void setupPlayers(Player player1, Player player2) throws IllegalStateException {
         if (gameState != GameState.READY) {
-            throw new IllegalStateException("Can only setup players when game is in READY state");
+            throw new IllegalStateException("Game must be READY to setup Players");
         }
         this.player1 = player1;
         this.player2 = player2;
         this.player1Monster = selectScreen.getP1Monster();
         this.player2Monster = selectScreen.getP2Monster();
-        this.currentPlayer = player1;
-        this.currentMonster = selectScreen.getP1Monster();
-        this.opponentMonster = selectScreen.getP2Monster();
         updatePlayersState();
     }
 
     @Override
-    public void executeTurn() throws IllegalStateException {
+    public void executeTurn(int move) throws IllegalStateException {
         if (gameState != GameState.RUNNING) {
-            throw new IllegalStateException("Game must be in RUNNING state to execute turn");
+            throw new IllegalStateException("Game must be RUNNING to execute Turn");
         }
         if (currentMonster == null || opponentMonster == null) {
-            throw new IllegalStateException("No active monsters set");
+            throw new IllegalStateException("No monster set");
+        }
+        if (!currentMonster.hasMove(move)) {
+            throw new IllegalArgumentException("Invalid move index");
         }
 
-        if (opponentMonster.currentHp() <= 0) {
-            battleOver = true;
-            end();
+        Move selectedMove = currentMonster.getMove(move);
+
+        switch (selectedMove.type()) {
+            case ATTACK -> {
+                // do damage
+                opponentMonster.takeDamage(selectedMove, currentMonster);
+                // Check for death
+                if (!opponentMonster.isAlive()) {
+                    battleOver = true;
+                    gameState = GameState.END;
+                    notifyGameStateChanged(GameState.END);
+
+                    if (currentPlayer == player1) {
+                        notifyGameEnded(1);
+                    } else {
+                        notifyGameEnded(2);
+                    }
+                    return;
+                }
+            }
+
+            case BUFF -> {
+                currentMonster.buffMonster(selectedMove);
+            }
+
+            case DEBUFF -> {
+                opponentMonster.debuffMonster(selectedMove);
+            }
+
+            default -> throw new IllegalStateException("Unknown move type: " + selectedMove.type());
         }
+
+        // Notify listeners about state update (e.g., UI refresh)
         updatePlayersState();
+
+        // Move to next player's turn if battle continues
+        if (!battleOver) {
+            nextTurn();
+            notifyListenersTurnChanged();
+
+        }
     }
+
+
 
     @Override
     public void nextTurn() throws IllegalStateException {
@@ -204,12 +247,12 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
         // Switch the current player and monsters
         if (currentPlayer == player1) {
             currentPlayer = player2;
-            currentMonster = player2Monster;
-            opponentMonster = player1Monster;
+            currentMonster = p2SimpleMonster;
+            opponentMonster = p1SimpleMonster;
         } else {
             currentPlayer = player1;
-            currentMonster = player1Monster;
-            opponentMonster = player2Monster;
+            currentMonster = p1SimpleMonster;
+            opponentMonster = p2SimpleMonster;
         }
         turnCount++;
         updatePlayersState();
@@ -255,7 +298,6 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
 
     @Override
     public Player determineStartingPlayer() {
-
         //if monster elements ate the same
         if (currentMonster.getElement() == opponentMonster.getElement()) {
             if (Math.random() < 0.50) {

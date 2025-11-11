@@ -1,40 +1,43 @@
 package de.hhn.it.devtools.apis.turnbasedbattle;
+
 /**
  * The main service interface for managing a turn-based battle game.
+ * This service is responsible for managing game state, players, and listeners.
+ * All battle logic (damage, moves, turns) is delegated to a BattleManager implementation.
  */
 public interface TurnBasedBattleService {
 
     /**
-     * Resets the game. The new game state is READY. Reset means reset, no matter in which
-     * GameState the game is.
+     * Resets the game. The new game state is READY.
+     * Reset means reset, no matter in which GameState the game currently is.
      */
     void reset();
 
     /**
      * Starts the game if the GameState is READY. The new GameState is RUNNING.
      *
-     * @throws IllegalStateException if the GameState was not READY.
+     * @throws IllegalStateException if the GameState was not READY or players not set.
      */
     void start() throws IllegalStateException;
 
     /**
      * Pauses the current game if the GameState is RUNNING. The new GameState is PAUSED.
      *
-     * @throws IllegalStateException if the GameState is READY.
+     * @throws IllegalStateException if the GameState is not RUNNING.
      */
     void pause() throws IllegalStateException;
 
     /**
      * Aborts the current game if the GameState is RUNNING. The new GameState is ABORTED.
      *
-     * @throws IllegalStateException if the GameState is READY.
+     * @throws IllegalStateException if the GameState is not RUNNING.
      */
     void abort() throws IllegalStateException;
 
     /**
      * Ends the current game if the GameState is RUNNING. The new GameState is END.
      *
-     * @throws IllegalStateException if the GameState is READY.
+     * @throws IllegalStateException if the GameState is not RUNNING.
      */
     void end() throws IllegalStateException;
 
@@ -59,16 +62,11 @@ public interface TurnBasedBattleService {
 
     /**
      * Notifies all registered listeners that the turn has changed.
-     * This method should be called whenever the active player/monster switches
-     * to update UI, logics, or other observers of the new turn state.
      */
     void notifyListenersTurnChanged();
 
     /**
      * Notifies all registered listeners that the battle has ended.
-     * This method should be called when the battle reaches a terminal state,
-     * for example when one monster has fainted, so listeners can update UI,
-     * declare a winner, or perform cleanup tasks.
      */
     void notifyListenersBattleEnded();
 
@@ -78,7 +76,6 @@ public interface TurnBasedBattleService {
      * @return the current GameState of the battle.
      */
     GameState getGameState();
-
 
     /**
      * Initializes the two players and their respective monsters for the battle.
@@ -91,28 +88,18 @@ public interface TurnBasedBattleService {
     void setupPlayers(Player player1, Player player2)
             throws IllegalStateException;
 
-
     /**
-     * Executes the currently selected actions for the active player’s monster.
-     * This method applies the chosen move or command, calculates its effects,
-     * and updates the state of both monsters accordingly.
+     * Executes the currently selected move for the active player's monster.
      *
-     * @param move which move is played.
-     * @throws IllegalStateException if the game is not running or if the turn
-     *                               cannot be executed at the current time.
+     * @param move index of the move to execute.
+     * @throws IllegalStateException if the game is not running or the move cannot be executed.
      */
     void executeTurn(int move) throws IllegalStateException;
 
-    //void setupPlayers(Player player1, Monster monster1, Player player2, Monster monster2) throws IllegalStateException;
-
-    void executeTurn() throws IllegalStateException;
-
     /**
      * Switches to the next player's turn.
-     * If a turn has ended successfully, this method sets the next player as the
-     * current player, unless the battle has already finished.
      *
-     * @throws IllegalStateException if the game is not running or the battle is already over.
+     * @throws IllegalStateException if the game is not running or the battle is over.
      */
     void nextTurn() throws IllegalStateException;
 
@@ -124,29 +111,30 @@ public interface TurnBasedBattleService {
     Player getCurrentPlayer();
 
     /**
-     * Returns the Player 1 Object
-     * @return PLayer 1
+     * Returns the Player 1 object.
+     *
+     * @return Player 1
      */
     Player getPlayer1();
 
     /**
-     * Returns the Player 2 Object
-     * @return PLayer 2
+     * Returns the Player 2 object.
+     *
+     * @return Player 2
      */
     Player getPlayer2();
 
     /**
      * Checks whether the battle has ended.
-     * A battle is considered over when one of the monsters has fainted or when
-     * an end condition is reached.
      *
      * @return true if the battle is over, otherwise false.
      */
     boolean isBattleOver();
 
     /**
-     * Returns teh current Turn count
-     * @return current Turn
+     * Returns the current turn count.
+     *
+     * @return current turn
      */
     int getTurnCount();
 
@@ -154,22 +142,11 @@ public interface TurnBasedBattleService {
      * Returns the winning player of the battle.
      * If the battle is not yet over, this method returns null.
      *
-     * @return the Player who won the battle, or null if the
-     *         battle is still ongoing.
+     * @return the Player who won the battle, or null if still ongoing.
      */
     Player getWinner();
 
-    /**
-     * Returns the Player how starts the game based on elemental effectiveness.
-     * @return  the Starting Player.
-     */
     Player determineStartingPlayer();
 
-    /**
-     *Checks the Element effectivity
-     * @param currentMonster the monster that is currently taking its turn.
-     * @param opponentMonster the monster that is not currently on turn.
-     * @return true if the Monster Element is Effective against this Opponent.
-     */
     boolean isElementEffective(Monster currentMonster, Monster opponentMonster);
 }
