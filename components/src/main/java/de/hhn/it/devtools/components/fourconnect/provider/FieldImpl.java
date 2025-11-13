@@ -24,8 +24,6 @@ public class FieldImpl implements Field {
     this.isToxicZone = isToxicZone;
   }
 
-  // --- PUBLIC READ-ONLY METHODS (from Field Interface) ---
-
   @Override
   public Player getOccupyingPlayer() {
     return owner;
@@ -40,14 +38,6 @@ public class FieldImpl implements Field {
   public int getDecayTime() {
     return decayTime;
   }
-
-  // Anmerkung: Die Methode boolean isToxic() wurde zu isToxicZone() korrigiert
-  // und isOccupied() / isEmpty() ist durch getOccupyingPlayer() == null abgedeckt.
-
-
-  // --- PACKAGE-PRIVATE METHODS (for Internal Service Control) ---
-  // Diese Methoden sind in der Fassade (Field.java) nicht sichtbar,
-  // aber für die Logik (GameBoardImpl) notwendig.
 
   /**
    * Sets the owner of this field. Used internally by GameBoardImpl.

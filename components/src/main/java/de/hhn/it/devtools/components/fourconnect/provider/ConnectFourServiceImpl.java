@@ -18,7 +18,6 @@ import java.util.List;
  */
 public class ConnectFourServiceImpl implements ConnectFourService {
 
-    // --- Internal States (Schritt 3 von Phase 1) ---
     private final GameBoardImpl board;
     private final GameRules gameRules;
     private final List<GameListener> listeners;
@@ -36,21 +35,11 @@ public class ConnectFourServiceImpl implements ConnectFourService {
         this.listeners = new ArrayList<>();
     }
 
-    // --- Interface Method Implementations (Platzhalter fÃ¼r TDD) ---
-
     @Override
     public void startGame(GameConfiguration configuration) {
         this.configuration = configuration;
         this.board.clearBoard();
-        // TODO: Implement logic to place random toxic fields based on config
-
-        // TODO: Implement Player creation (P1, P2)
-        // this.currentPlayer = ...
-
         this.gameActive = true;
-
-        // TODO: Notify listeners
-        // listeners.forEach(l -> l.onPlayerTurnChanged(currentPlayer));
     }
 
     @Override
@@ -65,8 +54,6 @@ public class ConnectFourServiceImpl implements ConnectFourService {
         if (!gameActive) {
             throw new OperationNotSupportedException("Game is not active. Call startGame() first.");
         }
-
-        // TODO: Implement logic (Phase 2)
         throw new OperationNotSupportedException("dropChip is not yet implemented.");
     }
 
@@ -77,19 +64,16 @@ public class ConnectFourServiceImpl implements ConnectFourService {
 
     @Override
     public Player getCurrentPlayer() throws OperationNotSupportedException {
-        // TODO: Implement logic (Phase 2)
         throw new OperationNotSupportedException("getCurrentPlayer is not yet implemented.");
     }
 
     @Override
     public boolean checkForWin() throws OperationNotSupportedException {
-        // TODO: Implement logic (Phase 2)
         throw new OperationNotSupportedException("checkForWin is not yet implemented.");
     }
 
     @Override
     public boolean checkForDraw() throws OperationNotSupportedException {
-        // TODO: Implement logic (Phase 2)
         throw new OperationNotSupportedException("checkForDraw is not yet implemented.");
     }
 
@@ -105,7 +89,5 @@ public class ConnectFourServiceImpl implements ConnectFourService {
 
     @Override
     public void applyToxicDecay() {
-        // TODO: Implement logic (Phase 2)
-        // (This logic will likely be called internally by dropChip)
     }
 }

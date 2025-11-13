@@ -17,10 +17,7 @@ public class GameBoardImpl implements GameBoard {
 
   public GameBoardImpl() {
     this.fields = new Field[ROWS][COLUMNS];
-    // Board must be initialized (see clearBoard)
   }
-
-  // --- Public Read-Only Methods (from Interface) ---
 
   @Override
   public Field[][] getFields() {
@@ -29,7 +26,6 @@ public class GameBoardImpl implements GameBoard {
 
   @Override
   public Field getField(int row, int column) {
-    // (Bounds checking should be added here later)
     return fields[row][column];
   }
 
@@ -49,7 +45,6 @@ public class GameBoardImpl implements GameBoard {
   void clearBoard() {
     for (int r = 0; r < ROWS; r++) {
       for (int c = 0; c < COLUMNS; c++) {
-        // Default: not toxic
         fields[r][c] = new Field() {
           @Override
           public Player getOccupyingPlayer() {
