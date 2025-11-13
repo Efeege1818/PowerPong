@@ -1,7 +1,6 @@
 package de.hhn.it.devtools.components.fourconnect.provider;
 
-<<<<<<< HEAD
-=======
+
 import de.hhn.it.devtools.apis.fourconnect.Field;
 import de.hhn.it.devtools.apis.fourconnect.Player;
 
@@ -86,4 +85,4 @@ public class FieldImpl implements Field {
     return false;
   }
 }
->>>>>>> 7810f2cfbea3cb8d72df1b8faa2e5c96662379ae
+
