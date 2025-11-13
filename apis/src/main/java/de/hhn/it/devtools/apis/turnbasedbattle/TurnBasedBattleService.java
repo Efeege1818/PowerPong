@@ -3,7 +3,6 @@ package de.hhn.it.devtools.apis.turnbasedbattle;
 /**
  * The main service interface for managing a turn-based battle game.
  * This service is responsible for managing game state, players, and listeners.
- * All battle logic (damage, moves, turns) is delegated to a BattleManager implementation.
  */
 public interface TurnBasedBattleService {
 
