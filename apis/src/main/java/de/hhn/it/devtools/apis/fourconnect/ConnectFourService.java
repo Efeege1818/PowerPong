@@ -16,6 +16,8 @@ public interface ConnectFourService {
    */
   void startGame(GameConfiguration configuration);
 
+  void registerListener(GameListener listener);
+
   /**
    * Attempts to drop the current player's chip into the specified column.
    * This operation handles turn changes and notifies listeners of board updates.
@@ -37,21 +39,21 @@ public interface ConnectFourService {
    *
    * @return The {@link Player} whose turn it is.
    */
-  Player getCurrentPlayer();
+  Player getCurrentPlayer() throws OperationNotSupportedException;
 
   /**
    * Checks if the last move resulted in a win for the current or previous player.
    *
    * @return {@code true} if a winning condition has been met, {@code false} otherwise.
    */
-  boolean checkForWin();
+  boolean checkForWin() throws OperationNotSupportedException;
 
   /**
    * Checks if the game board is full and no more moves can be made, resulting in a draw.
    *
    * @return {@code true} if the game has ended in a draw, {@code false} otherwise.
    */
-  boolean checkForDraw();
+  boolean checkForDraw() throws OperationNotSupportedException;
 
   /**
    * Registers a listener to receive notifications about game state changes (e.g., turn change, board update).
@@ -66,4 +68,6 @@ public interface ConnectFourService {
    * @param listener The {@link GameListener} to remove.
    */
   void removeGameListener(GameListener listener);
+
+    void applyToxicDecay();
 }

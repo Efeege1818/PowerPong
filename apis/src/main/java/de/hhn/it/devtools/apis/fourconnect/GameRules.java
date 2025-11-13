@@ -5,6 +5,9 @@ package de.hhn.it.devtools.apis.fourconnect;
  */
 public class GameRules {
 
+    public GameRules(int rows, int columns) {
+    }
+
     /**
      * Checks whether the given player has won on the board.
      */

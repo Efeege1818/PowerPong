@@ -8,4 +8,5 @@ module devtools.apis{
         exports de.hhn.it.devtools.apis.spaceinvaders;
         exports de.hhn.it.devtools.apis.spaceinvaders.entities;
         exports de.hhn.it.devtools.apis.spaceinvaders.exceptions;
+    exports de.hhn.it.devtools.apis.fourconnect;
 }

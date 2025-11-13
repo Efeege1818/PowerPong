@@ -9,6 +9,12 @@ public interface Field {
      */
     Player getOccupyingPlayer();
 
+    boolean isToxicZone();
+
+    int getDecayTime();
+
+    Player getOccupyingPlayer(Player player);
+
     /**
      * Returns whether the field is toxic.
      */
