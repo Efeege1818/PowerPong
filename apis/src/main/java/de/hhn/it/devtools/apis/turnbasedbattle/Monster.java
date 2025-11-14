@@ -56,7 +56,4 @@ public record Monster(int maxHp,int currentHp, int attack, int defense, double e
     public Monster(int maxHp, int attack, int defense, double evasionChance, double critChance, Element element,  HashMap<Integer, Move> moves) {
         this(maxHp, maxHp, attack, defense, evasionChance, critChance, element,  moves);
     }
-
-
-    public Element getElement() {return element; }
 }

@@ -2,7 +2,7 @@ package de.hhn.it.devtools.components.turnbasedbattle;
 
 import de.hhn.it.devtools.apis.turnbasedbattle.*;
 
-public class SimpleBattleManager {
+public class SimpleBattleManager implements BattleManager {
 
   private Player player1;
   private Player player2;
@@ -17,6 +17,7 @@ public class SimpleBattleManager {
   private int turnCount;
   private boolean battleOver;
 
+  @Override
   public void initializeBattle(Player p1, Player p2, Monster m1, Monster m2) {
     this.player1 = p1;
     this.player2 = p2;
@@ -38,14 +39,17 @@ public class SimpleBattleManager {
     }
   }
 
+  @Override
   public boolean isBattleOver() {
     return battleOver;
   }
 
+  @Override
   public int getTurnCount() {
     return turnCount;
   }
 
+  @Override
   public Player getCurrentPlayer() {
     return currentPlayer;
   }
@@ -58,6 +62,7 @@ public class SimpleBattleManager {
     return opponentMonster;
   }
 
+  @Override
   public Player getWinner() {
     if(!battleOver) {
       return null;
@@ -73,9 +78,7 @@ public class SimpleBattleManager {
     return null;
   }
 
-  /**
-   * Executes a turn and returns the winner: 0=no winner, 1=player1, 2=player2
-   */
+  @Override
   public int executeTurn(int moveNumber) {
     if (!currentMonster.hasMove(moveNumber)) {
       throw new IllegalArgumentException("Invalid move number.");
@@ -107,6 +110,7 @@ public class SimpleBattleManager {
     return 0; // no winner yet
   }
 
+  @Override
   public void nextTurn() {
     if(battleOver) {
       throw new IllegalStateException("Battle is already over.");
@@ -126,6 +130,7 @@ public class SimpleBattleManager {
     turnCount++;
   }
 
+  @Override
   public Player determineStartingPlayer() {
     // if same element → random
     if (p1Monster.getElement() == p2Monster.getElement()) {
