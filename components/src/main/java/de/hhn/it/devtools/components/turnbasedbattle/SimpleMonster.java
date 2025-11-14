@@ -6,6 +6,8 @@ import de.hhn.it.devtools.apis.turnbasedbattle.Move;
 
 import java.util.HashMap;
 
+import static de.hhn.it.devtools.components.turnbasedbattle.DamageCalculator.calculateDamage;
+
 /**
  * A simple implementation of the Monster interface.
  */
@@ -56,9 +58,9 @@ public class SimpleMonster {
         }
 
         boolean isCritical = Math.random() < attackingMonster.getCritChance();
-        boolean isEffective = isElementEffective(move.element());
+        boolean isEffective = isElementEffective(this, move.element());
 
-        actualDamage = calculateDamage(move, isCritical, isEffective, attackingMonster.getAttack());
+        actualDamage = calculateDamage(move, this, attackingMonster, isCritical, isEffective);
 
         if (actualDamage > currentHp) {
             currentHp = 0;
@@ -70,66 +72,28 @@ public class SimpleMonster {
 
     }
 
-
-    /**
-     * Calculates the actual damage based on the move, critical hit, and elemental effectiveness.
-     * @param move the move being executed.
-     * @param isCritical whether the attack is a critical hit.
-     * @param isEffective whether the attack is effective against the target's element.
-     * @return the actual damage done.
-     */
-    public int calculateDamage(Move move, boolean isCritical, boolean isEffective, int attackerAttack) {
-        double damage = move.amount() + attackerAttack;
-        if (isCritical) {
-            damage *= 1.5; // TODO: hardcoded critical multiplier
-        }
-        if (isEffective) {
-            damage *= 1.5; // TODO: hardcoded effective multiplier
-        }
-
-        damage -= defense;
-
-        if (damage < 0) {
-            return 0;
-        }
-
-        return (int) Math.floor(damage);
-    }
-
     /**
      * Checks if the move is effective against the target's element.
      *
      * @param moveElement the element of the move.
      * @return true if the move is effective, false otherwise.
      */
-    public boolean isElementEffective(Element moveElement) {
+    public boolean isElementEffective(SimpleMonster target, Element moveElement) {
 
 
         //Fire
-        if (element == Element.FIRE) {
-            if (moveElement == Element.GRASS) {
-                return true;
-            } else {
-                return false;
-            }
+        if (target.getElement() == Element.FIRE) {
+            return moveElement == Element.GRASS;
         }
 
         //Water
-        if (element == Element.WATER) {
-            if (moveElement == Element.FIRE) {
-                return true;
-            } else{
-                return false;
-            }
+        if (target.getElement() == Element.WATER) {
+            return moveElement == Element.FIRE;
         }
 
         //Grass
-        if (element == Element.GRASS) {
-            if (moveElement == Element.WATER) {
-                return true;
-            } else {
-                return false;
-            }
+        if (target.getElement() == Element.GRASS) {
+            return moveElement == Element.WATER;
         }
         return false;
 
