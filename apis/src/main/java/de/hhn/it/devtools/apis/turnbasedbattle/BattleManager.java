@@ -4,5 +4,5 @@ package de.hhn.it.devtools.apis.turnbasedbattle;
  */
 
 public interface BattleManager {
-    //TODO: right interface for SimpleBattleManager
+
 }
