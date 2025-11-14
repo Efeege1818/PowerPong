@@ -126,7 +126,8 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
         if (listeners.contains(listener)) {
             throw new IllegalStateException("listener already exists");
         }
-        return listeners.add((SimpleTurnBasedBattleListener) listener);    }
+        return listeners.add(listener);
+    }
 
     @Override
     public boolean removeListener(TurnBasedBattleListener listener) {
