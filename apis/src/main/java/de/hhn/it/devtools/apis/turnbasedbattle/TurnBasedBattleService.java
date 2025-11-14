@@ -146,6 +146,4 @@ public interface TurnBasedBattleService {
     Player getWinner();
 
     Player determineStartingPlayer();
-
-    boolean isElementEffective(Monster currentMonster, Monster opponentMonster);
 }
