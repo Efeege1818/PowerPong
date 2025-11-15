@@ -8,9 +8,17 @@ import de.hhn.it.devtools.apis.spaceinvaders.Sound;
 import de.hhn.it.devtools.apis.spaceinvaders.SpaceInvadersListener;
 import de.hhn.it.devtools.apis.spaceinvaders.SpaceInvadersService;
 import de.hhn.it.devtools.apis.spaceinvaders.exceptions.IllegalConfigurationException;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
+
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+
+import static de.hhn.it.devtools.components.spaceinvaders.utils.SoundProvider.soundFiles;
 
 /**
  * Simple implementation of SpaceInvadersService.
@@ -95,7 +103,26 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
   @Override
   public void playSound(Sound sound) throws IllegalStateException {
     logger.debug("Service PlaySound");
-    //TODO play sound
+    // Backend Sound????
+    String fileName = soundFiles.get(sound);
+    if (fileName == null) {
+      logger.error("No sound file for sound: {}", sound);
+      return;
+    }
+
+    try (AudioInputStream audioIn = AudioSystem.getAudioInputStream(
+            Objects.requireNonNull(getClass().getResourceAsStream(fileName)))) {
+
+      Clip clip = AudioSystem.getClip();
+      clip.open(audioIn);
+      clip.start();
+
+    } catch (Exception e) {
+      logger.error("Error playing sound: {}", e.getMessage());
+    }
+
+    // just give it to front????
+    notifyListeners((l) -> l.updateSound(sound));
   }
 
   @Override
