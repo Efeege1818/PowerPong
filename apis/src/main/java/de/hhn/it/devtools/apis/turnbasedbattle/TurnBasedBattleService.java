@@ -84,7 +84,7 @@ public interface TurnBasedBattleService {
      * @param player2 the second player.
      * @throws IllegalStateException if the game is not in the READY state.
      */
-    void setupPlayers(Player player1, Player player2)
+    void setupPlayers(Player player1, Player player2, Monster monster1, Monster monster2)
             throws IllegalStateException;
 
     /**

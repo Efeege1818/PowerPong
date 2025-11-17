@@ -15,7 +15,6 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
 
   private final List<TurnBasedBattleListener> listeners;
 
-  private final SimpleSelectScreen selectScreen = new SimpleSelectScreen();
   private final SimpleBattleManager battleManager = new SimpleBattleManager();
 
   public SimpleTurnBasedBattleService() {
@@ -127,14 +126,14 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
   }
 
   @Override
-  public void setupPlayers(Player player1, Player player2) {
+  public void setupPlayers(Player player1, Player player2, Monster monster1, Monster monster2) {
     if (gameState != GameState.READY) {
       throw new IllegalStateException("Game must be READY to setup players.");
     }
     this.player1 = player1;
     this.player2 = player2;
-    this.player1Monster = selectScreen.getP1Monster();
-    this.player2Monster = selectScreen.getP2Monster();
+    this.player1Monster = monster1;
+    this.player2Monster = monster2;
     updatePlayersState();
   }
 
