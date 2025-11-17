@@ -41,7 +41,7 @@ public class DemoTurnBasedBattleUsage {
         Player player2 = new Player(2, monster2, 0);
 
 
-        service.setupPlayers(player1, player2);
+        service.setupPlayers(player1, player2, monster1, monster2);
 
 
         service.start();
