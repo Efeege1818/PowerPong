@@ -4,6 +4,7 @@ import de.hhn.it.devtools.apis.turnbasedbattle.*;
 
 import java.util.HashMap;
 import java.util.Random;
+import java.util.Scanner;
 
 public class TurnBasedBattleDemo {
 
@@ -16,12 +17,12 @@ public class TurnBasedBattleDemo {
         // Create Moves
         Move move1 = new Move(MoveType.ATTACK, Element.NORMAL, 20, "health", 0, 0, false, "Normal attack");
         Move move2 = new Move(MoveType.ATTACK, Element.FIRE, 25, "health", 0, 1, false, "Fire attack");
-        Move move3 = new Move(MoveType.BUFF, Element.NORMAL, 30, "attack", 2, 2, false, "Increase damage");
-        Move move4 = new Move(MoveType.DEBUFF, Element.NORMAL, 0.1, "evasionChance", 0, 1, false, "Decrease evasion chance");
+        Move move3 = new Move(MoveType.BUFF, Element.NORMAL, 30, "attack", 3, 2, false, "Increase damage");
+        Move move4 = new Move(MoveType.DEBUFF, Element.NORMAL, 0.1, "evasionChance", 3, 1, false, "Decrease evasion chance");
         Move move5 = new Move(MoveType.ATTACK, Element.FIRE, 40, "health", 1, 10, true, "Strong fire attack");
         Move move6 = new Move(MoveType.ATTACK, Element.GRASS, 20, "health", 0, 0, false, "Grass attack");
         Move move7 = new Move(MoveType.BUFF, Element.GRASS, 0.1, "evasionChance",3, 3, false, "Increase evasion chance" );
-        Move move8 = new Move(MoveType.DEBUFF, Element.GRASS, 20, "defense", 5, 10, true, "Decrease defense");
+        Move move8 = new Move(MoveType.DEBUFF, Element.GRASS, 20, "defense", 3, 10, true, "Decrease defense");
 
         // Create Monsters
 
@@ -51,11 +52,21 @@ public class TurnBasedBattleDemo {
 
         Random random = new Random();
 
+
+        Scanner scanner = new Scanner(System.in);
+        // Fight with random moves
         while (!service.isBattleOver()) {
 
+            System.out.println("Turn: " + service.getTurnCount());
+
+            //int y = scanner.nextInt();
             service.executeTurn(random.nextInt(5) + 1);
+            //service.executeTurn(y);
+
 
         }
+
+        scanner.close();
 
         System.out.println("Player " + service.getWinner().playerId() + " won the battle!");
 

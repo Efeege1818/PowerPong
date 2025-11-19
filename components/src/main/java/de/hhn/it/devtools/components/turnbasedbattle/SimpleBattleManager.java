@@ -17,13 +17,17 @@ public class SimpleBattleManager implements BattleManager {
   private int turnCount;
   private boolean battleOver;
 
+  private BuffTracker buffTracker;
+
   @Override
   public void initializeBattle(Player p1, Player p2, Monster m1, Monster m2) {
+
     this.player1 = p1;
     this.player2 = p2;
 
     this.p1Monster = new SimpleMonster(m1);
     this.p2Monster = new SimpleMonster(m2);
+    this.buffTracker = new BuffTracker(p1Monster, p2Monster);
 
     this.turnCount = 0;
     this.battleOver = false;
@@ -84,6 +88,8 @@ public class SimpleBattleManager implements BattleManager {
       throw new IllegalArgumentException("Invalid move number.");
     }
 
+    buffTracker.tickBuffs();
+
     Move selectedMove = currentMonster.getMove(moveNumber);
 
     switch (selectedMove.type()) {
@@ -102,8 +108,14 @@ public class SimpleBattleManager implements BattleManager {
           }
         }
       }
-      case BUFF -> currentMonster.buffMonster(selectedMove);
-      case DEBUFF -> opponentMonster.debuffMonster(selectedMove);
+      case BUFF -> {
+        currentMonster.buffMonster(selectedMove);
+        buffTracker.addBuff(selectedMove, currentPlayer.playerId());
+      }
+      case DEBUFF -> {
+        opponentMonster.debuffMonster(selectedMove);
+        buffTracker.addBuff(selectedMove, currentPlayer.playerId());
+      }
       default -> throw new IllegalStateException("Unknown move type: " + selectedMove.type());
     }
 

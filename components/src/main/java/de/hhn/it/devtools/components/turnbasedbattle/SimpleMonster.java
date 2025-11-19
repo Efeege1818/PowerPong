@@ -194,7 +194,7 @@ public class SimpleMonster {
             default:
                 logger.warn("Invalid stat for removing buff: {}", stat);
         }
-        logger.debug("Monster buff removed: {}", stat);
+        logger.debug("Monster buff removed: {} and has now {}", stat, getStat(stat));
     }
 
     /**
@@ -221,7 +221,7 @@ public class SimpleMonster {
             default:
                 logger.warn("Invalid stat for removing debuff: {}", stat);
         }
-        logger.debug("Monster debuff removed: {}", stat);
+        logger.debug("Monster debuff removed: {} and has now {}", stat, getStat(stat));
     }
 
     /**
