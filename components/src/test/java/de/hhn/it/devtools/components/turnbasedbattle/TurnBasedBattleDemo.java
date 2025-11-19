@@ -53,8 +53,6 @@ public class TurnBasedBattleDemo {
 
         while (!service.isBattleOver()) {
 
-            System.out.println(service.getCurrentPlayer().playerId());
-
             service.executeTurn(random.nextInt(5) + 1);
 
         }
