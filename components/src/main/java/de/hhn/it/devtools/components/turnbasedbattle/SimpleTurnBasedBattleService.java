@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
+  private static final org.slf4j.Logger logger =
+          org.slf4j.LoggerFactory.getLogger(SimpleTurnBasedBattleService.class);
 
   private GameState gameState;
   private Player player1;
@@ -141,6 +143,8 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
   public void executeTurn(int moveIndex) {
     if (gameState != GameState.RUNNING)
       throw new IllegalStateException("Game must be RUNNING to execute turn.");
+
+    logger.debug("Executing turn with move index {}", moveIndex);
 
     int winner = battleManager.executeTurn(moveIndex);
 

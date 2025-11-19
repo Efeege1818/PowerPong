@@ -139,7 +139,7 @@ public class SimpleMonster {
             default:
                 logger.warn("Invalid stat for buff: {}", stat);
         }
-        logger.debug("Monster buffed: {}", stat);
+        logger.debug("Monster buffed: {} {} and has now {}", amount, stat, getStat(stat));
     }
 
     /**
@@ -167,7 +167,7 @@ public class SimpleMonster {
             default:
                 logger.warn("Invalid stat for debuff: {}", stat);
         }
-        logger.debug("Monster debuffed: {}", stat);
+        logger.debug("Monster debuffed: {} {} and has now {}", amount, stat, getStat(stat));
     }
 
     /**
@@ -252,8 +252,8 @@ public class SimpleMonster {
 
     @Override
     public String toString() {
-        return String.format("SimpleMonster[HP: %d/%d, ATK: %d, DEF: %d, Element: %s]",
-                currentHp, maxHp, attack, defense, element);
+        return String.format("SimpleMonster[HP: %d/%d, ATK: %d, DEF: %d, Element: %s, Evasion: %.2f, Critical: %.2f]",
+                currentHp, maxHp, attack, defense, element, evasionChance, critChance);
     }
 
     /**
@@ -328,6 +328,24 @@ public class SimpleMonster {
      */
     public double getCritChance() {
         return critChance;
+    }
+
+    public String getStat(String stat) {
+        switch (stat) {
+            case "health":
+                return String.valueOf(currentHp);
+            case "attack":
+                return String.valueOf(attack);
+            case "defense":
+                return String.valueOf(defense);
+            case "evasionChance":
+                return String.valueOf(evasionChance);
+            case "critChance":
+                return String.valueOf(critChance);
+            default:
+                throw new IllegalArgumentException("Invalid stat: " + stat);
+        }
+
     }
 
     /**
