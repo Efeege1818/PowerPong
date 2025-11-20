@@ -35,7 +35,7 @@ public class BuffTracker {
                 index = player2Monster;
             }
             buffs.get(index).put(move.duration(), move);
-            logger.debug("Player {} added buff move {}", currentPlayerId, move);
+            logger.debug("Player {} added buff move: {}", currentPlayerId, move.description());
         }
         else if (move.type() == MoveType.DEBUFF) {
             SimpleMonster index;
@@ -45,7 +45,7 @@ public class BuffTracker {
                 index = player1Monster;
             }
             buffs.get(index).put(move.duration(), move);
-            logger.debug("Player {} added debuff move {} to monster {}", currentPlayerId, move, index);
+            logger.debug("Player {} added debuff move: {} to monster {}", currentPlayerId, move.description(), index);
         }
         else {
             logger.warn("Player {} added invalid move type {}", currentPlayerId, move.type());
@@ -68,13 +68,13 @@ public class BuffTracker {
         buffs.get(this.player1Monster).forEach((duration, move) -> {
             if (duration > 0) {  // Only move buffs that haven't expired
                 newBuffs0.put(duration - 1, move);
-                logger.debug("Player 1 buff ticked: {} and has now {} turns duration", move, duration - 1);
+                logger.debug("Player 1 buff ticked: {} | {} turns duration left", move.description(), duration - 1);
             } else if (duration == 0) {
                 if (move.type() == MoveType.BUFF) {
-                    logger.debug("Player 1 buff expired: {}", move);
+                    logger.debug("Player 1 buff expired: {}", move.description());
                     player1Monster.removeBuff(move);
                 } else {
-                    logger.debug("Player 1 debuff expired: {}", move);
+                    logger.debug("Player 1 debuff expired: {}", move.description());
                     player1Monster.removeDebuff(move);
                 }
             }
@@ -86,13 +86,13 @@ public class BuffTracker {
         buffs.get(this.player2Monster).forEach((duration, move) -> {
             if (duration > 0) {  // Only move buffs that haven't expired
                 newBuffs1.put(duration - 1, move);
-                logger.debug("Player 2 buff ticked: {} and has now {} turns duration", move, duration - 1);
+                logger.debug("Player 2 buff ticked: {} | {} turns duration left", move.description(), duration - 1);
             } else if (duration == 0) {
                 if (move.type() == MoveType.BUFF) {
-                    logger.debug("Player 2 buff expired: {}", move);
+                    logger.debug("Player 2 buff expired: {}", move.description());
                     player2Monster.removeBuff(move);
                 } else {
-                    logger.debug("Player 2 debuff expired: {}", move);
+                    logger.debug("Player 2 debuff expired: {}", move.description());
                     player2Monster.removeDebuff(move);
                 }
             }

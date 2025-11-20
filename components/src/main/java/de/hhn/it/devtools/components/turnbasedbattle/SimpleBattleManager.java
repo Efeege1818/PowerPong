@@ -3,6 +3,8 @@ package de.hhn.it.devtools.components.turnbasedbattle;
 import de.hhn.it.devtools.apis.turnbasedbattle.*;
 
 public class SimpleBattleManager implements BattleManager {
+  private static final org.slf4j.Logger logger =
+          org.slf4j.LoggerFactory.getLogger(SimpleBattleManager.class);
 
   private Player player1;
   private Player player2;
@@ -41,6 +43,7 @@ public class SimpleBattleManager implements BattleManager {
       this.currentMonster = p2Monster;
       this.opponentMonster = p1Monster;
     }
+    logger.debug("Starting player: {} with monster {}", currentPlayer.playerId(), currentMonster);
   }
 
   @Override
@@ -91,6 +94,8 @@ public class SimpleBattleManager implements BattleManager {
     buffTracker.tickBuffs();
 
     Move selectedMove = currentMonster.getMove(moveNumber);
+
+    logger.debug("Player {} executing move: {}", currentPlayer.playerId(), selectedMove.description());
 
     switch (selectedMove.type()) {
       case ATTACK -> {

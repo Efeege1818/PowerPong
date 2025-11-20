@@ -83,17 +83,17 @@ public class SimpleMonster {
 
         //Fire
         if (target.getElement() == Element.FIRE) {
-            return moveElement == Element.GRASS;
+            return moveElement == Element.WATER;
         }
 
         //Water
         if (target.getElement() == Element.WATER) {
-            return moveElement == Element.FIRE;
+            return moveElement == Element.GRASS;
         }
 
         //Grass
         if (target.getElement() == Element.GRASS) {
-            return moveElement == Element.WATER;
+            return moveElement == Element.FIRE;
         }
         return false;
 

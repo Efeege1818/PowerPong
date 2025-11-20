@@ -21,12 +21,14 @@ public class DamageCalculator {
      */
     public static int calculateDamage(Move move, SimpleMonster target, SimpleMonster attacker, boolean isCritical, boolean isEffective) {
         double damage = move.amount() + attacker.getAttack();
-        logger.debug("Monster attacks with {} attack", attacker.getAttack());
+        logger.debug("Monster attacks with {} attack and {}% critical chance", attacker.getAttack(), attacker.getCritChance() * 100);
         if (isCritical) {
             damage *= 1.5; // TODO: hardcoded critical multiplier
+            logger.debug("Critical hit! Damage increased by 50%");
         }
         if (isEffective) {
             damage *= 1.5; // TODO: hardcoded effective multiplier
+            logger.debug("Effective attack! Damage increased by 50%");
         }
 
         damage -= target.getDefense();
