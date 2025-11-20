@@ -31,7 +31,7 @@ public class SimpleMonster {
      */
     public SimpleMonster(Monster monster) {
         this.maxHp = monster.maxHp();
-        this.currentHp = monster.currentHp();
+        this.currentHp = monster.maxHp();
         this.attack = monster.attack();
         this.defense = monster.defense();
         this.evasionChance = monster.evasionChance();

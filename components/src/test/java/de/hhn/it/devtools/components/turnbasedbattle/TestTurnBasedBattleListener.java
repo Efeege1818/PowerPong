@@ -49,8 +49,9 @@ public class TestTurnBasedBattleListener implements TurnBasedBattleListener {
             throw new IllegalArgumentException("Each player must have an assigned monster");
         }
 
-        player1Health = player1.monster().currentHp();
-        player2Health = player2.monster().currentHp();
+        // Ich habs auskommentiert weil es falsch ist da der monster ein record ist und deshalb es keinen currentHp gibt
+        //player1Health = player1.monster().currentHp();
+        //player2Health = player2.monster().currentHp();
     }
 
     /**
