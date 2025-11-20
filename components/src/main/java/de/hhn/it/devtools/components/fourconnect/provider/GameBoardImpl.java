@@ -12,11 +12,10 @@ public class GameBoardImpl implements GameBoard {
 
   public static final int ROWS = 6;
   public static final int COLUMNS = 7;
-
-  private final Field[][] fields;
+  private final FieldImpl[][] fields;
 
   public GameBoardImpl() {
-    this.fields = new Field[ROWS][COLUMNS];
+    this.fields = new FieldImpl[ROWS][COLUMNS];
   }
 
   @Override
@@ -45,41 +44,9 @@ public class GameBoardImpl implements GameBoard {
   void clearBoard() {
     for (int r = 0; r < ROWS; r++) {
       for (int c = 0; c < COLUMNS; c++) {
-        fields[r][c] = new Field() {
-          @Override
-          public Player getOccupyingPlayer() {
-            return null;
-          }
-
-          @Override
-          public boolean isToxicZone() {
-            return false;
-          }
-
-          @Override
-          public int getDecayTime() {
-            return 0;
-          }
-
-          @Override
-          public Player getOccupyingPlayer(Player player) {
-            return null;
-          }
-
-          @Override
-          public boolean isToxic() {
-            return false;
-          }
-        };
+        fields[r][c] = new FieldImpl(false);
       }
     }
-  }
-
-  /**
-   * Gets the concrete FieldImpl object (package-private).
-   */
-  Field getFieldImpl(int row, int column) {
-    return fields[row][column];
   }
 
   /**
@@ -89,14 +56,14 @@ public class GameBoardImpl implements GameBoard {
 
   int placeChip(int column, Player player) {
     for (int r = ROWS - 1; r >= 0; r--) {
-      if (fields[r][column].getOccupyingPlayer(player) == null) {
-        fields[r][column].getOccupyingPlayer(player);
+      if (fields[r][column].getOccupyingPlayer() == null) {
+        fields[r][column].setOccupyingPlayer(player);
 
-        if (fields[r][column].isToxic()) {
+        if (fields[r][column].isToxicZone()) {
+          fields[r][column].setDecayTime(3);
         }
         return r;
       }
     }
     return -1;
-  }
-}
+  }}

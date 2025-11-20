@@ -42,26 +42,25 @@ public class ConnectFourServiceImpl implements ConnectFourService {
     public void startGame(GameConfiguration configuration) {
         this.configuration = configuration;
         this.board.clearBoard(); // Setzt das Board zurück (Annahme: clearBoard existiert und initialisiert)
-
-        // TODO: Logik zur Platzierung der toxischen Felder (kommt später)
-
         this.currentPlayer = player1;
         this.gameActive = true; // Setzt das Spiel aktiv
     }
-
     @Override
     public int dropChip(int column) throws IllegalParameterException, OperationNotSupportedException {
-        // Prüfe, ob das Spiel gestartet ist
         if (!gameActive) {
             throw new OperationNotSupportedException("Game is not active. Call startGame() first.");
         }
-
-        // Prüfe auf ungültige Spalten
         if (column < 0 || column >= GameBoardImpl.COLUMNS) {
             throw new IllegalParameterException("Column index " + column + " is out of bounds (0-6).");
         }
+        int row = board.placeChip(column, currentPlayer);
 
-        return 0;
+        if (row == -1) {
+            throw new IllegalParameterException("Column " + column + " is already full.");
+        }
+        this.currentPlayer = (currentPlayer == player1) ? player2 : player1;
+
+        return row;
     }
 
     @Override
