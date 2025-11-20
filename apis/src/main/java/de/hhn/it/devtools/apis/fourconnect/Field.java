@@ -9,7 +9,6 @@ public interface Field {
     /**
      * Returns the player occupying this field, or null if empty.
      */
-    Player getOccupyingPlayer();
 
     boolean isToxicZone();
 
