@@ -65,16 +65,18 @@ public class TurnBasedBattleDemo {
 
             System.out.println("Turn: " + service.getTurnCount());
 
-            System.out.print("Enter move index (1-5): ");
+            System.out.print("Enter move index (1-5) or type -1 to see moves: ");
             int y = scanner.nextInt();
             if (y == -1) {
                 HashMap<Integer, Move> moves = service.getCurrentPlayer().monster().moves();
                 for (Map.Entry<Integer, Move> entry : moves.entrySet()) {
                     System.out.println(entry.getKey() + " - " + entry.getValue().description());
                 }
-            } else {
+            } else if (y >= 1 && y <= 5) {
                 //service.executeTurn(random.nextInt(5) + 1);
                 service.executeTurn(y);
+            } else {
+                System.out.println("Invalid move index. Please enter a number between 1 and 5 or -1.");
             }
 
 
