@@ -16,7 +16,7 @@ public interface ConnectFourService {
    */
   void startGame(GameConfiguration configuration);
 
-  void registerListener(GameListener listener);
+  void registerListener(GameListener listener) throws OperationNotSupportedException;
 
   /**
    * Attempts to drop the current player's chip into the specified column.
@@ -69,5 +69,5 @@ public interface ConnectFourService {
    */
   void removeGameListener(GameListener listener);
 
-    void applyToxicDecay();
+    void applyToxicDecay() throws OperationNotSupportedException;
 }
