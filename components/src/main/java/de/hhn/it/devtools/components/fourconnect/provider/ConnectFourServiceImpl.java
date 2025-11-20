@@ -15,7 +15,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Concrete implementation of the ConnectFourService facade.
+ * Concrete implementation of the {@link ConnectFourService} facade.
+ * <p>
+ * This class serves as the main entry point for controlling and managing a game
+ * of Four-Connect. It holds the current game state, manages the {@link GameBoardImpl},
+ * tracks the current player, and implements core game logic like starting a game
+ * and dropping chips.
+ * </p>
  */
 public class ConnectFourServiceImpl implements ConnectFourService {
     private final GameBoardImpl board;
@@ -29,7 +35,11 @@ public class ConnectFourServiceImpl implements ConnectFourService {
     private GameConfiguration configuration;
     private boolean gameActive = false;
 
-    /** Constructor */
+    /**
+     * Constructs a new {@code ConnectFourServiceImpl}.
+     * Initializes the {@link GameBoardImpl}, sets up the {@link GameRules},
+     * and creates the two default {@link Player} objects (Red and Yellow).
+     */
     public ConnectFourServiceImpl() {
         this.board = new GameBoardImpl();
         this.gameRules = new GameRules(GameBoardImpl.ROWS, GameBoardImpl.COLUMNS);
@@ -38,13 +48,35 @@ public class ConnectFourServiceImpl implements ConnectFourService {
         this.player2 = new Player("Player Yellow", PlayerColor.YELLOW);
     }
 
+    /**
+     * Initializes and starts a new game of Four-Connect.
+     * <p>
+     * This method saves the provided configuration, clears the board, sets the
+     * current player to Player 1 (Red), and sets the game state to active.
+     * </p>
+     *
+     * @param configuration The configuration to be used for the new game.
+     */
     @Override
     public void startGame(GameConfiguration configuration) {
         this.configuration = configuration;
-        this.board.clearBoard(); // Setzt das Board zurück (Annahme: clearBoard existiert und initialisiert)
+        this.board.clearBoard();
         this.currentPlayer = player1;
-        this.gameActive = true; // Setzt das Spiel aktiv
+        this.gameActive = true;
     }
+
+    /**
+     * Attempts to drop a chip for the {@link #currentPlayer} into the specified column.
+     * <p>
+     * If successful, the chip is placed at the lowest available row in that column,
+     * and the turn switches to the next player.
+     * </p>
+     *
+     * @param column The 0-based index of the column to drop the chip into.
+     * @return The row index (0-based) where the chip landed.
+     * @throws IllegalParameterException If the column index is out of bounds or the column is full.
+     * @throws OperationNotSupportedException If the game is not currently active.
+     */
     @Override
     public int dropChip(int column) throws IllegalParameterException, OperationNotSupportedException {
         if (!gameActive) {
@@ -58,21 +90,40 @@ public class ConnectFourServiceImpl implements ConnectFourService {
         if (row == -1) {
             throw new IllegalParameterException("Column " + column + " is already full.");
         }
+        // Switch player
         this.currentPlayer = (currentPlayer == player1) ? player2 : player1;
 
         return row;
     }
 
+    /**
+     * Registers a game listener to receive updates about the game state.
+     *
+     * @param listener The listener to register.
+     * @throws OperationNotSupportedException This method is currently not implemented.
+     * @deprecated Use {@link #addGameListener(GameListener)} instead.
+     */
     @Override
     public void registerListener(GameListener listener) throws OperationNotSupportedException {
         throw new OperationNotSupportedException("Method not implemented.");
     }
 
+    /**
+     * Returns the current state of the game board.
+     *
+     * @return The active {@link GameBoard}.
+     */
     @Override
     public GameBoard getBoard() {
         return this.board;
     }
 
+    /**
+     * Returns the player whose turn it currently is.
+     *
+     * @return The current {@link Player}.
+     * @throws OperationNotSupportedException If the game has not been initialized ({@code startGame} has not been called).
+     */
     @Override
     public Player getCurrentPlayer() throws OperationNotSupportedException {
         if (currentPlayer == null) {
@@ -81,26 +132,54 @@ public class ConnectFourServiceImpl implements ConnectFourService {
         return currentPlayer;
     }
 
+    /**
+     * Checks if the last move resulted in a win condition (four chips in a row).
+     *
+     * @return {@code true} if a player has won, {@code false} otherwise.
+     * @throws OperationNotSupportedException This method is currently not implemented.
+     */
     @Override
     public boolean checkForWin() throws OperationNotSupportedException {
         throw new OperationNotSupportedException("Method not implemented.");
     }
 
+    /**
+     * Checks if the game has ended in a draw.
+     *
+     * @return {@code true} if the game is a draw, {@code false} otherwise.
+     * @throws OperationNotSupportedException This method is currently not implemented.
+     */
     @Override
     public boolean checkForDraw() throws OperationNotSupportedException {
         throw new OperationNotSupportedException("Method not implemented.");
     }
 
+    /**
+     * Adds a {@link GameListener} to the list of objects receiving game state updates.
+     *
+     * @param listener The listener to be added.
+     */
     @Override
     public void addGameListener(GameListener listener) {
-
+        // Implementation missing: Should add listener to the 'listeners' list.
     }
 
+    /**
+     * Removes a {@link GameListener} from the list of objects receiving game state updates.
+     *
+     * @param listener The listener to be removed.
+     */
     @Override
     public void removeGameListener(GameListener listener) {
-
+        // Implementation missing: Should remove listener from the 'listeners' list.
     }
 
+    /**
+     * Applies the toxic decay effect across the board, reducing the decay timer
+     * on relevant fields and potentially removing chips.
+     *
+     * @throws OperationNotSupportedException This method is currently not implemented.
+     */
     @Override
     public void applyToxicDecay() throws OperationNotSupportedException {
         throw new OperationNotSupportedException("Method not implemented.");
