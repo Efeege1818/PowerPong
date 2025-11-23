@@ -3,7 +3,7 @@ package de.hhn.it.devtools.components.towerdefensecomponents;
 import de.hhn.it.devtools.apis.towerdefenseapi.Coordinates;
 import de.hhn.it.devtools.apis.towerdefenseapi.EnemyType;
 
-public class BasicEnemy {
+public class EnemyToolbox {
 
   int id;
   int speed;

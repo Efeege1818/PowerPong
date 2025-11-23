@@ -3,7 +3,7 @@ package de.hhn.it.devtools.components.towerdefensecomponents;
 import de.hhn.it.devtools.apis.towerdefenseapi.Coordinates;
 import de.hhn.it.devtools.apis.towerdefenseapi.TowerType;
 
-public class BasicTower {
+public class TowerToolbox {
 
   private TowerType towerType;
   int id;
