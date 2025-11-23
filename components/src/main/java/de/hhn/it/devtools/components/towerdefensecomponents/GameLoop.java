@@ -16,9 +16,24 @@ public interface GameLoop extends Runnable {
    */
   void updateGame() throws IllegalStateException;
 
+  /**
+   * End game tick, no tick after this is possible.
+   *
+   * @throws IllegalStateException if game is not running
+   */
   void endGame();
 
+  /**
+   * Saves last game round and makes it possible to retry that round if failed.
+   *
+   * @throws IllegalStateException if game is not running
+   */
   void retry();
 
+  /**
+   * Halts game and makes it possible to resume.
+   *
+   * @throws IllegalStateException if game is not running
+   */
   void pauseGame();
 }

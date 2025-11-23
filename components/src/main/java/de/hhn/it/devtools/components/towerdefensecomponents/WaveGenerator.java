@@ -1,15 +1,15 @@
 package de.hhn.it.devtools.components.towerdefensecomponents;
 
 import de.hhn.it.devtools.apis.towerdefenseapi.Enemy;
-
 import java.util.Map;
 
 /**
  * Generator that generates the subsequent enemy waves.
+ * Once generated it must save the enemies to a specific round.
  */
 public interface WaveGenerator {
 
-  // TODO: Methoden adden
+  // TODO: add methods
 
   /**
    * Calculates the total enemy power for a given wave.
