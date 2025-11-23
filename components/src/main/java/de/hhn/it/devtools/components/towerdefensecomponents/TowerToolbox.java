@@ -17,13 +17,15 @@ public class TowerToolbox {
    * @param enemies as list of enemies
    * @return {@code true} if attack was successful
    *         {@code false} otherwise
-   * @throws IllegalArgumentException if enemyID does not exist or is out of range.
+   * @throws IllegalArgumentException if towers or enemies do not exist.
    */
   public ArrayList<Enemy> action(List<Tower> towers, List<Enemy> enemies) throws IllegalArgumentException {
     return null;
   }
 
-
+  public int moneyMade(List<Tower> towers, List<Enemy> enemies){
+    return 0;
+  }
 
 
 
