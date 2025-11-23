@@ -1,25 +1,42 @@
 package de.hhn.it.devtools.components.towerdefensecomponents;
 
 import de.hhn.it.devtools.apis.towerdefenseapi.Coordinates;
+import de.hhn.it.devtools.apis.towerdefenseapi.Enemy;
+import de.hhn.it.devtools.apis.towerdefenseapi.Tower;
 import de.hhn.it.devtools.apis.towerdefenseapi.TowerType;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class TowerToolbox {
 
-  private TowerType towerType;
-  int id;
-  int attackSpeed;
-  int price;
-  int range;
-  Coordinates coords;
-  TowerType type;
+
+  /**
+   * Attacks the enemy in range, that has advanced the furthest on the path.
+   *
+   * @param enemies as list of enemies
+   * @return {@code true} if attack was successful
+   *         {@code false} otherwise
+   * @throws IllegalArgumentException if enemyID does not exist or is out of range.
+   */
+  public ArrayList<Enemy> action(List<Tower> towers, List<Enemy> enemies) throws IllegalArgumentException {
+    return null;
+  }
+
+
+
+
+
+
 
   /**
    * Returns the coordinates where the tower is placed on the map.
    *
    * @return the tower's position as Coordinates
    */
+  @Deprecated //Methode is unnötig
   Coordinates getCoordinates() {
-    return coords;
+    return null;
   }
 
   /**
@@ -27,21 +44,8 @@ public class TowerToolbox {
    *
    * @return the TowerType of this tower
    */
+  @Deprecated //Methode is unnötig
   TowerType getTowerType() {
-    return type;
+    return null;
   }
-
-  /**
-   * Attacks the enemy in range, that has advanced the furthest on the path.
-   *
-   * @param enemyId the ID of the targeted enemy
-   * @return {@code true} if attack was successful
-   *         {@code false} otherwise
-   * @throws IllegalArgumentException if enemyID does not exist or is out of range.
-   */
-  public boolean attack(int enemyId) throws IllegalArgumentException {
-    // TODO: need logic check and parser into enemy class
-    return false;
-  }
-
 }
