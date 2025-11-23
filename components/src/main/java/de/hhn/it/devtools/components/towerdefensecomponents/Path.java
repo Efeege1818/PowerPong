@@ -17,5 +17,4 @@ public interface Path {
    */
   ArrayList<Coordinates> getPath();
 
-
 }
