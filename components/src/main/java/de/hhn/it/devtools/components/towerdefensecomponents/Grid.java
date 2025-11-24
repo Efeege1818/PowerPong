@@ -7,18 +7,18 @@ import de.hhn.it.devtools.apis.towerdefenseapi.Direction;
  */
 public interface Grid {
 
-  /**
-   * Generates a new Map and saves it as a two-dimensional array.
-   *
-   * @param size the length and height of the map
-   */
-  public void generateGrid(int size);
+	/**
+	 * Generates a new Map and saves it as a two-dimensional array.
+	 *
+	 * @param size the length and height of the map must be a positive number
+	 */
+	public void generateGrid(int size) throws IllegalArgumentException;
 
-  /**
-   * Provides a copy of the underlying Data Structure that represents the enemy path.
-   *
-   * @return the grid of Directions as a two-dimensional array
-   */
-  public Direction[][] getGrid();
+	/**
+	 * Provides a copy of the underlying Data Structure that represents the enemy path.
+	 *
+	 * @return the grid of Directions as a two-dimensional array
+	 */
+	public Direction[][] getGrid() throws RuntimeException;
 
 }

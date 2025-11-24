@@ -12,17 +12,22 @@ public class SimpleGameLoop implements GameLoop {
     }
 
     @Override
-    public void endGame() {
+    public void endGame() throws IllegalStateException {
 
     }
 
     @Override
-    public void retry() {
+    public void retry() throws IllegalStateException {
 
     }
 
     @Override
-    public void pauseGame() {
+    public void pauseGame() throws IllegalStateException {
+
+    }
+
+    @Override
+    public void resumeRound() throws IllegalStateException {
 
     }
 }
