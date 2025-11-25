@@ -19,8 +19,9 @@ import de.hhn.it.devtools.apis.fourconnect.Player;
 public class FieldImpl implements Field {
 
   private Player owner = null;
-  private final boolean isToxicZone;
+  private boolean isToxicZone;
   private int decayTime = 0;
+  private int toxicTimer = 3;
 
   /**
    * Constructs a new field instance.
@@ -88,9 +89,24 @@ public class FieldImpl implements Field {
    *
    * @param time The initial countdown time (e.g., 3).
    */
-  void setDecayTime(int time) {
+  public void setDecayTime(int time) {
     this.decayTime = time;
   }
+
+  public boolean isOccupied() {
+    return this.getOccupyingPlayer() != null;
+  }
+
+  public boolean isToxicTimerExpired() {
+    return this.toxicTimer <= 0;
+  }
+
+  // Taşlar düştükten sonra sayacı tekrar 3 yap
+  public void resetToxicTimer() {
+    this.toxicTimer = 3;
+  }
+
+
 
   /**
    * Decrements the decay timer by one, provided the time is greater than zero.
@@ -103,5 +119,9 @@ public class FieldImpl implements Field {
     if (this.decayTime > 0) {
       this.decayTime--;
     }
+  }
+
+  public void setToxicZone(boolean isToxic) { // HINWEIS: Kein 'public' vor 'void'
+    this.isToxicZone = isToxic;
   }
 }

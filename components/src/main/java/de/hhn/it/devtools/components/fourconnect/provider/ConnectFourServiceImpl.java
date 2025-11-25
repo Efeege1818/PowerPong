@@ -138,9 +138,52 @@ public class ConnectFourServiceImpl implements ConnectFourService {
      * @return {@code true} if a player has won, {@code false} otherwise.
      * @throws OperationNotSupportedException This method is currently not implemented.
      */
-    @Override
-    public boolean checkForWin() throws OperationNotSupportedException {
-        throw new OperationNotSupportedException("Method not implemented.");
+    public boolean checkForWin() {
+
+
+        for (int r = 0; r < GameBoardImpl.ROWS; r++) {
+            for (int c = 0; c < GameBoardImpl.COLUMNS; c++) {
+                Player p = board.getField(r, c).getOccupyingPlayer();
+                if (p == null) continue;
+
+
+                if (r + 3 < GameBoardImpl.ROWS) {
+                    if (p == board.getField(r + 1, c).getOccupyingPlayer() &&
+                        p == board.getField(r + 2, c).getOccupyingPlayer() &&
+                        p == board.getField(r + 3, c).getOccupyingPlayer()) {
+                        return true;
+                    }
+                }
+
+
+                if (c + 3 < GameBoardImpl.COLUMNS) {
+                    if (p == board.getField(r, c + 1).getOccupyingPlayer() &&
+                        p == board.getField(r, c + 2).getOccupyingPlayer() &&
+                        p == board.getField(r, c + 3).getOccupyingPlayer()) {
+                        return true;
+                    }
+                }
+
+
+                if (r + 3 < GameBoardImpl.ROWS && c + 3 < GameBoardImpl.COLUMNS) {
+                    if (p == board.getField(r + 1, c + 1).getOccupyingPlayer() &&
+                        p == board.getField(r + 2, c + 2).getOccupyingPlayer() &&
+                        p == board.getField(r + 3, c + 3).getOccupyingPlayer()) {
+                        return true;
+                    }
+                }
+
+
+                if (r + 3 < GameBoardImpl.ROWS && c - 3 >= 0) {
+                    if (p == board.getField(r + 1, c - 1).getOccupyingPlayer() &&
+                        p == board.getField(r + 2, c - 2).getOccupyingPlayer() &&
+                        p == board.getField(r + 3, c - 3).getOccupyingPlayer()) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     /**

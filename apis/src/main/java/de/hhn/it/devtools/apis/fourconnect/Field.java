@@ -14,4 +14,9 @@ public interface Field {
 
     /** Returns the remaining decay time for a chip on this field (e.g., 3, 2, 1). */
     int getDecayTime();
+
+
+    boolean isOccupied();
+
+
 }
