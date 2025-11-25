@@ -149,8 +149,8 @@ public class ConnectFourServiceImpl implements ConnectFourService {
 
                 if (r + 3 < GameBoardImpl.ROWS) {
                     if (p == board.getField(r + 1, c).getOccupyingPlayer() &&
-                        p == board.getField(r + 2, c).getOccupyingPlayer() &&
-                        p == board.getField(r + 3, c).getOccupyingPlayer()) {
+                            p == board.getField(r + 2, c).getOccupyingPlayer() &&
+                            p == board.getField(r + 3, c).getOccupyingPlayer()) {
                         return true;
                     }
                 }
@@ -158,8 +158,8 @@ public class ConnectFourServiceImpl implements ConnectFourService {
 
                 if (c + 3 < GameBoardImpl.COLUMNS) {
                     if (p == board.getField(r, c + 1).getOccupyingPlayer() &&
-                        p == board.getField(r, c + 2).getOccupyingPlayer() &&
-                        p == board.getField(r, c + 3).getOccupyingPlayer()) {
+                            p == board.getField(r, c + 2).getOccupyingPlayer() &&
+                            p == board.getField(r, c + 3).getOccupyingPlayer()) {
                         return true;
                     }
                 }
@@ -167,8 +167,8 @@ public class ConnectFourServiceImpl implements ConnectFourService {
 
                 if (r + 3 < GameBoardImpl.ROWS && c + 3 < GameBoardImpl.COLUMNS) {
                     if (p == board.getField(r + 1, c + 1).getOccupyingPlayer() &&
-                        p == board.getField(r + 2, c + 2).getOccupyingPlayer() &&
-                        p == board.getField(r + 3, c + 3).getOccupyingPlayer()) {
+                            p == board.getField(r + 2, c + 2).getOccupyingPlayer() &&
+                            p == board.getField(r + 3, c + 3).getOccupyingPlayer()) {
                         return true;
                     }
                 }
@@ -176,8 +176,8 @@ public class ConnectFourServiceImpl implements ConnectFourService {
 
                 if (r + 3 < GameBoardImpl.ROWS && c - 3 >= 0) {
                     if (p == board.getField(r + 1, c - 1).getOccupyingPlayer() &&
-                        p == board.getField(r + 2, c - 2).getOccupyingPlayer() &&
-                        p == board.getField(r + 3, c - 3).getOccupyingPlayer()) {
+                            p == board.getField(r + 2, c - 2).getOccupyingPlayer() &&
+                            p == board.getField(r + 3, c - 3).getOccupyingPlayer()) {
                         return true;
                     }
                 }
@@ -192,9 +192,15 @@ public class ConnectFourServiceImpl implements ConnectFourService {
      * @return {@code true} if the game is a draw, {@code false} otherwise.
      * @throws OperationNotSupportedException This method is currently not implemented.
      */
-    @Override
-    public boolean checkForDraw() throws OperationNotSupportedException {
-        throw new OperationNotSupportedException("Method not implemented.");
+    public boolean checkForDraw() {
+        for (int r = 0; r < GameBoardImpl.ROWS; r++) {
+            for (int c = 0; c < GameBoardImpl.COLUMNS; c++) {
+                if (board.getField(r, c).getOccupyingPlayer() == null) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**
@@ -217,14 +223,41 @@ public class ConnectFourServiceImpl implements ConnectFourService {
         // Implementation missing: Should remove listener from the 'listeners' list.
     }
 
+
+
+
+
     /**
      * Applies the toxic decay effect across the board, reducing the decay timer
      * on relevant fields and potentially removing chips.
      *
      * @throws OperationNotSupportedException This method is currently not implemented.
      */
-    @Override
     public void applyToxicDecay() throws OperationNotSupportedException {
-        throw new OperationNotSupportedException("Method not implemented.");
+        for (int r = 0; r < GameBoardImpl.ROWS; r++) {
+            for (int c = 0; c < GameBoardImpl.COLUMNS; c++) {
+                FieldImpl currentField = (FieldImpl) board.getField(r, c);
+                if (currentField.isToxicZone() && currentField.isOccupied()) {
+                    currentField.decrementDecayTime();
+                    if (currentField.getDecayTime() <= 0) {
+                        System.out.println("Poison activated! Column: " + c + ", Row: " + r);
+                        for (int i = r; i > 0; i--) {
+                            FieldImpl fieldCurrent = (FieldImpl) board.getField(i, c);
+                            FieldImpl fieldAbove = (FieldImpl) board.getField(i - 1, c);
+                            fieldCurrent.setOccupyingPlayer(fieldAbove.getOccupyingPlayer());
+                        }
+
+                        FieldImpl topField = (FieldImpl) board.getField(0, c);
+                        topField.setOccupyingPlayer(null);
+                        if (currentField.isOccupied()) {
+                            currentField.setDecayTime(3);
+                        } else {
+                            currentField.setDecayTime(0);
+                        }
+                    }
+                }
+            }
+        }
     }
+
 }
