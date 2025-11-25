@@ -101,7 +101,7 @@ public class FieldImpl implements Field {
     return this.toxicTimer <= 0;
   }
 
-  // Taşlar düştükten sonra sayacı tekrar 3 yap
+
   public void resetToxicTimer() {
     this.toxicTimer = 3;
   }
@@ -121,7 +121,7 @@ public class FieldImpl implements Field {
     }
   }
 
-  public void setToxicZone(boolean isToxic) { // HINWEIS: Kein 'public' vor 'void'
+  public void setToxicZone(boolean isToxic) {
     this.isToxicZone = isToxic;
   }
 }
