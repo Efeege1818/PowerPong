@@ -12,16 +12,16 @@ import java.util.NoSuchElementException;
  *
  * <p>This record is immutable — once created, the enemy’s properties cannot change.
  *
- * @param id          a unique Identifier
- * @param coordinates the position of this enemy on the Board
- * @param type        the EnemyType of this Enemy
- * @param health      the current Health of this enemy
- * @param index       the current index in the path progression
+ * @param id            a unique Identifier
+ * @param coordinates   the position of this enemy on the Board
+ * @param type          the EnemyType of this Enemy
+ * @param currentHealth the current Health of this enemy
+ * @param index         the current index in the path progression
  */
 public record Enemy(int id,
                     Coordinates coordinates,
                     EnemyType type,
-                    int health,
+                    int currentHealth,
                     int index
 ) {
 
