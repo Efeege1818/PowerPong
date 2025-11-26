@@ -6,7 +6,6 @@ import de.hhn.it.devtools.apis.fourconnect.GameListener;
 import de.hhn.it.devtools.apis.fourconnect.GameBoard;
 import de.hhn.it.devtools.apis.fourconnect.Player;
 import de.hhn.it.devtools.apis.fourconnect.PlayerColor;
-import de.hhn.it.devtools.apis.fourconnect.GameRules;
 
 import de.hhn.it.devtools.apis.exceptions.IllegalParameterException;
 import de.hhn.it.devtools.apis.exceptions.OperationNotSupportedException;
@@ -25,7 +24,6 @@ import java.util.List;
  */
 public class ConnectFourServiceImpl implements ConnectFourService {
     private final GameBoardImpl board;
-    private final GameRules gameRules;
     private final List<GameListener> listeners;
 
     private final Player player1;
@@ -35,14 +33,9 @@ public class ConnectFourServiceImpl implements ConnectFourService {
     private GameConfiguration configuration;
     private boolean gameActive = false;
 
-    /**
-     * Constructs a new {@code ConnectFourServiceImpl}.
-     * Initializes the {@link GameBoardImpl}, sets up the {@link GameRules},
-     * and creates the two default {@link Player} objects (Red and Yellow).
-     */
+
     public ConnectFourServiceImpl() {
         this.board = new GameBoardImpl();
-        this.gameRules = new GameRules(GameBoardImpl.ROWS, GameBoardImpl.COLUMNS);
         this.listeners = new ArrayList<>();
         this.player1 = new Player("Player Red", PlayerColor.RED);
         this.player2 = new Player("Player Yellow", PlayerColor.YELLOW);
