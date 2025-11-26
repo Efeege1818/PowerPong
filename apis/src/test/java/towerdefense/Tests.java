@@ -19,7 +19,7 @@ public class Tests {
     }
 
     @Test
-    void constructorStoresAllValues() {
+    void checkEnemyAttributesWork() {
         Coordinates pos = new Coordinates(3, 4);
         Coordinates position = new Coordinates(3,4);
         Enemy enemy = new Enemy(1, pos, EnemyType.SMALL, 50, 0);
