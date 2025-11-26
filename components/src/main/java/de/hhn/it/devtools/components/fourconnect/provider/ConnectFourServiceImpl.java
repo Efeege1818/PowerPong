@@ -56,7 +56,12 @@ public class ConnectFourServiceImpl implements ConnectFourService {
         this.board.clearBoard();
         this.currentPlayer = player1;
         this.gameActive = true;
+
+        // Listener benachrichtigen
+        notifyBoardChanged();
+        notifyTurnChanged();
     }
+
 
     /**
      * Attempts to drop a chip for the {@link #currentPlayer} into the specified column.
@@ -97,9 +102,12 @@ public class ConnectFourServiceImpl implements ConnectFourService {
      * @deprecated Use {@link #addGameListener(GameListener)} instead.
      */
     @Override
-    public void registerListener(GameListener listener) throws OperationNotSupportedException {
-        throw new OperationNotSupportedException("Method not implemented.");
+    @Deprecated
+    public void registerListener(GameListener listener) {
+        // Delegiert auf die neue Methode
+        addGameListener(listener);
     }
+
 
     /**
      * Returns the current state of the game board.
@@ -203,7 +211,12 @@ public class ConnectFourServiceImpl implements ConnectFourService {
      */
     @Override
     public void addGameListener(GameListener listener) {
-        // Implementation missing: Should add listener to the 'listeners' list.
+        if (listener == null) {
+            return;
+        }
+        if (!listeners.contains(listener)) {
+            listeners.add(listener);
+        }
     }
 
     /**
@@ -213,7 +226,7 @@ public class ConnectFourServiceImpl implements ConnectFourService {
      */
     @Override
     public void removeGameListener(GameListener listener) {
-        // Implementation missing: Should remove listener from the 'listeners' list.
+        listeners.remove(listener);
     }
 
 
@@ -252,5 +265,23 @@ public class ConnectFourServiceImpl implements ConnectFourService {
             }
         }
     }
+    private void notifyTurnChanged() {
+        for (GameListener listener : listeners) {
+            listener.onTurnChanged(currentPlayer);
+        }
+    }
+
+    private void notifyBoardChanged() {
+        for (GameListener listener : listeners) {
+            listener.onBoardChanged(board);
+        }
+    }
+
+    private void notifyGameEnded(Player winner, boolean isDraw) {
+        for (GameListener listener : listeners) {
+            listener.onGameEnded(winner, isDraw);
+        }
+    }
+
 
 }
