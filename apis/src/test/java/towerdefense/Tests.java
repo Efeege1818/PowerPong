@@ -1,12 +1,9 @@
 package towerdefense;
 
-import de.hhn.it.devtools.apis.towerdefenseapi.Coordinates;
-import de.hhn.it.devtools.apis.towerdefenseapi.Enemy;
-import de.hhn.it.devtools.apis.towerdefenseapi.EnemyType;
-import de.hhn.it.devtools.apis.towerdefenseapi.Player;
+import de.hhn.it.devtools.apis.towerdefenseapi.*;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class Tests {
 
@@ -30,4 +27,15 @@ public class Tests {
         assertEquals(50, enemy.currentHealth());
         assertEquals(0, enemy.index());
     }
+
+    @Test
+    void checkTowerValues() {
+        Coordinates pos = new Coordinates(3, 4);
+        Tower tower = new Tower(10, pos, TowerType.RANGED);
+
+        assertEquals(10, tower.id());
+        assertEquals(pos, tower.coordinates());
+        assertEquals(TowerType.RANGED, tower.type());
+    }
+
 }
