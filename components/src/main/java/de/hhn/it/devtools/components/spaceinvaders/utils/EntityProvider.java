@@ -38,12 +38,12 @@ public class EntityProvider {
     int row = 1;
     int col = 1;
     for(int i = 1; i <= Constans.NUMBER_OF_ALIENS; i++){
+      aliens.put(i, new SimpleAlien(new Coordinate(col*10, 10*row), AlienType.BASIC, i));
+      col++;
       if(i % 10 == 0) {
         row++;
         col = 1;
       }
-      aliens.put(i, new SimpleAlien(new Coordinate(col*10, 10*row), AlienType.BASIC, i));
-      col++;
     }
   }
 
