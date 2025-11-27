@@ -30,6 +30,7 @@ public class GameBoardImpl implements GameBoard {
    */
   public GameBoardImpl() {
     this.fields = new FieldImpl[ROWS][COLUMNS];
+    clearBoard();
   }
 
   /**
@@ -101,16 +102,26 @@ public class GameBoardImpl implements GameBoard {
    * @return The row index (0-based) where the chip landed, or -1 if the column is full.
    */
   int placeChip(int column, Player player) {
-    for (int r = ROWS - 1; r >= 0; r--) {
-      if (fields[r][column].getOccupyingPlayer() == null) {
-        fields[r][column].setOccupyingPlayer(player);
+    if (column < 0 || column >= COLUMNS) {
+      throw new IllegalArgumentException("Column index out of bounds: " + column);
+    }
 
-        if (fields[r][column].isToxicZone()) {
-          fields[r][column].setDecayTime(3);
+    for (int r = ROWS - 1; r >= 0; r--) {
+      FieldImpl field = fields[r][column];
+      if (field.getOccupyingPlayer() == null) {
+        field.setOccupyingPlayer(player);
+
+        if (field.isToxicZone()) {
+          field.setDecayTime(3);
         }
         return r;
       }
     }
-    return -1;
+
+    throw new IllegalStateException("Column " + column + " is full");
   }
+
+
+
+
 }

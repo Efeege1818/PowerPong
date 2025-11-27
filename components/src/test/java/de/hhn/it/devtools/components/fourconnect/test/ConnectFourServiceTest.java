@@ -247,7 +247,6 @@ public class ConnectFourServiceTest {
     assertFalse(((ConnectFourServiceImpl) service).checkForDraw(), "Draw should not return true before the board is full.");
   }
 
-  @Test
   void testCheckForDraw_TrueWhenFull() throws OperationNotSupportedException, IllegalParameterException {
     service.startGame(null);
 
@@ -260,24 +259,55 @@ public class ConnectFourServiceTest {
     int rows = 6;
     int cols = 7;
 
-    // Simulate filling the board row by row
-    // (The loop fills upwards by dropping into each column sequentially)
-    for (int r = 0; r < rows; r++) {
-      for (int c = 0; c < cols; c++) {
-        try {
-          // If the service blocks drops because the game ended,
-          // this test would need a specific move sequence to produce a "Draw Scenario".
-          // For now, we are just filling it.
-          service.dropChip(c);
-        } catch (Exception e) {
-          // Ignore if error occurs due to game won (Test aim is only fullness check)
-        }
-      }
-    }
+    service.dropChip(0);
+    service.dropChip(1);
+    service.dropChip(0);
+    service.dropChip(2);
+    service.dropChip(3);
+    service.dropChip(0);
+    service.dropChip(1);
+    service.dropChip(1);
+    service.dropChip(4);
+    service.dropChip(5);
+    service.dropChip(6);
+    service.dropChip(2);
+    service.dropChip(0);
+    service.dropChip(0);
+    service.dropChip(0);
+    service.dropChip(1);
+    service.dropChip(3);
+    service.dropChip(2);
+    service.dropChip(3);
+    service.dropChip(3);
+    service.dropChip(2);
+    service.dropChip(1);
+    service.dropChip(2);
+    service.dropChip(2);
+    service.dropChip(1);
+    service.dropChip(3);
+    service.dropChip(3);
+    service.dropChip(6);
+    service.dropChip(6);
+    service.dropChip(4);
+    service.dropChip(5);
+    service.dropChip(4);
+    service.dropChip(5);
+    service.dropChip(4);
+    service.dropChip(4);
+    service.dropChip(4);
+    service.dropChip(6);
+    service.dropChip(5);
+    service.dropChip(5);
+    service.dropChip(6);
+    service.dropChip(5);
+    service.dropChip(6);
 
     // Board is completely full, should return true
     assertTrue(((ConnectFourServiceImpl) service).checkForDraw(), "Should return true when the board is completely full.");
   }
+
+
+
 
   /**
    * Tests that applying toxic decay simply reduces the counter
@@ -407,4 +437,35 @@ public class ConnectFourServiceTest {
     assertEquals(1, field.getDecayTime(), "Decay time should not change on non-toxic fields.");
     assertNotNull(field.getOccupyingPlayer(), "Chip should not be removed.");
   }
+
+  @Test
+  void testDropChipPlacesPlayerInCorrectField() throws OperationNotSupportedException, IllegalParameterException {
+    service.startGame(null);
+
+    ConnectFourServiceImpl svc = (ConnectFourServiceImpl) service;
+    GameBoardImpl board = (GameBoardImpl) svc.getBoard();
+
+    Player current = svc.getCurrentPlayer(); // player1
+
+    int column = 3;
+    int row = svc.dropChip(column);
+
+
+    assertEquals(current, board.getField(row, column).getOccupyingPlayer(),
+            "Dropped chip should belong to currentPlayer");
+  }
+
+
+  @Test
+  void testDropChipColumnOutOfBoundsThrowsException() {
+    ConnectFourServiceImpl svc = (ConnectFourServiceImpl) service;
+    svc.startGame(null);
+
+    assertThrows(IllegalParameterException.class, () -> svc.dropChip(-1));
+    assertThrows(IllegalParameterException.class, () -> svc.dropChip(GameBoardImpl.COLUMNS));
+  }
+
+
+
+
 }

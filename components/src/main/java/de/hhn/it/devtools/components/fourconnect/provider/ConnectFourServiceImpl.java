@@ -81,18 +81,31 @@ public class ConnectFourServiceImpl implements ConnectFourService {
             throw new OperationNotSupportedException("Game is not active. Call startGame() first.");
         }
         if (column < 0 || column >= GameBoardImpl.COLUMNS) {
-            throw new IllegalParameterException("Column index " + column + " is out of bounds (0-6).");
+            throw new IllegalParameterException("Column index " + column + " out of bounds.");
         }
+
         int row = board.placeChip(column, currentPlayer);
 
-        if (row == -1) {
-            throw new IllegalParameterException("Column " + column + " is already full.");
+        // Toxic decay test için devre dışı bırakılabilir
+        // applyToxicDecay();
+
+        notifyBoardChanged();
+
+        if (checkForWin()) {
+            gameActive = false;
+            notifyGameEnded(currentPlayer, false);
+        } else if (checkForDraw()) {
+            gameActive = false;
+            notifyGameEnded(null, true);
+        } else {
+            currentPlayer = (currentPlayer == player1) ? player2 : player1;
+            notifyTurnChanged();
         }
-        // Switch player
-        this.currentPlayer = (currentPlayer == player1) ? player2 : player1;
 
         return row;
     }
+
+
 
     /**
      * Registers a game listener to receive updates about the game state.
@@ -282,6 +295,23 @@ public class ConnectFourServiceImpl implements ConnectFourService {
             listener.onGameEnded(winner, isDraw);
         }
     }
+
+    /**
+     * Test helper: player parametresi ile drop yapar, currentPlayer kontrolü yoktur.
+     */
+    public int dropChipForTest(int column, Player player) throws IllegalParameterException, OperationNotSupportedException {
+        if (!gameActive) {
+            throw new OperationNotSupportedException("Game is not active. Call startGame() first.");
+        }
+        if (column < 0 || column >= GameBoardImpl.COLUMNS) {
+            throw new IllegalParameterException("Column index " + column + " is out of bounds (0-6).");
+        }
+
+        return board.placeChip(column, player);
+    }
+
+
+
 
 
 }
