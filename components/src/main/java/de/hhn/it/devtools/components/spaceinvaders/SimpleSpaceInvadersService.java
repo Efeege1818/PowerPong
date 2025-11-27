@@ -8,6 +8,8 @@ import de.hhn.it.devtools.apis.spaceinvaders.Sound;
 import de.hhn.it.devtools.apis.spaceinvaders.SpaceInvadersListener;
 import de.hhn.it.devtools.apis.spaceinvaders.SpaceInvadersService;
 import de.hhn.it.devtools.apis.spaceinvaders.exceptions.IllegalConfigurationException;
+import de.hhn.it.devtools.components.spaceinvaders.utils.EntityProvider;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -23,6 +25,8 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
   private SimpleGameLoop simpleGameLoop;
   private GameState gameState;
   private int round;
+
+  private EntityProvider entityProvider;
 
   /**
    * Default constructor. Load default values for configuration.
@@ -42,6 +46,7 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
   public void start() throws IllegalStateException {
     logger.debug("Service Start");
     checkIfGameStateIsLegal(GameState.PREPARED);
+    entityProvider = new EntityProvider();
     simpleGameLoop = new SimpleGameLoop(this);
     simpleGameLoop.start();
     gameState = GameState.RUNNING;
@@ -52,6 +57,7 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
   public void abort() throws IllegalStateException {
     logger.debug("Service Abort");
     checkIfGameStateIsLegal(GameState.PREPARED);
+    entityProvider = null;
     simpleGameLoop.stopGame();
     notifyListeners((l) -> {
       l.changedGameState(gameState);
@@ -95,7 +101,7 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
   @Override
   public void playSound(Sound sound) throws IllegalStateException {
     logger.debug("Service PlaySound");
-    //TODO play sound
+    notifyListeners((l) -> l.updateSound(sound));
   }
 
   @Override
@@ -154,7 +160,9 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
    * This method gets triggered every loop by SimpleGameLoop.
    */
   protected void triggeredByGameLoop() {
-    //TODO Spiel logik
+    if(gameState != GameState.RUNNING) {
+        return;
+    }
   }
 
   protected GameState getGameState() {

@@ -46,6 +46,10 @@ public class SimpleShip {
     }
   }
 
+  public Coordinate getCoordinate() { return coordinate; }
+
+  public int getHitPoints() { return this.hitPoints; }
+
   public void setHitPoints(int hitPoints) {
     this.hitPoints = hitPoints;
   }
