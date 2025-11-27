@@ -51,6 +51,17 @@ public class EntityProvider {
    * Method to check for collisions.
    */
   private void checkCollision() {
+    aliens.values().forEach(alien -> {
+      barriers.values().forEach(barrier -> {
+        alien.getHitbox().stream()
+            .filter(barrier.getHitbox()::contains)
+            .findFirst()
+            .ifPresent(hit->alien.getHit(100));
+      });
+      if(alien.getCoordinate().y() >= player.getCoordinate().y()) {
+        player.setHitPoints(0);
+      }
+    });
     for (SimpleProjectile projectile : projectiles) {
       if(projectile.getdirection() == Direction.UP) {
         aliens.values().forEach(alien -> {
@@ -59,27 +70,12 @@ public class EntityProvider {
           }
         });
       }
-      else if(projectile.getdirection() == Direction.DOWN) {
+      else {
         if(player.getHitbox().contains(projectile.getCoordinate())) {
           player.setHitPoints(player.getHitPoints()-1);
         }
       }
     }
-
-    barriers.values().forEach(barrier -> {
-      aliens.values().forEach(alien -> {
-        alien.getHitbox().stream()
-            .filter(barrier.getHitbox()::contains)
-            .findFirst()
-            .ifPresent(hit->alien.getHit(100));
-      });
-    });
-
-    aliens.values().forEach(alien -> {
-      if(alien.getCoordinate().y() >= player.getCoordinate().y()) {
-        player.setHitPoints(0);
-      }
-    });
   }
 
   /**
