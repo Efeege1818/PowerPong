@@ -12,6 +12,7 @@ import de.hhn.it.devtools.components.spaceinvaders.utils.Constans;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * EntityProvider for all Entity Utils.
@@ -29,6 +30,18 @@ public class EntityProvider {
   public EntityProvider() {
     player = new SimpleShip(new Coordinate(Constans.FIELD_SIZE/2,Constans.FIELD_SIZE - 10));
     generateAliens();
+  }
+
+  public void updatePlayer(Direction direction) {
+    player.move(direction);
+  }
+
+  public void updateAliens(Direction direction) {
+    aliens.values().forEach(alien -> alien.move(direction));
+  }
+
+  public void updateProjectiles() {
+    projectiles.forEach(SimpleProjectile::move);
   }
 
   /**
@@ -66,13 +79,13 @@ public class EntityProvider {
       if(projectile.getdirection() == Direction.UP) {
         aliens.values().forEach(alien -> {
           if(alien.getHitbox().contains(projectile.getCoordinate())) {
-            alien.getHit(Constans.BASE_DAMAGE);
+            alien.getHit(projectile.getDamage());
           }
         });
       }
       else {
         if(player.getHitbox().contains(projectile.getCoordinate())) {
-          player.setHitPoints(player.getHitPoints()-1);
+          player.setHitPoints(projectile.getDamage());
         }
       }
     }

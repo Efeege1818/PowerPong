@@ -22,6 +22,7 @@ public class SimpleProjectile {
     this.damage = damage;
   }
 
+  public int getDamage() { return damage; }
   public Coordinate getCoordinate() { return coordinate; }
 
   public Direction getdirection() { return direction; }
