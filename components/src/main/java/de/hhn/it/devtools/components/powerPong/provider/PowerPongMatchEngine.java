@@ -1,4 +1,4 @@
-package de.hhn.it.devtools.components.powerPong;
+package de.hhn.it.devtools.components.powerPong.provider;
 
 import de.hhn.it.devtools.apis.exceptions.GameLogicException;
 import de.hhn.it.devtools.apis.powerPong.BallState;
