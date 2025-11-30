@@ -22,5 +22,5 @@ public enum GameMode {
     /**
      * Endless mode against AI (nice-to-have).
      */
-    SURVIVAL_CHALLENGE
+    SURVIVAL
 }
