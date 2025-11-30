@@ -14,12 +14,7 @@ dependencies {
     // see also the dependencies in build.gradle (root)
     // JUnit 5 (Jupiter)
     testImplementation 'org.junit.jupiter:junit-jupiter:5.11.3'
-    // Ab Gradle 9 nötig: Launcher explizit zur Test-Runtime
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
-    // Nur falls du noch JUnit 4 Tests hast:
-    // testImplementation 'junit:junit:4.13.2'
-    // testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.11.3'
 }
 
 test {
