@@ -86,9 +86,6 @@ public class ConnectFourServiceImpl implements ConnectFourService {
 
         int row = board.placeChip(column, currentPlayer);
 
-        // Toxic decay test için devre dışı bırakılabilir
-        // applyToxicDecay();
-
         notifyBoardChanged();
 
         if (checkForWin()) {
@@ -253,6 +250,11 @@ public class ConnectFourServiceImpl implements ConnectFourService {
      * @throws OperationNotSupportedException This method is currently not implemented.
      */
     public void applyToxicDecay() throws OperationNotSupportedException {
+
+        if (!gameActive) {
+            throw new OperationNotSupportedException("Toxic decay cannot be applied because the game is not active.");
+        }
+
         for (int r = 0; r < GameBoardImpl.ROWS; r++) {
             for (int c = 0; c < GameBoardImpl.COLUMNS; c++) {
                 FieldImpl currentField = (FieldImpl) board.getField(r, c);
