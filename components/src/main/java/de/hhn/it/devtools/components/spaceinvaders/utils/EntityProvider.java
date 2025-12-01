@@ -28,7 +28,7 @@ public class EntityProvider {
    * Default Constructor.
    */
   public EntityProvider() {
-    player = new SimpleShip(new Coordinate(Constans.FIELD_SIZE/2,Constans.FIELD_SIZE - 10));
+    player = new SimpleShip(new Coordinate(Constans.FIELD_SIZE/2,Constans.FIELD_SIZE - 16));
     generateAliens();
   }
 
@@ -64,6 +64,7 @@ public class EntityProvider {
    * Method to check for collisions.
    */
   private void checkCollision() {
+    //check if alien either hits barrier or the player
     aliens.values().forEach(alien -> {
       barriers.values().forEach(barrier -> {
         alien.getHitbox().stream()
@@ -75,15 +76,17 @@ public class EntityProvider {
         player.setHitPoints(0);
       }
     });
+
+    //check if projectiles hit alien or player
     for (SimpleProjectile projectile : projectiles) {
-      if(projectile.getdirection() == Direction.UP) {
+      if(projectile.getdirection() == Direction.UP) { //player can only shoot up, so all projectiles moving up are from player
         aliens.values().forEach(alien -> {
           if(alien.getHitbox().contains(projectile.getCoordinate())) {
             alien.getHit(projectile.getDamage());
           }
         });
       }
-      else {
+      else { //aliens can only shoot down, so all projectiles moving down are from aliens
         if(player.getHitbox().contains(projectile.getCoordinate())) {
           player.setHitPoints(projectile.getDamage());
         }

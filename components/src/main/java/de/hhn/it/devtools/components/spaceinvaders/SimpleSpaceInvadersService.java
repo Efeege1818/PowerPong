@@ -10,6 +10,7 @@ import de.hhn.it.devtools.apis.spaceinvaders.SpaceInvadersService;
 import de.hhn.it.devtools.apis.spaceinvaders.exceptions.IllegalConfigurationException;
 import de.hhn.it.devtools.components.spaceinvaders.utils.EntityProvider;
 
+import java.io.Console;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -89,7 +90,6 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
   @Override
   public void move(Direction direction) throws IllegalStateException {
     logger.debug("Service Move");
-    //TODO move func
   }
 
   @Override
@@ -160,9 +160,11 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
    * This method gets triggered every loop by SimpleGameLoop.
    */
   protected void triggeredByGameLoop() {
-    if(gameState != GameState.RUNNING) {
-        return;
+    if(entityProvider == null) {
+      logger.debug("Something went wrong; no EntityProvider");
+      return;
     }
+
   }
 
   protected GameState getGameState() {
