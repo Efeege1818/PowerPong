@@ -1,7 +1,14 @@
 package de.hhn.it.devtools.components.turnbasedbattle;
 
-import de.hhn.it.devtools.apis.turnbasedbattle.*;
+import de.hhn.it.devtools.apis.turnbasedbattle.BattleManager;
+import de.hhn.it.devtools.apis.turnbasedbattle.Element;
+import de.hhn.it.devtools.apis.turnbasedbattle.Monster;
+import de.hhn.it.devtools.apis.turnbasedbattle.Move;
+import de.hhn.it.devtools.apis.turnbasedbattle.Player;
 
+/**
+ * Class for managing and executing turns.
+ */
 public class SimpleBattleManager implements BattleManager {
   private static final org.slf4j.Logger logger =
           org.slf4j.LoggerFactory.getLogger(SimpleBattleManager.class);
@@ -23,7 +30,6 @@ public class SimpleBattleManager implements BattleManager {
 
   @Override
   public void initializeBattle(Player p1, Player p2, Monster m1, Monster m2) {
-
     this.player1 = p1;
     this.player2 = p2;
 
@@ -71,14 +77,14 @@ public class SimpleBattleManager implements BattleManager {
 
   @Override
   public Player getWinner() {
-    if(!battleOver) {
+    if (!battleOver) {
       return null;
     }
 
-    if(p1Monster.getCurrentHp() <= 0) {
+    if (p1Monster.getCurrentHp() <= 0) {
       return player2;
     }
-    if(p2Monster.getCurrentHp() <= 0) {
+    if (p2Monster.getCurrentHp() <= 0) {
       return player1;
     }
 
@@ -103,10 +109,10 @@ public class SimpleBattleManager implements BattleManager {
         opponentMonster.takeDamage(selectedMove, currentMonster);
 
         // Check for death
-        if(!opponentMonster.isAlive()) {
+        if (!opponentMonster.isAlive()) {
           battleOver = true;
 
-          if(currentPlayer == player1) {
+          if (currentPlayer == player1) {
             return 1; //Player 1 win
           } else {
             return 2; //Player 2 win
@@ -129,12 +135,12 @@ public class SimpleBattleManager implements BattleManager {
 
   @Override
   public void nextTurn() {
-    if(battleOver) {
+    if (battleOver) {
       throw new IllegalStateException("Battle is already over.");
     }
 
     // Switch the current player and monsters
-    if(currentPlayer == player1) {
+    if (currentPlayer == player1) {
       currentPlayer = player2;
       currentMonster = p2Monster;
       opponentMonster = p1Monster;
@@ -165,15 +171,25 @@ public class SimpleBattleManager implements BattleManager {
     }
   }
 
+  /**
+   * Determines whether element is effective against opponent element.
+   * Fire is effective against grass.
+   * Water is effective against fire.
+   * Grass is effective against water.
+   *
+   * @param currentMonster Current Monster
+   * @param opponentMonster Opponent Monster
+   * @return true if currentMonster's element is effective
+   */
   public boolean isElementEffective(SimpleMonster currentMonster, SimpleMonster opponentMonster) {
     Element currentElement = currentMonster.getElement();
     Element opponentElement = opponentMonster.getElement();
 
-    if(currentElement == Element.FIRE) {
+    if (currentElement == Element.FIRE) {
       return opponentElement == Element.GRASS;
-    } else if(currentElement == Element.WATER) {
+    } else if (currentElement == Element.WATER) {
       return opponentElement == Element.FIRE;
-    } else if(currentElement == Element.GRASS) {
+    } else if (currentElement == Element.GRASS) {
       return opponentElement == Element.WATER;
     }
 

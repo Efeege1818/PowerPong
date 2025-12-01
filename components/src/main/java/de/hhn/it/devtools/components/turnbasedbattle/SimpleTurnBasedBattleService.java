@@ -1,10 +1,16 @@
 package de.hhn.it.devtools.components.turnbasedbattle;
 
-import de.hhn.it.devtools.apis.turnbasedbattle.*;
-
+import de.hhn.it.devtools.apis.turnbasedbattle.GameState;
+import de.hhn.it.devtools.apis.turnbasedbattle.Monster;
+import de.hhn.it.devtools.apis.turnbasedbattle.Player;
+import de.hhn.it.devtools.apis.turnbasedbattle.TurnBasedBattleListener;
+import de.hhn.it.devtools.apis.turnbasedbattle.TurnBasedBattleService;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Service to manage game logic.
+ */
 public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
   private static final org.slf4j.Logger logger =
           org.slf4j.LoggerFactory.getLogger(SimpleTurnBasedBattleService.class);
@@ -53,32 +59,35 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
 
   @Override
   public void pause() {
-    if (gameState != GameState.RUNNING)
+    if (gameState != GameState.RUNNING) {
       throw new IllegalStateException("Game must be RUNNING to pause.");
+    }
     gameState = GameState.PAUSED;
     notifyGameStateChanged(GameState.PAUSED);
   }
 
   @Override
   public void abort() {
-    if (gameState != GameState.RUNNING)
+    if (gameState != GameState.RUNNING) {
       throw new IllegalStateException("Game must be RUNNING to abort.");
+    }
     gameState = GameState.ABORTED;
     notifyGameStateChanged(GameState.ABORTED);
   }
 
   @Override
   public void end() {
-    if (gameState != GameState.RUNNING)
+    if (gameState != GameState.RUNNING) {
       throw new IllegalStateException("Game must be RUNNING to end.");
+    }
     gameState = GameState.END;
     notifyGameStateChanged(GameState.END);
 
     Player winner = battleManager.getWinner();
     if (winner != null) {
-      if(winner == player1) {
+      if (winner == player1) {
         notifyGameEnded(1);
-      } else  if(winner == player2) {
+      } else if (winner == player2) {
         notifyGameEnded(2);
       }
     }
@@ -86,8 +95,13 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
 
   @Override
   public boolean addListener(TurnBasedBattleListener listener) {
-    if (listener == null) throw new IllegalArgumentException("Listener cannot be null.");
-    if (listeners.contains(listener)) throw new IllegalStateException("Listener already exists.");
+    if (listener == null) {
+      throw new IllegalArgumentException("Listener cannot be null.");
+    }
+    if (listeners.contains(listener)) {
+      throw new IllegalStateException("Listener already exists.");
+    }
+
     return listeners.add(listener);
   }
 
@@ -141,8 +155,9 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
 
   @Override
   public void executeTurn(int moveIndex) {
-    if (gameState != GameState.RUNNING)
+    if (gameState != GameState.RUNNING) {
       throw new IllegalStateException("Game must be RUNNING to execute turn.");
+    }
 
     logger.debug("Player {} executing turn with move index {}", getCurrentPlayer().playerId(), moveIndex);
 
@@ -163,8 +178,9 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
 
   @Override
   public void nextTurn() {
-    if (gameState != GameState.RUNNING)
+    if (gameState != GameState.RUNNING) {
       throw new IllegalStateException("Game must be RUNNING to change turns.");
+    }
     battleManager.nextTurn();
     notifyListenersTurnChanged();
   }
