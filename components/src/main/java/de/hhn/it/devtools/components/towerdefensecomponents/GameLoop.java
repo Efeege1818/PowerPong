@@ -8,41 +8,41 @@ import de.hhn.it.devtools.apis.exceptions.IllegalParameterException;
  */
 public interface GameLoop extends Runnable {
 
-	@Override
-	void run();
+  @Override
+  void run();
 
-	/**
-	 * Triggers calculation of the next game-tick.
-	 *
-	 * @throws IllegalStateException if game is not running
-	 */
-	void updateGame() throws IllegalStateException;
+  /**
+   * Triggers calculation of the next game-tick.
+   *
+   * @throws IllegalStateException if game is not running
+   */
+  void updateGame() throws IllegalStateException;
 
-	/**
-	 * End game tick, no tick after this is possible.
-	 *
-	 * @throws IllegalStateException if game is not running
-	 */
-	void endGame() throws IllegalStateException;
+  /**
+   * End game tick, no tick after this is possible.
+   *
+   * @throws IllegalStateException if game is not running
+   */
+  void endGame() throws IllegalStateException;
 
-	/**
-	 * Saves last game round and makes it possible to retry that round if failed.
-	 *
-	 * @throws IllegalStateException if game is not running
-	 */
-	void retry() throws IllegalStateException;
+  /**
+   * Saves last game round and makes it possible to retry that round if failed.
+   *
+   * @throws IllegalStateException if game is not running
+   */
+  void retry() throws IllegalStateException;
 
-	/**
-	 * Halts game and makes it possible to resume.
-	 *
-	 * @throws IllegalStateException if game is not running
-	 */
-	void pauseGame() throws IllegalStateException;
+  /**
+   * Halts game and makes it possible to resume.
+   *
+   * @throws IllegalStateException if game is not running
+   */
+  void pauseGame() throws IllegalStateException;
 
-	/**
-	 * Resumes the game or starts the next round if possible.
-	 *
-	 * @throws IllegalStateException if game is running
-	 */
-	void resumeRound() throws IllegalStateException;
+  /**
+   * Resumes the game or starts the next round if possible.
+   *
+   * @throws IllegalStateException if game is running
+   */
+  void resumeRound() throws IllegalStateException;
 }

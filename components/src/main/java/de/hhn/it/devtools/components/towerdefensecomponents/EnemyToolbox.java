@@ -25,13 +25,13 @@ public class EnemyToolbox {
     // TODO: Check if enemy is dead in towerToolbox or Service
     // TODO: Money in towerToolbox when enemy dies
 
-    if (enemy.health() - amount <= 0) {
+    if (enemy.currentHealth() - amount <= 0) {
       return new Enemy(enemy.id(), enemy.coordinates(), enemy.type(),
               0, enemy.index());
     }
 
     return new Enemy(enemy.id(), enemy.coordinates(), enemy.type(),
-            enemy.health() - amount, enemy.index());
+            enemy.currentHealth() - amount, enemy.index());
   }
 
   /**
@@ -104,7 +104,7 @@ public class EnemyToolbox {
    */
   public int moneyPerEnemy(ArrayList<Enemy> enemyList) {
     // TODO: implement
-    //getMoney(enemy.type())
+    // getMoney(enemy.type())
     return 0;
   }
 

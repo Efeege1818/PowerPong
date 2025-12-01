@@ -4,7 +4,6 @@ import de.hhn.it.devtools.apis.towerdefenseapi.Coordinates;
 import de.hhn.it.devtools.apis.towerdefenseapi.Enemy;
 import de.hhn.it.devtools.apis.towerdefenseapi.Tower;
 import de.hhn.it.devtools.apis.towerdefenseapi.TowerType;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,29 +40,5 @@ public class TowerToolbox {
     }
 
     return money;
-  }
-
-
-
-
-
-  /**
-   * Returns the coordinates where the tower is placed on the map.
-   *
-   * @return the tower's position as Coordinates
-   */
-  @Deprecated //Methode is unnötig
-  Coordinates getCoordinates() {
-    return null;
-  }
-
-  /**
-   * Returns the type of this tower, e.g. MELEE, MONEYMAKER and RANGED.
-   *
-   * @return the TowerType of this tower
-   */
-  @Deprecated //Methode is unnötig
-  TowerType getTowerType() {
-    return null;
   }
 }

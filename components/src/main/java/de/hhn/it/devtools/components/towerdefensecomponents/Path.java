@@ -4,6 +4,7 @@ import de.hhn.it.devtools.apis.towerdefenseapi.Coordinates;
 
 import java.util.ArrayList;
 
+// LOCKED: S.Arsenovici
 /**
  * Determines whether a certain list of coordinates is PATH using Directions or free for other things.
  */
