@@ -1,59 +1,44 @@
 package de.hhn.it.devtools.apis.turnbasedbattle;
-
 /**
- *Manages the Battle
+ * All battle logic (damage, moves?, turns) is delegated to a BattleManager implementation.
  */
-public class BattleManager {
 
-    private Monster player1Monster;
-    private Monster player2Monster;
-    private Monster currentMonster;
-    private Monster opponentMonster;
-    private boolean battleOver;
+public interface BattleManager {
+  /**
+   * Initializes players and their monsters and sets the starting player.
+   *
+   * @param p1 Player 1
+   * @param p2 Player 2
+   * @param m1 Player 1's monster
+   * @param m2 Player 2's monster
+   */
+  void initializeBattle(Player p1, Player p2, Monster m1, Monster m2);
 
-    //constructor
-    public BattleManager(Monster player1Monster, Monster player2Monster) {}
+  boolean isBattleOver();
 
-    /**
-     * starts the battle.
-     */
-    public void startBattle(){}
+  int getTurnCount();
 
-    /**
-     * switches to the next turn and counts the turns in battle.
-     */
-    public void nextTurn(){}
+  Player getCurrentPlayer();
 
-    /**
-     * lets Monsters attack each other.
-     */
-    public void doAttack(){}
+  Player getWinner();
 
-    /**
-     * ends the Battle.
-     * @return true if one Monster is dead.
-     */
-    public boolean isBattleOver(){
-        return false;
-    }
+  /**
+   * Executes a selected move and checks if there is a winner yet.
+   *
+   * @param moveNumber index number of move from monster
+   * @return 0 if there is no winner yet, 1 if player 1 won and 2 if player 2 won
+   */
+  int executeTurn(int moveNumber);
 
-    /**
-     * checks if a Player has won the battle.
-     * @return Player how has won.
-     */
-    public Player getWinner(){
-        return null;
-    }
+  /**
+   * Flips who current and opponent players are to advance the turn to the next player.
+   */
+  void nextTurn();
 
-    public Monster getcurrentMonster(){
-        return currentMonster;
-    }
-    public Monster getopponentMonster(){
-        return opponentMonster;
-    }
-
-    /**
-     * switches the current Player/Monster and the opponent Player.
-     */
-    private void switchTurns(){}
+  /**
+   * Checks whether one player's monster is effective against the other.
+   *
+   * @return the player with the weaker monster. If both monsters have the same element, starting player is randomized
+   */
+  Player determineStartingPlayer();
 }

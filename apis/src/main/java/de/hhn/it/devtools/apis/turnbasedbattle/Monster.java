@@ -1,170 +1,40 @@
 package de.hhn.it.devtools.apis.turnbasedbattle;
 
+import java.util.HashMap;
+
 /**
- * The monster object contains all stats of a monster.
- * This class acts as a customizable parent class for the different monsters.
+ * Record that allows creation of a new Monster with fully customizable stats.
+ *
+ * @param maxHp maximum amount of health the monster has.
+ * @param attack increases damage dealt.
+ * @param defense reduces damage taken.
+ * @param evasionChance chance to not take any damage.
+ * @param critChance chance to inflict double damage.
+ * @param element element of the monster.
+ * @param moves array with all moves the monster is able to execute.
  */
-public abstract class Monster {
+public record Monster(int maxHp, int attack, int defense, double evasionChance, double critChance, Element element, HashMap<Integer, Move> moves) {
+    private static final org.slf4j.Logger logger =
+            org.slf4j.LoggerFactory.getLogger(Monster.class);
 
-  public static final String ATTACK = "attack";
-  public static final String DEFENSE = "defense";
-  public static final String EVASION = "evasion";
+    /**
+     * Checks if the monster's parameters are valid.
+     *
+     * @throws IllegalArgumentException if any parameter is invalid.
+     */
+    public Monster {
+        if (maxHp <= 0) {
+            throw new IllegalArgumentException("maxHp must be positive");
+        }
+        if (attack < 0 || defense < 0) {
+            throw new IllegalArgumentException("attack and defense must be non-negative");
+        }
+        if (evasionChance < 0 || evasionChance > 1 || critChance < 0 || critChance > 1) {
+            throw new IllegalArgumentException("chances must be between 0 and 1");
+        }
+        if (moves.size() < 5) {
+            throw new IllegalArgumentException("at least 5 moves should be specified");
+        }
+    }
 
-  /**
-   * The total amount of HP the monster can have.
-   */
-  private int maxHp;
-
-  /**
-   * The current amount of HP the monster has.
-   */
-  private int currentHp;
-
-  /**
-   * A multiplier which increases damage dealt by the monster.
-   */
-  private int attack;
-
-  /**
-   * A multiplier which reduces damage taken by the monster.
-   */
-  private int defense;
-
-  /**
-   * A chance for the monster to take no damage when hit by an attack.
-   */
-  private double evasionChance = 0.1;
-
-  /**
-   * A chance for the monster's attack to deal double the normal amount of damage.
-   */
-  private double critChance = 0.05;
-
-  /**
-   * The elemental type of the monster.
-   */
-  private Element element;
-
-  /**
-   * Calculates the damage a move will do to the opposing monster.
-   *
-   * @param damage flat amount of damage a move will do
-   * @param element multiplier that can increase or decrease damage when the element is effective against the opponent's
-   */
-  public int damage(int damage, Element element) {
-    return 0;
-  }
-
-  /**
-   * Reduces the HP of this monster when being hit.
-   *
-   * @param damage amount of HP to be subtracted
-   */
-  public void takeDamage(int damage) {
-
-  }
-
-  /**
-   * Stores the values used for a debuff on the opponent's monster.
-   *
-   * @param stat name of stat to be reduced (should use one of the constant Strings in this class)
-   * @param value amount by which the stat will be reduced
-   */
-  public Debuff inflictDebuff(String stat, int value) {
-    return new Debuff(stat, value);
-  }
-
-  /**
-   * Reduces a stat of this monster when being debuffed by the opponent.
-   *
-   * @param stat name of stat to be reduced (should use one of the constant Strings in this class)
-   * @param value amount by which the stat will be reduced
-   */
-  public void takeDebuff(String stat, int value) {
-
-  }
-
-  /**
-   * A normal, pure damaging attack without elemental properties.
-   */
-  public void normalAttack(Monster monster) {
-
-  }
-
-  /**
-   * An elemental attack, which can do more or less damage depending on the opponent's element.
-   */
-  public void elementalAttack(Monster monster) {
-
-  }
-
-  /**
-   * Increases one of this monster's stats.
-   */
-  public void buff(Monster monster) {
-
-  }
-
-  /**
-   * Decreases one of the opponent's monster's stats.
-   */
-  public void debuff(Monster monster) {
-
-  }
-
-  public int getMaxHp() {
-    return maxHp;
-  }
-
-  public void setMaxHp(int maxHp) {
-    this.maxHp = maxHp;
-  }
-
-  public int getCurrentHp() {
-    return currentHp;
-  }
-
-  public void setCurrentHp(int currentHp) {
-    this.currentHp = currentHp;
-  }
-
-  public int getAttack() {
-    return attack;
-  }
-
-  public void setAttack(int attack) {
-    this.attack = attack;
-  }
-
-  public int getDefense() {
-    return defense;
-  }
-
-  public void setDefense(int defense) {
-    this.defense = defense;
-  }
-
-  public double getEvasionChance() {
-    return evasionChance;
-  }
-
-  public void setEvasionChance(double evasionChance) {
-    this.evasionChance = evasionChance;
-  }
-
-  public double getCritChance() {
-    return critChance;
-  }
-
-  public void setCritChance(double critChance) {
-    this.critChance = critChance;
-  }
-
-  public Element getElement() {
-    return element;
-  }
-
-  public void setElement(Element element) {
-    this.element = element;
-  }
 }
