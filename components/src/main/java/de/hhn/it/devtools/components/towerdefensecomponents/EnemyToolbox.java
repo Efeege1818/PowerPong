@@ -84,6 +84,26 @@ public class EnemyToolbox {
   }
 
   /**
+   * Returns the weight of the EnemyType.
+   * This determines how rare the enemies are in relation to each other
+   * and is used for creating balanced waves.
+   * A higher value means, that the enemy is more common.
+   *
+   * @param type the EnemyType of the Enemy
+   * @return the weight for an enemy of the given type
+   * @throws NoSuchElementException if the given EnemyType isn't supported
+   */
+  public static int getWeight(EnemyType type) throws NoSuchElementException {
+    // TODO: replace these dummy values with balanced ones
+    return switch (type) {
+      case SMALL -> 10;
+      case MEDIUM -> 5;
+      case LARGE -> 3;
+      default -> throw new NoSuchElementException();
+    };
+  }
+
+  /**
    * Deals damage to the player when the enemy reaches the end of its path.
    *
    * <p>The amount of damage is determined by the enemy type.

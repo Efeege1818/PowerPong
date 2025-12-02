@@ -10,6 +10,8 @@ import de.hhn.it.devtools.apis.towerdefenseapi.Tower;
 import de.hhn.it.devtools.apis.towerdefenseapi.TowerType;
 import org.junit.jupiter.api.Test;
 
+import java.util.UUID;
+
 /**
  * Test class that test the api.
  */
@@ -27,9 +29,8 @@ public class Tests {
   void checkEnemyAttributesWork() {
     Coordinates pos = new Coordinates(3, 4);
     Coordinates position = new Coordinates(3,4);
-    Enemy enemy = new Enemy(1, pos, EnemyType.SMALL, 50, 0);
+    Enemy enemy = new Enemy(UUID.randomUUID(), pos, EnemyType.SMALL, 50, 0);
 
-    assertEquals(1, enemy.id());
     assertEquals(pos, enemy.coordinates());
     assertEquals(EnemyType.SMALL, enemy.type());
     assertEquals(50, enemy.currentHealth());

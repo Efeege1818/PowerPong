@@ -1,35 +1,128 @@
 package de.hhn.it.devtools.components.towerdefensecomponents;
 
 import de.hhn.it.devtools.apis.towerdefenseapi.Enemy;
+import de.hhn.it.devtools.apis.towerdefenseapi.EnemyType;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Random;
+import java.util.UUID;
 
-// LOCKED: L.Missbach
 /**
- * Generator that generates the subsequent enemy waves.
- * Once generated it must save the enemies to a specific round.
+ * Manages the generation of new Waves.
  */
-public interface WaveGenerator {
+public class WaveGenerator {
 
-  // TODO: add methods
+  private static final float DEFAULT_POWER_MODIFIER = 10.0f;
+  private static final float DEFAULT_HEALTH_MODIFIER = 1.0f;
+  private static final float ESCALATION = 1.1f;
+
+  private final float powerModifier;
+  private final float healthModifier;
+  private final long randomSeed;
 
   /**
-   * Calculates the total enemy power for a given wave.
+   * Creates a new WaveGenerator with default modifiers.
    *
-   * @param wave the wave number to calculate the power for
-   * @return the corresponding amount of enemy power
-   * @throws IllegalArgumentException if wave number is less than or equal to zero
+   * @param randomSeed the Seed that should be used for the random Generation
    */
-  int getEnemyPower(int wave, int multiplier);
+  public WaveGenerator(long randomSeed) {
+    this(randomSeed, DEFAULT_POWER_MODIFIER, DEFAULT_HEALTH_MODIFIER);
+  }
+
+  /**
+   * Creates a new WaveGenerator.
+   *
+   * @param randomSeed the Seed that should be used for the random Generation
+   * @param powerModifier a multiplier that is applied to the number of enemies.
+   * @param healthModifier a multiplier that is applied to the health of enemies.
+   */
+  public WaveGenerator(long randomSeed, float powerModifier, float healthModifier) {
+    this.powerModifier = powerModifier;
+    this.healthModifier = healthModifier;
+    this.randomSeed = randomSeed;
+  }
 
   /**
    * Generates a wave of enemies with the enemyPower.
    *
-   * @param enemyPower will determine how strong the wave will be
+   * @param wave the wave for which the enemies are generated
    * @return Map filled with enemies and their id
-   * @throws IllegalArgumentException if enemyPower number is less than or equal to zero
    */
-  Map<Integer, Enemy> generateWave(int enemyPower);
+  public Map<UUID, Enemy> generateWave(int wave) {
 
-  // TODO: check logic and usefulness
-  Map<Integer, Map<Integer, Enemy>> wavePerRound(int round);
+    Map<UUID, Enemy> enemyMap = new HashMap<>();
+
+    Random random = createRandomGenerator(wave);
+    int remainingPower = calculatePower(wave);
+
+    // Create a Map with all accessible EnemyTypes and their weights for easy access later
+    Map<EnemyType, Integer> weightMap = new HashMap<>();
+    Arrays.stream(EnemyType.values())
+        .forEach(n -> weightMap.put(n, EnemyToolbox.getWeight(n)));
+
+    int minPower = weightMap.keySet().stream().mapToInt(EnemyToolbox::getMoney).min().orElse(0);
+    assert minPower > 0;
+
+    while (remainingPower >= minPower) {
+
+      // Remove all entries from the Map, that have higher power than what is left to spend.
+      Iterator<EnemyType> iterator = weightMap.keySet().iterator();
+      while (iterator.hasNext()) {
+        EnemyType next = iterator.next();
+        if (EnemyToolbox.getMoney(next) > remainingPower) {
+          iterator.remove();
+        }
+      }
+
+      Iterator<EnemyType> types = new HashSet<EnemyType>(weightMap.keySet()).iterator();
+      int combinedWeight = weightMap.values().stream().mapToInt(n -> n).sum();
+      int randomValue = random.nextInt(combinedWeight);
+      EnemyType nextEnemyType;
+
+      do {
+        nextEnemyType = types.next();
+        randomValue -= weightMap.get(nextEnemyType);
+      } while (randomValue >= 0);
+
+      Enemy enemy = createEnemy(nextEnemyType, wave);
+      enemyMap.put(enemy.id(), enemy);
+      remainingPower -= EnemyToolbox.getMoney(nextEnemyType);
+
+    }
+
+    return Map.copyOf(enemyMap);
+  }
+
+  private Random createRandomGenerator(int wave) {
+    Random random =  new Random(randomSeed ^ wave);
+    // Let the RNG run through a few times
+    // to eliminate any obvious patterns that emerge from similar seeds.
+    for (int i = 0; i < 5; i++) {
+      random.nextInt();
+    }
+    return random;
+  }
+
+  @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
+  private double calculateHMW(int wave) {
+    return healthModifier * Math.pow(wave, ESCALATION);
+  }
+
+  private int calculatePower(int wave) {
+    return (int) powerModifier * wave;
+  }
+
+  private Enemy createEnemy(EnemyType type, int wave) {
+    // TODO: Add coordinates and Index
+    return new Enemy(
+        UUID.randomUUID(),
+        null,
+        type,
+        (int) (Enemy.getMaxHealth(type) * calculateHMW(wave)),
+        0
+    );
+  }
 }
