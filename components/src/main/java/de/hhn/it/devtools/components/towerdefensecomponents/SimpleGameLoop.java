@@ -1,6 +1,9 @@
 package de.hhn.it.devtools.components.towerdefensecomponents;
 
-public class SimpleGameLoop implements GameLoop {
+/**
+ * This Class runs in a loop every game tick and manages everything that has to run constantly.
+ */
+public class SimpleGameLoop extends Thread implements GameLoop {
   @Override
   public void run() {
 

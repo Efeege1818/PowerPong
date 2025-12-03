@@ -1,12 +1,14 @@
 package de.hhn.it.devtools.components.towerdefensecomponents;
 
-import de.hhn.it.devtools.apis.towerdefenseapi.Coordinates;
 import de.hhn.it.devtools.apis.towerdefenseapi.Enemy;
 import de.hhn.it.devtools.apis.towerdefenseapi.Tower;
 import de.hhn.it.devtools.apis.towerdefenseapi.TowerType;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A class that provides general functionality for the Management of Towers.
+ */
 public class TowerToolbox {
 
 
@@ -19,7 +21,8 @@ public class TowerToolbox {
    *         {@code false} otherwise
    * @throws IllegalArgumentException if towers or enemies do not exist.
    */
-  public ArrayList<Enemy> action(List<Tower> towers, List<Enemy> enemies, EnemyToolbox enemyBox) throws IllegalArgumentException {
+  public ArrayList<Enemy> action(List<Tower> towers, List<Enemy> enemies, EnemyToolbox enemyBox)
+      throws IllegalArgumentException {
     return null;
   }
 

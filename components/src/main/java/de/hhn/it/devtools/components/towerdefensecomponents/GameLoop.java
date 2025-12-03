@@ -1,7 +1,5 @@
 package de.hhn.it.devtools.components.towerdefensecomponents;
 
-import de.hhn.it.devtools.apis.exceptions.IllegalParameterException;
-
 /**
  * Independent Thread, that manages everything that runs constantly,
  * and isn't directly tied to user inputs.

@@ -4,7 +4,6 @@ import de.hhn.it.devtools.apis.towerdefenseapi.Enemy;
 import de.hhn.it.devtools.apis.towerdefenseapi.EnemyType;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
@@ -77,7 +76,7 @@ public class WaveGenerator {
         }
       }
 
-      Iterator<EnemyType> types = new HashSet<EnemyType>(weightMap.keySet()).iterator();
+      Iterator<EnemyType> types = weightMap.keySet().iterator();
       int combinedWeight = weightMap.values().stream().mapToInt(n -> n).sum();
       int randomValue = random.nextInt(combinedWeight);
       EnemyType nextEnemyType;
