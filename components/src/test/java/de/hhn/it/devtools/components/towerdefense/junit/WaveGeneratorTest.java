@@ -1,5 +1,6 @@
 package de.hhn.it.devtools.components.towerdefense.junit;
 
+import de.hhn.it.devtools.apis.towerdefenseapi.Coordinates;
 import de.hhn.it.devtools.apis.towerdefenseapi.Enemy;
 import de.hhn.it.devtools.apis.towerdefenseapi.EnemyType;
 import de.hhn.it.devtools.components.towerdefensecomponents.EnemyToolbox;
@@ -18,7 +19,7 @@ public class WaveGeneratorTest {
   @Test
   public void createWaveTest() {
 
-    WaveGenerator waveGenerator = new WaveGenerator(123456789, 10.0f, 1.0f);
+    WaveGenerator waveGenerator = new WaveGenerator(new Coordinates(0.0f, 0.0f), 123456789, 10.0f, 1.0f);
 
     logger.debug(waveGenerator.generateWave(1).toString());
 
@@ -35,7 +36,7 @@ public class WaveGeneratorTest {
   @Test
   public void createWaveConsistencyTest() {
 
-    WaveGenerator waveGenerator = new WaveGenerator(123456789, 10.0f, 1.0f);
+    WaveGenerator waveGenerator = new WaveGenerator(new Coordinates(0.0f, 0.0f), 123456789, 10.0f, 1.0f);
     List<EnemyType> generation1 = waveGenerator
         .generateWave(10)
         .values()

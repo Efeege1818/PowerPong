@@ -1,5 +1,6 @@
 package de.hhn.it.devtools.components.towerdefensecomponents;
 
+import de.hhn.it.devtools.apis.towerdefenseapi.Coordinates;
 import de.hhn.it.devtools.apis.towerdefenseapi.Enemy;
 import de.hhn.it.devtools.apis.towerdefenseapi.EnemyType;
 import java.util.Arrays;
@@ -21,14 +22,15 @@ public class WaveGenerator {
   private final float powerModifier;
   private final float healthModifier;
   private final long randomSeed;
+  private final Coordinates startCoordinates;
 
   /**
    * Creates a new WaveGenerator with default modifiers.
    *
    * @param randomSeed the Seed that should be used for the random Generation
    */
-  public WaveGenerator(long randomSeed) {
-    this(randomSeed, DEFAULT_POWER_MODIFIER, DEFAULT_HEALTH_MODIFIER);
+  public WaveGenerator(Coordinates startCoordinates, long randomSeed) {
+    this(startCoordinates, randomSeed, DEFAULT_POWER_MODIFIER, DEFAULT_HEALTH_MODIFIER);
   }
 
   /**
@@ -38,10 +40,11 @@ public class WaveGenerator {
    * @param powerModifier a multiplier that is applied to the number of enemies.
    * @param healthModifier a multiplier that is applied to the health of enemies.
    */
-  public WaveGenerator(long randomSeed, float powerModifier, float healthModifier) {
+  public WaveGenerator(Coordinates startCoordinates, long randomSeed, float powerModifier, float healthModifier) {
     this.powerModifier = powerModifier;
     this.healthModifier = healthModifier;
     this.randomSeed = randomSeed;
+    this.startCoordinates = startCoordinates;
   }
 
   /**
@@ -115,10 +118,9 @@ public class WaveGenerator {
   }
 
   private Enemy createEnemy(EnemyType type, int wave) {
-    // TODO: Add coordinates and Index
     return new Enemy(
         UUID.randomUUID(),
-        null,
+        startCoordinates,
         type,
         (int) (Enemy.getMaxHealth(type) * calculateHMW(wave)),
         0
