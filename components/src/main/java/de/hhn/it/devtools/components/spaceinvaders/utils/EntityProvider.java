@@ -66,12 +66,13 @@ public class EntityProvider {
    */
   private void checkCollision() {
     // check if alien either hits barrier or the player
-    List<SimpleAlien> toRemove = new ArrayList<>();
+    List<SimpleAlien> toRemoveAliens = new ArrayList<>();
+    List<SimpleProjectile> toRemoveProjectile = new ArrayList<>();
     aliens.values().forEach(alien -> {
       boolean collided = barriers.values().stream().anyMatch(barrier ->
                       alien.getHitbox().stream().anyMatch(barrier.getHitbox()::contains));
       if (collided) {
-        toRemove.add(alien);
+        toRemoveAliens.add(alien);
       }
       if (alien.getCoordinate().y() >= player.getCoordinate().y()) {
         player.setHitPoints(0);
@@ -83,8 +84,9 @@ public class EntityProvider {
       if (projectile.getdirection() == Direction.UP) { // player can only shoot up, so all projectiles moving up are from player
         aliens.values().forEach(alien -> {
           if (alien.getHitbox().contains(projectile.getCoordinate())) {
+            toRemoveProjectile.add(projectile);
             if (alien.getHit()) {
-              toRemove.add(alien);
+              toRemoveAliens.add(alien);
             }
           }
         });
@@ -94,8 +96,10 @@ public class EntityProvider {
         }
       }
     }
-
-    toRemove.forEach(aliens.values()::remove);
+    projectiles.removeAll(toRemoveProjectile);
+    toRemoveProjectile.clear();
+    toRemoveAliens.forEach(aliens.values()::remove);
+    toRemoveAliens.clear();
   }
 
   /**
