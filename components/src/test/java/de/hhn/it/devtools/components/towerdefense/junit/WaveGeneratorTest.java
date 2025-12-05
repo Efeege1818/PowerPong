@@ -1,5 +1,6 @@
 package de.hhn.it.devtools.components.towerdefense.junit;
 
+import de.hhn.it.devtools.apis.towerdefenseapi.Configuration;
 import de.hhn.it.devtools.apis.towerdefenseapi.Coordinates;
 import de.hhn.it.devtools.apis.towerdefenseapi.Enemy;
 import de.hhn.it.devtools.apis.towerdefenseapi.EnemyType;
@@ -18,6 +19,10 @@ public class WaveGeneratorTest {
 
   @Test
   public void createWaveTest() {
+
+    Configuration configuration = new Configuration(
+        Configuration.
+    )
 
     WaveGenerator waveGenerator = new WaveGenerator(new Coordinates(0.0f, 0.0f), 123456789, 10.0f, 1.0f);
 
