@@ -17,11 +17,12 @@ public record Configuration(int mapSize,
                             float enemyPowerMultiplier,
                             float enemyHealthMultiplier,
                             int escalation) {
-  static int DEFAULT_MAP_SIZE = 10;
-  static int DEFAULT_STARTING_HEALTH = 50;
-  static int DEFAULT_STARTING_MONEY = 100;
-  static float DEFAULT_ENEMY_POWER_MULTIPLIER = 10.0f;
-  static float DEFAULT_ENEMY_HEALTH_MULTIPLIER = 1.0f;
-  static float DEFAULT_ESCALATION = 1.1f;
+
+  public static int DEFAULT_MAP_SIZE = 10;
+  public static int DEFAULT_STARTING_HEALTH = 50;
+  public static int DEFAULT_STARTING_MONEY = 100;
+  public static float DEFAULT_ENEMY_POWER_MULTIPLIER = 10.0f;
+  public static float DEFAULT_ENEMY_HEALTH_MULTIPLIER = 1.0f;
+  public static float DEFAULT_ESCALATION = 1.1f;
 
 }
