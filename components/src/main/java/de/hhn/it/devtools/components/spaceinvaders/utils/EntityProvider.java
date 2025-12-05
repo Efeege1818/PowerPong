@@ -11,6 +11,7 @@ import de.hhn.it.devtools.components.spaceinvaders.entities.SimpleShip;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 /**
  * EntityProvider for all Entity Utils.
@@ -62,6 +63,26 @@ public class EntityProvider {
    */
   public void updateProjectiles() {
     projectiles.forEach(SimpleProjectile::move);
+  }
+
+  /**
+   * shoots from player.
+   */
+  public void shootPlayer() {
+    projectiles.add(new SimpleProjectile(new Coordinate(player.getCoordinate().x() + 1,
+            player.getCoordinate().y() - 1), Direction.UP, Constans.BASE_DAMAGE));
+  }
+
+  /**
+   * Selects a random alien and shoots from its Position.
+   */
+  public void shootAliens() {
+    Random rand = new Random();
+    List<Integer> keys = new ArrayList<>(aliens.keySet());
+    Integer randomKey = keys.get(rand.nextInt(keys.size()));
+    SimpleAlien randomAlien = aliens.get(randomKey);
+    projectiles.add(new SimpleProjectile(new Coordinate(randomAlien.getCoordinate().x() + 1,
+            randomAlien.getCoordinate().y() + 1), Direction.DOWN, Constans.BASE_DAMAGE));
   }
 
   /**

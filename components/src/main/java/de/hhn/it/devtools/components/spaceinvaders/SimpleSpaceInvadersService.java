@@ -95,7 +95,7 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
   @Override
   public void shoot() throws IllegalStateException {
     logger.debug("Service Shoot");
-    //TODO shoot func
+    entityProvider.shootPlayer();
   }
 
   @Override
