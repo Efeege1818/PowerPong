@@ -35,11 +35,10 @@ public class SimpleAlien {
   /**
    * Removes the amount of Damage from the HitPoints.
    *
-   * @param damage the amount of Damage to take.
    * @return a boolean true if the alien is still alive after the hit.
    */
-  public boolean getHit(int damage) {
-    this.hitPoints = this.hitPoints - damage;
+  public boolean getHit() {
+    this.hitPoints = this.hitPoints - 1;
     return hitPoints > 0;
   }
 

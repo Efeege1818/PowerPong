@@ -28,7 +28,7 @@ public class EntityProvider {
    * Default Constructor.
    */
   public EntityProvider() {
-    player = new SimpleShip(new Coordinate(Constans.FIELD_SIZE/2,Constans.FIELD_SIZE - 16));
+    player = new SimpleShip(new Coordinate(Constans.FIELD_SIZE / 2, Constans.FIELD_SIZE - 16));
     generateAliens();
   }
 
@@ -50,10 +50,10 @@ public class EntityProvider {
   private void generateAliens() {
     int row = 1;
     int col = 1;
-    for(int i = 1; i <= Constans.NUMBER_OF_ALIENS; i++){
-      aliens.put(i, new SimpleAlien(new Coordinate(col*10, 10*row), AlienType.BASIC, i));
+    for (int i = 1; i <= Constans.NUMBER_OF_ALIENS; i++) {
+      aliens.put(i, new SimpleAlien(new Coordinate(col * 10, 10 * row), AlienType.BASIC, i));
       col++;
-      if(i % 10 == 0) {
+      if (i % 10 == 0) {
         row++;
         col = 1;
       }
@@ -64,30 +64,29 @@ public class EntityProvider {
    * Method to check for collisions.
    */
   private void checkCollision() {
-    //check if alien either hits barrier or the player
+    // check if alien either hits barrier or the player
     aliens.values().forEach(alien -> {
       barriers.values().forEach(barrier -> {
         alien.getHitbox().stream()
             .filter(barrier.getHitbox()::contains)
             .findFirst()
-            .ifPresent(hit->alien.getHit(100));
+            .ifPresent(hit -> alien.getHit());
       });
-      if(alien.getCoordinate().y() >= player.getCoordinate().y()) {
+      if (alien.getCoordinate().y() >= player.getCoordinate().y()) {
         player.setHitPoints(0);
       }
     });
 
-    //check if projectiles hit alien or player
+    // check if projectiles hit alien or player
     for (SimpleProjectile projectile : projectiles) {
-      if(projectile.getdirection() == Direction.UP) { //player can only shoot up, so all projectiles moving up are from player
+      if (projectile.getdirection() == Direction.UP) { // player can only shoot up, so all projectiles moving up are from player
         aliens.values().forEach(alien -> {
-          if(alien.getHitbox().contains(projectile.getCoordinate())) {
+          if (alien.getHitbox().contains(projectile.getCoordinate())) {
             alien.getHit(projectile.getDamage());
           }
         });
-      }
-      else { //aliens can only shoot down, so all projectiles moving down are from aliens
-        if(player.getHitbox().contains(projectile.getCoordinate())) {
+      } else { // aliens can only shoot down, so all projectiles moving down are from aliens
+        if (player.getHitbox().contains(projectile.getCoordinate())) {
           player.setHitPoints(projectile.getDamage());
         }
       }
