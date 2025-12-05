@@ -16,7 +16,7 @@ public record Configuration(int mapSize,
                             int startingMoney,
                             float enemyPowerMultiplier,
                             float enemyHealthMultiplier,
-                            int escalation) {
+                            float escalation) {
 
   public static int DEFAULT_MAP_SIZE = 10;
   public static int DEFAULT_STARTING_HEALTH = 50;
