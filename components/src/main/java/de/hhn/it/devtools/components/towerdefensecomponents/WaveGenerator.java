@@ -122,7 +122,7 @@ public class WaveGenerator {
         UUID.randomUUID(),
         startCoordinates,
         type,
-        (int) (Enemy.getMaxHealth(type) * calculateHMW(wave)),
+        (int) (EnemyToolbox.getMaxHealth(type) * calculateHMW(wave)),
         0
     );
   }
