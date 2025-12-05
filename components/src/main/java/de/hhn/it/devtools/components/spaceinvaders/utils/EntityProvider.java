@@ -13,6 +13,7 @@ import de.hhn.it.devtools.components.spaceinvaders.utils.Constans;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * EntityProvider for all Entity Utils.
@@ -65,13 +66,13 @@ public class EntityProvider {
    */
   private void checkCollision() {
     // check if alien either hits barrier or the player
+    List<SimpleAlien> toRemove = new ArrayList<>();
     aliens.values().forEach(alien -> {
-      barriers.values().forEach(barrier -> {
-        alien.getHitbox().stream()
-            .filter(barrier.getHitbox()::contains)
-            .findFirst()
-            .ifPresent(hit -> alien.getHit());
-      });
+      boolean collided = barriers.values().stream().anyMatch(barrier ->
+                      alien.getHitbox().stream().anyMatch(barrier.getHitbox()::contains));
+      if (collided) {
+        toRemove.add(alien);
+      }
       if (alien.getCoordinate().y() >= player.getCoordinate().y()) {
         player.setHitPoints(0);
       }
@@ -82,7 +83,9 @@ public class EntityProvider {
       if (projectile.getdirection() == Direction.UP) { // player can only shoot up, so all projectiles moving up are from player
         aliens.values().forEach(alien -> {
           if (alien.getHitbox().contains(projectile.getCoordinate())) {
-            alien.getHit();
+            if (alien.getHit()) {
+              toRemove.add(alien);
+            }
           }
         });
       } else { // aliens can only shoot down, so all projectiles moving down are from aliens
@@ -91,6 +94,8 @@ public class EntityProvider {
         }
       }
     }
+
+    toRemove.forEach(aliens.values()::remove);
   }
 
   /**
