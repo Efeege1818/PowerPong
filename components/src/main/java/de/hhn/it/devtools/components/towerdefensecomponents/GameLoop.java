@@ -1,46 +1,57 @@
 package de.hhn.it.devtools.components.towerdefensecomponents;
 
 /**
- * Independent Thread, that manages everything that runs constantly,
- * and isn't directly tied to user inputs.
+ * This Class runs in a loop every game tick and manages everything that has to run constantly.
  */
-public interface GameLoop extends Runnable {
-
+public class GameLoop extends Thread{
   @Override
-  void run();
+  public void run() {
+
+  }
+
 
   /**
    * Triggers calculation of the next game-tick.
    *
    * @throws IllegalStateException if game is not running
    */
-  void updateGame() throws IllegalStateException;
+  public void updateGame() throws IllegalStateException {
+
+  }
 
   /**
    * End game tick, no tick after this is possible.
    *
    * @throws IllegalStateException if game is not running
    */
-  void endGame() throws IllegalStateException;
+  public void endGame() throws IllegalStateException {
+
+  }
 
   /**
    * Saves last game round and makes it possible to retry that round if failed.
    *
    * @throws IllegalStateException if game is not running
    */
-  void retry() throws IllegalStateException;
+  public void retry() throws IllegalStateException {
+
+  }
 
   /**
    * Halts game and makes it possible to resume.
    *
    * @throws IllegalStateException if game is not running
    */
-  void pauseGame() throws IllegalStateException;
+  public void pauseGame() throws IllegalStateException {
+
+  }
 
   /**
    * Resumes the game or starts the next round if possible.
    *
    * @throws IllegalStateException if game is running
    */
-  void resumeRound() throws IllegalStateException;
+  public void resumeRound() throws IllegalStateException {
+
+  }
 }
