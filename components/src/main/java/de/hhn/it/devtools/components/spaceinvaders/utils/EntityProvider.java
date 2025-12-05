@@ -24,6 +24,7 @@ public class EntityProvider {
   private HashMap<Integer, SimpleBarrier> barriers = new HashMap<>();
   private HashMap<Integer, SimpleAlien> aliens = new HashMap<>();
   private ArrayList<SimpleProjectile> projectiles = new ArrayList<>();
+  private Direction currentDirection = Direction.RIGHT;
 
   /**
    * Default Constructor.
@@ -37,8 +38,8 @@ public class EntityProvider {
     player.move(direction);
   }
 
-  public void updateAliens(Direction direction) {
-    aliens.values().forEach(alien -> alien.move(direction));
+  public void updateAliens() {
+    aliens.values().forEach(alien -> alien.move(currentDirection));
   }
 
   public void updateProjectiles() {
