@@ -2,7 +2,10 @@ package de.hhn.it.devtools.components.spaceinvaders.utils;
 
 import de.hhn.it.devtools.apis.spaceinvaders.Coordinate;
 import de.hhn.it.devtools.apis.spaceinvaders.Direction;
+import de.hhn.it.devtools.apis.spaceinvaders.entities.Alien;
 import de.hhn.it.devtools.apis.spaceinvaders.entities.AlienType;
+import de.hhn.it.devtools.apis.spaceinvaders.entities.Barrier;
+import de.hhn.it.devtools.components.spaceinvaders.SimpleSpaceInvadersService;
 import de.hhn.it.devtools.components.spaceinvaders.entities.SimpleAlien;
 import de.hhn.it.devtools.components.spaceinvaders.entities.SimpleBarrier;
 import de.hhn.it.devtools.components.spaceinvaders.entities.SimpleProjectile;
@@ -23,21 +26,20 @@ public class EntityProvider {
   private HashMap<Integer, SimpleAlien> aliens = new HashMap<>();
   private ArrayList<SimpleProjectile> projectiles = new ArrayList<>();
   private Direction currentAlienDirection = Direction.RIGHT;
-
+  private SimpleSpaceInvadersService service;
   /**
    * Default Constructor.
    */
-  public EntityProvider() {
+  public EntityProvider(SimpleSpaceInvadersService service) {
     player = new SimpleShip(new Coordinate(Constans.FIELD_SIZE / 2, Constans.FIELD_SIZE - 16));
     generateAliens();
+    this.service = service;
   }
 
-  /**
-   * moves the player ship.
-   */
-  public void updatePlayer(Direction direction) {
-    player.move(direction);
+  public SimpleShip getPlayer() {
+    return player;
   }
+
 
   /**
    * moves all the aliens.
@@ -52,6 +54,9 @@ public class EntityProvider {
         } else {
           this.currentAlienDirection = Direction.RIGHT;
         }
+
+        service.notifyListeners(spaceInvadersListener -> spaceInvadersListener
+                .updateAliens((Alien[]) aliens.values().stream().map(SimpleAlien::immutableAlien).toArray()));
         break;
       }
     }
@@ -104,18 +109,21 @@ public class EntityProvider {
   /**
    * Method to check for collisions.
    */
-  private void checkCollision() {
+  public void checkCollision() {
     // check if alien either hits barrier or the player
     List<SimpleAlien> toRemoveAliens = new ArrayList<>();
     List<SimpleProjectile> toRemoveProjectile = new ArrayList<>();
     aliens.values().forEach(alien -> {
-      boolean collided = barriers.values().stream().anyMatch(barrier ->
-              alien.getHitbox().stream().anyMatch(barrier.getHitbox()::contains));
-      if (collided) {
+      java.util.Optional<SimpleBarrier> barrier = barriers.values().stream().filter(barriers -> alien.getHitbox().stream().anyMatch(barriers.getHitbox()::contains)).findFirst();
+
+      if (barrier.isPresent()) {
+        service.notifyListeners(spaceInvadersListener -> spaceInvadersListener
+                .updateBarrier(barrier.get().getImmutableBarrier()));
         toRemoveAliens.add(alien);
       }
       if (alien.getCoordinate().y() >= player.getCoordinate().y()) {
         player.setHitPoints(0);
+        service.notifyListeners(spaceInvadersListener -> spaceInvadersListener.updateShip(player.getImmutableShip()));
       }
     });
 
@@ -128,10 +136,13 @@ public class EntityProvider {
             if (alien.getHit()) {
               toRemoveAliens.add(alien);
             }
+            service.notifyListeners(spaceInvadersListener -> spaceInvadersListener.damageAlien(alien.immutableAlien()));
           }
         });
       } else { // aliens can only shoot down, so all projectiles moving down are from aliens
         if (player.getHitbox().contains(projectile.getCoordinate())) {
+          service.notifyListeners(spaceInvadersListener -> spaceInvadersListener
+                  .updateShip(player.getImmutableShip()));
           player.setHitPoints(projectile.getDamage());
         }
       }

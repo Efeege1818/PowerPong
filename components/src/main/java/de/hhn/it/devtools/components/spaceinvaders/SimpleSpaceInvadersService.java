@@ -26,6 +26,7 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
   private SimpleGameLoop simpleGameLoop;
   private GameState gameState;
   private int round;
+  boolean alienMoveAllowed = true;
 
   private EntityProvider entityProvider;
 
@@ -47,7 +48,7 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
   public void start() throws IllegalStateException {
     logger.debug("Service Start");
     checkIfGameStateIsLegal(GameState.PREPARED);
-    entityProvider = new EntityProvider();
+    entityProvider = new EntityProvider(this);
     simpleGameLoop = new SimpleGameLoop(this);
     simpleGameLoop.start();
     gameState = GameState.RUNNING;
@@ -90,6 +91,9 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
   @Override
   public void move(Direction direction) throws IllegalStateException {
     logger.debug("Service Move");
+    entityProvider.getPlayer().move(direction);
+    notifyListeners(spaceInvadersListener -> spaceInvadersListener
+            .updateShip(entityProvider.getPlayer().getImmutableShip()));
   }
 
   @Override
@@ -137,7 +141,7 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
    *
    * @param listener triggered callback.
    */
-  private void notifyListeners(Consumer<SpaceInvadersListener> listener) {
+  public void notifyListeners(Consumer<SpaceInvadersListener> listener) {
     for (SpaceInvadersListener l : listeners) {
       listener.accept(l);
     }
@@ -160,9 +164,22 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
    * This method gets triggered every loop by SimpleGameLoop.
    */
   protected void triggeredByGameLoop() {
-    if(entityProvider == null) {
+    if (entityProvider == null) {
       logger.debug("Something went wrong; no EntityProvider");
       return;
+    }
+    entityProvider.updateProjectiles();
+    entityProvider.checkCollision();
+
+    if (alienMoveAllowed) {
+      entityProvider.updateAliens();
+      alienMoveAllowed = false;
+    } else {
+      alienMoveAllowed = true;
+    }
+
+    if (entityProvider.getPlayer().getHitPoints() == 0) {
+      abort();
     }
 
   }
