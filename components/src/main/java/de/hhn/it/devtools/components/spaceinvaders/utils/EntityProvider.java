@@ -82,7 +82,7 @@ public class EntityProvider {
       if (projectile.getdirection() == Direction.UP) { // player can only shoot up, so all projectiles moving up are from player
         aliens.values().forEach(alien -> {
           if (alien.getHitbox().contains(projectile.getCoordinate())) {
-            alien.getHit(projectile.getDamage());
+            alien.getHit();
           }
         });
       } else { // aliens can only shoot down, so all projectiles moving down are from aliens
