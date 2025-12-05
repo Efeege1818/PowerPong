@@ -17,14 +17,19 @@ public class WaveGeneratorTest {
   private static final org.slf4j.Logger logger =
       org.slf4j.LoggerFactory.getLogger(WaveGeneratorTest.class);
 
+  private final Configuration configuration = new Configuration(
+      Configuration.DEFAULT_MAP_SIZE,
+      Configuration.DEFAULT_STARTING_HEALTH,
+      Configuration.DEFAULT_STARTING_MONEY,
+      Configuration.DEFAULT_ENEMY_POWER_MULTIPLIER,
+      Configuration.DEFAULT_ENEMY_HEALTH_MULTIPLIER,
+      Configuration.DEFAULT_ESCALATION);
+
   @Test
   public void createWaveTest() {
 
-    Configuration configuration = new Configuration(
-        Configuration.
-    )
-
-    WaveGenerator waveGenerator = new WaveGenerator(new Coordinates(0.0f, 0.0f), 123456789, 10.0f, 1.0f);
+    WaveGenerator waveGenerator = new WaveGenerator(
+        new Coordinates(0.0f, 0.0f), 123456789, configuration);
 
     logger.debug(waveGenerator.generateWave(1).toString());
 
@@ -41,7 +46,9 @@ public class WaveGeneratorTest {
   @Test
   public void createWaveConsistencyTest() {
 
-    WaveGenerator waveGenerator = new WaveGenerator(new Coordinates(0.0f, 0.0f), 123456789, 10.0f, 1.0f);
+    WaveGenerator waveGenerator = new WaveGenerator(
+        new Coordinates(0.0f, 0.0f), 123456789, configuration);
+
     List<EnemyType> generation1 = waveGenerator
         .generateWave(10)
         .values()
