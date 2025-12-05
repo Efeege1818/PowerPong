@@ -1,5 +1,6 @@
 package de.hhn.it.devtools.components.towerdefensecomponents;
 
+import de.hhn.it.devtools.apis.towerdefenseapi.Configuration;
 import de.hhn.it.devtools.apis.towerdefenseapi.Coordinates;
 import de.hhn.it.devtools.apis.towerdefenseapi.Enemy;
 import de.hhn.it.devtools.apis.towerdefenseapi.EnemyType;
@@ -15,34 +16,20 @@ import java.util.UUID;
  */
 public class WaveGenerator {
 
-  private static final float DEFAULT_POWER_MODIFIER = 10.0f;
-  private static final float DEFAULT_HEALTH_MODIFIER = 1.0f;
-  private static final float ESCALATION = 1.1f;
-
-  private final float powerModifier;
-  private final float healthModifier;
+  private final Configuration configuration;
   private final long randomSeed;
   private final Coordinates startCoordinates;
 
-  /**
-   * Creates a new WaveGenerator with default modifiers.
-   *
-   * @param randomSeed the Seed that should be used for the random Generation
-   */
-  public WaveGenerator(Coordinates startCoordinates, long randomSeed) {
-    this(startCoordinates, randomSeed, DEFAULT_POWER_MODIFIER, DEFAULT_HEALTH_MODIFIER);
-  }
 
   /**
    * Creates a new WaveGenerator.
    *
+   * @param startCoordinates the coordinates where enemies start on the map
    * @param randomSeed the Seed that should be used for the random Generation
-   * @param powerModifier a multiplier that is applied to the number of enemies.
-   * @param healthModifier a multiplier that is applied to the health of enemies.
+   * @param configuration the current configuration of the game
    */
-  public WaveGenerator(Coordinates startCoordinates, long randomSeed, float powerModifier, float healthModifier) {
-    this.powerModifier = powerModifier;
-    this.healthModifier = healthModifier;
+  public WaveGenerator(Coordinates startCoordinates, long randomSeed, Configuration configuration) {
+    this.configuration = configuration;
     this.randomSeed = randomSeed;
     this.startCoordinates = startCoordinates;
   }
@@ -110,11 +97,11 @@ public class WaveGenerator {
 
   @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
   private double calculateHMW(int wave) {
-    return healthModifier * Math.pow(wave, ESCALATION);
+    return configuration.enemyHealthMultiplier() * Math.pow(wave, configuration.escalation());
   }
 
   private int calculatePower(int wave) {
-    return (int) powerModifier * wave;
+    return (int) configuration.enemyPowerMultiplier() * wave;
   }
 
   private Enemy createEnemy(EnemyType type, int wave) {
