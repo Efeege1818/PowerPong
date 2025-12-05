@@ -2,17 +2,14 @@ package de.hhn.it.devtools.components.spaceinvaders.utils;
 
 import de.hhn.it.devtools.apis.spaceinvaders.Coordinate;
 import de.hhn.it.devtools.apis.spaceinvaders.Direction;
-import de.hhn.it.devtools.apis.spaceinvaders.entities.Alien;
 import de.hhn.it.devtools.apis.spaceinvaders.entities.AlienType;
 import de.hhn.it.devtools.components.spaceinvaders.entities.SimpleAlien;
 import de.hhn.it.devtools.components.spaceinvaders.entities.SimpleBarrier;
 import de.hhn.it.devtools.components.spaceinvaders.entities.SimpleProjectile;
 import de.hhn.it.devtools.components.spaceinvaders.entities.SimpleShip;
-import de.hhn.it.devtools.components.spaceinvaders.utils.Constans;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -24,7 +21,7 @@ public class EntityProvider {
   private HashMap<Integer, SimpleBarrier> barriers = new HashMap<>();
   private HashMap<Integer, SimpleAlien> aliens = new HashMap<>();
   private ArrayList<SimpleProjectile> projectiles = new ArrayList<>();
-  private Direction currentDirection = Direction.RIGHT;
+  private Direction currentAlienDirection = Direction.RIGHT;
 
   /**
    * Default Constructor.
@@ -39,7 +36,19 @@ public class EntityProvider {
   }
 
   public void updateAliens() {
-    aliens.values().forEach(alien -> alien.move(currentDirection));
+
+    for (SimpleAlien a : aliens.values()) {
+      if (a.getCoordinate().x() < 0 || a.getCoordinate().x() > Constans.FIELD_SIZE) {
+        aliens.values().forEach(alien -> alien.move(Direction.DOWN));
+        if (this.currentAlienDirection == Direction.RIGHT) {
+          this.currentAlienDirection = Direction.LEFT;
+        } else {
+          this.currentAlienDirection = Direction.RIGHT;
+        }
+        break;
+      }
+    }
+    aliens.values().forEach(alien -> alien.move(currentAlienDirection));
   }
 
   public void updateProjectiles() {
@@ -71,7 +80,7 @@ public class EntityProvider {
     List<SimpleProjectile> toRemoveProjectile = new ArrayList<>();
     aliens.values().forEach(alien -> {
       boolean collided = barriers.values().stream().anyMatch(barrier ->
-                      alien.getHitbox().stream().anyMatch(barrier.getHitbox()::contains));
+              alien.getHitbox().stream().anyMatch(barrier.getHitbox()::contains));
       if (collided) {
         toRemoveAliens.add(alien);
       }
