@@ -1,6 +1,5 @@
 package de.hhn.it.devtools.apis.towerdefenseapi;
 
-
 /**
  * Record that stores global Variables.
  */

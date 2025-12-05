@@ -25,11 +25,11 @@ public class MapToolbox {
 
 
   /**
-   * Calculates the enemy's path.
+   * Returns the enemy's path of the given grid.
    *
-   * @param type the EnemyType of the Enemy
-   * @return the default money for an enemy of the given type
-   * @throws NoSuchElementException if the given EnemyType isn't supported
+   * @param grid the grid on wich the path will be based on.
+   * @return the path of the grid
+   * @throws IllegalArgumentException if the given grid is null
    */
   public ArrayList<Coordinates> getPath(Grid grid) {
     return null;
@@ -38,9 +38,11 @@ public class MapToolbox {
   /**
    * Returns the default money values for different enemy types.
    *
-   * @param type the EnemyType of the Enemy
-   * @return the default money for an enemy of the given type
-   * @throws NoSuchElementException if the given EnemyType isn't supported
+   * @param coordinates where the tower should be placed
+   * @param towers is the list of towers already on the grid
+   * @param grid the grid on wich the tower will be placed on
+   * @return if the tower is allowed to be placed on the given coordinates
+   * @throws IllegalArgumentException if any given parameters are null
    */
   public boolean isTowerPlacementAllowed(Coordinates coordinates, List<Tower> towers, Grid grid) {
     return false;

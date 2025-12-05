@@ -11,5 +11,5 @@ package de.hhn.it.devtools.apis.towerdefenseapi;
  */
 public record Tower(int id,
                     Coordinates coordinates,
-                    TowerType type) {
-}
+                    TowerType type
+){}

@@ -2,16 +2,13 @@ package de.hhn.it.devtools.apis.towerdefenseapi;
 
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 /**
  * Interface for the TowerDefenseSystem.
  */
 interface TowerDefenseService {
 
-
-
-  public GameState getCurrentGameState();
+  GameState getCurrentGameState();
 
   /**
    * Adds a listener to the list.
@@ -91,7 +88,8 @@ interface TowerDefenseService {
    * Places a tower on the map at its defined position.
    *
    * @param tower the tower to be placed
-   * @throws IllegalArgumentException if tower is null or placement is invalid (on Path or on other tower).
+   * @throws IllegalArgumentException if tower is null or
+   *     placement is invalid (on Path or on other tower).
    */
   void placeTower(Tower tower) throws IllegalArgumentException;
 
