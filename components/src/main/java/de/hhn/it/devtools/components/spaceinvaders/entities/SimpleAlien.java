@@ -70,4 +70,7 @@ public class SimpleAlien {
   public Alien immutableAlien() {
     return new Alien(coordinate, hitPoints, alienType, alienId);
   }
+
+  public ArrayList<Coordinate> getHitbox() { return hitbox; }
+  public Coordinate getCoordinate() { return coordinate; }
 }

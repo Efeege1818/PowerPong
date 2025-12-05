@@ -1,13 +1,13 @@
 package de.hhn.it.devtools.components.spaceinvaders;
 
 import de.hhn.it.devtools.apis.spaceinvaders.GameState;
+import de.hhn.it.devtools.components.spaceinvaders.utils.Constans;
 
 /**
  * Simple GameLoop for the game SpaceInvaders.
  */
 public class SimpleGameLoop extends Thread {
   private final SimpleSpaceInvadersService service;
-  private static final int TICKS_PER_SECOND = 20;
 
   /**
    * Default Constructor.
@@ -32,7 +32,7 @@ public class SimpleGameLoop extends Thread {
       }
       service.triggeredByGameLoop();
       try {
-        wait(TICKS_PER_SECOND);
+        wait(Constans.FIELD_SIZE);
       } catch (InterruptedException e) {
         return;
       }

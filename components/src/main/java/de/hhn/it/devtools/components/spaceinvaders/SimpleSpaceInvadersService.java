@@ -8,17 +8,12 @@ import de.hhn.it.devtools.apis.spaceinvaders.Sound;
 import de.hhn.it.devtools.apis.spaceinvaders.SpaceInvadersListener;
 import de.hhn.it.devtools.apis.spaceinvaders.SpaceInvadersService;
 import de.hhn.it.devtools.apis.spaceinvaders.exceptions.IllegalConfigurationException;
+import de.hhn.it.devtools.components.spaceinvaders.utils.EntityProvider;
 
+import java.io.Console;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Consumer;
-
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-
-import static de.hhn.it.devtools.components.spaceinvaders.utils.SoundProvider.soundFiles;
 
 /**
  * Simple implementation of SpaceInvadersService.
@@ -31,6 +26,8 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
   private SimpleGameLoop simpleGameLoop;
   private GameState gameState;
   private int round;
+
+  private EntityProvider entityProvider;
 
   /**
    * Default constructor. Load default values for configuration.
@@ -50,6 +47,7 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
   public void start() throws IllegalStateException {
     logger.debug("Service Start");
     checkIfGameStateIsLegal(GameState.PREPARED);
+    entityProvider = new EntityProvider();
     simpleGameLoop = new SimpleGameLoop(this);
     simpleGameLoop.start();
     gameState = GameState.RUNNING;
@@ -60,6 +58,7 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
   public void abort() throws IllegalStateException {
     logger.debug("Service Abort");
     checkIfGameStateIsLegal(GameState.PREPARED);
+    entityProvider = null;
     simpleGameLoop.stopGame();
     notifyListeners((l) -> {
       l.changedGameState(gameState);
@@ -91,7 +90,6 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
   @Override
   public void move(Direction direction) throws IllegalStateException {
     logger.debug("Service Move");
-    //TODO move func
   }
 
   @Override
@@ -103,25 +101,6 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
   @Override
   public void playSound(Sound sound) throws IllegalStateException {
     logger.debug("Service PlaySound");
-    // Backend Sound????
-    String fileName = soundFiles.get(sound);
-    if (fileName == null) {
-      logger.error("No sound file for sound: {}", sound);
-      return;
-    }
-
-    try (AudioInputStream audioIn = AudioSystem.getAudioInputStream(
-            Objects.requireNonNull(getClass().getResourceAsStream(fileName)))) {
-
-      Clip clip = AudioSystem.getClip();
-      clip.open(audioIn);
-      clip.start();
-
-    } catch (Exception e) {
-      logger.error("Error playing sound: {}", e.getMessage());
-    }
-
-    // just give it to front????
     notifyListeners((l) -> l.updateSound(sound));
   }
 
@@ -181,7 +160,11 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
    * This method gets triggered every loop by SimpleGameLoop.
    */
   protected void triggeredByGameLoop() {
-    //TODO Spiel logik
+    if(entityProvider == null) {
+      logger.debug("Something went wrong; no EntityProvider");
+      return;
+    }
+
   }
 
   protected GameState getGameState() {
