@@ -31,10 +31,16 @@ public class EntityProvider {
     generateAliens();
   }
 
+  /**
+   * moves the player ship.
+   */
   public void updatePlayer(Direction direction) {
     player.move(direction);
   }
 
+  /**
+   * moves all the aliens.
+   */
   public void updateAliens() {
 
     for (SimpleAlien a : aliens.values()) {
@@ -51,6 +57,9 @@ public class EntityProvider {
     aliens.values().forEach(alien -> alien.move(currentAlienDirection));
   }
 
+  /**
+   * moves all the projectiles.
+   */
   public void updateProjectiles() {
     projectiles.forEach(SimpleProjectile::move);
   }
