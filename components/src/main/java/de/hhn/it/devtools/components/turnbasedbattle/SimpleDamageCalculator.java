@@ -1,14 +1,13 @@
 package de.hhn.it.devtools.components.turnbasedbattle;
 
-import de.hhn.it.devtools.apis.turnbasedbattle.Element;
 import de.hhn.it.devtools.apis.turnbasedbattle.Move;
 
 /**
  * Utility class for damage calculation.
  */
-public class DamageCalculator {
+public class SimpleDamageCalculator{
   private static final org.slf4j.Logger logger =
-          org.slf4j.LoggerFactory.getLogger(DamageCalculator.class);
+          org.slf4j.LoggerFactory.getLogger(SimpleDamageCalculator.class);
 
   /**
    * Calculates the actual damage based on the move, critical hit, and elemental effectiveness.

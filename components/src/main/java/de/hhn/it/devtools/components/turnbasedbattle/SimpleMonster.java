@@ -5,7 +5,7 @@ import de.hhn.it.devtools.apis.turnbasedbattle.Monster;
 import de.hhn.it.devtools.apis.turnbasedbattle.Move;
 import java.util.HashMap;
 
-import static de.hhn.it.devtools.components.turnbasedbattle.DamageCalculator.calculateDamage;
+import static de.hhn.it.devtools.components.turnbasedbattle.SimpleDamageCalculator.calculateDamage;
 
 /**
  * A simple implementation of the Monster interface.

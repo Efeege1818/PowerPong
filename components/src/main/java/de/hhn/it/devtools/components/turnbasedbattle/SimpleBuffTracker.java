@@ -1,18 +1,18 @@
 package de.hhn.it.devtools.components.turnbasedbattle;
 
+import de.hhn.it.devtools.apis.turnbasedbattle.BuffTracker;
 import de.hhn.it.devtools.apis.turnbasedbattle.Move;
 import de.hhn.it.devtools.apis.turnbasedbattle.MoveType;
-import de.hhn.it.devtools.apis.turnbasedbattle.Player;
-import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Class that tracks the turn duration of buffs and debuffs.
  */
-public class BuffTracker {
+public class SimpleBuffTracker implements BuffTracker {
   private static final org.slf4j.Logger logger =
-          org.slf4j.LoggerFactory.getLogger(BuffTracker.class);
+          org.slf4j.LoggerFactory.getLogger(SimpleBuffTracker.class);
 
   private Map<Integer, Move> buffsMonster1 = new HashMap<>();
   private Map<Integer, Move> buffsMonster2 = new HashMap<>();
@@ -26,7 +26,7 @@ public class BuffTracker {
    * @param player1Monster Player 1 monster
    * @param player2Monster Player 2 monster
    */
-  public BuffTracker(SimpleMonster player1Monster, SimpleMonster player2Monster) {
+  public SimpleBuffTracker(SimpleMonster player1Monster, SimpleMonster player2Monster) {
     this.player1Monster = player1Monster;
     this.player2Monster = player2Monster;
     buffs.put(this.player1Monster, buffsMonster1);
@@ -39,6 +39,7 @@ public class BuffTracker {
    * @param move Move containing the buff or debuff
    * @param currentPlayerId id of the player currently executing this move
    */
+  @Override
   public void addBuff(Move move, int currentPlayerId) {
 
     if (move.type() == MoveType.BUFF) {
@@ -72,6 +73,7 @@ public class BuffTracker {
    * @param currentPlayerId id of the player currently in control
    * @return all active buffs
    */
+  @Override
   public Map<Integer, Move> getBuffs(int currentPlayerId) {
     SimpleMonster index;
     if (currentPlayerId == 1) {
@@ -86,6 +88,7 @@ public class BuffTracker {
    * Buff duration is reduced by 1 each turn.
    * A buff with a duration of 0 is removed.
    */
+  @Override
   public void tickBuffs() {
     HashMap<Integer, Move> newBuffs0 = new HashMap<>();
     buffs.get(this.player1Monster).forEach((duration, move) -> {
