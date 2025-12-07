@@ -1,4 +1,4 @@
-package de.hhn.it.devtools.components.turnbasedbattle;
+package de.hhn.it.devtools.javafx.turnbasedbattle;
 
 import de.hhn.it.devtools.apis.turnbasedbattle.Monster;
 import de.hhn.it.devtools.apis.turnbasedbattle.SelectScreen;
