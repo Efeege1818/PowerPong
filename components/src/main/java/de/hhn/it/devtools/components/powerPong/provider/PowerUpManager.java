@@ -258,7 +258,7 @@ public class PowerUpManager {
     public List<PowerUpState> getPowerUpStates() {
         List<PowerUpState> states = new ArrayList<>();
         for (FieldPowerUp p : powerUps) {
-            states.add(new PowerUpState(p.x, p.y, p.type));
+            states.add(new PowerUpState(p.x, p.y, POWERUP_RADIUS, p.type));
         }
         return states;
     }
@@ -287,4 +287,3 @@ public class PowerUpManager {
         }
     }
 }
-

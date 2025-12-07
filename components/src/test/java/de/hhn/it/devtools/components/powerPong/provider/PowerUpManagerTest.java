@@ -28,6 +28,7 @@ public class PowerUpManagerTest {
         manager.reset();
         manager.update(10.0);
         assertEquals(1, manager.getPowerUpStates().size());
+        assertEquals(12.0, manager.getPowerUpStates().get(0).radius(), 0.001);
     }
 
     @Test

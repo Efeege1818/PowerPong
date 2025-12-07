@@ -27,7 +27,12 @@ public class PhysicsEngineTest {
         PaddleState right = physics.getRightPaddleState();
 
         assertEquals(PhysicsEngine.FIELD_HEIGHT / 2.0, left.yPosition(), 0.001);
+        assertEquals(PhysicsEngine.LEFT_PADDLE_X, left.xPosition(), 0.001);
+        assertEquals(PhysicsEngine.PADDLE_WIDTH, left.width(), 0.001);
+
         assertEquals(PhysicsEngine.FIELD_HEIGHT / 2.0, right.yPosition(), 0.001);
+        assertEquals(PhysicsEngine.RIGHT_PADDLE_X, right.xPosition(), 0.001);
+        assertEquals(PhysicsEngine.PADDLE_WIDTH, right.width(), 0.001);
         assertTrue(physics.getBallStates().isEmpty());
     }
 
@@ -37,6 +42,7 @@ public class PhysicsEngineTest {
         assertNotNull(physics.getBall());
         assertEquals(PhysicsEngine.FIELD_WIDTH / 2.0, physics.getBall().x, 0.001);
         assertTrue(physics.getBall().vx > 0);
+        assertEquals(PhysicsEngine.BALL_RADIUS, physics.getBallStates().get(0).radius(), 0.001);
     }
 
     @Test

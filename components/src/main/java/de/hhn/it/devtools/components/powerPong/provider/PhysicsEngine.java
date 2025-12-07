@@ -263,11 +263,11 @@ public class PhysicsEngine {
 
     // Getters and Setters for state
     public PaddleState getLeftPaddleState() {
-        return new PaddleState(paddle1CenterY, PADDLE_HEIGHT * leftHeightFactor);
+        return new PaddleState(LEFT_PADDLE_X, paddle1CenterY, PADDLE_WIDTH, PADDLE_HEIGHT * leftHeightFactor);
     }
 
     public PaddleState getRightPaddleState() {
-        return new PaddleState(paddle2CenterY, PADDLE_HEIGHT * rightHeightFactor);
+        return new PaddleState(RIGHT_PADDLE_X, paddle2CenterY, PADDLE_WIDTH, PADDLE_HEIGHT * rightHeightFactor);
     }
 
     // Helper for AI
@@ -278,9 +278,9 @@ public class PhysicsEngine {
     public List<BallState> getBallStates() {
         List<BallState> balls = new ArrayList<>();
         if (ball != null)
-            balls.add(new BallState(ball.x, ball.y));
+            balls.add(new BallState(ball.x, ball.y, BALL_RADIUS));
         if (secondaryBall != null)
-            balls.add(new BallState(secondaryBall.x, secondaryBall.y));
+            balls.add(new BallState(secondaryBall.x, secondaryBall.y, BALL_RADIUS));
         return balls;
     }
 

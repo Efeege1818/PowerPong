@@ -1,10 +1,11 @@
 package de.hhn.it.devtools.apis.powerPong;
+
 /**
  * State of a power-up visible on the field.
  *
  * @param xPosition The X-coordinate of the power-up.
  * @param yPosition The Y-coordinate of the power-up.
- * @param type The type of the power-up (so the UI can draw it correctly).
+ * @param type      The type of the power-up (so the UI can draw it correctly).
  */
-public record PowerUpState(double xPosition, double yPosition, PowerUpType type) {
+public record PowerUpState(double xPosition, double yPosition, double radius, PowerUpType type) {
 }
