@@ -2,9 +2,13 @@ package de.hhn.it.devtools.javafx.turnbasedbattle;
 
 import de.hhn.it.devtools.apis.turnbasedbattle.Monster;
 import de.hhn.it.devtools.apis.turnbasedbattle.SelectScreen;
+import javafx.scene.layout.AnchorPane;
+
 import java.util.List;
 
-public class SimpleSelectScreen implements SelectScreen {
+public class SimpleSelectScreen extends AnchorPane implements SelectScreen {
+  public static final String SCREEN_NAME = "SelectScreen";
+
   private boolean selected1 = false;
   private boolean selected2 = false;
   private Monster p1Monster;

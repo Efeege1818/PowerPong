@@ -3,7 +3,7 @@ package de.hhn.it.devtools.apis.turnbasedbattle;
 import java.util.Map;
 
 /**
- * Tracks, removes and excecut effects of Buffs and Debuffs
+ * Tracks, removes and execute effects of Buffs and Debuffs
  */
 public interface BuffTracker {
 
