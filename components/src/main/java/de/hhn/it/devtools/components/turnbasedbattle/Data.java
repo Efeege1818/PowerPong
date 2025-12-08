@@ -64,7 +64,11 @@ public class Data {
     Move moveStrongWaterAttack = new Move(MoveType.ATTACK, Element.WATER,
         30, "health", 1, 10, true, "Strong water attack");
 
-    Move[] fireMonsterMoves = {moveNormalAttack, moveFireAttack, moveCriticalBuff,
+    // Dot moves
+    Move moveDotFire = new Move(MoveType.DOT, Element.FIRE,
+        5, "health", 2, 10, true, "Fire dot");
+
+    Move[] fireMonsterMoves = {moveDotFire, moveFireAttack, moveCriticalBuff,
         moveDefenseDebuff, moveStrongFireAttack};
     Move[] grassMonsterMoves = {moveNormalAttack, moveGrassAttack, moveAttackBuff,
         moveEvasionDebuff, moveStrongGrassAttack};

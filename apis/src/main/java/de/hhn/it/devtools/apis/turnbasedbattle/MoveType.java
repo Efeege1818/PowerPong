@@ -22,5 +22,10 @@ public enum MoveType {
      * The move is a debuff.
      * Decreases the stats of the opponent's monster.
      */
-    DEBUFF
+    DEBUFF,
+
+    /**
+     * The move applies damage-over-time (DOT) to the opponent's monster.
+     */
+    DOT
 }

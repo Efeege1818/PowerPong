@@ -27,6 +27,7 @@ public class SimpleBattleManager implements BattleManager {
   private boolean battleOver;
 
   private SimpleBuffTracker simpleBuffTracker;
+  private DotTracker dotTracker;
 
   @Override
   public void initializeBattle(Player p1, Player p2, Monster m1, Monster m2) {
@@ -36,6 +37,7 @@ public class SimpleBattleManager implements BattleManager {
     this.p1Monster = new SimpleMonster(m1);
     this.p2Monster = new SimpleMonster(m2);
     this.simpleBuffTracker = new SimpleBuffTracker(p1Monster, p2Monster);
+    this.dotTracker = new DotTracker(p1Monster, p2Monster);
 
     this.turnCount = 0;
     this.battleOver = false;
@@ -96,7 +98,6 @@ public class SimpleBattleManager implements BattleManager {
     if (!currentMonster.hasMove(moveNumber)) {
       throw new IllegalArgumentException("Invalid move number.");
     }
-
     simpleBuffTracker.tickBuffs();
 
     Move selectedMove = currentMonster.getMove(moveNumber);
@@ -107,6 +108,7 @@ public class SimpleBattleManager implements BattleManager {
     switch (selectedMove.type()) {
       case ATTACK -> {
         // do damage
+        dotTracker.applyDotOnAttack(opponentMonster);
         opponentMonster.takeDamage(selectedMove, currentMonster);
 
         // Check for death
@@ -127,6 +129,9 @@ public class SimpleBattleManager implements BattleManager {
       case DEBUFF -> {
         opponentMonster.debuffMonster(selectedMove);
         simpleBuffTracker.addBuff(selectedMove, currentPlayer.playerId());
+      }
+      case DOT -> {
+        dotTracker.addDot(selectedMove, currentPlayer.playerId());
       }
       default -> throw new IllegalStateException("Unknown move type: " + selectedMove.type());
     }

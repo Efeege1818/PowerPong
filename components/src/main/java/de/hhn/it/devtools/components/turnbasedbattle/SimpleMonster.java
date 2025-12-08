@@ -109,6 +109,23 @@ public class SimpleMonster {
   }
 
   /**
+   * Applies raw damage to this monster that ignores evasion, critical hits and
+   * elemental effectiveness. Used for damage-over-time (DOT) effects.
+   *
+   * @param amount the amount of health to subtract
+   */
+  public void takeDotDamage(int amount) {
+    if (amount <= 0) {
+      return;
+    }
+    currentHp -= amount;
+    if (currentHp < 0) {
+      currentHp = 0;
+    }
+    logger.debug("Monster took {} DOT damage, current HP: {}", amount, currentHp);
+  }
+
+  /**
    * Applies a buff to the monster based on the provided move.
    *
    * @param move the move that contains the buff information.
