@@ -465,7 +465,177 @@ public class ConnectFourServiceTest {
     assertThrows(IllegalParameterException.class, () -> svc.dropChip(GameBoardImpl.COLUMNS));
   }
 
+  /**
+   * Test Case: Verifies that calling applyToxicDecay before the game has started
+   * (gameActive = false) throws an OperationNotSupportedException.
+   */
+  @Test
+  void testToxicDecay_ThrowsExceptionWhenGameNotActive() {
+    // We do NOT call service.startGame(config) explicitly here.
 
+    assertThrows(OperationNotSupportedException.class, () ->
+                    ((ConnectFourServiceImpl) service).applyToxicDecay(),
+            "applyToxicDecay must throw an exception when the game is not active.");
+  }
 
+  /**
+   * Test Case: When a chip in a toxic zone dissolves, if there is no other chip above it
+   * (meaning the column becomes empty):
+   * 1. The field must become completely empty (null).
+   * 2. DecayTime must be set to 0.
+   * (This tests the 'else { currentField.setDecayTime(0); }' block at the end of the code).
+   */
+  @Test
+  void testToxicDecay_ResetsTimerToZeroWhenNoChipFallsIn() throws Exception {
+    service.startGame(config);
 
+    // 1. Scenario: Drop only 1 chip into Column 0.
+    service.dropChip(0); // Row 5 (Bottom) is occupied, Row 4 (Above) is empty.
+
+    GameBoardImpl board = (GameBoardImpl) service.getBoard();
+    FieldImpl bottomField = (FieldImpl) board.getField(5, 0);
+
+    // 2. Manually flag as toxic and set the timer to 1.
+    bottomField.setToxicZone(true);
+    bottomField.setDecayTime(1);
+
+    // 3. Act: Trigger the decay.
+    ((ConnectFourServiceImpl) service).applyToxicDecay();
+
+    // 4. Assert
+    assertNull(bottomField.getOccupyingPlayer(),
+            "The field must be empty (null) after decay since no chip fell from above.");
+
+    assertEquals(0, bottomField.getDecayTime(),
+            "The decay timer must reset to 0 because the field is now empty.");
+  }
+
+  // -------------------------------------------------------------------------
+  // DIRECT HELPER METHOD TESTS (WHITE BOX TESTING)
+  // -------------------------------------------------------------------------
+
+  @Test
+  void testCheckHorizontal_OnlyDetectsHorizontalWin() throws Exception {
+    service.startGame(null);
+
+    // We line up 4 chips side-by-side (turn alternation doesn't matter here, the board state does).
+    // Instead of manipulating the board manually, we use dropChip but
+    // we strictly create a horizontal condition.
+
+    // To create R(0,0), R(0,1), R(0,2), R(0,3), we could sprinkle Yellows in between
+    // so they don't stack. However, the easiest way is to line them up on the bottom row.
+
+    service.dropChip(0); // R
+    service.dropChip(0); // Y (Goes above)
+    service.dropChip(1); // R
+    service.dropChip(1); // Y
+    service.dropChip(2); // R
+    service.dropChip(2); // Y
+    service.dropChip(3); // R -> HORIZONTAL WIN (Row 5: R, R, R, R)
+
+    // Access the method directly via casting
+    ConnectFourServiceImpl impl = (ConnectFourServiceImpl) service;
+
+    assertTrue(impl.checkHorizontal(), "checkHorizontal() must detect the horizontal win.");
+
+    // Ensure diagonal or vertical methods return FALSE (Isolation test)
+    assertFalse(impl.checkVertical(), "checkVertical() must not return true when there is a horizontal win.");
+    assertFalse(impl.checkDiagonal(), "checkDiagonal() must not return true when there is a horizontal win.");
+  }
+
+  @Test
+  void testCheckVertical_OnlyDetectsVerticalWin() throws Exception {
+    service.startGame(null);
+
+    // Vertical setup: We need to stack 4 Red chips in Column 0.
+    // Yellow must not interrupt. That is why creating 4 same-colored chips
+    // vertically using dropChip (with alternating turns) is tricky.
+    // HOWEVER: checkVertical() only checks "are there 4 same-colored chips in a row".
+
+    // Simulation:
+    service.dropChip(0); // R
+    service.dropChip(1); // Y (Throw into another column)
+    service.dropChip(0); // R
+    service.dropChip(1); // Y
+    service.dropChip(0); // R
+    service.dropChip(1); // Y
+    service.dropChip(0); // R -> VERTICAL WIN (Col 0: R, R, R, R)
+
+    ConnectFourServiceImpl impl = (ConnectFourServiceImpl) service;
+
+    assertTrue(impl.checkVertical(), "checkVertical() must detect the vertical win.");
+
+    // Verify that others do not work
+    assertFalse(impl.checkHorizontal(), "checkHorizontal() must not work when there is a vertical win.");
+  }
+
+  @Test
+  void testCheckDiagonal_UpRight_OnlyDropChip() throws Exception {
+    service.startGame(null);
+    ConnectFourServiceImpl impl = (ConnectFourServiceImpl) service;
+
+    // TARGET: Place RED chips at positions (5,0), (4,1), (3,2), (2,3).
+    // To do this, we need to fill underneath them and align the turn order.
+
+    // --- COLUMN 0 (Target is at the bottom) ---
+    service.dropChip(0); // RED (5,0) -> TARGET 1
+
+    // --- COLUMN 1 (One below is full, top is target) ---
+    service.dropChip(1); // YELLOW (Filler)
+    service.dropChip(1); // RED (4,1) -> TARGET 2
+
+    // --- COLUMN 2 (Two below are full, top is target) ---
+    service.dropChip(2); // YELLOW (Filler)
+    service.dropChip(2); // RED (Filler)
+    service.dropChip(6); // YELLOW (WASTE MOVE - Distant column to switch turn back to Red)
+    service.dropChip(2); // RED (3,2) -> TARGET 3
+
+    // --- COLUMN 3 (Three below are full, top is target) ---
+    service.dropChip(3); // YELLOW (Filler)
+    service.dropChip(3); // RED (Filler)
+    service.dropChip(3); // YELLOW (Filler)
+    service.dropChip(3); // RED (2,3) -> TARGET 4
+
+    // NOW CHECK
+    assertTrue(impl.checkDiagonal(), "Up-right (/) diagonal win must be detected.");
+
+    // Ensure others are false (Isolation test)
+    assertFalse(impl.checkHorizontal(), "Horizontal win should not be detected during diagonal win.");
+    assertFalse(impl.checkVertical(), "Vertical win should not be detected during diagonal win.");
+  }
+
+  @Test
+  void testCheckDiagonal_UpLeft_OnlyDropChip() throws Exception {
+    service.startGame(null);
+    ConnectFourServiceImpl impl = (ConnectFourServiceImpl) service;
+
+    // TARGET: Place RED chips at positions (2,0), (3,1), (4,2), (5,3).
+    // Since it is a reverse diagonal, the left side needs to be high, right side low.
+
+    // --- COLUMN 3 (Target is at the bottom) ---
+    service.dropChip(3); // RED (5,3) -> TARGET 1
+
+    // --- COLUMN 2 (One below is full, top is target) ---
+    service.dropChip(2); // YELLOW (Filler)
+    service.dropChip(2); // RED (4,2) -> TARGET 2
+
+    // --- COLUMN 1 (Two below are full, top is target) ---
+    service.dropChip(1); // YELLOW (Filler)
+    service.dropChip(1); // RED (Filler)
+    service.dropChip(6); // YELLOW (WASTE MOVE - Adjust turn)
+    service.dropChip(1); // RED (3,1) -> TARGET 3
+
+    // --- COLUMN 0 (Three below are full, top is target) ---
+    service.dropChip(0); // YELLOW (Filler)
+    service.dropChip(0); // RED (Filler)
+    service.dropChip(0); // YELLOW (Filler)
+    service.dropChip(0); // RED (2,0) -> TARGET 4
+
+    // NOW CHECK
+    assertTrue(impl.checkDiagonal(), "Up-left (\\) diagonal win must be detected.");
+
+    // Ensure others are false
+    assertFalse(impl.checkHorizontal());
+    assertFalse(impl.checkVertical());
+  }
 }

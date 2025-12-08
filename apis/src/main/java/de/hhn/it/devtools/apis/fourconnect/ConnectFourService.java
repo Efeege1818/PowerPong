@@ -48,6 +48,30 @@ public interface ConnectFourService {
    */
   boolean checkForWin() throws OperationNotSupportedException;
 
+
+  /**
+   * Checks specifically for a horizontal win condition (4 chips in a row horizontally).
+   *
+   * @return {@code true} if a horizontal win is detected.
+   */
+  boolean checkHorizontal();
+
+  /**
+   * Checks specifically for a vertical win condition (4 chips in a row vertically).
+   *
+   * @return {@code true} if a vertical win is detected.
+   */
+  boolean checkVertical();
+
+  /**
+   * Checks specifically for a diagonal win condition (both directions).
+   *
+   * @return {@code true} if a diagonal win is detected.
+   */
+  boolean checkDiagonal();
+
+  // -------------------------------------------------------------------------
+
   /**
    * Checks if the game board is full and no more moves can be made, resulting in a draw.
    *
@@ -69,5 +93,5 @@ public interface ConnectFourService {
    */
   void removeGameListener(GameListener listener);
 
-    void applyToxicDecay() throws OperationNotSupportedException;
+  void applyToxicDecay() throws OperationNotSupportedException;
 }
