@@ -5,7 +5,7 @@ import de.hhn.it.devtools.apis.turnbasedbattle.Move;
 /**
  * Utility class for damage calculation.
  */
-public class SimpleDamageCalculator{
+public class SimpleDamageCalculator {
   private static final org.slf4j.Logger logger =
           org.slf4j.LoggerFactory.getLogger(SimpleDamageCalculator.class);
 
@@ -19,9 +19,11 @@ public class SimpleDamageCalculator{
    * @param isEffective whether the attack is effective against the target's element.
    * @return the actual damage done.
    */
-  public static int calculateDamage(Move move, SimpleMonster target, SimpleMonster attacker, boolean isCritical, boolean isEffective) {
+  public static int calculateDamage(Move move, SimpleMonster target, SimpleMonster attacker,
+                                    boolean isCritical, boolean isEffective) {
     double damage = move.amount() + attacker.getAttack();
-    logger.debug("Monster attacks with {} attack and {}% critical chance", attacker.getAttack(), attacker.getCritChance() * 100);
+    logger.debug("Monster attacks with {} attack and {}% critical chance",
+        attacker.getAttack(), attacker.getCritChance() * 100);
 
     if (isCritical) {
       damage *= 1.5; // TODO: hardcoded critical multiplier

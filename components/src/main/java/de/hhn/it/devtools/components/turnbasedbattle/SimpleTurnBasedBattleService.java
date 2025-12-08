@@ -159,7 +159,8 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
       throw new IllegalStateException("Game must be RUNNING to execute turn.");
     }
 
-    logger.debug("Player {} executing turn with move index {}", getCurrentPlayer().playerId(), moveIndex);
+    logger.debug("Player {} executing turn with move index {}",
+        getCurrentPlayer().playerId(), moveIndex);
 
     int winner = battleManager.executeTurn(moveIndex);
 

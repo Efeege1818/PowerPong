@@ -3,7 +3,6 @@ package de.hhn.it.devtools.components.turnbasedbattle;
 import de.hhn.it.devtools.apis.turnbasedbattle.BuffTracker;
 import de.hhn.it.devtools.apis.turnbasedbattle.Move;
 import de.hhn.it.devtools.apis.turnbasedbattle.MoveType;
-
 import java.util.HashMap;
 import java.util.Map;
 

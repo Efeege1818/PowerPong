@@ -1,11 +1,11 @@
 package de.hhn.it.devtools.components.turnbasedbattle;
 
+import static de.hhn.it.devtools.components.turnbasedbattle.SimpleDamageCalculator.calculateDamage;
+
 import de.hhn.it.devtools.apis.turnbasedbattle.Element;
 import de.hhn.it.devtools.apis.turnbasedbattle.Monster;
 import de.hhn.it.devtools.apis.turnbasedbattle.Move;
 import java.util.HashMap;
-
-import static de.hhn.it.devtools.components.turnbasedbattle.SimpleDamageCalculator.calculateDamage;
 
 /**
  * A simple implementation of the Monster interface.
@@ -247,7 +247,8 @@ public class SimpleMonster {
 
   @Override
   public String toString() {
-    return String.format("SimpleMonster[HP: %d/%d, ATK: %d, DEF: %d, Element: %s, Evasion: %.2f, Critical: %.2f]",
+    return String.format("SimpleMonster[HP: %d/%d, ATK: %d, DEF: %d, Element: %s,"
+            + " Evasion: %.2f, Critical: %.2f]",
       currentHp, maxHp, attack, defense, element, evasionChance, critChance);
   }
 

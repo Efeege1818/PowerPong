@@ -101,7 +101,8 @@ public class SimpleBattleManager implements BattleManager {
 
     Move selectedMove = currentMonster.getMove(moveNumber);
 
-    logger.debug("Player {} executing move: {}", currentPlayer.playerId(), selectedMove.description());
+    logger.debug("Player {} executing move: {}",
+        currentPlayer.playerId(), selectedMove.description());
 
     switch (selectedMove.type()) {
       case ATTACK -> {
