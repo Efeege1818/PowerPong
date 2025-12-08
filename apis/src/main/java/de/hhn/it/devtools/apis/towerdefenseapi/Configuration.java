@@ -1,26 +1,40 @@
 package de.hhn.it.devtools.apis.towerdefenseapi;
 
-
 /**
  * Record to save general Setting about the game.
  *
  * @param mapSize height and length of the Map
- * @param playerStartingHealth the health of the player at the start of the game
- * @param enemyPowerMultiplier a multiplier, that is applied to the enemy power
+ * @param startingHealth the health of the player at the start of the game
  * @param startingMoney the amount of money the player has at the beginning of the game
- * @param moneyRate the default amount of money, that is awarded for every enemy kill
+ * @param enemyPowerMultiplier a multiplier, that is applied to the enemy power
+ * @param enemyHealthMultiplier a multiplier, that is applied to the enemy health
+ * @param escalation a multiplier, that increases the enemy health
+ *                   in relation to the health of the enemies in the previous wave
  */
 public record Configuration(int mapSize,
-                            int playerStartingHealth,
-                            float enemyPowerMultiplier,
+                            int startingHealth,
                             int startingMoney,
-                            int moneyRate) {
+                            float enemyPowerMultiplier,
+                            float enemyHealthMultiplier,
+                            float escalation) {
 
+  /**
+   * Constructor for default values.
+   */
+  public Configuration() {
+    this(DEFAULT_MAP_SIZE,
+        DEFAULT_STARTING_HEALTH,
+        DEFAULT_STARTING_MONEY,
+        DEFAULT_ENEMY_POWER_MULTIPLIER,
+        DEFAULT_ENEMY_HEALTH_MULTIPLIER,
+        DEFAULT_ESCALATION);
+  }
 
-  static int DEFAULT_MAP_SIZE = 10;
-  static int DEFAULT_PLAYER_STARTING_HEALTH = 50;
-  static float DEFAULT_ENEMY_POWER_MULTIPLIER = 1.5f;
-  static int DEFAULT_STARTING_MONEY = 100;
-  static int DEFAULT_MONEY_RATE = 1; // how much money per enemy kill
+  public static int DEFAULT_MAP_SIZE = 10;
+  public static int DEFAULT_STARTING_HEALTH = 50;
+  public static int DEFAULT_STARTING_MONEY = 100;
+  public static float DEFAULT_ENEMY_POWER_MULTIPLIER = 10.0f;
+  public static float DEFAULT_ENEMY_HEALTH_MULTIPLIER = 1.0f;
+  public static float DEFAULT_ESCALATION = 1.1f;
 
 }

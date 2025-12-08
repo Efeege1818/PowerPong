@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Test class that test the api.
  */
-public class Tests {
+public class ApiTest {
 
   @Test
   void checkPlayerHealthAndMoney() {
@@ -26,7 +26,6 @@ public class Tests {
   @Test
   void checkEnemyAttributesWork() {
     Coordinates pos = new Coordinates(3, 4);
-    Coordinates position = new Coordinates(3,4);
     Enemy enemy = new Enemy(1, pos, EnemyType.SMALL, 50, 0);
 
     assertEquals(1, enemy.id());
