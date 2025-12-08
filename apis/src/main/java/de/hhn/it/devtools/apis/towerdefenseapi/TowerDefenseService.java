@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * Interface for the TowerDefenseSystem.
  */
-interface TowerDefenseService {
+public interface TowerDefenseService {
 
   GameState getCurrentGameState();
 
