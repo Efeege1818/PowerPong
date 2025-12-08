@@ -1,4 +1,4 @@
-package towerdefense;
+package de.hhn.it.devtools.apis.towerdefense;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
