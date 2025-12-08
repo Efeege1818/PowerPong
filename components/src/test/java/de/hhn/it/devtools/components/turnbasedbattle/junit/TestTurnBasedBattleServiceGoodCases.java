@@ -99,22 +99,52 @@ public class TestTurnBasedBattleServiceGoodCases {
         assertEquals(GameState.READY, listener.getCurrentState());
     }
 
-    @Test
-    @DisplayName("battle executes until END and winner is reported")
-    void battleExecutesToEnd() {
-        service.start();
+  @Test
+  @DisplayName("battle executes until END and winner is reported")
+  void battleExecutesToEnd() {
+    service.start();
+    assertEquals(GameState.RUNNING, service.getGameState(),
+        "GameState should be RUNNING after start()");
 
-        int safe = 0;
-        while (!service.isBattleOver() && safe < 100) {
-            service.executeTurn(1); // Move-ID 1 (Normal Attack)
-            safe++;
+    int maxTurns = 1000;
+    int turnsExecuted = 0;
+
+    while (!service.isBattleOver() && turnsExecuted < maxTurns) {
+
+      boolean moveExecutedThisTurn = false;
+
+      for (int moveId = 1; moveId <= 5 && !moveExecutedThisTurn; moveId++) {
+        try {
+          service.executeTurn(moveId);
+          moveExecutedThisTurn = true;
+        } catch (IllegalStateException e) {
+
         }
+      }
+      assertTrue(moveExecutedThisTurn,
+          "No executable move found this turn (all moves on cooldown?)");
 
-        assertTrue(service.isBattleOver(), "Battle should end after several turns");
-        assertEquals(GameState.END, service.getGameState());
-        assertNotNull(service.getWinner());
-        assertNotNull(listener.getWinnerPlayerNumber());
-        assertTrue(listener.getWinnerPlayerNumber() == 1
-                || listener.getWinnerPlayerNumber() == 2);
+      turnsExecuted++;
     }
+    assertTrue(turnsExecuted > 0, "At least one turn should have been executed");
+    assertTrue(turnsExecuted < maxTurns,
+        "Battle should finish within a reasonable number of turns");
+
+    assertTrue(service.isBattleOver(), "Battle should end after several turns");
+    assertEquals(GameState.END, service.getGameState(),
+        "GameState should be END when the battle is over");
+
+    Player winner = service.getWinner();
+    assertNotNull(winner, "Winner must not be null when battle is over");
+
+    Integer winnerFromListener = listener.getWinnerPlayerNumber();
+    assertNotNull(winnerFromListener,
+        "Listener should have been notified with the winner player number");
+
+    assertTrue(winnerFromListener == 1 || winnerFromListener == 2,
+        "Winner player number must be 1 or 2");
+
+    assertEquals(winner.playerId(), winnerFromListener,
+        "Listener winnerPlayerNumber must match winner.playerId()");
+  }
 }
