@@ -18,6 +18,18 @@ public record Configuration(int mapSize,
                             float enemyHealthMultiplier,
                             float escalation) {
 
+  /**
+   * Constructor for default values.
+   */
+  public Configuration() {
+    this(DEFAULT_MAP_SIZE,
+        DEFAULT_STARTING_HEALTH,
+        DEFAULT_STARTING_MONEY,
+        DEFAULT_ENEMY_POWER_MULTIPLIER,
+        DEFAULT_ENEMY_HEALTH_MULTIPLIER,
+        DEFAULT_ESCALATION);
+  }
+
   public static int DEFAULT_MAP_SIZE = 10;
   public static int DEFAULT_STARTING_HEALTH = 50;
   public static int DEFAULT_STARTING_MONEY = 100;
