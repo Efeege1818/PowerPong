@@ -36,8 +36,6 @@ public class TurnBasedBattleDemo {
         while (!service.isBattleOver()) {
 
             System.out.println("Turn: " + service.getTurnCount());
-            System.out.println("Player" + service.getCurrentPlayer().playerId() + "'s monster: "
-                + service.getCurrentPlayer().monster());
 
             System.out.print("Enter move index (1-5) or type -1 to see moves: ");
             int y = scanner.nextInt();

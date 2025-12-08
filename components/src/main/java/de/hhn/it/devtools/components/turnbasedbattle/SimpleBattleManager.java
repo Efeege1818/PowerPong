@@ -27,7 +27,8 @@ public class SimpleBattleManager implements BattleManager {
   private boolean battleOver;
 
   private SimpleBuffTracker simpleBuffTracker;
-  private DotTracker dotTracker;
+  private SimpleCooldownTracker simpleCooldownTracker;
+  private SimpleDotTracker dotTracker;
 
   @Override
   public void initializeBattle(Player p1, Player p2, Monster m1, Monster m2) {
@@ -37,7 +38,8 @@ public class SimpleBattleManager implements BattleManager {
     this.p1Monster = new SimpleMonster(m1);
     this.p2Monster = new SimpleMonster(m2);
     this.simpleBuffTracker = new SimpleBuffTracker(p1Monster, p2Monster);
-    this.dotTracker = new DotTracker(p1Monster, p2Monster);
+    this.simpleCooldownTracker = new SimpleCooldownTracker(p1Monster, p2Monster);
+    this.dotTracker = new SimpleDotTracker(p1Monster, p2Monster);
 
     this.turnCount = 0;
     this.battleOver = false;
@@ -99,8 +101,17 @@ public class SimpleBattleManager implements BattleManager {
       throw new IllegalArgumentException("Invalid move number.");
     }
     simpleBuffTracker.tickBuffs();
+    simpleCooldownTracker.tickCooldowns(currentMonster);
+
+    if (simpleCooldownTracker.isMoveOnCooldown(currentMonster, moveNumber)) {
+      int remaining = simpleCooldownTracker.getRemainingCooldown(currentMonster, moveNumber);
+      logger.debug("Move {} is on cooldown for {} more turn(s).", moveNumber, remaining);
+      throw new IllegalStateException("Move is on cooldown for " + remaining + " more turn(s).");
+    }
 
     Move selectedMove = currentMonster.getMove(moveNumber);
+
+    simpleCooldownTracker.applyCooldown(currentMonster, moveNumber, selectedMove);
 
     logger.debug("Player {} executing move: {}",
         currentPlayer.playerId(), selectedMove.description());

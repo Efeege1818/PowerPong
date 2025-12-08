@@ -11,9 +11,9 @@ import java.util.Map;
  * <p>DOT effects are represented as {@link Move} instances of type {@link MoveType#DOT}.
  * The key of the inner map is the remaining duration in turns, the value is the Move.
  */
-public class DotTracker {
+public class SimpleDotTracker {
   private static final org.slf4j.Logger logger =
-      org.slf4j.LoggerFactory.getLogger(DotTracker.class);
+      org.slf4j.LoggerFactory.getLogger(SimpleDotTracker.class);
 
   private final SimpleMonster player1Monster;
   private final SimpleMonster player2Monster;
@@ -26,7 +26,7 @@ public class DotTracker {
    * Initializes the DotTracker with the two monsters participating in the battle.
    * Each monster gets its own DOT map for tracking active damage-over-time effects.
    */
-  public DotTracker(SimpleMonster player1Monster, SimpleMonster player2Monster) {
+  public SimpleDotTracker(SimpleMonster player1Monster, SimpleMonster player2Monster) {
     this.player1Monster = player1Monster;
     this.player2Monster = player2Monster;
     dots.put(this.player1Monster, dotsMonster1);
