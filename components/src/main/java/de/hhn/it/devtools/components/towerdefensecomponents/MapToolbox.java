@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 
+// LOCKED : L.Alischer
 public class MapToolbox {
 
 

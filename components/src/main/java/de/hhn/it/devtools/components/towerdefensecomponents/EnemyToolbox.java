@@ -6,6 +6,7 @@ import de.hhn.it.devtools.apis.towerdefenseapi.EnemyType;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
+// LOCKED : S.Arsenovici
 /**
  * Makes service between the actual class and enemy operable through new creations of the records.
  */

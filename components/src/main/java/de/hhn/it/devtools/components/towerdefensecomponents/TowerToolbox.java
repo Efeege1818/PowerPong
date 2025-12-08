@@ -6,6 +6,7 @@ import de.hhn.it.devtools.apis.towerdefenseapi.TowerType;
 import java.util.ArrayList;
 import java.util.List;
 
+// LOCKED : S.Arsenovici
 /**
  * A class that provides general functionality for the Management of Towers.
  */
