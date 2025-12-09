@@ -38,7 +38,13 @@ public class TurnBasedBattleDemo {
             System.out.println("Turn: " + service.getTurnCount());
 
             System.out.print("Enter move index (1-5) or type -1 to see moves: ");
-            int y = scanner.nextInt();
+            int y;
+            try {
+                y = Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number between 1 and 5 or -1.");
+                continue;
+            }
             if (y == -1) {
                 HashMap<Integer, Move> moves = service.getCurrentPlayer().monster().moves();
                 for (Map.Entry<Integer, Move> entry : moves.entrySet()) {
@@ -46,7 +52,12 @@ public class TurnBasedBattleDemo {
                 }
             } else if (y >= 1 && y <= 5) {
                 //service.executeTurn(random.nextInt(5) + 1);
-                service.executeTurn(y);
+
+                try {
+                    service.executeTurn(y);
+                } catch (IllegalStateException e) {
+                    System.out.println("Enter a different move index.");
+                }
             } else {
                 System.out.println("Invalid move index. Please enter a number between 1 and 5 or -1.");
             }
