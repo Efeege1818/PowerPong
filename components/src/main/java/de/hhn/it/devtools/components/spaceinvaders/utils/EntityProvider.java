@@ -133,7 +133,7 @@ public class EntityProvider {
         aliens.values().forEach(alien -> {
           if (alien.getHitbox().contains(projectile.getCoordinate())) {
             toRemoveProjectile.add(projectile);
-            if (alien.getHit()) {
+            if (!alien.getHit()) {
               toRemoveAliens.add(alien);
             }
             service.notifyListeners(spaceInvadersListener -> spaceInvadersListener.damageAlien(alien.immutableAlien()));
