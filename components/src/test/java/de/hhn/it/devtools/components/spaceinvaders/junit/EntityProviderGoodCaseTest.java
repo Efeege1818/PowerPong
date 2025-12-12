@@ -20,7 +20,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class EntityProviderTest {
+class EntityProviderGoodCaseTest {
 
   private SimpleSpaceInvadersService testService;
   private EntityProvider provider;

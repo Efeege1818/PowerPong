@@ -14,7 +14,7 @@ import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class BadCaseEntitiesTest {
+class SimpleEntitiesBadCaseTest {
 
   private EntityProvider provider;
 

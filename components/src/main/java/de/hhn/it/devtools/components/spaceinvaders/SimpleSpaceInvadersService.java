@@ -32,7 +32,7 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
    * Default constructor. Load default values for configuration.
    */
   public SimpleSpaceInvadersService() {
-    this.gameConfiguration = new GameConfiguration(20, Difficulty.NORMAL);
+    this.gameConfiguration = new GameConfiguration(3, Difficulty.NORMAL);
   }
 
   @Override
@@ -56,9 +56,11 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
   @Override
   public void abort() throws IllegalStateException {
     logger.debug("Service Abort");
-    checkIfGameStateIsLegal(GameState.PREPARED);
+    this.gameState = GameState.ABORTED;
     entityProvider = null;
-    simpleGameLoop.stopGame();
+    if (simpleGameLoop != null) {
+      simpleGameLoop.stopGame();
+    }
     notifyListeners((l) -> {
       l.changedGameState(gameState);
       l.gameEnded();
@@ -69,6 +71,7 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
   public void pause() throws IllegalStateException {
     logger.debug("Service Pause");
     checkIfGameStateIsLegal(GameState.RUNNING);
+    this.gameState = GameState.PAUSED;
     notifyListeners((l) -> l.changedGameState(gameState));
   }
 
@@ -76,6 +79,7 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
   public void resume() throws IllegalStateException {
     logger.debug("Service Resume");
     checkIfGameStateIsLegal(GameState.PAUSED);
+    this.gameState = GameState.RUNNING;
     notifyListeners((l) -> l.changedGameState(gameState));
   }
 
@@ -83,6 +87,7 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
   public void nextRound() throws IllegalStateException {
     logger.debug("Service NextRound");
     checkIfGameStateIsLegal(GameState.RUNNING);
+    this.gameState = GameState.PAUSED;
     notifyListeners((l) -> l.updateRound(round));
   }
 
@@ -161,7 +166,7 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
   /**
    * This method gets triggered every loop by SimpleGameLoop.
    */
-  protected void triggeredByGameLoop() {
+  public void triggeredByGameLoop() {
     if (entityProvider == null) {
       logger.debug("Something went wrong; no EntityProvider");
       return;

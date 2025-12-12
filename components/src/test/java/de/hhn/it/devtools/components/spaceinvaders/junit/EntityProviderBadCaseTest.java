@@ -16,7 +16,7 @@ import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class BadCaseEntityProviderTest {
+class EntityProviderBadCaseTest {
 
   private SimpleSpaceInvadersService testService;
   private EntityProvider provider;
