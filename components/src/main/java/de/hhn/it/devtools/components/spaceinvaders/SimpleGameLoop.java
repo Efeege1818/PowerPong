@@ -1,7 +1,8 @@
 package de.hhn.it.devtools.components.spaceinvaders;
 
+import de.hhn.it.devtools.apis.spaceinvaders.APIConstants;
 import de.hhn.it.devtools.apis.spaceinvaders.GameState;
-import de.hhn.it.devtools.components.spaceinvaders.utils.Constans;
+
 
 /**
  * Simple GameLoop for the game SpaceInvaders.
@@ -32,7 +33,7 @@ public class SimpleGameLoop extends Thread {
       }
       service.triggeredByGameLoop();
       try {
-        wait(Constans.FIELD_SIZE);
+        wait(APIConstants.FIELD_SIZE);
       } catch (InterruptedException e) {
         return;
       }

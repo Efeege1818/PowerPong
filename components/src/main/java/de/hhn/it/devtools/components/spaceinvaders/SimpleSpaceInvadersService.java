@@ -9,8 +9,6 @@ import de.hhn.it.devtools.apis.spaceinvaders.SpaceInvadersListener;
 import de.hhn.it.devtools.apis.spaceinvaders.SpaceInvadersService;
 import de.hhn.it.devtools.apis.spaceinvaders.exceptions.IllegalConfigurationException;
 import de.hhn.it.devtools.components.spaceinvaders.utils.EntityProvider;
-
-import java.io.Console;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -168,6 +166,9 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
       logger.debug("Something went wrong; no EntityProvider");
       return;
     }
+    if (entityProvider.getAliens().isEmpty()) {
+      nextRound();
+    }
     entityProvider.updateProjectiles();
     entityProvider.checkCollision();
 
@@ -178,7 +179,7 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
       alienMoveAllowed = true;
     }
 
-    if (entityProvider.getPlayer().getHitPoints() == 0) {
+    if (entityProvider.getPlayer().getHitPoints() <= 0) {
       abort();
     }
 

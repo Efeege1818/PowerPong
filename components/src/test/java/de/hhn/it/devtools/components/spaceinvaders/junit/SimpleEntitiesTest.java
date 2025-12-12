@@ -14,19 +14,19 @@ class SimpleEntitiesTest {
 
   @Test
   void testSimpleAlienMoveAndHitAndHitboxSize() {
-    SimpleAlien alien = new SimpleAlien(new Coordinate(0, 0), AlienType.BASIC, 1);
+    SimpleAlien alien = new SimpleAlien(new Coordinate(10, 0), AlienType.BASIC, 1);
     // initial coordinate
-    assertEquals(0, alien.getCoordinate().x());
+    assertEquals(10, alien.getCoordinate().x());
     assertEquals(0, alien.getCoordinate().y());
 
     // move right
     alien.move(Direction.RIGHT);
-    assertEquals(1, alien.getCoordinate().x());
+    assertEquals(11, alien.getCoordinate().x());
     assertEquals(0, alien.getCoordinate().y());
 
     // move left
     alien.move(Direction.LEFT);
-    assertEquals(0, alien.getCoordinate().x());
+    assertEquals(10, alien.getCoordinate().x());
 
     // move down
     alien.move(Direction.DOWN);
@@ -68,5 +68,6 @@ class SimpleEntitiesTest {
     // hitbox size 10 * 10 = 100
     assertEquals(100, ship.getHitbox().size());
   }
+
 }
 

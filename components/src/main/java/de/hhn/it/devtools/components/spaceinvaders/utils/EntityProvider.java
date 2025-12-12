@@ -1,10 +1,10 @@
 package de.hhn.it.devtools.components.spaceinvaders.utils;
 
+import de.hhn.it.devtools.apis.spaceinvaders.APIConstants;
 import de.hhn.it.devtools.apis.spaceinvaders.Coordinate;
 import de.hhn.it.devtools.apis.spaceinvaders.Direction;
 import de.hhn.it.devtools.apis.spaceinvaders.entities.Alien;
 import de.hhn.it.devtools.apis.spaceinvaders.entities.AlienType;
-import de.hhn.it.devtools.apis.spaceinvaders.entities.Barrier;
 import de.hhn.it.devtools.components.spaceinvaders.SimpleSpaceInvadersService;
 import de.hhn.it.devtools.components.spaceinvaders.entities.SimpleAlien;
 import de.hhn.it.devtools.components.spaceinvaders.entities.SimpleBarrier;
@@ -31,7 +31,7 @@ public class EntityProvider {
    * Default Constructor.
    */
   public EntityProvider(SimpleSpaceInvadersService service) {
-    player = new SimpleShip(new Coordinate(Constans.FIELD_SIZE / 2, Constans.FIELD_SIZE - 16));
+    player = new SimpleShip(new Coordinate(APIConstants.FIELD_SIZE / 2, APIConstants.FIELD_SIZE - 16));
     generateAliens();
     this.service = service;
   }
@@ -40,14 +40,19 @@ public class EntityProvider {
     return player;
   }
 
+  public HashMap<Integer, SimpleAlien> getAliens() {
+    return aliens;
+  }
 
   /**
    * moves all the aliens.
    */
   public void updateAliens() {
-
+    if (aliens.isEmpty()) {
+      return;
+    }
     for (SimpleAlien a : aliens.values()) {
-      if (a.getCoordinate().x() < 0 || a.getCoordinate().x() > Constans.FIELD_SIZE) {
+      if (a.getCoordinate().x() < 0 || a.getCoordinate().x() > APIConstants.FIELD_SIZE - 15) {
         aliens.values().forEach(alien -> alien.move(Direction.DOWN));
         if (this.currentAlienDirection == Direction.RIGHT) {
           this.currentAlienDirection = Direction.LEFT;
@@ -75,19 +80,23 @@ public class EntityProvider {
    */
   public void shootPlayer() {
     projectiles.add(new SimpleProjectile(new Coordinate(player.getCoordinate().x() + 1,
-            player.getCoordinate().y() - 1), Direction.UP, Constans.BASE_DAMAGE));
+            player.getCoordinate().y() - 1), Direction.UP, Constants.BASE_DAMAGE));
   }
 
   /**
    * Selects a random alien and shoots from its Position.
    */
   public void shootAliens() {
+    if (aliens.isEmpty()) {
+      return;
+    }
+
     Random rand = new Random();
     List<Integer> keys = new ArrayList<>(aliens.keySet());
     Integer randomKey = keys.get(rand.nextInt(keys.size()));
     SimpleAlien randomAlien = aliens.get(randomKey);
     projectiles.add(new SimpleProjectile(new Coordinate(randomAlien.getCoordinate().x() + 1,
-            randomAlien.getCoordinate().y() + 1), Direction.DOWN, Constans.BASE_DAMAGE));
+            randomAlien.getCoordinate().y() + 1), Direction.DOWN, Constants.BASE_DAMAGE));
   }
 
   /**
@@ -96,7 +105,7 @@ public class EntityProvider {
   private void generateAliens() {
     int row = 1;
     int col = 1;
-    for (int i = 1; i <= Constans.NUMBER_OF_ALIENS; i++) {
+    for (int i = 1; i <= Constants.NUMBER_OF_ALIENS; i++) {
       aliens.put(i, new SimpleAlien(new Coordinate(col * 10, 10 * row), AlienType.BASIC, i));
       col++;
       if (i % 10 == 0) {
@@ -110,6 +119,9 @@ public class EntityProvider {
    * Method to check for collisions.
    */
   public void checkCollision() {
+    if (aliens.isEmpty()) {
+      return;
+    }
     // check if alien either hits barrier or the player
     List<SimpleAlien> toRemoveAliens = new ArrayList<>();
     List<SimpleProjectile> toRemoveProjectile = new ArrayList<>();
@@ -161,6 +173,10 @@ public class EntityProvider {
    * @return hitbox ArrayList.
    */
   public static ArrayList<Coordinate> fillHitBox(Coordinate coordinate, int x, int y) {
+    if (coordinate.x() < 10 || coordinate.y() < 0 || coordinate.x() > APIConstants.FIELD_SIZE - 15
+            || coordinate.y() > APIConstants.FIELD_SIZE) {
+      return new ArrayList<>();
+    }
     ArrayList<Coordinate> coords = new ArrayList<>();
     for (int i = 0; i < x; i++) {
       for (int j = 0; j < y; j++) {
