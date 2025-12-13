@@ -1,10 +1,12 @@
 package de.hhn.it.devtools.components.towerdefensecomponents;
 
 import de.hhn.it.devtools.apis.towerdefenseapi.Enemy;
+import de.hhn.it.devtools.apis.towerdefenseapi.EnemyType;
 import de.hhn.it.devtools.apis.towerdefenseapi.Tower;
 import de.hhn.it.devtools.apis.towerdefenseapi.TowerType;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 // LOCKED : S.Arsenovici
 /**
@@ -13,17 +15,37 @@ import java.util.List;
 public class TowerToolbox {
 
 
+
+  /**
+   * Returns the default range values for different tower types.
+   *
+   * @param type the TowerType of the Tower
+   * @return the range for a tower of the given type
+   * @throws NoSuchElementException if the given TowerType isn't supported
+   */
+  public static int getRange(TowerType type) throws NoSuchElementException {
+    return switch (type) {
+      case MELEE -> 5;
+      case RANGED -> 10;
+      case MONEYMAKER -> 0;
+      default -> throw new NoSuchElementException();
+    };
+  }
+
+
+
   /**
    * Attacks the enemy in range, that has advanced the furthest on the path.
    *
    * @param enemies as list of enemies
    * @param towers as list of towers
-   * @return {@code true} if attack was successful
-   *         {@code false} otherwise
+   * @return {@code ArrayList<Enemy>} with updated enemies
    * @throws IllegalArgumentException if towers or enemies do not exist.
    */
-  public ArrayList<Enemy> action(List<Tower> towers, List<Enemy> enemies, EnemyToolbox enemyBox)
+  public static ArrayList<Enemy> action(List<Tower> towers, List<Enemy> enemies)
       throws IllegalArgumentException {
+    for (Tower tower : towers){
+    }
     return null;
   }
 
