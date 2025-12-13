@@ -1,26 +1,48 @@
-package de.hhn.it.devtools.apis.powerPong;
+package de.hhn.it.devtools.components.powerPong.demo;
 
 import de.hhn.it.devtools.apis.exceptions.GameLogicException;
+import de.hhn.it.devtools.apis.powerPong.BallState;
+import de.hhn.it.devtools.apis.powerPong.GameMode;
+import de.hhn.it.devtools.apis.powerPong.GameState;
+import de.hhn.it.devtools.apis.powerPong.GameStatus;
+import de.hhn.it.devtools.apis.powerPong.PlayerInput;
+import de.hhn.it.devtools.apis.powerPong.PowerPongService;
+import de.hhn.it.devtools.components.powerPong.provider.PowerPongMatchEngine;
 import javafx.scene.input.KeyCode;
 
 /**
  * This class demonstrates the intended use of the PowerPongService interface.
- * This code cannot be executed yet because the interface implementation
- * is still missing. It serves only to validate the API design and
- * to find logical flaws in the design.
+ * It is now executable and validates the component implementation.
  */
 public class DemoUsage {
 
-    // We declare the variable even though we don't have an instance yet.
-    // In the real application, the UI would receive this instance via dependency injection.
+    // Dependency injection simulation
     private PowerPongService powerPongService;
+
+    public DemoUsage() {
+        // In a real app, this would be injected. Here we instantiate it directly.
+        this.powerPongService = new PowerPongMatchEngine();
+    }
+
+    public static void main(String[] args) {
+        DemoUsage demo = new DemoUsage();
+        try {
+            demo.demonstrateGameStart();
+            // Run a few frames
+            for (int i = 0; i < 5; i++) {
+                demo.demonstrateGameLoopFrame();
+                Thread.sleep(100); // Simulate frame time
+            }
+        } catch (GameLogicException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * Demonstrates starting the game.
      */
     public void demonstrateGameStart() throws GameLogicException {
-        // The UI (e.g., in the main menu) would make this call
-        // when the "Start" button is clicked.
+        // The UI would make this call when the "Start" button is clicked.
         powerPongService.startGame(GameMode.POWERUP_DUEL);
         System.out.println("Game started in Power-Up mode.");
     }
@@ -31,8 +53,8 @@ public class DemoUsage {
      */
     public void demonstrateGameLoopFrame() throws GameLogicException {
 
-        // --- 1. Collect inputs (done by the UI) ---
-        // (Here we simulate that Player 1 presses 'W' and Player 2 presses 'ArrowDown')
+        // --- 1. Collect inputs ---
+        // Here we simulate that Player 1 presses 'W' and Player 2 presses 'ArrowDown'
         PlayerInput inputs = new PlayerInput();
         inputs.keyPressed(KeyCode.W);
         inputs.keyPressed(KeyCode.DOWN);
@@ -45,12 +67,12 @@ public class DemoUsage {
         // The UI fetches the new "snapshot" of the game.
         GameState currentState = powerPongService.getGameState();
 
-        // --- 4. Render state (done by the UI) ---
+        // --- 4. Render state ---
         // The UI would now draw based on 'currentState'.
         // We simulate this with console outputs.
 
         if (currentState.status() == GameStatus.RUNNING) {
-
+            System.out.println("--- Frame ---");
             // Draw paddles
             double p1_Y = currentState.player1Paddle().yPosition();
             double p2_Y = currentState.player2Paddle().yPosition();
@@ -71,10 +93,7 @@ public class DemoUsage {
 
             // Show end screen
             System.out.println("Player 1 wins!");
-            // (Here the UI would show buttons like "Play again", etc.)
+            // Here the UI would show buttons like "Play again"
         }
-
-        // --- 5. Game gets terminated by the user (e.g., ESC in menu) ---
-        powerPongService.endGame();
     }
 }

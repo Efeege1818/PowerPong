@@ -43,3 +43,13 @@ task myJavadocs(type: Javadoc) {
     source = sourceSets.main.allJava
     failOnError = false
 }
+
+task runDemo(type: JavaExec) {
+    group = "Execution"
+    description = "Runs the DemoUsage class"
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = "de.hhn.it.devtools.components.powerPong.demo.DemoUsage"
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
