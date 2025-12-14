@@ -8,7 +8,6 @@ import de.hhn.it.devtools.apis.turnbasedbattle.Move;
 import de.hhn.it.devtools.components.turnbasedbattle.monster.FireMonster;
 import de.hhn.it.devtools.components.turnbasedbattle.monster.GrassMonster;
 import de.hhn.it.devtools.components.turnbasedbattle.monster.WaterMonster;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,7 +53,8 @@ public class SimpleMonster {
    * Factory method to create the appropriate monster type based on the element.
    *
    * @param monster the monster data to create from.
-   * @return a SimpleMonster instance of the appropriate subclass (FireMonster, WaterMonster, or GrassMonster).
+   * @return a SimpleMonster instance of the appropriate subclass
+   *        (FireMonster, WaterMonster, or GrassMonster).
    */
   public static SimpleMonster create(Monster monster) {
     switch (monster.element()) {
@@ -435,11 +435,13 @@ public class SimpleMonster {
     switch (move.type()) {
       case BUFF:
         buffMonster(move);
-        logger.debug("Added buff '{}' to {} for {} turns", move.description(), name, move.duration());
+        logger.debug("Added buff '{}' to {} for {} turns",
+                move.description(), name, move.duration());
         break;
       case DEBUFF:
         debuffMonster(move);
-        logger.debug("Added debuff '{}' to {} for {} turns", move.description(), name, move.duration());
+        logger.debug("Added debuff '{}' to {} for {} turns",
+                move.description(), name, move.duration());
         break;
       default:
         logger.warn("Attempted to add non-buff/debuff move as buff: {}", move.type());
@@ -464,17 +466,20 @@ public class SimpleMonster {
       int newDuration = duration - 1;
       if (newDuration > 0) {
         updatedBuffs.put(newDuration, move);
-        logger.debug("Buff/Debuff '{}' for {} ticked: {} turns remaining", move.description(), name, newDuration);
+        logger.debug("Buff/Debuff '{}' for {} ticked: {} turns remaining",
+                move.description(), name, newDuration);
       } else {
         // Buff/Debuff expired - remove its effects
         switch (move.type()) {
           case BUFF:
             removeBuff(move);
-            logger.debug("Buff '{}' for {} expired and was removed", name, move.description());
+            logger.debug("Buff '{}' for {} expired and was removed",
+                    name, move.description());
             break;
           case DEBUFF:
             removeDebuff(move);
-            logger.debug("Debuff '{}' for {} expired and was removed", name, move.description());
+            logger.debug("Debuff '{}' for {} expired and was removed",
+                    name, move.description());
             break;
           default:
             break;
@@ -585,7 +590,8 @@ public class SimpleMonster {
     int cooldown = move.cooldown();
     if (cooldown > 0) {
       moveCooldowns.put(moveIndex, cooldown);
-      logger.debug("{}: Applied {} turns cooldown to move {} ({})", name, cooldown, moveIndex, move.description());
+      logger.debug("{}: Applied {} turns cooldown to move {} ({})",
+              name, cooldown, moveIndex, move.description());
     }
   }
 
@@ -609,7 +615,8 @@ public class SimpleMonster {
         if (newRemaining > 0) {
           updatedCooldowns.put(moveIndex, newRemaining);
         }
-        logger.debug("{}: Cooldown ticked for move {}: {} turns left", name, moveIndex, newRemaining);
+        logger.debug("{}: Cooldown ticked for move {}: {} turns left",
+                name, moveIndex, newRemaining);
       }
     }
 

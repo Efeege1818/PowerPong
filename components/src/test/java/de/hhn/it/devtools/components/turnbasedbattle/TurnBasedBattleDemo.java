@@ -12,7 +12,7 @@ public class TurnBasedBattleDemo {
     public static void main(String[] args) {
         System.out.println("TurnBasedBattleDemo");
 
-        TurnBasedBattleService service = new SimpleTurnBasedBattleService();
+        SimpleTurnBasedBattleService service = new SimpleTurnBasedBattleService();
         System.out.println(service.getGameState());
 
         Data data = new Data();
@@ -32,25 +32,25 @@ public class TurnBasedBattleDemo {
 
 
         Scanner scanner = new Scanner(System.in);
-        // Fight with random moves
         while (!service.isBattleOver()) {
 
             System.out.println("Turn: " + service.getTurnCount());
 
-            System.out.print("Enter move index (1-5) or type -1 to see moves: ");
+            System.out.print("Enter move index (1-" + service.getCurrentMonster().getMoves().size() + ") or type -1 to see moves: ");
             int y;
             try {
                 y = Integer.parseInt(scanner.nextLine());
             } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a number between 1 and 5 or -1.");
+                System.out.println("Invalid input. Please enter a number between 1 and " + service.getCurrentMonster().getMoves().size() + " or -1.");
                 continue;
             }
             if (y == -1) {
-                HashMap<Integer, Move> moves = service.getCurrentPlayer().monster().moves();
+                HashMap<Integer, Move> moves = service.getCurrentMonster().getMoves();
                 for (Map.Entry<Integer, Move> entry : moves.entrySet()) {
-                    System.out.println(entry.getKey() + " - " + entry.getValue().description());
+                    System.out.println(entry.getKey() + " - " + entry.getValue().description() +
+                            " (Cooldown: " + service.getCurrentMonster().getRemainingCooldown(entry.getKey()) + " turns)");
                 }
-            } else if (y >= 1 && y <= 5) {
+            } else if (y >= 1 && y <= service.getCurrentMonster().getMoves().size()) {
                 //service.executeTurn(random.nextInt(5) + 1);
 
                 try {
@@ -59,7 +59,7 @@ public class TurnBasedBattleDemo {
                     System.out.println("Enter a different move index.");
                 }
             } else {
-                System.out.println("Invalid move index. Please enter a number between 1 and 5 or -1.");
+                System.out.println("Invalid move index. Please enter a number between 1 and " + service.getCurrentMonster().getMoves().size() + " or -1.");
             }
 
 

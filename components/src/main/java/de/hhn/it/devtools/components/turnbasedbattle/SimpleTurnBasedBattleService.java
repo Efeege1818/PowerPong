@@ -224,4 +224,8 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
   public boolean isElementEffective(SimpleMonster current, SimpleMonster opponent) {
     return battleManager.isElementEffective(current, opponent);
   }
+
+  public SimpleMonster getCurrentMonster() {
+    return battleManager.getCurrentMonster();
+  }
 }
