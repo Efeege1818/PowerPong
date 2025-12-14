@@ -4,8 +4,12 @@ module devtools.javafx {
   requires devtools.components;
   requires javafx.controls;
   requires javafx.fxml;
+  requires java.desktop;
   uses de.hhn.it.devtools.apis.examples.coffeemakerservice.CoffeeMakerService;
   uses de.hhn.it.devtools.apis.examples.coffeemakerservice.AdminCoffeeMakerService;
+  uses de.hhn.it.devtools.components.spaceinvaders.SimpleSpaceInvadersService;
+  uses de.hhn.it.devtools.apis.spaceinvaders.SpaceInvadersService;
+  uses de.hhn.it.devtools.apis.spaceinvaders.SpaceInvadersListener;
   opens de.hhn.it.devtools.javafx.controllers to javafx.fxml;
   opens de.hhn.it.devtools.javafx.coffeemaker.view to javafx.fxml;
   opens de.hhn.it.devtools.javafx.controllers.template to javafx.fxml;
