@@ -5,6 +5,9 @@ import de.hhn.it.devtools.apis.turnbasedbattle.Element;
 import de.hhn.it.devtools.apis.turnbasedbattle.Monster;
 import de.hhn.it.devtools.apis.turnbasedbattle.Move;
 import de.hhn.it.devtools.apis.turnbasedbattle.Player;
+import de.hhn.it.devtools.components.turnbasedbattle.monster.FireMonster;
+import de.hhn.it.devtools.components.turnbasedbattle.monster.GrassMonster;
+import de.hhn.it.devtools.components.turnbasedbattle.monster.WaterMonster;
 
 /**
  * Class for managing and executing turns.
@@ -35,8 +38,8 @@ public class SimpleBattleManager implements BattleManager {
     this.player1 = p1;
     this.player2 = p2;
 
-    this.p1Monster = new SimpleMonster(m1);
-    this.p2Monster = new SimpleMonster(m2);
+    this.p1Monster = SimpleMonster.create(m1);
+    this.p2Monster = SimpleMonster.create(m2);
     this.simpleBuffTracker = new SimpleBuffTracker(p1Monster, p2Monster);
     this.simpleCooldownTracker = new SimpleCooldownTracker(p1Monster, p2Monster);
     this.dotTracker = new SimpleDotTracker(p1Monster, p2Monster);

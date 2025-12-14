@@ -43,7 +43,7 @@ public class TestSimpleMonster {
     @DisplayName("Test creating a SimpleMonster")
     void testCreatingSimpleMonster() {
         Monster monster = new Monster(100, 10, 10, 0.1, 0.1, Element.FIRE, moves);
-        SimpleMonster simpleMonster = new SimpleMonster(monster);
+        SimpleMonster simpleMonster = SimpleMonster.create(monster);
 
         assertEquals(100, simpleMonster.getMaxHp());
         assertEquals(100, simpleMonster.getCurrentHp());

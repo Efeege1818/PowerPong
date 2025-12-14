@@ -5,6 +5,10 @@ import static de.hhn.it.devtools.components.turnbasedbattle.SimpleDamageCalculat
 import de.hhn.it.devtools.apis.turnbasedbattle.Element;
 import de.hhn.it.devtools.apis.turnbasedbattle.Monster;
 import de.hhn.it.devtools.apis.turnbasedbattle.Move;
+import de.hhn.it.devtools.components.turnbasedbattle.monster.FireMonster;
+import de.hhn.it.devtools.components.turnbasedbattle.monster.GrassMonster;
+import de.hhn.it.devtools.components.turnbasedbattle.monster.WaterMonster;
+
 import java.util.HashMap;
 
 /**
@@ -14,32 +18,43 @@ public class SimpleMonster {
   private static final org.slf4j.Logger logger =
           org.slf4j.LoggerFactory.getLogger(SimpleMonster.class);
 
-  private int maxHp;
-  private int currentHp;
-  private int attack;
-  private int defense;
-  private double evasionChance;
-  private double critChance;
-  private Element element;
-  private HashMap<Integer, Move> moves;
+  protected int maxHp;
+  protected int currentHp;
+  protected int attack;
+  protected int defense;
+  protected double evasionChance;
+  protected double critChance;
+  protected Element element;
+  protected HashMap<Integer, Move> moves;
+
 
   /**
-   * Constructor for creating a SimpleMonster from a Monster.
+   * Factory method to create the appropriate monster type based on the element.
    *
-   * @param monster the Monster to create the SimpleMonster from.
+   * @param monster the monster data to create from.
+   * @return a SimpleMonster instance of the appropriate subclass (FireMonster, WaterMonster, or GrassMonster).
    */
-  public SimpleMonster(Monster monster) {
-    this.maxHp = monster.maxHp();
-    this.currentHp = monster.maxHp();
-    this.attack = monster.attack();
-    this.defense = monster.defense();
-    this.evasionChance = monster.evasionChance();
-    this.critChance = monster.critChance();
-    this.element = monster.element();
-    this.moves = monster.moves();
-
-    logger.debug("Monster created: {}", toString());
+  public static SimpleMonster create(Monster monster) {
+    switch (monster.element()) {
+      case FIRE:
+        return new FireMonster(monster);
+      case WATER:
+        return new WaterMonster(monster);
+      case GRASS:
+        return new GrassMonster(monster);
+      default:
+        throw new IllegalArgumentException("Invalid element: " + monster.element());
+    }
   }
+
+  /**
+   * Protected constructor for subclasses.
+   */
+  protected SimpleMonster() {
+    // Subclasses will initialize the fields
+  }
+
+
 
   /**
    * Takes damage from a move.
