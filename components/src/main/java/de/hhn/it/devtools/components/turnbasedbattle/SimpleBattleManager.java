@@ -29,10 +29,6 @@ public class SimpleBattleManager implements BattleManager {
   private int turnCount;
   private boolean battleOver;
 
-  private SimpleBuffTracker simpleBuffTracker;
-  private SimpleCooldownTracker simpleCooldownTracker;
-  private SimpleDotTracker dotTracker;
-
   @Override
   public void initializeBattle(Player p1, Player p2, Monster m1, Monster m2) {
     this.player1 = p1;
@@ -40,9 +36,6 @@ public class SimpleBattleManager implements BattleManager {
 
     this.p1Monster = SimpleMonster.create(m1);
     this.p2Monster = SimpleMonster.create(m2);
-    this.simpleBuffTracker = new SimpleBuffTracker(p1Monster, p2Monster);
-    this.simpleCooldownTracker = new SimpleCooldownTracker(p1Monster, p2Monster);
-    this.dotTracker = new SimpleDotTracker(p1Monster, p2Monster);
 
     this.turnCount = 0;
     this.battleOver = false;
@@ -103,26 +96,35 @@ public class SimpleBattleManager implements BattleManager {
     if (!currentMonster.hasMove(moveNumber)) {
       throw new IllegalArgumentException("Invalid move number.");
     }
-    simpleBuffTracker.tickBuffs();
-    simpleCooldownTracker.tickCooldowns(currentMonster);
 
-    if (simpleCooldownTracker.isMoveOnCooldown(currentMonster, moveNumber)) {
-      int remaining = simpleCooldownTracker.getRemainingCooldown(currentMonster, moveNumber);
+    // Tick buffs for both monsters
+    p1Monster.tickBuffs();
+    p2Monster.tickBuffs();
+
+    // Tick cooldowns for the current monster
+    currentMonster.tickCooldowns();
+
+    // Check if move is on cooldown
+    if (currentMonster.isMoveOnCooldown(moveNumber)) {
+      int remaining = currentMonster.getRemainingCooldown(moveNumber);
       logger.debug("Move {} is on cooldown for {} more turn(s).", moveNumber, remaining);
       throw new IllegalStateException("Move is on cooldown for " + remaining + " more turn(s).");
     }
 
     Move selectedMove = currentMonster.getMove(moveNumber);
 
-    simpleCooldownTracker.applyCooldown(currentMonster, moveNumber, selectedMove);
+    // Apply cooldown to the move
+    currentMonster.applyCooldown(moveNumber, selectedMove);
 
     logger.debug("Player {} executing move: {}",
         currentPlayer.playerId(), selectedMove.description());
 
     switch (selectedMove.type()) {
       case ATTACK -> {
-        // do damage
-        dotTracker.applyDotOnAttack(opponentMonster);
+        // Apply DOT damage to opponent before the attack
+        opponentMonster.applyAndTickDots();
+
+        // Do damage
         opponentMonster.takeDamage(selectedMove, currentMonster);
 
         // Check for death
@@ -137,15 +139,13 @@ public class SimpleBattleManager implements BattleManager {
         }
       }
       case BUFF -> {
-        currentMonster.buffMonster(selectedMove);
-        simpleBuffTracker.addBuff(selectedMove, currentPlayer.playerId());
+        currentMonster.addBuffOrDebuff(selectedMove);
       }
       case DEBUFF -> {
-        opponentMonster.debuffMonster(selectedMove);
-        simpleBuffTracker.addBuff(selectedMove, currentPlayer.playerId());
+        opponentMonster.addBuffOrDebuff(selectedMove);
       }
       case DOT -> {
-        dotTracker.addDot(selectedMove, currentPlayer.playerId());
+        opponentMonster.addDot(selectedMove);
       }
       default -> throw new IllegalStateException("Unknown move type: " + selectedMove.type());
     }

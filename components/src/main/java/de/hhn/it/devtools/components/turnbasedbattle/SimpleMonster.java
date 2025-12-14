@@ -10,6 +10,7 @@ import de.hhn.it.devtools.components.turnbasedbattle.monster.GrassMonster;
 import de.hhn.it.devtools.components.turnbasedbattle.monster.WaterMonster;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple implementation of the Monster interface.
@@ -26,6 +27,27 @@ public class SimpleMonster {
   protected double critChance;
   protected Element element;
   protected HashMap<Integer, Move> moves;
+  protected String name;
+
+  // ========== Internal Tracking (Buffs, DOTs, Cooldowns) ==========
+
+  /**
+   * Tracks active buffs/debuffs on this monster.
+   * Key: remaining duration in turns, Value: the Move that caused the buff/debuff.
+   */
+  private HashMap<Integer, Move> activeBuffs = new HashMap<>();
+
+  /**
+   * Tracks active damage-over-time effects on this monster.
+   * Key: remaining duration in turns, Value: the Move that caused the DOT.
+   */
+  private HashMap<Integer, Move> activeDots = new HashMap<>();
+
+  /**
+   * Tracks cooldowns for this monster's moves.
+   * Key: move index, Value: remaining cooldown turns.
+   */
+  private Map<Integer, Integer> moveCooldowns = new HashMap<>();
 
 
   /**
@@ -67,7 +89,7 @@ public class SimpleMonster {
 
     // Check if the attack is evaded
     if (Math.random() < evasionChance) {
-      logger.debug("Monster evaded the attack.");
+      logger.debug("{} evaded the attack.", name);
       return;
     }
 
@@ -82,7 +104,7 @@ public class SimpleMonster {
       currentHp -= actualDamage;
     }
 
-    logger.debug("Monster took {} damage and has {} hp left.", actualDamage, currentHp);
+    logger.debug("{} took {} damage and has {} hp left.", name, actualDamage, currentHp);
   }
 
   /**
@@ -120,7 +142,7 @@ public class SimpleMonster {
     if (currentHp > maxHp) {
       currentHp = maxHp;
     }
-    logger.debug("Monster health increased by {} to {}", amount, currentHp);
+    logger.debug("{} health increased by {} to {}", name, amount, currentHp);
   }
 
   /**
@@ -137,7 +159,7 @@ public class SimpleMonster {
     if (currentHp < 0) {
       currentHp = 0;
     }
-    logger.debug("Monster took {} DOT damage, current HP: {}", amount, currentHp);
+    logger.debug("{} took {} DOT damage, current HP: {}", name, amount, currentHp);
   }
 
   /**
@@ -165,9 +187,9 @@ public class SimpleMonster {
         defense += (int) amount;
         break;
       default:
-        logger.warn("Invalid stat for buff: {}", stat);
+        logger.warn("{} Invalid stat for buff: {}", name, stat);
     }
-    logger.debug("Monster buffed: {} {} and has now {}", amount, stat, getStat(stat));
+    logger.debug("{} buffed: {} {} and has now {}", name, amount, stat, getStat(stat));
   }
 
   /**
@@ -192,9 +214,9 @@ public class SimpleMonster {
         critChance = Math.max(0.0, Math.min(1.0, critChance - amount));
         break;
       default:
-        logger.warn("Invalid stat for debuff: {}", stat);
+        logger.warn("{} Invalid stat for debuff: {}", name, stat);
     }
-    logger.debug("Monster debuffed: {} {} and has now {}", amount, stat, getStat(stat));
+    logger.debug("{} debuffed: {} {} and has now {}", name, amount, stat, getStat(stat));
   }
 
   /**
@@ -219,9 +241,9 @@ public class SimpleMonster {
         defense -= (int) amount;
         break;
       default:
-        logger.warn("Invalid stat for removing buff: {}", stat);
+        logger.warn("{} Invalid stat for removing buff: {}", name, stat);
     }
-    logger.debug("Monster buff removed: {} and has now {}", stat, getStat(stat));
+    logger.debug("{} buff removed: {} and has now {}", name, stat, getStat(stat));
   }
 
   /**
@@ -246,9 +268,9 @@ public class SimpleMonster {
         defense += (int) amount;
         break;
       default:
-        logger.warn("Invalid stat for removing debuff: {}", stat);
+        logger.warn("{} Invalid stat for removing debuff: {}", name, stat);
     }
-    logger.debug("Monster debuff removed: {} and has now {}", stat, getStat(stat));
+    logger.debug("{} debuff removed: {} and has now {}", name, stat, getStat(stat));
   }
 
   /**
@@ -397,5 +419,209 @@ public class SimpleMonster {
    */
   public HashMap<Integer, Move> getMoves() {
     return moves;
+  }
+
+  // ========== Buff/Debuff Tracking Methods ==========
+
+  /**
+   * Adds a buff or debuff to this monster and applies it immediately.
+   *
+   * @param move the buff/debuff move to add.
+   */
+  public void addBuffOrDebuff(Move move) {
+    activeBuffs.put(move.duration(), move);
+
+    // Apply the buff/debuff immediately
+    switch (move.type()) {
+      case BUFF:
+        buffMonster(move);
+        logger.debug("Added buff '{}' to {} for {} turns", move.description(), name, move.duration());
+        break;
+      case DEBUFF:
+        debuffMonster(move);
+        logger.debug("Added debuff '{}' to {} for {} turns", move.description(), name, move.duration());
+        break;
+      default:
+        logger.warn("Attempted to add non-buff/debuff move as buff: {}", move.type());
+    }
+  }
+
+  /**
+   * Ticks all active buffs/debuffs, reducing their duration by 1.
+   * Removes buffs/debuffs that have expired.
+   */
+  public void tickBuffs() {
+    if (activeBuffs.isEmpty()) {
+      return;
+    }
+
+    HashMap<Integer, Move> updatedBuffs = new HashMap<>();
+
+    for (Map.Entry<Integer, Move> entry : activeBuffs.entrySet()) {
+      int duration = entry.getKey();
+      Move move = entry.getValue();
+
+      int newDuration = duration - 1;
+      if (newDuration > 0) {
+        updatedBuffs.put(newDuration, move);
+        logger.debug("Buff/Debuff '{}' for {} ticked: {} turns remaining", move.description(), name, newDuration);
+      } else {
+        // Buff/Debuff expired - remove its effects
+        switch (move.type()) {
+          case BUFF:
+            removeBuff(move);
+            logger.debug("Buff '{}' for {} expired and was removed", name, move.description());
+            break;
+          case DEBUFF:
+            removeDebuff(move);
+            logger.debug("Debuff '{}' for {} expired and was removed", name, move.description());
+            break;
+          default:
+            break;
+        }
+      }
+    }
+
+    activeBuffs = updatedBuffs;
+  }
+
+  /**
+   * Gets all active buffs/debuffs on this monster.
+   *
+   * @return a copy of the active buffs map.
+   */
+  public Map<Integer, Move> getActiveBuffs() {
+    return new HashMap<>(activeBuffs);
+  }
+
+  // ========== DOT Tracking Methods ==========
+
+  /**
+   * Adds a damage-over-time effect to this monster.
+   *
+   * @param move the DOT move to add.
+   */
+  public void addDot(Move move) {
+    activeDots.put(move.duration(), move);
+    logger.debug("Added DOT '{}' to {} for {} turns", move.description(), name, move.duration());
+  }
+
+  /**
+   * Applies all active DOT effects to this monster and ticks their duration.
+   * Called when this monster is attacked.
+   */
+  public void applyAndTickDots() {
+    if (activeDots.isEmpty()) {
+      return;
+    }
+
+    HashMap<Integer, Move> updatedDots = new HashMap<>();
+
+    for (Map.Entry<Integer, Move> entry : activeDots.entrySet()) {
+      int duration = entry.getKey();
+      Move move = entry.getValue();
+
+      if (duration > 0 && isAlive()) {
+        // Apply DOT damage
+        int damage = (int) move.amount();
+        if (damage > 0) {
+          takeDotDamage(damage);
+          logger.debug("DOT '{}' dealt {} damage to {} ({} turns left after this)",
+              move.description(), damage, name, duration - 1);
+        }
+
+        // Reduce duration
+        int newDuration = duration - 1;
+        if (newDuration > 0) {
+          updatedDots.put(newDuration, move);
+        } else {
+          logger.debug("DOT '{}' for {} expired", move.description(), name);
+        }
+      }
+    }
+
+    activeDots = updatedDots;
+  }
+
+  /**
+   * Gets all active DOT effects on this monster.
+   *
+   * @return a copy of the active DOTs map.
+   */
+  public Map<Integer, Move> getActiveDots() {
+    return new HashMap<>(activeDots);
+  }
+
+  // ========== Cooldown Tracking Methods ==========
+
+  /**
+   * Checks if a move is currently on cooldown.
+   *
+   * @param moveIndex the index of the move to check.
+   * @return true if the move is on cooldown, false otherwise.
+   */
+  public boolean isMoveOnCooldown(int moveIndex) {
+    Integer remaining = moveCooldowns.get(moveIndex);
+    return remaining != null && remaining > 0;
+  }
+
+  /**
+   * Gets the remaining cooldown for a specific move.
+   *
+   * @param moveIndex the index of the move.
+   * @return the remaining cooldown turns, or 0 if not on cooldown.
+   */
+  public int getRemainingCooldown(int moveIndex) {
+    return moveCooldowns.getOrDefault(moveIndex, 0);
+  }
+
+  /**
+   * Applies cooldown to a move after it has been used.
+   *
+   * @param moveIndex the index of the move.
+   * @param move the move that was used.
+   */
+  public void applyCooldown(int moveIndex, Move move) {
+    int cooldown = move.cooldown();
+    if (cooldown > 0) {
+      moveCooldowns.put(moveIndex, cooldown);
+      logger.debug("{}: Applied {} turns cooldown to move {} ({})", name, cooldown, moveIndex, move.description());
+    }
+  }
+
+  /**
+   * Ticks all cooldowns for this monster, reducing them by 1.
+   * Removes cooldowns that have reached 0.
+   */
+  public void tickCooldowns() {
+    if (moveCooldowns.isEmpty()) {
+      return;
+    }
+
+    Map<Integer, Integer> updatedCooldowns = new HashMap<>();
+
+    for (Map.Entry<Integer, Integer> entry : moveCooldowns.entrySet()) {
+      int moveIndex = entry.getKey();
+      int remaining = entry.getValue();
+
+      if (remaining > 0) {
+        int newRemaining = remaining - 1;
+        if (newRemaining > 0) {
+          updatedCooldowns.put(moveIndex, newRemaining);
+        }
+        logger.debug("{}: Cooldown ticked for move {}: {} turns left", name, moveIndex, newRemaining);
+      }
+    }
+
+    moveCooldowns = updatedCooldowns;
+  }
+
+  /**
+   * Gets all active cooldowns for this monster.
+   *
+   * @return a copy of the cooldowns map.
+   */
+  public Map<Integer, Integer> getMoveCooldowns() {
+    return new HashMap<>(moveCooldowns);
   }
 }

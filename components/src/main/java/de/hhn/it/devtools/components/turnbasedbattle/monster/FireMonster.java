@@ -7,8 +7,6 @@ public class FireMonster extends SimpleMonster {
     private static final org.slf4j.Logger logger =
             org.slf4j.LoggerFactory.getLogger(FireMonster.class);
 
-    public String name = "Fire Monster";
-
   public FireMonster(Monster monster) {
       this.maxHp = monster.maxHp();
       this.currentHp = monster.maxHp();
@@ -18,7 +16,7 @@ public class FireMonster extends SimpleMonster {
       this.critChance = monster.critChance();
       this.element = monster.element();
       this.moves = monster.moves();
-
+      this.name = "Fire Monster";
       logger.debug("{} created: {}", name, toString());
   }
 
