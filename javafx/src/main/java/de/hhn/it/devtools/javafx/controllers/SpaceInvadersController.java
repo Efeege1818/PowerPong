@@ -6,6 +6,7 @@ import de.hhn.it.devtools.components.spaceinvaders.SimpleSpaceInvadersService;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import de.hhn.it.devtools.javafx.Main;
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -104,6 +105,7 @@ public class SpaceInvadersController extends Controller implements Initializable
     anchorPane.getChildren().add(canvas);
 
     Scene scene = new Scene(anchorPane, 1080, 720);
+    stage2.setOnCloseRequest((event) -> stage.show());
     stage2.setScene(scene);
     stage2.setResizable(false);
     stage2.setTitle("Space Invaders");
