@@ -8,6 +8,11 @@ import java.util.Map;
  */
 public interface TowerDefenseService {
 
+  /**
+   * Provides the current State of the Game.
+   *
+   * @return the current GameState
+   */
   GameState getCurrentGameState();
 
   /**
@@ -56,9 +61,11 @@ public interface TowerDefenseService {
   void retry() throws IllegalStateException;
 
   /**
-   * Called when the player has failed the current round.
+   * Starts the next round.
+   *
+   * @throws IllegalStateException if the gameState doesn't allow the start of a new round
    */
-  void roundFailed();
+  void startNextRound() throws IllegalStateException;
 
   /**
    * Returns the current game map.
@@ -92,21 +99,6 @@ public interface TowerDefenseService {
    *     placement is invalid (on Path or on other tower).
    */
   void placeTower(Tower tower) throws IllegalArgumentException;
-
-  /**
-   * Updates the player's health when damaged.
-   *
-   * @param health the new health value
-   * @throws IllegalArgumentException if health is negative
-   */
-  void updateHealth(int health) throws IllegalArgumentException;
-
-  /**
-   * Updates the player's money when killing enemies or spending on towers.
-   *
-   * @param money the new money value
-   */
-  void updateMoney(int money);
 
   /**
    * Provides the number of the last round that has been started.
