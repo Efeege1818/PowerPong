@@ -64,25 +64,27 @@ public class SpaceInvadersController extends Controller implements Initializable
 
     Image alien = new Image(getClass().getResource("/images/alien.png").toExternalForm());
 
-    double[] x = {56};      // Startposition links
-    double y = 100;        // Höhe konstant
-    double speedX = 1;     // Geschwindigkeit
-    boolean[] movingRight = {true}; // Richtung
 
     new AnimationTimer() {
+
+      double x = 56;      // Startposition links
+      double y = 100;        // Höhe konstant
+      double speedX = 1;     // Geschwindigkeit
+      boolean movingRight = true; // Richtung
+
       @Override
       public void handle(long now) {
 
         // Richtung prüfen und Position ändern
-        if (movingRight[0]) {
-          x[0] += speedX;
-          if (x[0] + 10 >= 200) {  // rechts angekommen
-            movingRight[0] = false;
+        if (movingRight) {
+          x += speedX;
+          if (x + 10 >= 200) {  // rechts angekommen
+            movingRight = false;
           }
         } else {
-          x[0] -= speedX;
-          if (x[0] <= 56) {        // links angekommen
-            movingRight[0] = true;
+          x -= speedX;
+          if (x <= 56) {        // links angekommen
+            movingRight = true;
           }
         }
 
@@ -90,8 +92,8 @@ public class SpaceInvadersController extends Controller implements Initializable
 
         // Alien 10x10 Pixel zeichnen
         for (int i = 0; i < 5; i++) {
-          gc.drawImage(alien, x[0] + i * 10, y, 10, 10);
-          gc.drawImage(alien, x[0] - i * 10, y, 10, 10);
+          gc.drawImage(alien, x + i * 10, y, 10, 10);
+          gc.drawImage(alien, x - i * 10, y, 10, 10);
         }
       }
     }.start();
