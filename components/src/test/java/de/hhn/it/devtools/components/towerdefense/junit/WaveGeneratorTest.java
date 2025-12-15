@@ -36,7 +36,6 @@ public class WaveGeneratorTest {
     Assertions.assertEquals(10.0f,
         waveGenerator
             .generateWave(1)
-            .values()
             .stream()
             .mapToInt(n -> EnemyToolbox.getMoney(n.type()))
             .sum());
@@ -51,14 +50,12 @@ public class WaveGeneratorTest {
 
     List<EnemyType> generation1 = waveGenerator
         .generateWave(10)
-        .values()
         .stream()
         .map(Enemy::type)
         .sorted()
         .toList();
     List<EnemyType> generation2 = waveGenerator
         .generateWave(10)
-        .values()
         .stream()
         .map(Enemy::type)
         .sorted()

@@ -7,6 +7,8 @@ import de.hhn.it.devtools.apis.towerdefenseapi.EnemyType;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
@@ -40,9 +42,9 @@ public class WaveGenerator {
    * @param wave the wave for which the enemies are generated
    * @return Map filled with enemies and their id
    */
-  public Map<UUID, Enemy> generateWave(int wave) {
+  public List<Enemy> generateWave(int wave) {
 
-    Map<UUID, Enemy> enemyMap = new HashMap<>();
+    List<Enemy> enemyList = new LinkedList<Enemy>();
 
     Random random = createRandomGenerator(wave);
     int remainingPower = calculatePower(wave);
@@ -77,12 +79,12 @@ public class WaveGenerator {
       } while (randomValue >= 0);
 
       Enemy enemy = createEnemy(nextEnemyType, wave);
-      enemyMap.put(enemy.id(), enemy);
+      enemyList.add(enemy);
       remainingPower -= EnemyToolbox.getMoney(nextEnemyType);
 
     }
 
-    return Map.copyOf(enemyMap);
+    return List.copyOf(enemyList);
   }
 
   private Random createRandomGenerator(int wave) {

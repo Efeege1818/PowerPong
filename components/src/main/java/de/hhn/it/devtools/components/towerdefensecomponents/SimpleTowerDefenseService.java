@@ -10,25 +10,38 @@ import de.hhn.it.devtools.apis.towerdefenseapi.Tower;
 import de.hhn.it.devtools.apis.towerdefenseapi.TowerDefenseListener;
 import de.hhn.it.devtools.apis.towerdefenseapi.TowerDefenseService;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.function.Consumer;
 
 // LOCKED : L.Missbach
 public class SimpleTowerDefenseService implements TowerDefenseService {
 
-  Grid grid;
-  GameState currentGameState;
-  List<TowerDefenseListener> listeners = new ArrayList<TowerDefenseListener>();
-  GameLoop gameLoop = new GameLoop();
-  Player player;
-  Configuration configuration;
-  int currentRound;
+  private final MapToolbox mapToolbox = new MapToolbox();
+  private final EnemyToolbox enemyToolbox = new EnemyToolbox();
+  private final TowerToolbox towerToolbox = new TowerToolbox();
+  private final WaveGenerator waveGenerator;
 
-  // TODO: Es gibt keine Methode, um eine neue Runde zu starten
+  private final long seed;
+  private Grid grid;
+  private GameState currentGameState;
+  private final List<TowerDefenseListener> listeners = new ArrayList<TowerDefenseListener>();
+  private final GameLoop gameLoop = new GameLoop();
+  private Player player;
+  private Configuration configuration;
+  private int currentRound;
+
+  private List<Enemy> enemies;
 
   public SimpleTowerDefenseService() {
+
+    seed = new Random().nextLong();
     configuration = new Configuration();
+    grid = mapToolbox.generateMap(configuration.mapSize());
+    waveGenerator = new WaveGenerator(mapToolbox.getPath(grid).getFirst(), seed, configuration);
+
     player = new Player(configuration.startingHealth(), configuration.startingMoney());
     currentRound = 0;
 
@@ -51,7 +64,6 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
     return listeners.remove(listener);
   }
 
-  // TODO: Wozu ist diese Methode da?
   @Override
   public void startGame() throws IllegalStateException {
 
@@ -72,10 +84,16 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
 
   }
 
-  // TODO: Diese Methode sollte private sein
   @Override
-  public void roundFailed() {
+  public void startNextRound() throws IllegalStateException {
+    if (currentGameState != GameState.PAUSED) {
+      throw new IllegalStateException(
+          "Operation startNextRound is only allowed for GameState PAUSED");
+    }
+    currentRound += 1;
+    waveGenerator.generateWave(currentRound);
 
+    currentGameState = GameState.RUNNING;
   }
 
   @Override
@@ -99,9 +117,12 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
 
   }
 
-
-  // TODO: Diese Methode muss nicht Teil der API sein
-  @Override
+  /**
+   * Updates the player's health when damaged.
+   *
+   * @param health the new health value
+   * @throws IllegalArgumentException if health is negative
+   */
   public void updateHealth(int health) throws IllegalArgumentException {
     if (health < 0) {
       throw new IllegalArgumentException("Health can't be negative");
@@ -110,9 +131,11 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
     notifyListeners(TowerDefenseListener::updateHealth);
   }
 
-
-  // TODO: Diese Methode muss nicht Teil der API sein
-  @Override
+  /**
+   * Updates the player's money when killing enemies or spending on towers.
+   *
+   * @param money the new money value
+   */
   public void updateMoney(int money) {
     if (money < 0) {
       throw new IllegalArgumentException("Money can't be negative");
@@ -130,5 +153,9 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
     for (TowerDefenseListener listener : listeners) {
       consumer.accept(listener);
     }
+  }
+
+  private void roundFailed() {
+
   }
 }
