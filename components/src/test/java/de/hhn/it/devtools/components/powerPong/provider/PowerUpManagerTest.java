@@ -130,6 +130,18 @@ public class PowerUpManagerTest {
         });
     }
 
+    @Test
+    void testNoSpawnBeforeInterval() {
+        manager.reset();
+        // Update for slightly less than spawn interval (6.0)
+        manager.update(5.9);
+        assertTrue(manager.getPowerUpStates().isEmpty(), "No powerup should spawn before 6.0 seconds");
+
+        // Update just past the interval
+        manager.update(0.2);
+        assertEquals(1, manager.getPowerUpStates().size(), "Powerup should spawn after 6.0 seconds");
+    }
+
     private void testPowerUpEffect(PowerUpType type, Runnable assertion) {
         manager.reset();
         physics.reset();

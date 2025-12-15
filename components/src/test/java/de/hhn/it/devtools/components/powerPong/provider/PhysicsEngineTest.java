@@ -193,4 +193,56 @@ public class PhysicsEngineTest {
         // Ball should have bounced (vx flipped to negative)
         assertTrue(ball.vx < 0);
     }
+
+    @Test
+    void testDifficultyScaling() {
+        physics.launchBall(1);
+        PhysicsEngine.Ball ball = physics.getBall();
+        double initialVx = ball.vx;
+
+        physics.setDifficultyMultiplier(1.5);
+
+        // Velocity should be updated immediately or on next update/launch?
+        // implementation check: setDifficultyMultiplier calls
+        // updateBallVelocityForDifficulty
+        // which updates existing balls speed.
+
+        // Speed magnitude should increase
+        double initialSpeed = Math.abs(initialVx);
+        double newSpeed = Math.hypot(ball.vx, ball.vy);
+
+        assertTrue(newSpeed > initialSpeed);
+        assertEquals(1.5, physics.getDifficultyMultiplier(), 0.001);
+    }
+
+    @Test
+    void testExplicitSetters() {
+        physics.setLeftHeightFactor(2.0);
+        physics.setRightHeightFactor(0.5);
+        physics.setLeftSpeedFactor(1.5);
+        physics.setRightSpeedFactor(0.8);
+
+        // No direct getters for factors, but we can verify effect on PaddleState or
+        // internal state if exposed
+        // Or simply verify no exceptions thrown and simple state checks if possible.
+        // The resetModifiers test already verifies they do *something* (restore to
+        // 1.0).
+        // Here we just ensure setters work as API points.
+
+        // Indirect verification via paddle height
+        // physics.reset(); // Don't reset, as it clears modifiers!
+        assertEquals(PhysicsEngine.PADDLE_HEIGHT * 2.0, physics.getLeftPaddleState().height(), 0.001);
+        assertEquals(PhysicsEngine.PADDLE_HEIGHT * 0.5, physics.getRightPaddleState().height(), 0.001);
+    }
+
+    @Test
+    void testGetPaddle2Y() {
+        physics.reset();
+        assertEquals(PhysicsEngine.FIELD_HEIGHT / 2.0, physics.getPaddle2Y(), 0.001);
+    }
+
+    @Test
+    void testGetBaseBallSpeed() {
+        assertTrue(physics.getBaseBallSpeed() > 0);
+    }
 }

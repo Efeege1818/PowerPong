@@ -84,6 +84,10 @@ public class PhysicsEngine {
         }
     }
 
+    public double getDifficultyMultiplier() {
+        return difficultyMultiplier;
+    }
+
     private void updateBallVelocityForDifficulty(Ball b) {
         double currentSpeed = Math.hypot(b.vx, b.vy);
         if (currentSpeed > 0) {
