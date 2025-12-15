@@ -149,6 +149,13 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
     return currentRound;
   }
 
+  /**
+   * Logic that gets called by the GameLoop one per Game-Tick.
+   */
+  public void tick() {
+
+  }
+
   private void notifyListeners(Consumer<TowerDefenseListener> consumer) {
     for (TowerDefenseListener listener : listeners) {
       consumer.accept(listener);
