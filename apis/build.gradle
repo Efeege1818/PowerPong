@@ -26,4 +26,8 @@ dependencies {
 
 test {
     useJUnitPlatform()
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+    exclude 'de/hhn/it/devtools/apis/examples/**'
 }
