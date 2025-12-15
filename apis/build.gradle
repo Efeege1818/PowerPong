@@ -22,6 +22,8 @@ dependencies {
     api ("org.openjfx:javafx-graphics:${javafxVersion}:${javafxPlatform}")
     api ("org.openjfx:javafx-base:${javafxVersion}:${javafxPlatform}")
     // see also the dependencies in build.gradle (root)
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.3'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 test {
@@ -29,5 +31,5 @@ test {
     javaLauncher = javaToolchains.launcherFor {
         languageVersion = JavaLanguageVersion.of(21)
     }
-    exclude 'de/hhn/it/devtools/apis/examples/**'
 }
+
