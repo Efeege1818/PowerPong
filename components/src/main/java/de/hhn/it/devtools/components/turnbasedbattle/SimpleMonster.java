@@ -108,6 +108,21 @@ public class SimpleMonster {
   }
 
   /**
+   * Takes true damage, ignoring evasion, critical hits, elemental effectiveness,
+   * attack, and defense.
+   *
+   * @param amount the amount of damage to take.
+   */
+  public void takeTrueDamage(int amount) {
+    if (amount > currentHp) {
+      currentHp = 0;
+    } else {
+      currentHp -= amount;
+    }
+    logger.debug("{} took {} true damage and has {} hp left.", name, amount, currentHp);
+  }
+
+  /**
    * Checks if the move is effective against the target's element.
    *
    * @param moveElement the element of the move.
@@ -419,6 +434,15 @@ public class SimpleMonster {
    */
   public HashMap<Integer, Move> getMoves() {
     return moves;
+  }
+
+  /**
+   * Ticks all active effects (buffs, DOTs, cooldowns).
+   */
+  public void tickAllEffects() {
+    tickBuffs();
+    applyAndTickDots();
+    tickCooldowns();
   }
 
   // ========== Buff/Debuff Tracking Methods ==========

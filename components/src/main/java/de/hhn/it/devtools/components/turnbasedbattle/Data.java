@@ -68,17 +68,34 @@ public class Data {
     Move moveDotFire = new Move(MoveType.DOT, Element.FIRE,
         5, "health", 2, 10, true, "Fire dot");
 
+    // Overtuned moves
+    Move moveOvertunedFire = new Move(MoveType.ATTACK, Element.FIRE,
+        40, "health", 0, 1, true, "Overtuned fire attack");
+    Move moveOvertunedGrass = new Move(MoveType.ATTACK, Element.GRASS,
+        40, "health", 0, 1, true, "Overtuned grass attack");
+    Move moveOvertunedWater = new Move(MoveType.ATTACK, Element.WATER,
+        40, "health", 0, 1, true, "Overtuned water attack");
+    Move moveOverTunedDot = new Move(MoveType.DOT, Element.NORMAL,
+        20, "health", 5, 1, true, "Overtuned dot");
+    Move moveOverTunedBuff = new Move(MoveType.BUFF, Element.NORMAL,
+        20, "defense", 5, 1, true, "Overtuned buff");
+    Move moveOverTunedDebuff = new Move(MoveType.DEBUFF, Element.NORMAL,
+        20, "defense", 5, 1, true, "Overtuned debuff");
+
     Move[] fireMonsterMoves = {moveDotFire, moveFireAttack, moveCriticalBuff,
         moveDefenseDebuff, moveStrongFireAttack};
     Move[] grassMonsterMoves = {moveNormalAttack, moveGrassAttack, moveAttackBuff,
         moveEvasionDebuff, moveStrongGrassAttack};
     Move[] waterMonsterMoves = {moveNormalAttack, moveWaterAttack, moveEvasionBuff,
         moveAttackDebuff, moveStrongWaterAttack};
+    Move[] overTunedMoves = {moveOvertunedFire, moveOvertunedGrass, moveOvertunedWater,
+            moveOverTunedDot, moveOverTunedBuff, moveOverTunedDebuff};
 
     HashMap<Element, Move[]> movesMap = new HashMap<>();
     movesMap.put(Element.FIRE, fireMonsterMoves);
     movesMap.put(Element.GRASS, grassMonsterMoves);
     movesMap.put(Element.WATER, waterMonsterMoves);
+    movesMap.put(Element.NORMAL, overTunedMoves);
 
     // Return all moves
     return movesMap;
@@ -93,7 +110,8 @@ public class Data {
     return new Monster[] {
       new Monster(100, 10, 10, 0.1, 0.1, Element.FIRE, getFireMonsterMoves()),
       new Monster(120, 8, 8, 0.2, 0.2, Element.GRASS, getGrassMonsterMoves()),
-      new Monster(150, 6, 6, 0.3, 0.3, Element.WATER, getWaterMonsterMoves())
+      new Monster(150, 6, 6, 0.3, 0.3, Element.WATER, getWaterMonsterMoves()),
+      new Monster(150, 10, 10, 0.1, 0.1, Element.WATER, getOverTunedMonsterMoves())
     };
   }
 
@@ -143,6 +161,22 @@ public class Data {
     movesMap.put(3, createMovesMap().get(Element.WATER)[2]);
     movesMap.put(4, createMovesMap().get(Element.WATER)[3]);
     movesMap.put(5, createMovesMap().get(Element.WATER)[4]);
+    return movesMap;
+  }
+
+  /**
+   * Returns all moves for OverTunedMonster.
+   *
+   * @return Map with moves.
+   */
+  public HashMap<Integer, Move> getOverTunedMonsterMoves() {
+    HashMap<Integer, Move> movesMap = new HashMap<>();
+    movesMap.put(1, createMovesMap().get(Element.NORMAL)[0]);
+    movesMap.put(2, createMovesMap().get(Element.NORMAL)[1]);
+    movesMap.put(3, createMovesMap().get(Element.NORMAL)[2]);
+    movesMap.put(4, createMovesMap().get(Element.NORMAL)[3]);
+    movesMap.put(5, createMovesMap().get(Element.NORMAL)[4]);
+    movesMap.put(6, createMovesMap().get(Element.NORMAL)[5]);
     return movesMap;
   }
 

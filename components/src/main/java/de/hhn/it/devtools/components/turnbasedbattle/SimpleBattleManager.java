@@ -97,19 +97,16 @@ public class SimpleBattleManager implements BattleManager {
       throw new IllegalArgumentException("Invalid move number.");
     }
 
-    // Tick buffs for both monsters
-    p1Monster.tickBuffs();
-    p2Monster.tickBuffs();
-
-    // Tick cooldowns for the current monster
-    currentMonster.tickCooldowns();
-
     // Check if move is on cooldown
     if (currentMonster.isMoveOnCooldown(moveNumber)) {
       int remaining = currentMonster.getRemainingCooldown(moveNumber);
       logger.debug("Move {} is on cooldown for {} more turn(s).", moveNumber, remaining);
       throw new IllegalStateException("Move is on cooldown for " + remaining + " more turn(s).");
     }
+
+    // Tick all effects for both monsters
+    p1Monster.tickAllEffects();
+    p2Monster.tickAllEffects();
 
     Move selectedMove = currentMonster.getMove(moveNumber);
 
@@ -121,22 +118,8 @@ public class SimpleBattleManager implements BattleManager {
 
     switch (selectedMove.type()) {
       case ATTACK -> {
-        // Apply DOT damage to opponent before the attack
-        opponentMonster.applyAndTickDots();
-
         // Do damage
         opponentMonster.takeDamage(selectedMove, currentMonster);
-
-        // Check for death
-        if (!opponentMonster.isAlive()) {
-          battleOver = true;
-
-          if (currentPlayer == player1) {
-            return 1; //Player 1 win
-          } else {
-            return 2; //Player 2 win
-          }
-        }
       }
       case BUFF -> {
         currentMonster.addBuffOrDebuff(selectedMove);
@@ -148,6 +131,17 @@ public class SimpleBattleManager implements BattleManager {
         opponentMonster.addDot(selectedMove);
       }
       default -> throw new IllegalStateException("Unknown move type: " + selectedMove.type());
+    }
+
+    // Check for death
+    if (!opponentMonster.isAlive() || !currentMonster.isAlive()) {
+      battleOver = true;
+
+      if (currentPlayer == player1) {
+        return 1; //Player 1 win
+      } else {
+        return 2; //Player 2 win
+      }
     }
 
     return 0; // no winner yet
