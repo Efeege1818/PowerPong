@@ -3,7 +3,6 @@ package de.hhn.it.devtools.components.turnbasedbattle;
 import de.hhn.it.devtools.apis.turnbasedbattle.GameState;
 import de.hhn.it.devtools.apis.turnbasedbattle.Monster;
 import de.hhn.it.devtools.apis.turnbasedbattle.Player;
-import de.hhn.it.devtools.apis.turnbasedbattle.move.Move;
 import de.hhn.it.devtools.apis.turnbasedbattle.TurnBasedBattleListener;
 import de.hhn.it.devtools.apis.turnbasedbattle.TurnBasedBattleService;
 import java.util.ArrayList;

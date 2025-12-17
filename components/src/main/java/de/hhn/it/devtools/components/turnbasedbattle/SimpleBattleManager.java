@@ -3,11 +3,8 @@ package de.hhn.it.devtools.components.turnbasedbattle;
 import de.hhn.it.devtools.apis.turnbasedbattle.BattleManager;
 import de.hhn.it.devtools.apis.turnbasedbattle.Element;
 import de.hhn.it.devtools.apis.turnbasedbattle.Monster;
-import de.hhn.it.devtools.apis.turnbasedbattle.move.Move;
 import de.hhn.it.devtools.apis.turnbasedbattle.Player;
-import de.hhn.it.devtools.components.turnbasedbattle.monster.FireMonster;
-import de.hhn.it.devtools.components.turnbasedbattle.monster.GrassMonster;
-import de.hhn.it.devtools.components.turnbasedbattle.monster.WaterMonster;
+import de.hhn.it.devtools.apis.turnbasedbattle.move.Move;
 
 /**
  * Class for managing and executing turns.
