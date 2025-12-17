@@ -1,6 +1,8 @@
 package de.hhn.it.devtools.components.turnbasedbattle;
 
 import de.hhn.it.devtools.apis.turnbasedbattle.*;
+import de.hhn.it.devtools.apis.turnbasedbattle.move.Move;
+
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,8 +19,8 @@ public class TurnBasedBattleDemo {
 
         Data data = new Data();
 
-        Monster monster1 = data.getMonsters()[3];
-        Monster monster2 = data.getMonsters()[3];
+        Monster monster1 = data.getMonsters()[0];
+        Monster monster2 = data.getMonsters()[1];
 
         Player player1 = new Player(1, monster1, 0);
         Player player2 = new Player(2, monster2, 0);

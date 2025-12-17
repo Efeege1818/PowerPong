@@ -3,7 +3,7 @@ package de.hhn.it.devtools.components.turnbasedbattle;
 import de.hhn.it.devtools.apis.turnbasedbattle.BattleManager;
 import de.hhn.it.devtools.apis.turnbasedbattle.Element;
 import de.hhn.it.devtools.apis.turnbasedbattle.Monster;
-import de.hhn.it.devtools.apis.turnbasedbattle.Move;
+import de.hhn.it.devtools.apis.turnbasedbattle.move.Move;
 import de.hhn.it.devtools.apis.turnbasedbattle.Player;
 import de.hhn.it.devtools.components.turnbasedbattle.monster.FireMonster;
 import de.hhn.it.devtools.components.turnbasedbattle.monster.GrassMonster;

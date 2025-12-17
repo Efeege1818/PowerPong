@@ -1,5 +1,7 @@
 package de.hhn.it.devtools.apis.turnbasedbattle;
 
+import de.hhn.it.devtools.apis.turnbasedbattle.move.*;
+
 import java.util.HashMap;
 
 public class DemoTurnBasedBattleUsage {
@@ -10,14 +12,14 @@ public class DemoTurnBasedBattleUsage {
         TurnBasedBattleService service = null;
 
         // Create Moves
-        Move move1 = new Move(MoveType.ATTACK, Element.NORMAL, 20, "health", 0, 0, false, "Normal attack");
-        Move move2 = new Move(MoveType.ATTACK, Element.FIRE, 25, "health", 0, 1, false, "Fire attack");
-        Move move3 = new Move(MoveType.BUFF, Element.NORMAL, 30, "damage", 2, 2, false, "Increase damage");
-        Move move4 = new Move(MoveType.DEBUFF, Element.NORMAL, 0.1, "evasionChance", 0, 1, false, "Decrease evasion chance");
-        Move move5 = new Move(MoveType.ATTACK, Element.FIRE, 40, "health", 1, 10, true, "Strong fire attack");
-        Move move6 = new Move(MoveType.ATTACK, Element.GRASS, 20, "health", 0, 0, false, "Grass attack");
-        Move move7 = new Move(MoveType.BUFF, Element.GRASS, 0.1, "evasionChance",3, 3, false, "Increase evasion chance" );
-        Move move8 = new Move(MoveType.DEBUFF, Element.GRASS, 20, "defense", 5, 10, true, "Decrease defense");
+        Move move1 = new AttackMove("Normal attack", Element.NORMAL, 20, 0, false, "Normal attack");
+        Move move2 = new AttackMove("Fire attack", Element.FIRE, 25, 1, false, "Fire attack");
+        Move move3 = new BuffMove("Attack buff", Element.NORMAL, "attack", 30, 3, 2, false, "Increase attack of your monster");
+        Move move4 = new DebuffMove("Evasion debuff", Element.NORMAL, "evasionChance", 0.1, 3, 2, false, "Decrease evasion chance of your monster");
+        Move move5 = new AttackMove("Strong fire attack", Element.FIRE, 40, 1, true, "Strong fire attack");
+        Move move6 = new AttackMove("Grass attack", Element.GRASS, 20, 1, false, "Grass attack");
+        Move move7 = new BuffMove("Evasion buff", Element.GRASS, "evasionChance", 0.1, 3, 3, false, "Increase evasion chance of your monster");
+        DebuffMove move8 = new DebuffMove("Defense debuff", Element.GRASS, "defense", 10, 10, 1, true, "Decrease defense of your monster");
 
         // Create Monsters
 

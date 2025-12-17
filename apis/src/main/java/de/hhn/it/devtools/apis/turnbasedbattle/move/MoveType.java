@@ -1,4 +1,4 @@
-package de.hhn.it.devtools.apis.turnbasedbattle;
+package de.hhn.it.devtools.apis.turnbasedbattle.move;
 
 /**
  * Enum to represent different types of moves.

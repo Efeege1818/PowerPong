@@ -1,6 +1,6 @@
 package de.hhn.it.devtools.components.turnbasedbattle;
 
-import de.hhn.it.devtools.apis.turnbasedbattle.Move;
+import de.hhn.it.devtools.apis.turnbasedbattle.move.Move;
 
 /**
  * Utility class for damage calculation.

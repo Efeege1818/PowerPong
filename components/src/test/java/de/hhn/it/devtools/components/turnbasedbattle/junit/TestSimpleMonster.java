@@ -2,8 +2,7 @@ package de.hhn.it.devtools.components.turnbasedbattle.junit;
 
 import de.hhn.it.devtools.apis.turnbasedbattle.Element;
 import de.hhn.it.devtools.apis.turnbasedbattle.Monster;
-import de.hhn.it.devtools.apis.turnbasedbattle.Move;
-import de.hhn.it.devtools.apis.turnbasedbattle.MoveType;
+import de.hhn.it.devtools.apis.turnbasedbattle.move.*;
 import de.hhn.it.devtools.components.turnbasedbattle.SimpleMonster;
 import de.hhn.it.devtools.components.turnbasedbattle.SimpleTurnBasedBattleService;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,11 +24,11 @@ public class TestSimpleMonster {
     @BeforeEach
     void setup() {
         this.service = new SimpleTurnBasedBattleService();
-        Move move1 = new Move(MoveType.ATTACK, Element.NORMAL, 20, "health", 0, 0, false, "Normal attack");
-        Move move2 = new Move(MoveType.ATTACK, Element.FIRE, 40, "health", 1, 10, true, "Strong fire attack");
-        Move move3 = new Move(MoveType.BUFF, Element.NORMAL, 30, "attack", 3, 2, false, "Increase damage");
-        Move move4 = new Move(MoveType.DEBUFF, Element.NORMAL, 0.1, "evasionChance", 3, 1, false, "Decrease evasion chance");
-        Move move5 = new Move(MoveType.BUFF, Element.FIRE, 0.1, "critChance", 3, 2, true, "Increase critical hit chance");
+        Move move1 = new AttackMove("Normal attack", Element.NORMAL, 20, 0, false, "Normal attack");
+        Move move2 = new AttackMove("Strong fire attack", Element.FIRE, 40, 1, true, "Strong fire attack");
+        Move move3 = new BuffMove("Increase damage", Element.NORMAL, "attack", 30, 3, 2, false, "Increase damage");
+        Move move4 = new DebuffMove("Decrease evasion chance", Element.NORMAL, "evasionChance", 0.1, 3, 1, false, "Decrease evasion chance");
+        Move move5 = new BuffMove("Increase critical hit chance", Element.FIRE, "critChance", 0.1, 3, 2, true, "Increase critical hit chance");
         HashMap<Integer, Move> testMoves = new HashMap<>();
         testMoves.put(1, move1);
         testMoves.put(2, move2);
