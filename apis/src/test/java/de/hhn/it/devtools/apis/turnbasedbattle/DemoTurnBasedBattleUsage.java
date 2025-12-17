@@ -12,14 +12,14 @@ public class DemoTurnBasedBattleUsage {
         TurnBasedBattleService service = null;
 
         // Create Moves
-        Move move1 = new AttackMove("Normal attack", Element.NORMAL, 20, 0, false, "Normal attack");
-        Move move2 = new AttackMove("Fire attack", Element.FIRE, 25, 1, false, "Fire attack");
-        Move move3 = new BuffMove("Attack buff", Element.NORMAL, "attack", 30, 3, 2, false, "Increase attack of your monster");
-        Move move4 = new DebuffMove("Evasion debuff", Element.NORMAL, "evasionChance", 0.1, 3, 2, false, "Decrease evasion chance of your monster");
-        Move move5 = new AttackMove("Strong fire attack", Element.FIRE, 40, 1, true, "Strong fire attack");
-        Move move6 = new AttackMove("Grass attack", Element.GRASS, 20, 1, false, "Grass attack");
-        Move move7 = new BuffMove("Evasion buff", Element.GRASS, "evasionChance", 0.1, 3, 3, false, "Increase evasion chance of your monster");
-        DebuffMove move8 = new DebuffMove("Defense debuff", Element.GRASS, "defense", 10, 10, 1, true, "Decrease defense of your monster");
+        Move move1 = new AttackMove("Normal attack", Element.NORMAL, 20, 0, false, "Normal attack", 1);
+        Move move2 = new AttackMove("Fire attack", Element.FIRE, 25, 1, false, "Fire attack", 1);
+        Move move3 = new BuffMove("Attack buff", Element.NORMAL, "attack", 30, 3, 2, false, "Increase attack of your monster", 1);
+        Move move4 = new DebuffMove("Evasion debuff", Element.NORMAL, "evasionChance", 0.1, 3, 2, false, "Decrease evasion chance of your monster", 1);
+        Move move5 = new AttackMove("Strong fire attack", Element.FIRE, 40, 1, true, "Strong fire attack", 1);
+        Move move6 = new AttackMove("Grass attack", Element.GRASS, 20, 1, false, "Grass attack", 1);
+        Move move7 = new BuffMove("Evasion buff", Element.GRASS, "evasionChance", 0.1, 3, 3, false, "Increase evasion chance of your monster", 1);
+        DebuffMove move8 = new DebuffMove("Defense debuff", Element.GRASS, "defense", 10, 10, 1, true, "Decrease defense of your monster", 1);
 
         // Create Monsters
 

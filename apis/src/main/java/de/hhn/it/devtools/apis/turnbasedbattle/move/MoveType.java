@@ -27,5 +27,5 @@ public enum MoveType {
     /**
      * The move applies damage-over-time (DOT) to the opponent's monster.
      */
-    DOT
+    DOT,
 }

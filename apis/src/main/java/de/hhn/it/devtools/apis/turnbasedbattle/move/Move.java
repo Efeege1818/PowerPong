@@ -12,6 +12,7 @@ public interface Move {
   int cooldown();
   boolean isSpecial();
   Element element();
+  int executionCount();
 
   // Optional methods with default implementations
   default double amount() {

@@ -14,7 +14,7 @@ import de.hhn.it.devtools.apis.turnbasedbattle.Element;
  * @param isSpecial whether the move is special.
  * @param description description of the move.
  */
-public record DotMove(MoveType type, String name, Element element, double damagePerTurn, int duration, int cooldown, boolean isSpecial, String description) implements Move {
+public record DotMove(MoveType type, String name, Element element, double damagePerTurn, int duration, int cooldown, boolean isSpecial, String description, int executionCount) implements Move {
 
   @Override
   public double amount() {
@@ -24,8 +24,8 @@ public record DotMove(MoveType type, String name, Element element, double damage
   /**
    * Custom constructor without type parameter - type is always DOT.
    */
-  public DotMove(String name, Element element, double damagePerTurn, int duration, int cooldown, boolean isSpecial, String description) {
-    this(MoveType.DOT, name, element, damagePerTurn, duration, cooldown, isSpecial, description);
+  public DotMove(String name, Element element, double damagePerTurn, int duration, int cooldown, boolean isSpecial, String description, int executionCount) {
+    this(MoveType.DOT, name, element, damagePerTurn, duration, cooldown, isSpecial, description, executionCount);
   }
 
   /**

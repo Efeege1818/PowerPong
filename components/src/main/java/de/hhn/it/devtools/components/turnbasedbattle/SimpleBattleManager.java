@@ -107,40 +107,44 @@ public class SimpleBattleManager implements BattleManager {
 
     Move selectedMove = currentMonster.getMove(moveNumber);
 
+    logger.debug("Player {} executing move: {}",
+            currentPlayer.playerId(), selectedMove.description());
+
     // Apply cooldown to the move
     currentMonster.applyCooldown(moveNumber, selectedMove);
 
-    logger.debug("Player {} executing move: {}",
-        currentPlayer.playerId(), selectedMove.description());
 
-    switch (selectedMove.type()) {
-      case ATTACK -> {
-        // Do damage
-        opponentMonster.takeDamage(selectedMove, currentMonster);
+    for(int count = 1; count <= selectedMove.executionCount(); count++) {
+      logger.debug("Executing move {} of {}", count, selectedMove.executionCount());
+
+      switch (selectedMove.type()) {
+        case ATTACK -> {
+          // Do damage
+          opponentMonster.takeDamage(selectedMove, currentMonster);
+        }
+        case BUFF -> {
+          currentMonster.addBuffOrDebuff(selectedMove);
+        }
+        case DEBUFF -> {
+          opponentMonster.addBuffOrDebuff(selectedMove);
+        }
+        case DOT -> {
+          opponentMonster.addDot(selectedMove);
+        }
+        default -> throw new IllegalStateException("Unknown move type: " + selectedMove.type());
       }
-      case BUFF -> {
-        currentMonster.addBuffOrDebuff(selectedMove);
+
+      // Check for death
+      if (!opponentMonster.isAlive() || !currentMonster.isAlive()) {
+        battleOver = true;
+
+        if (currentPlayer == player1) {
+          return 1; //Player 1 win
+        } else {
+          return 2; //Player 2 win
+        }
       }
-      case DEBUFF -> {
-        opponentMonster.addBuffOrDebuff(selectedMove);
-      }
-      case DOT -> {
-        opponentMonster.addDot(selectedMove);
-      }
-      default -> throw new IllegalStateException("Unknown move type: " + selectedMove.type());
     }
-
-    // Check for death
-    if (!opponentMonster.isAlive() || !currentMonster.isAlive()) {
-      battleOver = true;
-
-      if (currentPlayer == player1) {
-        return 1; //Player 1 win
-      } else {
-        return 2; //Player 2 win
-      }
-    }
-
     return 0; // no winner yet
   }
 

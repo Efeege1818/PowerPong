@@ -31,73 +31,73 @@ public class Data {
   private Map<Element, Move[]> createMovesMap() {
     // Attack moves
     AttackMove moveNormalAttack = new AttackMove("Normal attack", Element.NORMAL, 20, 0,
-        false, "Normal attack");
+        false, "Normal attack", 1);
     AttackMove moveFireAttack = new AttackMove("Fire attack", Element.FIRE, 25, 1,
-        false, "Fire attack");
+        false, "Fire attack", 1);
     AttackMove moveGrassAttack = new AttackMove("Grass attack", Element.GRASS, 20, 1,
-        false, "Grass attack");
+        false, "Grass attack", 3);
     AttackMove moveWaterAttack = new AttackMove("Water attack", Element.WATER, 20, 1,
-        false, "Water attack");
+        false, "Water attack", 1);
 
     // Buff moves
     BuffMove moveAttackBuff = new BuffMove(
             "Attack buff", Element.NORMAL, "attack",
-            30, 3, 2, false, "Increase attack of your monster");
+            30, 3, 2, false, "Increase attack of your monster", 1);
     BuffMove moveEvasionBuff = new BuffMove(
             "Evasion buff", Element.NORMAL, "evasionChance",
-            0.1, 3, 2, false, "Increase evasion chance of your monster");
+            0.1, 3, 2, false, "Increase evasion chance of your monster", 1);
     BuffMove moveDefenseBuff = new BuffMove(
             "Defense buff", Element.NORMAL, "defense",
-            10, 3, 2, false, "Increase defense of your monster");
+            10, 3, 2, false, "Increase defense of your monster", 1);
     BuffMove moveCriticalBuff = new BuffMove(
             "Critical buff", Element.NORMAL, "critChance",
-            0.1, 3, 2, false, "Increase critical hit chance of your monster");
+            0.1, 3, 2, false, "Increase critical hit chance of your monster", 1);
 
     // Debuff moves
     DebuffMove moveAttackDebuff = new DebuffMove(
             "Attack debuff", Element.NORMAL, "attack",
-            20, 3, 1, true, "Decrease attack of your enemy's monster");
+            20, 3, 1, true, "Decrease attack of your enemy's monster", 1);
     DebuffMove moveEvasionDebuff = new DebuffMove(
             "Evasion debuff", Element.NORMAL, "evasionChance",
-            0.1, 3, 1, true, "Decrease evasion chance of your enemy's monster");
+            0.1, 3, 1, true, "Decrease evasion chance of your enemy's monster", 1);
     DebuffMove moveDefenseDebuff = new DebuffMove(
             "Defense debuff", Element.NORMAL, "defense",
-            10, 3, 1, true, "Decrease defense of your enemy's monster");
+            10, 3, 1, true, "Decrease defense of your enemy's monster", 1);
     DebuffMove moveCriticalDebuff = new DebuffMove(
             "Critical debuff", Element.NORMAL, "critChance",
-            0.1, 3, 1, true, "Decrease critical hit chance of your enemy's monster");
+            0.1, 3, 1, true, "Decrease critical hit chance of your enemy's monster", 1);
 
     // Special moves
     AttackMove moveStrongFireAttack = new AttackMove("Strong fire attack", Element.FIRE,
-        40, 10, true, "Strong fire attack");
+        40, 10, true, "Strong fire attack", 1);
     AttackMove moveStrongGrassAttack = new AttackMove("Strong grass attack", Element.GRASS,
-        30, 10, true, "Strong grass attack");
+        30, 10, true, "Strong grass attack", 1);
     AttackMove moveStrongWaterAttack = new AttackMove("Strong water attack", Element.WATER,
-        30, 10, true, "Strong water attack");
+        30, 10, true, "Strong water attack", 1);
 
     // Dot moves
     DotMove moveDotFire = new DotMove("Fire dot", Element.FIRE,
-        5, 2, 10, true, "Fire dot");
+        5, 2, 10, true, "Fire dot", 1);
 
     // Overtuned moves
     Move moveOvertunedFire = new AttackMove(
         "Overtuned fire attack", Element.FIRE,
-            10, 1, true, "Overtuned fire attack");
+            10, 1, true, "Overtuned fire attack", 1);
     Move moveOvertunedGrass = new AttackMove(
         "Overtuned grass attack", Element.GRASS,
-            10, 1, true, "Overtuned grass attack");
+            10, 1, true, "Overtuned grass attack", 1);
     Move moveOvertunedWater = new AttackMove(
         "Overtuned water attack", Element.WATER,
-            10, 1, true, "Overtuned water attack");
+            10, 1, true, "Overtuned water attack", 1);
     DotMove moveOverTunedDot = new DotMove(
         "Overtuned dot", Element.NORMAL,
-            20, 5, 1, true, "Overtuned dot");
+            20, 5, 1, true, "Overtuned dot", 1);
     BuffMove moveOverTunedBuff = new BuffMove(
         "Overtuned buff", Element.NORMAL, "defense",
-            20, 5, 1, true, "Overtuned buff");
+            20, 5, 1, true, "Overtuned buff", 1);
     DebuffMove moveOverTunedDebuff = new DebuffMove(
         "Overtuned debuff", Element.NORMAL, "defense",
-            20, 5, 1, true, "Overtuned debuff");
+            20, 5, 1, true, "Overtuned debuff", 1);
 
     Move[] fireMonsterMoves = {moveDotFire, moveFireAttack, moveCriticalBuff,
         moveDefenseDebuff, moveStrongFireAttack};
