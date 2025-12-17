@@ -12,9 +12,6 @@ version = "1.0"
 dependencies {
     implementation project(":apis")
     // see also the dependencies in build.gradle (root)
-    // JUnit 5 (Jupiter)
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.3'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 test {
@@ -42,14 +39,4 @@ checkstyle {
 task myJavadocs(type: Javadoc) {
     source = sourceSets.main.allJava
     failOnError = false
-}
-
-task runDemo(type: JavaExec) {
-    group = "Execution"
-    description = "Runs the DemoUsage class"
-    classpath = sourceSets.test.runtimeClasspath
-    mainClass = "de.hhn.it.devtools.components.powerPong.demo.DemoUsage"
-    javaLauncher = javaToolchains.launcherFor {
-        languageVersion = JavaLanguageVersion.of(21)
-    }
 }

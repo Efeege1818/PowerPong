@@ -5,31 +5,6 @@ plugins {
 group = "de.hhn.it.devtools.apis"
 version = "1.0"
 
-def javafxVersion = "21.0.3"
-def osName = System.getProperty("os.name").toLowerCase()
-def arch = System.getProperty("os.arch").toLowerCase()
-def javafxPlatform
-if (osName.contains("mac")) {
-    javafxPlatform = (arch.contains("aarch64") || arch.contains("arm")) ? "mac-aarch64" : "mac"
-} else if (osName.contains("win")) {
-    javafxPlatform = "win"
-} else {
-    // default to linux build; adjust if you target a different platform
-    javafxPlatform = "linux"
-}
-
 dependencies {
-    api ("org.openjfx:javafx-graphics:${javafxVersion}:${javafxPlatform}")
-    api ("org.openjfx:javafx-base:${javafxVersion}:${javafxPlatform}")
     // see also the dependencies in build.gradle (root)
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.3'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
-
-test {
-    useJUnitPlatform()
-    javaLauncher = javaToolchains.launcherFor {
-        languageVersion = JavaLanguageVersion.of(21)
-    }
-}
-
