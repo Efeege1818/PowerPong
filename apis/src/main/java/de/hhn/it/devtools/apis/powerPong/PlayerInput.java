@@ -1,70 +1,68 @@
 package de.hhn.it.devtools.apis.powerPong;
 
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
-import javafx.scene.input.KeyCode;
 
 /**
- * Thin facade around JavaFX input handling. Instead of keeping boolean flags per paddle we simply
- * capture the currently pressed {@link KeyCode KeyCodes} reported by the JavaFX scene.
+ * Thin facade around input handling. Instead of keeping boolean flags per paddle we simply
+ * capture the currently active {@link InputAction InputActions} reported by the UI layer.
  * <p>Example integration:</p>
  * <pre>{@code
  * PlayerInput input = new PlayerInput();
- * scene.setOnKeyPressed(event -> input.keyPressed(event.getCode()));
- * scene.setOnKeyReleased(event -> input.keyReleased(event.getCode()));
+ * scene.setOnKeyPressed(event -> input.keyPressed(KeyCodeMapper.map(event.getCode())));
+ * scene.setOnKeyReleased(event -> input.keyReleased(KeyCodeMapper.map(event.getCode())));
  * animationTimer.handle(...) -> powerPongService.updateGame(input);
  * }</pre>
  *
- * No game logic lives here—this class just mirrors what the JavaFX event system saw last frame.
+ * No game logic lives here—this class just mirrors what the UI reported last frame.
  */
 public class PlayerInput {
 
-    private final Set<KeyCode> pressedKeys = EnumSet.noneOf(KeyCode.class);
+    private final Set<InputAction> pressedActions = EnumSet.noneOf(InputAction.class);
 
     /**
-     * Marks a key as pressed. Intended to be called directly from {@code Scene#setOnKeyPressed}.
+     * Marks an action as active. Intended to be called from the UI adapter.
      *
-     * @param code JavaFX key code, ignored when null.
+     * @param action logical input action, ignored when null.
      */
-    public void keyPressed(KeyCode code) {
-        if (code != null) {
-            pressedKeys.add(code);
+    public void keyPressed(InputAction action) {
+        if (action != null) {
+            pressedActions.add(action);
         }
     }
 
     /**
-     * Marks a key as released. Intended to be wired to {@code Scene#setOnKeyReleased}.
+     * Marks an action as released. Intended to be wired to the UI adapter.
      *
-     * @param code JavaFX key code, ignored when null.
+     * @param action logical input action, ignored when null.
      */
-    public void keyReleased(KeyCode code) {
-        if (code != null) {
-            pressedKeys.remove(code);
+    public void keyReleased(InputAction action) {
+        if (action != null) {
+            pressedActions.remove(action);
         }
     }
 
     /**
-     * Checks whether the given key is currently held down.
+     * Checks whether the given action is currently active.
      *
-     * @param code JavaFX key code.
-     * @return true if the key is part of the tracked set.
+     * @param action logical input action.
+     * @return true if the action is part of the tracked set.
      */
-    public boolean isPressed(KeyCode code) {
-        return code != null && pressedKeys.contains(code);
+    public boolean isPressed(InputAction action) {
+        return action != null && pressedActions.contains(action);
     }
 
     /**
-     * Returns an immutable snapshot of the pressed key set for the current frame.
+     * Returns an immutable snapshot of the pressed actions for the current frame.
      */
-    public Set<KeyCode> getPressedKeysSnapshot() {
-        return Set.copyOf(pressedKeys);
+    public Set<InputAction> getPressedKeysSnapshot() {
+        return Set.copyOf(pressedActions);
     }
 
     /**
-     * Clears all tracked key presses (useful if the scene loses focus).
+     * Clears all tracked actions (useful if the scene loses focus).
      */
     public void clear() {
-        pressedKeys.clear();
+        pressedActions.clear();
     }
 }

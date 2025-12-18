@@ -5,6 +5,7 @@ import de.hhn.it.devtools.apis.powerPong.GameMode;
 import de.hhn.it.devtools.apis.powerPong.GameState;
 import de.hhn.it.devtools.apis.powerPong.GameStatus;
 import de.hhn.it.devtools.apis.powerPong.PlayerInput;
+import de.hhn.it.devtools.apis.powerPong.InputAction;
 import de.hhn.it.devtools.apis.powerPong.PowerPongListener;
 import de.hhn.it.devtools.apis.powerPong.PowerPongService;
 import de.hhn.it.devtools.apis.powerPong.Score;
@@ -12,7 +13,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
-import javafx.scene.input.KeyCode;
 
 /**
  * Implementation of PowerPongService using the Facade pattern.
@@ -119,13 +119,13 @@ public class PowerPongMatchEngine implements PowerPongService {
   }
 
   private void applyInput(PlayerInput input) {
-    double leftDir = directionFromInput(input, KeyCode.W, KeyCode.S);
+    double leftDir = directionFromInput(input, InputAction.LEFT_UP, InputAction.LEFT_DOWN);
     double rightDir = 0;
 
     if (currentMode == GameMode.PLAYER_VS_AI || currentMode == GameMode.SURVIVAL) {
       rightDir = calculateAIMovement();
     } else {
-      rightDir = directionFromInput(input, KeyCode.UP, KeyCode.DOWN);
+      rightDir = directionFromInput(input, InputAction.RIGHT_UP, InputAction.RIGHT_DOWN);
     }
 
     physics.movePaddle(true, leftDir, FRAME_TIME_SECONDS);
@@ -198,7 +198,7 @@ public class PowerPongMatchEngine implements PowerPongService {
     }
   }
 
-  private double directionFromInput(PlayerInput input, KeyCode up, KeyCode down) {
+  private double directionFromInput(PlayerInput input, InputAction up, InputAction down) {
     if (input == null) {
       return 0;
     }

@@ -9,6 +9,7 @@ import de.hhn.it.devtools.apis.exceptions.GameLogicException;
 import de.hhn.it.devtools.apis.powerPong.GameMode;
 import de.hhn.it.devtools.apis.powerPong.GameState;
 import de.hhn.it.devtools.apis.powerPong.GameStatus;
+import de.hhn.it.devtools.apis.powerPong.InputAction;
 import de.hhn.it.devtools.apis.powerPong.PlayerInput;
 import de.hhn.it.devtools.apis.powerPong.PowerPongListener;
 import de.hhn.it.devtools.apis.powerPong.Score;
@@ -149,8 +150,8 @@ public class PowerPongMatchEngineTest {
 
         // Create input with W and UP pressed (moving both paddles up)
         PlayerInput input = new PlayerInput();
-        input.keyPressed(javafx.scene.input.KeyCode.W);
-        input.keyPressed(javafx.scene.input.KeyCode.UP);
+        input.keyPressed(InputAction.LEFT_UP);
+        input.keyPressed(InputAction.RIGHT_UP);
 
         GameState before = engine.getGameState();
         double leftBefore = before.player1Paddle().yPosition();

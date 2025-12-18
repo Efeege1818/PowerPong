@@ -5,10 +5,10 @@ import de.hhn.it.devtools.apis.powerPong.BallState;
 import de.hhn.it.devtools.apis.powerPong.GameMode;
 import de.hhn.it.devtools.apis.powerPong.GameState;
 import de.hhn.it.devtools.apis.powerPong.GameStatus;
+import de.hhn.it.devtools.apis.powerPong.InputAction;
 import de.hhn.it.devtools.apis.powerPong.PlayerInput;
 import de.hhn.it.devtools.apis.powerPong.PowerPongService;
 import de.hhn.it.devtools.components.powerPong.provider.PowerPongMatchEngine;
-import javafx.scene.input.KeyCode;
 
 /**
  * This class demonstrates the intended use of the PowerPongService interface.
@@ -56,8 +56,8 @@ public class DemoUsage {
         // --- 1. Collect inputs ---
         // Here we simulate that Player 1 presses 'W' and Player 2 presses 'ArrowDown'
         PlayerInput inputs = new PlayerInput();
-        inputs.keyPressed(KeyCode.W);
-        inputs.keyPressed(KeyCode.DOWN);
+        inputs.keyPressed(InputAction.LEFT_UP);
+        inputs.keyPressed(InputAction.RIGHT_DOWN);
 
         // --- 2. Update game logic ---
         // The UI "ticks" the game logic and passes in the inputs.
