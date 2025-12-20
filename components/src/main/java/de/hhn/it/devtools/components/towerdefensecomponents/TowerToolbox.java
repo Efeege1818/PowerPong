@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 // LOCKED : S.Arsenovici
+
 /**
  * A class that provides general functionality for the Management of Towers.
  */
 public class TowerToolbox {
-
 
 
   /**
@@ -33,18 +33,17 @@ public class TowerToolbox {
   }
 
 
-
   /**
    * Attacks the enemy in range, that has advanced the furthest on the path.
    *
    * @param enemies as list of enemies
-   * @param towers as list of towers
+   * @param towers  as list of towers
    * @return {@code ArrayList<Enemy>} with updated enemies
    * @throws IllegalArgumentException if towers or enemies do not exist.
    */
   public static ArrayList<Enemy> action(List<Tower> towers, List<Enemy> enemies)
-      throws IllegalArgumentException {
-    for (Tower tower : towers){
+          throws IllegalArgumentException {
+    for (Tower tower : towers) {
     }
     return null;
   }
