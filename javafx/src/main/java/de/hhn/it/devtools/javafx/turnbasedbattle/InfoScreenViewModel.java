@@ -1,0 +1,105 @@
+package de.hhn.it.devtools.javafx.turnbasedbattle;
+
+import de.hhn.it.devtools.apis.turnbasedbattle.Element;
+import de.hhn.it.devtools.apis.turnbasedbattle.Monster;
+import de.hhn.it.devtools.apis.turnbasedbattle.move.Move;
+import de.hhn.it.devtools.components.turnbasedbattle.SimpleMonster;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.StringProperty;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.shape.Path;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+
+
+public class InfoScreenViewModel {
+
+    private static final Logger logger =
+            LoggerFactory.getLogger(InfoScreenViewModel.class);
+
+    private SimpleMonster monster;
+    private ImageView imageView;
+    private String monsterName;
+    private int maxHp;
+    private int currentHp;
+    private int atk;
+    private int def;
+    private String focusInfo;
+    private String passiveInfo;
+    private Element element;
+    private Map<Integer, Move> moves = new HashMap<>();
+    //may be make an Special move outside the move list or mark it somehow to reffer to it for the UI
+    //should have an name and descriptions like the other moves
+    String specialMove;
+
+
+    public InfoScreenViewModel(SimpleMonster monster) {
+        this.monster = monster;
+        this.maxHp=monster.getMaxHp();
+        this.atk=monster.getAttack();
+        this.def=monster.getDefense();
+        this.element=monster.getElement();
+        this.moves=monster.getMoves();
+        this.specialMove="SpecialMove";
+    }
+
+
+    public static String getMonsterName(){
+        //TODO: make a getName for Monster, should return a String
+        return "Monster Name";
+    }
+
+    public int getMaxHp() {
+        return maxHp;
+    }
+
+    public int getAtk() {
+        return atk;
+    }
+
+    public int getDef() {
+        return def;
+    }
+
+    public String getFocus() {
+        //TODO: make a getFocus for Monster
+        String focusInfo = "Manipulates Dodge and Krit chances";
+        return focusInfo;
+    }
+
+    public ImageView getImageView() {
+        //TODO: make a getImageView for Monster
+        try {
+            ImageView imageView = new ImageView("/Monster Sprites/WasserMon.png");
+            return imageView;
+
+        }catch(Exception e){
+            return null;
+        }
+    }
+
+    public String getPassiveInfo() {
+        //TODO: make a getPassiveInfo for Monster
+        String passiveInfo ="Dodges are more likely";
+        return passiveInfo;
+    }
+
+    public Element getElement() {
+        return element;
+    }
+
+    public Map<Integer, Move> getMoves() {
+        return moves;
+    }
+
+    public String getSpecialMove() {
+        String specialMove = "Hits an enemy 6 times with Water (3) and Normal (3) DMG.\nDecreases cooldown by 1 for each Krit hit.";
+        return specialMove;
+    }
+}

@@ -45,7 +45,7 @@ public class SimpleMonster {
 
   /**
    * Tracks cooldowns for this monster's moves.
-   * Key: move index, Value: remaining cooldown turns.
+   * Key: move index, Value: remaining cooldown turns.i
    */
   private Map<Integer, Integer> moveCooldowns = new HashMap<>();
 
@@ -76,8 +76,6 @@ public class SimpleMonster {
   protected SimpleMonster() {
     // Subclasses will initialize the fields
   }
-
-
 
   /**
    * Takes damage from a move.
