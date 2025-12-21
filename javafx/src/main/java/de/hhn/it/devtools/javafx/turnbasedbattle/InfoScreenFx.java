@@ -129,9 +129,26 @@ public class InfoScreenFx extends VBox {
             rightCol.getChildren().add(MonsterView);
         } else {
             // Fallback: draw a stroked circle
+            Element fallbackElement = viewModel.getElement();
+            String fallbackColore;
+                    switch (fallbackElement){
+                        case FIRE:
+                            fallbackColore ="#ff0000";
+                            break;
+                        case GRASS:
+                            fallbackColore ="#00ff00";
+                            break;
+                        case WATER:
+                            fallbackColore ="#1e90ff";
+                            break;
+                        default : fallbackColore ="#000000";
+                        break;
+                    };
+
+
             Circle fallback = new Circle(130);
             fallback.setFill(Color.TRANSPARENT);
-            fallback.setStroke(Color.web("#1e90ff"));//blue
+            fallback.setStroke(Color.web(fallbackColore));
             fallback.setStrokeWidth(3.0);
             rightCol.getChildren().add(fallback);
         }
