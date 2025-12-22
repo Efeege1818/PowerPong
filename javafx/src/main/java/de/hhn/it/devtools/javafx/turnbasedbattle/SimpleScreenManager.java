@@ -7,7 +7,7 @@ import javafx.scene.layout.Pane;
 public class SimpleScreenManager implements ScreenManager {
 
   Pane pane;
-  private SimpleSelectScreen selectScreen;
+  private SelectScreen selectScreen;
   private P1Screen p1Screen;
   private P2Screen p2Screen;
 
@@ -15,9 +15,9 @@ public class SimpleScreenManager implements ScreenManager {
     this.pane = pane;
   }
 
-  private SimpleSelectScreen getSelectScreen() {
+  private SelectScreen getSelectScreen() {
     if(selectScreen == null) {
-      selectScreen = new SimpleSelectScreen();
+      selectScreen = new SelectScreen(this);
     }
     return selectScreen;
   }
@@ -39,7 +39,7 @@ public class SimpleScreenManager implements ScreenManager {
   @Override
   public void switchTo(String fromScreen, String toScreen) throws UnknownTransitionException {
     switch (toScreen) {
-      case SimpleSelectScreen.SCREEN_NAME:
+      case SelectScreen.SCREEN_NAME:
         pane.getChildren().clear();
         pane.getChildren().add(getSelectScreen());
         break;
