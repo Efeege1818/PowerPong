@@ -8,7 +8,7 @@ import javafx.scene.layout.VBox;
 import java.io.IOException;
 import java.util.List;
 
-public class SelectScreen extends VBox {
+public class SelectScreen extends AnchorPane {
   public static final String SCREEN_NAME = "SelectScreen";
 
   private final SimpleScreenManager screenManager;
