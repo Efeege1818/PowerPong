@@ -71,8 +71,6 @@ public class InfoScreenViewModel {
     }
 
     public String getFocus() {
-        //TODO: make a getFocus for Monster
-        String focusInfo = "Manipulates Dodge and Krit chances";
         return focusInfo;
     }
 
