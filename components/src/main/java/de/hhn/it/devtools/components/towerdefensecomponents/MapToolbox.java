@@ -25,9 +25,9 @@ import java.util.Random;
  */
 public class MapToolbox {
 
-  Grid grid;
-  List<Coordinates> path;
-  int originSize;
+  private Grid grid;
+  private List<Coordinates> path;
+  private int originSize;
 
   /**
    * Initializes a new grid of the given size and triggers
@@ -38,8 +38,8 @@ public class MapToolbox {
    */
 
   public void generateMap(int size) {
-    if (originSize <= 0) {
-      throw new IllegalArgumentException("Grid size must be greater or equal than zero.");
+    if (size <= 0) {
+      throw new IllegalArgumentException("Grid size must be greater than zero.");
     }
     this.originSize = size;
     Direction[][] map = new Direction[size][size];
@@ -68,7 +68,7 @@ public class MapToolbox {
   }
 
   /**
-   * Returns the enemy's path, even if the grid has not been generated.
+   * Returns the generated enemy path.
    *
    * @return an ordered list of {@link Coordinates} representing the path
    * @throws IllegalStateException if no path has been generated yet
@@ -85,7 +85,8 @@ public class MapToolbox {
    *
    * @param coordinates the coordinate to be checked
    * @return {@code true} if the coordinate can be used, {@code false} otherwise
-   * @throws IllegalStateException    if the grid or path has not been generated or the size is invalid
+   * @throws IllegalStateException    if the grid or path has not been generated
+   *                                  or the size is negative
    * @throws IllegalArgumentException if the coordinate is {@code null} or out of bounds
    */
   public boolean isAllowed(Coordinates coordinates) throws IllegalStateException {
@@ -143,7 +144,7 @@ public class MapToolbox {
    * @return the start coordinate of the enemy path
    * @throws IllegalStateException if no path has been generated
    */
-  public Coordinates getStart() throws IllegalStateException {
+  public Coordinates getStartPoint() throws IllegalStateException {
     if (this.path == null || this.grid == null || this.path.isEmpty()) {
       throw new IllegalStateException("No path or grid has been generated.");
     }
@@ -278,8 +279,7 @@ public class MapToolbox {
    * @param start        the starting coordinate
    * @param goal         the target coordinate
    * @param blockedTiles a grid of blocked tiles; may be {@code null} for the first path
-   * @return a list of coordinates representing the shortest path,
-   * or an empty list if no path exists
+   * @return a list of coordinates representing the path, or an empty list if no path exists
    */
   private List<Coordinates> dijkstra(Coordinates start,
                                      Coordinates goal,
