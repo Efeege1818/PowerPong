@@ -29,7 +29,7 @@ import static javafx.application.Application.launch;
  * InfoScreenFx — builds the UI shows Monster Infos in Selectscreen.
  */
 public class InfoScreenFx extends VBox {
-    String monsterName = InfoScreenViewModel.getMonsterName();
+    private String monsterName;
     private InfoScreenViewModel viewModel1;
 
 
@@ -40,7 +40,7 @@ public class InfoScreenFx extends VBox {
     public InfoScreenFx(InfoScreenViewModel viewModel) {
         this.viewModel = viewModel;
 
-        String monsterName = viewModel.getElement()+" Monster";//only temporary solution
+        String monsterName = viewModel.getMonsterName();
         int maxHp = viewModel.getMaxHp();
         int atk = viewModel.getAtk();
         int def = viewModel.getDef();

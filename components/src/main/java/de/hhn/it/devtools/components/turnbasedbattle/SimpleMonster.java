@@ -341,6 +341,15 @@ public class SimpleMonster {
   }
 
   /**
+   * Gets the name of the monster.
+   *
+   * @return the name.
+   */
+  public String getName() {
+    return name;
+  }
+
+  /**
    * Gets the maximum HP of the monster.
    *
    * @return the maximum HP.

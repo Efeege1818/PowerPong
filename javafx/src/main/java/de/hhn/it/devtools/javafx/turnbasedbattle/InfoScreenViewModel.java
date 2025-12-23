@@ -41,6 +41,7 @@ public class InfoScreenViewModel {
 
     public InfoScreenViewModel(SimpleMonster monster) {
         this.monster = monster;
+        this.monsterName = monster.getName();
         this.maxHp=monster.getMaxHp();
         this.atk=monster.getAttack();
         this.def=monster.getDefense();
@@ -50,9 +51,9 @@ public class InfoScreenViewModel {
     }
 
 
-    public static String getMonsterName(){
+    public String getMonsterName(){
         //TODO: make a getName for Monster, should return a String
-        return "Monster Name";
+        return monsterName;
     }
 
     public int getMaxHp() {
