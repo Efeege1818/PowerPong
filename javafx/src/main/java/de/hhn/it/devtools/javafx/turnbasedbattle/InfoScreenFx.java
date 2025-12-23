@@ -3,6 +3,7 @@ package de.hhn.it.devtools.javafx.turnbasedbattle;
 import de.hhn.it.devtools.apis.turnbasedbattle.Element;
 import de.hhn.it.devtools.apis.turnbasedbattle.Monster;
 import de.hhn.it.devtools.apis.turnbasedbattle.move.Move;
+import de.hhn.it.devtools.components.turnbasedbattle.Data;
 import de.hhn.it.devtools.components.turnbasedbattle.SimpleMonster;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -84,18 +85,17 @@ public class InfoScreenFx extends VBox {
         passiveText.setStyle("-fx-font-size: 12px;");
 
 
-        // Attacks TODO: figure out what to do with the move names and descriptions
+        // Überlegen wie man die moves darstellt. (Hab aus Versehen den alten Kommentar gelöscht ups)
+        // Attacks
         Label attacksTitle = new Label("Attacks:");
         attacksTitle.setStyle("-fx-font-size: 12px; -fx-font-weight: bold;");
         TextFlow attacksList = new TextFlow();
         attacksList.setMaxWidth(420);
-        Map<String, String> attacks = new LinkedHashMap<>();
-        int size = attacks.size();
-        int index = 0;
-        for (Map.Entry<String, String> attack : attacks.entrySet()) {
+        for (Map.Entry<Integer, Move> entry : moves.entrySet()) {
+            Move move = entry.getValue();
             attacksList.getChildren().addAll(
-                    new Text("  \u2022 " + attack.getKey() + "\n"),
-                    new Text("      \u25E6 " + attack.getValue() + "\n")
+                    new Text("  \u2022 " + move.name() + "\n"),
+                    new Text("      \u25E6 " + move.description() + "\n")
             );
         }
         attacksList.setStyle("-fx-font-size: 12px; -fx-line-spacing: 6px;");
@@ -167,21 +167,10 @@ public class InfoScreenFx extends VBox {
     public static void main(String[] args) {
         // --- Prepare test data BEFORE launching JavaFX ---
         // Monster record requires at least 5 moves according to your record validation.
-        HashMap<Integer, Move> moves = new HashMap<>();
-        for (int i = 0; i < 5; i++) moves.put(i, null); // TODO: use real Move objects for real tests
-
-        Monster dataMonster = new Monster(
-                100,    // maxHp
-                15,     // attack
-                5,      // defense
-                0.05,   // evasionChance
-                0.10,   // critChance
-                Element.WATER, // element
-                moves
-        );
+        Data data = new Data();
 
         // Create runtime monster and view model
-        SimpleMonster runtimeMonster = SimpleMonster.create(dataMonster);
+        SimpleMonster runtimeMonster = SimpleMonster.create(data.getMonsters()[0]);
         InfoScreenViewModel viewModel = new InfoScreenViewModel(runtimeMonster);
 
         // Pass the viewModel into the TestApp via a static field
