@@ -50,6 +50,7 @@ public class InfoScreenViewModel {
         this.moves=monster.getMoves();
         this.specialMove="SpecialMove";
         this.focusInfo=monster.getFocus();
+        this.passiveInfo=monster.getPassiveInfo();
         this.imagePath= monster.getImagePath();
     }
 
@@ -75,7 +76,6 @@ public class InfoScreenViewModel {
     }
 
     public ImageView getImageView() {
-        //TODO: make a getImageView for Monster
         try {
             ImageView imageView = new ImageView(imagePath);
             return imageView;
@@ -86,8 +86,6 @@ public class InfoScreenViewModel {
     }
 
     public String getPassiveInfo() {
-        //TODO: make a getPassiveInfo for Monster
-        String passiveInfo ="Dodges are more likely";
         return passiveInfo;
     }
 

@@ -27,6 +27,7 @@ public class FireMonster extends SimpleMonster {
 
     this.name = "Fire Monster";
     this.focus = "Manipulates Dodge and Krit chances";
+    this.passiveInfo = "PASSIVE INFO PLACEHOLDER";
     this.imagePath = "/Monster Sprites/FeuerMon.png";
 
     logger.debug("{} created: {}", name, toString());

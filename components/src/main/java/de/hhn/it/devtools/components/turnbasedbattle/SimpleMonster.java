@@ -30,6 +30,7 @@ public class SimpleMonster {
   protected HashMap<Integer, Move> moves;
   protected String name;
   protected String focus;
+  protected String passiveInfo;
   protected String imagePath;
 
   // ========== Internal Tracking (Buffs, DOTs, Cooldowns) ==========
@@ -463,6 +464,15 @@ public class SimpleMonster {
    */
   public String getImagePath() {
     return imagePath;
+  }
+
+  /**
+   * Gets the passive info of the monster.
+   *
+   * @return the passive info.
+   */
+  public String getPassiveInfo() {
+    return passiveInfo;
   }
 
   /**

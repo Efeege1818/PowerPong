@@ -27,6 +27,7 @@ public class GrassMonster extends SimpleMonster {
 
     this.name = "Grass Monster";
     this.focus = "Manipulates Dodge and Krit chances";
+    this.passiveInfo = "PASSIVE INFO PLACEHOLDER";
     this.imagePath = "/Monster Sprites/PflanzeMon.png";
 
     logger.debug("{} created: {}", name, toString());
