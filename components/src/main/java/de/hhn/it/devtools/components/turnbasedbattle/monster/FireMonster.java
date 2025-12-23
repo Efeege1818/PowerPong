@@ -26,7 +26,7 @@ public class FireMonster extends SimpleMonster {
     this.moves = monster.moves();
 
     this.name = "Fire Monster";
-    this.focus = "Manipulates Dodge and Krit chances";
+    this.focus = "FOCUS INFO PLACEHOLDER";
     this.passiveInfo = "PASSIVE INFO PLACEHOLDER";
     this.imagePath = "/Monster Sprites/FeuerMon.png";
 
