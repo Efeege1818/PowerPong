@@ -44,7 +44,7 @@ public class InfoScreenFx extends VBox {
         String focusInfo = viewModel.getFocus();
         String passiveInfo = viewModel.getPassiveInfo();
         Map<Integer, Move> moves = viewModel.getMoves();
-        String specialMove = viewModel.getSpecialMove();
+        Move specialMove = moves.get(5);
 
         // Outer frame
         this.setStyle("-fx-border-color: black; -fx-border-width: 3; -fx-background-color: white;");
@@ -97,9 +97,9 @@ public class InfoScreenFx extends VBox {
         attacksList.setStyle("-fx-font-size: 12px; -fx-line-spacing: 6px;");
 
         // Special move
-        Label specialTitle = new Label("Special Move (Cooldown: 6 Turns):");
+        Label specialTitle = new Label(specialMove.name());
         specialTitle.setStyle("-fx-font-size: 12px; -fx-font-weight: bold;");
-        Text specialText = new Text("Hits an enemy 6 times with Water (3) and Normal (3) DMG.\nDecreases cooldown by 1 for each Krit hit.");
+        Text specialText = new Text(specialMove.description());
         specialText.setStyle("-fx-font-size: 12px;");
         TextFlow specialFlow = new TextFlow(specialText);
         specialFlow.setMaxWidth(420);

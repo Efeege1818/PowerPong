@@ -96,9 +96,4 @@ public class InfoScreenViewModel {
     public Map<Integer, Move> getMoves() {
         return moves;
     }
-
-    public String getSpecialMove() {
-        String specialMove = "Hits an enemy 6 times with Water (3) and Normal (3) DMG.\nDecreases cooldown by 1 for each Krit hit.";
-        return specialMove;
-    }
 }
