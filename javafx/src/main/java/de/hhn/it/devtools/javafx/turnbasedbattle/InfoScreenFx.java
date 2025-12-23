@@ -30,10 +30,6 @@ import static javafx.application.Application.launch;
  * InfoScreenFx — builds the UI shows Monster Infos in Selectscreen.
  */
 public class InfoScreenFx extends VBox {
-    private String monsterName;
-    private InfoScreenViewModel viewModel1;
-
-
     private static final org.slf4j.Logger logger =
             org.slf4j.LoggerFactory.getLogger(InfoScreenFx.class);
     private final InfoScreenViewModel viewModel;
@@ -170,7 +166,7 @@ public class InfoScreenFx extends VBox {
         Data data = new Data();
 
         // Create runtime monster and view model
-        SimpleMonster runtimeMonster = SimpleMonster.create(data.getMonsters()[0]);
+        SimpleMonster runtimeMonster = SimpleMonster.create(data.getMonsters()[2]);
         InfoScreenViewModel viewModel = new InfoScreenViewModel(runtimeMonster);
 
         // Pass the viewModel into the TestApp via a static field
@@ -185,21 +181,14 @@ public class InfoScreenFx extends VBox {
     public static class TestApp extends Application {
         // Static holder used only for quick preview/testing
         public static InfoScreenViewModel viewModelForTest;
+        Data data = new Data();
 
         @Override
         public void start(Stage stage) {
             // Defensive check — create a fallback view model if the static holder is null
             InfoScreenViewModel vm = viewModelForTest != null
                     ? viewModelForTest
-                    : new InfoScreenViewModel(SimpleMonster.create(
-                    new Monster(50,
-                            5,
-                            2,
-                            0.0,
-                            0.0,
-                            Element.WATER,
-                            defaultMoves())
-            ));
+                    : new InfoScreenViewModel(SimpleMonster.create(data.getMonsters()[0]));
 
             InfoScreenFx screen = new InfoScreenFx(vm);
             Scene scene = new Scene(screen, 880, 560);
@@ -208,11 +197,5 @@ public class InfoScreenFx extends VBox {
             stage.show();
         }
 
-        // Helper to create a small default moves map if you need it in fallback
-        private static HashMap<Integer, Move> defaultMoves() {
-            HashMap<Integer, Move> m = new HashMap<>();
-            for (int i = 0; i < 5; i++) m.put(i, null);//TODO: figure out how to give monster moves
-            return m;
-        }
     }
 }
