@@ -25,6 +25,7 @@ public class InfoScreenViewModel {
 
     private SimpleMonster monster;
     private ImageView imageView;
+    private String imagePath;
     private String monsterName;
     private int maxHp;
     private int currentHp;
@@ -48,11 +49,12 @@ public class InfoScreenViewModel {
         this.element=monster.getElement();
         this.moves=monster.getMoves();
         this.specialMove="SpecialMove";
+        this.focusInfo=monster.getFocus();
+        this.imagePath= monster.getImagePath();
     }
 
 
     public String getMonsterName(){
-        //TODO: make a getName for Monster, should return a String
         return monsterName;
     }
 
@@ -77,7 +79,7 @@ public class InfoScreenViewModel {
     public ImageView getImageView() {
         //TODO: make a getImageView for Monster
         try {
-            ImageView imageView = new ImageView("/Monster Sprites/WasserMon.png");
+            ImageView imageView = new ImageView(imagePath);
             return imageView;
 
         }catch(Exception e){

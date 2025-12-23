@@ -9,6 +9,7 @@ import de.hhn.it.devtools.apis.turnbasedbattle.move.MoveType;
 import de.hhn.it.devtools.components.turnbasedbattle.monster.FireMonster;
 import de.hhn.it.devtools.components.turnbasedbattle.monster.GrassMonster;
 import de.hhn.it.devtools.components.turnbasedbattle.monster.WaterMonster;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,6 +29,8 @@ public class SimpleMonster {
   protected Element element;
   protected HashMap<Integer, Move> moves;
   protected String name;
+  protected String focus;
+  protected String imagePath;
 
   // ========== Internal Tracking (Buffs, DOTs, Cooldowns) ==========
 
@@ -321,16 +324,6 @@ public class SimpleMonster {
   }
 
   /**
-   * Gets a move by its index.
-   *
-   * @param index the index of the move.
-   * @return the move at the specified index.
-   */
-  public Move getMove(int index) {
-    return moves.get(index);
-  }
-
-  /**
    * Checks if the monster has a move at the specified index.
    *
    * @param index the index to check.
@@ -338,33 +331,6 @@ public class SimpleMonster {
    */
   public boolean hasMove(int index) {
     return moves.containsKey(index);
-  }
-
-  /**
-   * Gets the name of the monster.
-   *
-   * @return the name.
-   */
-  public String getName() {
-    return name;
-  }
-
-  /**
-   * Gets the maximum HP of the monster.
-   *
-   * @return the maximum HP.
-   */
-  public int getMaxHp() {
-    return maxHp;
-  }
-
-  /**
-   * Gets the current HP of the monster.
-   *
-   * @return the current HP.
-   */
-  public int getCurrentHp() {
-    return currentHp;
   }
 
   /**
@@ -377,12 +343,39 @@ public class SimpleMonster {
   }
 
   /**
+   * Gets the critical hit chance of the monster.
+   *
+   * @return the critical hit chance (0.0 to 1.0).
+   */
+  public double getCritChance() {
+    return critChance;
+  }
+
+  /**
+   * Gets the current HP of the monster.
+   *
+   * @return the current HP.
+   */
+  public int getCurrentHp() {
+    return currentHp;
+  }
+
+  /**
    * Gets the defense stat of the monster.
    *
    * @return the defense value.
    */
   public int getDefense() {
     return defense;
+  }
+
+  /**
+   * Gets the element type of the monster.
+   *
+   * @return the element.
+   */
+  public Element getElement() {
+    return element;
   }
 
   /**
@@ -395,12 +388,40 @@ public class SimpleMonster {
   }
 
   /**
-   * Gets the critical hit chance of the monster.
+   * Gets the maximum HP of the monster.
    *
-   * @return the critical hit chance (0.0 to 1.0).
+   * @return the maximum HP.
    */
-  public double getCritChance() {
-    return critChance;
+  public int getMaxHp() {
+    return maxHp;
+  }
+
+  /**
+   * Gets a move by its index.
+   *
+   * @param index the index of the move.
+   * @return the move at the specified index.
+   */
+  public Move getMove(int index) {
+    return moves.get(index);
+  }
+
+  /**
+   * Gets all moves of the monster.
+   *
+   * @return a HashMap containing all moves indexed by their position.
+   */
+  public HashMap<Integer, Move> getMoves() {
+    return moves;
+  }
+
+  /**
+   * Gets the name of the monster.
+   *
+   * @return the name.
+   */
+  public String getName() {
+    return name;
   }
 
   /**
@@ -427,21 +448,21 @@ public class SimpleMonster {
   }
 
   /**
-   * Gets the element type of the monster.
+   * Gets the focus of the monster.
    *
-   * @return the element.
+   * @return the focus.
    */
-  public Element getElement() {
-    return element;
+  public String getFocus() {
+    return focus;
   }
 
   /**
-   * Gets all moves of the monster.
+   * Gets the image path of the monster.
    *
-   * @return a HashMap containing all moves indexed by their position.
+   * @return the image path.
    */
-  public HashMap<Integer, Move> getMoves() {
-    return moves;
+  public String getImagePath() {
+    return imagePath;
   }
 
   /**

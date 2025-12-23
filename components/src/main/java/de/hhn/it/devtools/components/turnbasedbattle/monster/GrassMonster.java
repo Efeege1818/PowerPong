@@ -24,7 +24,11 @@ public class GrassMonster extends SimpleMonster {
     this.critChance = monster.critChance();
     this.element = monster.element();
     this.moves = monster.moves();
+
     this.name = "Grass Monster";
+    this.focus = "Manipulates Dodge and Krit chances";
+    this.imagePath = "/Monster Sprites/PflanzeMon.png";
+
     logger.debug("{} created: {}", name, toString());
   }
 

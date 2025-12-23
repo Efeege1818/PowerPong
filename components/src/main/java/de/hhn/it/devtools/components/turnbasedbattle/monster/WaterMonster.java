@@ -24,7 +24,11 @@ public class WaterMonster extends SimpleMonster {
     this.critChance = monster.critChance();
     this.element = monster.element();
     this.moves = monster.moves();
+
     this.name = "Water Monster";
+    this.focus = "Manipulates Dodge and Krit chances";
+    this.imagePath = "/Monster Sprites/WasserMon.png";
+
     logger.debug("{} created: {}", name, toString());
   }
 
