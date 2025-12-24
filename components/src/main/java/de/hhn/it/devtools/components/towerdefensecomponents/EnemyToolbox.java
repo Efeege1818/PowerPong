@@ -21,7 +21,7 @@ public class EnemyToolbox {
    * @param enemy  this is the object which damageEnemy is called on
    * @throws IllegalArgumentException if the damage amount is negative
    */
-  public Enemy damageEnemy(int amount, Enemy enemy) {
+  public static Enemy damageEnemy(int amount, Enemy enemy) {
     // TODO: Check throwable and logic here
     // TODO: Check if enemy is dead in towerToolbox or Service
     // TODO: Money in towerToolbox when enemy dies

@@ -1,10 +1,8 @@
 package de.hhn.it.devtools.components.towerdefensecomponents;
 
 import de.hhn.it.devtools.apis.towerdefenseapi.Enemy;
-import de.hhn.it.devtools.apis.towerdefenseapi.EnemyType;
 import de.hhn.it.devtools.apis.towerdefenseapi.Tower;
 import de.hhn.it.devtools.apis.towerdefenseapi.TowerType;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -32,6 +30,22 @@ public class TowerToolbox {
     };
   }
 
+  /**
+   * Returns the default damage values for different tower types.
+   *
+   * @param type the TowerType of the Tower
+   * @return the damage for a tower of the given type
+   * @throws NoSuchElementException if the given TowerType isn't supported
+   */
+  public static int getDamage(TowerType type) throws NoSuchElementException {
+    return switch (type) {
+      case MELEE -> 20;
+      case RANGED -> 10;
+      case MONEYMAKER -> 0;
+      default -> throw new NoSuchElementException();
+    };
+  }
+
 
   /**
    * Attacks the enemy in range, that has advanced the furthest on the path.
@@ -41,11 +55,28 @@ public class TowerToolbox {
    * @return {@code ArrayList<Enemy>} with updated enemies
    * @throws IllegalArgumentException if towers or enemies do not exist.
    */
-  public static ArrayList<Enemy> action(List<Tower> towers, List<Enemy> enemies)
+  public static List<Enemy> action(List<Tower> towers, List<Enemy> enemies)
           throws IllegalArgumentException {
     for (Tower tower : towers) {
+      if (tower.type() != TowerType.MONEYMAKER) {
+        double distance = -1;
+        int furthestEnemy = -1;
+        Enemy enemyToBeAttacked = null;
+        for (Enemy enemy : enemies) {
+          double testDistance = Math.abs(Math.pow((tower.coordinates().x() - enemy.coordinates().x()), 2) + Math.pow((tower.coordinates().y() - enemy.coordinates().y()), 2));
+          furthestEnemy = enemy.index();
+          if ((testDistance < getRange(tower.type())) && (distance == -1 || testDistance < distance)) {
+            distance = testDistance;
+            enemyToBeAttacked = enemy;
+          }
+        }
+        if (enemyToBeAttacked != null) {
+          enemies.set(enemies.indexOf(enemyToBeAttacked),
+                  EnemyToolbox.damageEnemy(getDamage(tower.type()), enemyToBeAttacked));
+        }
+      }
     }
-    return null;
+    return enemies;
   }
 
 
@@ -63,7 +94,6 @@ public class TowerToolbox {
         money += 50;
       }
     }
-
     return money;
   }
 }
