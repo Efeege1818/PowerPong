@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
  */
 public class SpaceInvadersController extends Controller implements Initializable {
   private static final Logger logger = LoggerFactory.getLogger(SpaceInvadersController.class);
-  private final SpaceInvadersService spaceInvadersService;
 
   @FXML
   AnchorPane spaceInvadersPane;
@@ -43,7 +42,7 @@ public class SpaceInvadersController extends Controller implements Initializable
    * Constructor.
    */
   public SpaceInvadersController() {
-    this.spaceInvadersService = new SimpleSpaceInvadersService();
+
   }
 
 
@@ -62,7 +61,7 @@ public class SpaceInvadersController extends Controller implements Initializable
 
     Stage newStage = new Stage();
 
-    Scene scene = new Scene(new SpaceInvadersScreen(), 1280, 720);
+    Scene scene = new Scene(new SpaceInvadersScreen(stage), 1280, 720);
     newStage.setOnCloseRequest((event) -> stage.show());
     newStage.setScene(scene);
     newStage.setResizable(false);

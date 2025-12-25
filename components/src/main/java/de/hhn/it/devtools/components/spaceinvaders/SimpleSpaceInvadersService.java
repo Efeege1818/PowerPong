@@ -33,6 +33,7 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
    */
   public SimpleSpaceInvadersService() {
     this.gameConfiguration = new GameConfiguration(3, Difficulty.NORMAL);
+    this.gameState = GameState.PREPARED;
   }
 
   @Override

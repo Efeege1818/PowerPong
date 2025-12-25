@@ -33,7 +33,9 @@ public class SimpleGameLoop extends Thread {
       }
       service.triggeredByGameLoop();
       try {
-        wait(APIConstants.FIELD_SIZE);
+        synchronized (this) {
+          wait(APIConstants.FIELD_SIZE);
+        }
       } catch (InterruptedException e) {
         return;
       }
