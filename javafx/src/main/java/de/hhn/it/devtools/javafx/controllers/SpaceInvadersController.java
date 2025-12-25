@@ -12,6 +12,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
@@ -58,6 +59,8 @@ public class SpaceInvadersController extends Controller implements Initializable
     newStage.setScene(scene);
     newStage.setResizable(false);
     newStage.setTitle("Space Invaders");
+    newStage.getIcons().add(new Image(getClass()
+            .getResource("/images/spaceinvaders/alien.png").toExternalForm()));
     newStage.show();
   }
 
