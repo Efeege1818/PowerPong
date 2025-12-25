@@ -61,11 +61,13 @@ public class EntityProvider {
         }
 
         service.notifyListeners(spaceInvadersListener -> spaceInvadersListener
-                .updateAliens((Alien[]) aliens.values().stream().map(SimpleAlien::immutableAlien).toArray()));
+                .updateAliens(aliens.values().stream().map(SimpleAlien::immutableAlien).toArray(Alien[]::new)));
         break;
       }
     }
     aliens.values().forEach(alien -> alien.move(currentAlienDirection));
+    service.notifyListeners(spaceInvadersListener -> spaceInvadersListener
+            .updateAliens(aliens.values().stream().map(SimpleAlien::immutableAlien).toArray(Alien[]::new)));
   }
 
   /**
@@ -106,7 +108,7 @@ public class EntityProvider {
     int row = 1;
     int col = 1;
     for (int i = 1; i <= Constants.NUMBER_OF_ALIENS; i++) {
-      aliens.put(i, new SimpleAlien(new Coordinate(col * 10, 10 * row), AlienType.BASIC, i));
+      aliens.put(i, new SimpleAlien(new Coordinate(col * 25, 25 * row), AlienType.BASIC, i));
       col++;
       if (i % 10 == 0) {
         row++;

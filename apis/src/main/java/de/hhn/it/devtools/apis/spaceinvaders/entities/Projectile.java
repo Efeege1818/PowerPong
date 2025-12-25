@@ -8,5 +8,5 @@ import de.hhn.it.devtools.apis.spaceinvaders.Coordinate;
  *
  * @param coordinate The Position of the Projectile.
  */
-public record Projectile(Coordinate coordinate) {
+public record Projectile(Coordinate coordinate, int projectileId) {
 }
