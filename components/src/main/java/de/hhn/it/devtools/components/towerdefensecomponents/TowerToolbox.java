@@ -59,14 +59,15 @@ public class TowerToolbox {
           throws IllegalArgumentException {
     for (Tower tower : towers) {
       if (tower.type() != TowerType.MONEYMAKER) {
-        double distance = -1;
         int furthestEnemy = -1;
         Enemy enemyToBeAttacked = null;
         for (Enemy enemy : enemies) {
-          double testDistance = Math.abs(Math.pow((tower.coordinates().x() - enemy.coordinates().x()), 2) + Math.pow((tower.coordinates().y() - enemy.coordinates().y()), 2));
-          furthestEnemy = enemy.index();
-          if ((testDistance < getRange(tower.type())) && (distance == -1 || testDistance < distance)) {
-            distance = testDistance;
+          double testDistance = Math.abs(Math.pow((tower.coordinates().x()
+                  - enemy.coordinates().x()), 2) + Math.pow((tower.coordinates().y()
+                  - enemy.coordinates().y()), 2));
+          if ((testDistance < getRange(tower.type()))
+                  && (furthestEnemy == -1 || enemy.index() > furthestEnemy)) {
+            furthestEnemy = enemy.index();
             enemyToBeAttacked = enemy;
           }
         }
