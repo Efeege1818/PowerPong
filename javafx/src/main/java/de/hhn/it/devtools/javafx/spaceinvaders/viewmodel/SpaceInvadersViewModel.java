@@ -99,10 +99,6 @@ public class SpaceInvadersViewModel implements SpaceInvadersListener {
     return currentRound;
   }
 
-  public IntegerProperty currentRoundProperty() {
-    return currentRound;
-  }
-
   public ObservableMap<Integer, Barrier> getBarriers() {
     return barriers;
   }
@@ -115,15 +111,15 @@ public class SpaceInvadersViewModel implements SpaceInvadersListener {
     return projectiles;
   }
 
-  public ObjectProperty<Ship> shipObjectPropertyProperty() {
+  public ObjectProperty<Ship> getShipObjectPropertyProperty() {
     return shipObjectProperty;
   }
 
-  public ObjectProperty<GameState> gameStateObjectPropertyProperty() {
+  public ObjectProperty<GameState> getGameStateObjectPropertyProperty() {
     return gameStateObjectProperty;
   }
 
-  public IntegerProperty scoreProperty() {
+  public IntegerProperty getScoreProperty() {
     return score;
   }
 
@@ -131,7 +127,7 @@ public class SpaceInvadersViewModel implements SpaceInvadersListener {
     return shipObjectProperty.get();
   }
 
-  public BooleanProperty syncProperty() {
+  public BooleanProperty getSyncProperty() {
     return running;
   }
 

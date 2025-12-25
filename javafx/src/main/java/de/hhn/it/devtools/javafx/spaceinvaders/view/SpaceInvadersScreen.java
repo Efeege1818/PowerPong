@@ -84,7 +84,7 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
     level.textProperty().bind(viewModel.getCurrentRoundProperty().asString());
     viewModel.getCurrentRoundProperty().addListener(((observableValue, oldRound, newRound) ->
             openNextRoundPopup()));
-    viewModel.syncProperty().addListener((obs, oldValue, newValue) -> {
+    viewModel.getSyncProperty().addListener((obs, oldValue, newValue) -> {
       if (newValue == true) {
         drawCanvas();
       } else {
