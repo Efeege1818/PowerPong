@@ -129,10 +129,14 @@ public class EnemyToolbox {
    *
    * @return the amount of damage dealt to the player
    */
-  public int damagePlayer(ArrayList<Enemy> enemyList) {
-    // TODO: Check logic and add throwable + params
-    // TODO: Implement logic for how much damage the enemy causes the player
-    return 0;
+  public int damagePlayer(ArrayList<Enemy> enemyList, int pathLength) {
+    int damage = 0;
+    for (Enemy enemy : enemyList) {
+      if (enemy.index() >= pathLength) {
+        damage += getDamage(enemy.type());
+      }
+    }
+    return damage;
   }
 
   /**
@@ -142,9 +146,13 @@ public class EnemyToolbox {
    * @return the amount of money to the player
    */
   public int moneyPerEnemy(ArrayList<Enemy> enemyList) {
-    // TODO: implement
-    // getMoney(enemy.type())
-    return 0;
+    int money = 0;
+    for (Enemy enemy : enemyList) {
+      if (enemy.currentHealth() <= 0) {
+        money += getMaxHealth(enemy.type());
+      }
+    }
+    return money;
   }
 
   /**
@@ -161,17 +169,16 @@ public class EnemyToolbox {
   public ArrayList<Enemy> progress(ArrayList<Enemy> enemyList,
                                    ArrayList<Coordinates> coordinatesList) {
 
-//    ArrayList<Enemy> newList = new ArrayList<>();
-//
-//    for (Enemy enemy : enemyList) {
-//      if (!(coordinatesList.size() <= enemy.index() + 1)) {
-//        newList.add(new Enemy(enemy.id(),
-//                coordinatesList.get(enemy.index() + getSpeed(enemy.type())),
-//                enemy.type(), enemy.health(), enemy.index() + getSpeed(enemy.type())));
-//      }
-//    }
-//    return newList;
-    return null;
+    ArrayList<Enemy> newList = new ArrayList<>();
+
+    for (Enemy enemy : enemyList) {
+      if ((enemy.currentHealth() > 0) && !(coordinatesList.size() <= enemy.index() + 1)) {
+        newList.add(new Enemy(enemy.id(),
+                coordinatesList.get(enemy.index() + getSpeed(enemy.type())),
+                enemy.type(), enemy.currentHealth(), enemy.index() + getSpeed(enemy.type())));
+      }
+    }
+    return newList;
   }
 
   /**

@@ -1,8 +1,11 @@
 package de.hhn.it.devtools.components.towerdefensecomponents;
 
+import de.hhn.it.devtools.apis.towerdefenseapi.Coordinates;
 import de.hhn.it.devtools.apis.towerdefenseapi.Enemy;
 import de.hhn.it.devtools.apis.towerdefenseapi.Tower;
 import de.hhn.it.devtools.apis.towerdefenseapi.TowerType;
+
+import java.nio.file.Path;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -52,16 +55,21 @@ public class TowerToolbox {
    *
    * @param enemies as list of enemies
    * @param towers  as list of towers
+   * @param pathLength as the length of the enemies path
    * @return {@code ArrayList<Enemy>} with updated enemies
    * @throws IllegalArgumentException if towers or enemies do not exist.
    */
-  public static List<Enemy> action(List<Tower> towers, List<Enemy> enemies)
+  public static List<Enemy> action(List<Tower> towers, List<Enemy> enemies, int pathLength)
           throws IllegalArgumentException {
     for (Tower tower : towers) {
       if (tower.type() != TowerType.MONEYMAKER) {
         int furthestEnemy = -1;
         Enemy enemyToBeAttacked = null;
         for (Enemy enemy : enemies) {
+          if (enemy.index() >= pathLength) {
+            enemies.remove(enemy);
+            continue;
+          }
           double testDistance = Math.abs(Math.pow((tower.coordinates().x()
                   - enemy.coordinates().x()), 2) + Math.pow((tower.coordinates().y()
                   - enemy.coordinates().y()), 2));
@@ -89,6 +97,7 @@ public class TowerToolbox {
    * @throws IllegalArgumentException if towers or enemies do not exist.
    */
   public int moneyMade(List<Tower> towers) {
+
     int money = 0;
     for (Tower tower : towers) {
       if (tower.type().equals(TowerType.MONEYMAKER)) {
