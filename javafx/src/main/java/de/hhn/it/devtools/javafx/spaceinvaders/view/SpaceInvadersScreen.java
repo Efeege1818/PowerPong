@@ -164,10 +164,9 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
   }
 
   private void createPopup() {
-    PopupProvider popupProvider = new PopupProvider();
 
     // Settings Popup.
-    this.settingsStage = popupProvider.init((Stage) getScene().getWindow())
+    this.settingsStage = new PopupProvider((Stage) getScene().getWindow())
             .setTitle("Settings")
             .addButton((e) -> spaceInvadersService.resume(), "Resume")
             .addButton((e) -> {
@@ -178,7 +177,7 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
             .setCloseRequest((e) -> spaceInvadersService.resume()).build();
 
     // Start Popup.
-    this.startStage = popupProvider.init((Stage) getScene().getWindow())
+    this.startStage = new PopupProvider((Stage) getScene().getWindow())
             .setTitle("SpaceInvaders")
             .addButton((e) -> spaceInvadersService.start(), "Start Game")
             .addButton((e) -> {
@@ -193,7 +192,7 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
             }).build();
 
     // Next Round Popup.
-    this.nextRoundStage = popupProvider.init((Stage) getScene().getWindow())
+    this.nextRoundStage = new PopupProvider((Stage) getScene().getWindow())
             .setTitle("Level Complete")
             .addButton((e) -> spaceInvadersService.nextRound(), "Next Level")
             .addButton((e) -> {
@@ -208,12 +207,15 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
             }).build();
 
     // Ending Popup.
-    this.endingStage = popupProvider.init((Stage) getScene().getWindow())
+    String finalScore = score.getText();
+    String finalLevel = level.getText();
+
+    this.endingStage = new PopupProvider((Stage) getScene().getWindow())
             .setTitle("Game Over")
             .addLabel("Your Score")
-            .addLabel(score)
+            .addLabel(finalScore)
             .addLabel("Reached Level")
-            .addLabel(level)
+            .addLabel(finalLevel)
             .addButton((e) -> {
               ((Stage) getScene().getWindow()).close();
               mainStage.show();

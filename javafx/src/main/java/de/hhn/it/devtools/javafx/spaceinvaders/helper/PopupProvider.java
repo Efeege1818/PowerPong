@@ -18,21 +18,19 @@ import javafx.stage.WindowEvent;
  * Helper class for Popups.
  */
 public class PopupProvider {
-  private Stage popup;
+  private final Stage popup;
   private final ArrayList<Node> elements = new ArrayList<>();
 
   /**
    * Initialize PopupProvider.
    *
    * @param owner the owner stage.
-   * @return the PopupProvider instance.
    */
-  public PopupProvider init(Stage owner) {
+  public PopupProvider(Stage owner) {
     this.popup = new Stage();
     this.popup.initOwner(owner);
     this.popup.initModality(Modality.WINDOW_MODAL);
     elements.clear();
-    return this;
   }
 
   /**
@@ -109,6 +107,8 @@ public class PopupProvider {
     vbox.setPadding(new Insets(30, 30, 30, 30));
     vbox.getChildren().addAll(elements);
     this.popup.setScene(new Scene(vbox, 500, 400));
+    this.popup.setMinWidth(300);
+    this.popup.setMinHeight(200);
     return this.popup;
   }
 
