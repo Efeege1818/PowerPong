@@ -1,11 +1,10 @@
 package de.hhn.it.devtools.javafx.controllers;
 
-
 import de.hhn.it.devtools.apis.spaceinvaders.Difficulty;
 import de.hhn.it.devtools.apis.spaceinvaders.GameConfiguration;
+import de.hhn.it.devtools.javafx.spaceinvaders.view.SpaceInvadersScreen;
 import java.net.URL;
 import java.util.ResourceBundle;
-import de.hhn.it.devtools.javafx.spaceinvaders.view.SpaceInvadersScreen;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -33,14 +32,6 @@ public class SpaceInvadersController extends Controller implements Initializable
   @FXML
   ChoiceBox<Difficulty> difficultyChoiceBox;
 
-  /**
-   * Constructor.
-   */
-  public SpaceInvadersController() {
-
-  }
-
-
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     difficultyChoiceBox.setValue(Difficulty.NORMAL);
@@ -62,6 +53,7 @@ public class SpaceInvadersController extends Controller implements Initializable
     newStage.getIcons().add(new Image(getClass()
             .getResource("/images/spaceinvaders/alien.png").toExternalForm()));
     newStage.show();
+    logger.info("SpaceInvaders Game started");
   }
 
 }

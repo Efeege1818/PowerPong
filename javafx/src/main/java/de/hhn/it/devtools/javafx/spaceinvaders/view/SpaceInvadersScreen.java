@@ -4,29 +4,21 @@ import de.hhn.it.devtools.apis.spaceinvaders.GameConfiguration;
 import de.hhn.it.devtools.apis.spaceinvaders.SpaceInvadersService;
 import de.hhn.it.devtools.apis.spaceinvaders.entities.Ship;
 import de.hhn.it.devtools.components.spaceinvaders.SimpleSpaceInvadersService;
+import de.hhn.it.devtools.javafx.spaceinvaders.helper.PopupProvider;
 import de.hhn.it.devtools.javafx.spaceinvaders.viewmodel.SpaceInvadersViewModel;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +37,10 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
           .getResource("/images/spaceinvaders/ship.png").toExternalForm());
   private final Image barrier = new Image(getClass()
           .getResource("/images/spaceinvaders/ship.png").toExternalForm());
+  private Stage settingsStage;
+  private Stage startStage;
+  private Stage nextRoundStage;
+  private Stage endingStage;
 
   @FXML
   public Label score;
@@ -98,6 +94,8 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
     settings.setImage(new Image(getClass()
             .getResource("/images/spaceinvaders/setting.png").toExternalForm()));
     settings.setOnMouseClicked((m) -> {
+      spaceInvadersService.pause();
+      openSettingsPopup();
     });
 
     Platform.runLater(() -> {
@@ -137,132 +135,94 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
 
   }
 
-  private void testAnimation() {
-    GraphicsContext gc = canvas.getGraphicsContext2D();
-
-    Image alien = new Image(getClass()
-            .getResource("/images/spaceinvaders/alien.png").toExternalForm());
-
-
-    new AnimationTimer() {
-
-      double x = 56;      // Startposition links
-      double y = 100;        // Höhe konstant
-      double speedX = 1;     // Geschwindigkeit
-      boolean movingRight = true; // Richtung
-
-      @Override
-      public void handle(long now) {
-
-        // Richtung prüfen und Position ändern
-        if (movingRight) {
-          x += speedX;
-          if (x + 10 >= 200) {  // rechts angekommen
-            movingRight = false;
-          }
-        } else {
-          x -= speedX;
-          if (x <= 56) {        // links angekommen
-            movingRight = true;
-          }
-        }
-
-        gc.clearRect(0, 0, 256, 256);
-
-        // Alien 10x10 Pixel zeichnen
-        for (int i = 0; i < 5; i++) {
-          gc.drawImage(alien, x + i * 10, y, 10, 10);
-          gc.drawImage(alien, x - i * 10, y, 10, 10);
-        }
-      }
-    }.start();
+  private void openSettingsPopup() {
+    if (settingsStage == null) {
+      createPopup();
+    }
+    settingsStage.showAndWait();
   }
 
   private void openStartPopup() {
-    openPopup((e) -> spaceInvadersService.start(), "SpaceInvaders", "Start Game");
+    if (startStage == null) {
+      createPopup();
+    }
+    startStage.showAndWait();
   }
 
   private void openNextRoundPopup() {
-    openPopup((e) -> spaceInvadersService.nextRound(), "Level Complete", "Next Level");
-  }
-
-  private void openPopup(EventHandler<ActionEvent> firstButtonAction,
-                         String title, String buttonName) {
-    Stage popup = new Stage();
-    popup.setTitle(title);
-
-    VBox vbox = new VBox(20);
-    vbox.setAlignment(Pos.CENTER);
-    vbox.setPadding(new Insets(30, 30, 30, 30));
-
-    Button firstButton = new Button(buttonName);
-    firstButton.setPrefWidth(150);
-
-    Button cancelButton = new Button("Quit");
-    cancelButton.setPrefWidth(150);
-
-    vbox.getChildren().addAll(firstButton, cancelButton);
-
-    popup.setScene(new Scene(vbox, 220, 140));
-
-    if (getScene() != null && getScene().getWindow() != null) {
-      popup.initOwner(getScene().getWindow());
-      popup.initModality(Modality.APPLICATION_MODAL);
+    if (nextRoundStage == null) {
+      createPopup();
     }
-
-    firstButton.setOnAction(e -> {
-      popup.close();
-      firstButtonAction.handle(e);
-    });
-
-    cancelButton.setOnAction(e -> {
-      spaceInvadersService.abort();
-      popup.close();
-      ((Stage) getScene().getWindow()).close();
-      mainStage.show();
-    });
-
-    popup.setOnCloseRequest((e) -> {
-      spaceInvadersService.abort();
-      ((Stage) getScene().getWindow()).close();
-      mainStage.show();
-    });
-
-    popup.showAndWait();
+    nextRoundStage.showAndWait();
   }
 
   private void openEndingPopup() {
-    Stage popup = new Stage();
-    popup.setTitle("Game Over");
+    if (endingStage == null) {
+      createPopup();
+    }
+    endingStage.showAndWait();
+  }
 
-    VBox vbox = new VBox(15);
-    vbox.setAlignment(Pos.CENTER);
-    vbox.setPadding(new Insets(20));
+  private void createPopup() {
+    PopupProvider popupProvider = new PopupProvider();
 
-    Label lbl1 = new Label("Your Score");
-    Label lbl3 = new Label("Reached Level");
+    // Settings Popup.
+    this.settingsStage = popupProvider.init((Stage) getScene().getWindow())
+            .setTitle("Settings")
+            .addButton((e) -> spaceInvadersService.resume(), "Resume")
+            .addButton((e) -> {
+              spaceInvadersService.abort();
+              ((Stage) getScene().getWindow()).close();
+              mainStage.show();
+            }, "Quit")
+            .setCloseRequest((e) -> spaceInvadersService.resume()).build();
 
-    Button quitButton = new Button("Quit");
-    quitButton.setPrefWidth(150);
+    // Start Popup.
+    this.startStage = popupProvider.init((Stage) getScene().getWindow())
+            .setTitle("SpaceInvaders")
+            .addButton((e) -> spaceInvadersService.start(), "Start Game")
+            .addButton((e) -> {
+              spaceInvadersService.abort();
+              ((Stage) getScene().getWindow()).close();
+              mainStage.show();
+            }, "Quit")
+            .setCloseRequest((e) -> {
+              spaceInvadersService.abort();
+              ((Stage) getScene().getWindow()).close();
+              mainStage.show();
+            }).build();
 
-    vbox.getChildren().addAll(lbl1, score, lbl3, level, quitButton);
+    // Next Round Popup.
+    this.nextRoundStage = popupProvider.init((Stage) getScene().getWindow())
+            .setTitle("Level Complete")
+            .addButton((e) -> spaceInvadersService.nextRound(), "Next Level")
+            .addButton((e) -> {
+              spaceInvadersService.abort();
+              ((Stage) getScene().getWindow()).close();
+              mainStage.show();
+            }, "Quit")
+            .setCloseRequest((e) -> {
+              spaceInvadersService.abort();
+              ((Stage) getScene().getWindow()).close();
+              mainStage.show();
+            }).build();
 
-    quitButton.setOnAction(e -> {
-      popup.close();
-      spaceInvadersService.abort();
-      ((Stage) getScene().getWindow()).close();
-      mainStage.show();
-    });
+    // Ending Popup.
+    this.endingStage = popupProvider.init((Stage) getScene().getWindow())
+            .setTitle("Game Over")
+            .addLabel("Your Score")
+            .addLabel(score)
+            .addLabel("Reached Level")
+            .addLabel(level)
+            .addButton((e) -> {
+              ((Stage) getScene().getWindow()).close();
+              mainStage.show();
+            }, "Quit")
+            .setCloseRequest((e) -> {
+              ((Stage) getScene().getWindow()).close();
+              mainStage.show();
+            }).build();
 
-    popup.setOnCloseRequest((e) -> {
-      spaceInvadersService.abort();
-      ((Stage) getScene().getWindow()).close();
-      mainStage.show();
-    });
-
-    popup.setScene(new Scene(vbox, 260, 220));
-    popup.initModality(Modality.APPLICATION_MODAL);
-    popup.showAndWait();
   }
 
 }
