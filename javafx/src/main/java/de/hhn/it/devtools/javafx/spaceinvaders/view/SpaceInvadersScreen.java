@@ -36,11 +36,10 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
   private final Image ship = new Image(getClass()
           .getResource("/images/spaceinvaders/ship.png").toExternalForm());
   private final Image barrier = new Image(getClass()
-          .getResource("/images/spaceinvaders/ship.png").toExternalForm());
+          .getResource("/images/spaceinvaders/barrier.png").toExternalForm());
   private Stage settingsStage;
   private Stage startStage;
   private Stage nextRoundStage;
-  private Stage endingStage;
 
   @FXML
   public Label score;
@@ -79,10 +78,10 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
     score.textProperty().bind(viewModel.getCurrentRoundProperty().asString());
     level.textProperty().bind(viewModel.getCurrentRoundProperty().asString());
     viewModel.getCurrentRoundProperty().addListener(((observableValue, oldRound, newRound) ->
-            openNextRoundPopup()));
+            Platform.runLater(this::openNextRoundPopup)));
     viewModel.getSyncProperty().addListener((obs, oldValue, newValue) -> {
       if (newValue == true) {
-        drawCanvas();
+        Platform.runLater(this::drawCanvas);
       } else {
         Platform.runLater(this::openEndingPopup);
       }
@@ -95,7 +94,7 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
             .getResource("/images/spaceinvaders/setting.png").toExternalForm()));
     settings.setOnMouseClicked((m) -> {
       spaceInvadersService.pause();
-      openSettingsPopup();
+      Platform.runLater(this::openSettingsPopup);
     });
 
     Platform.runLater(() -> {
@@ -167,6 +166,7 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
             .addLabel("Reached Level")
             .addLabel(finalLevel)
             .addButton((e) -> {
+              spaceInvadersService.removeListener(viewModel);
               ((Stage) getScene().getWindow()).close();
               mainStage.show();
             }, "Quit")
@@ -182,9 +182,7 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
     this.settingsStage = new PopupProvider((Stage) getScene().getWindow())
             .setTitle("Settings")
             .addButton((e) -> spaceInvadersService.resume(), "Resume")
-            .addButton((e) -> {
-              spaceInvadersService.abort();
-            }, "Quit")
+            .addButton((e) -> spaceInvadersService.abort(), "Quit")
             .setCloseRequest((e) -> spaceInvadersService.resume()).build();
 
     // Start Popup.
@@ -192,11 +190,13 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
             .setTitle("SpaceInvaders")
             .addButton((e) -> spaceInvadersService.start(), "Start Game")
             .addButton((e) -> {
+              spaceInvadersService.removeListener(viewModel);
               spaceInvadersService.abort();
               ((Stage) getScene().getWindow()).close();
               mainStage.show();
             }, "Quit")
             .setCloseRequest((e) -> {
+              spaceInvadersService.removeListener(viewModel);
               spaceInvadersService.abort();
               ((Stage) getScene().getWindow()).close();
               mainStage.show();
@@ -208,15 +208,12 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
             .addButton((e) -> spaceInvadersService.nextRound(), "Next Level")
             .addButton((e) -> {
               spaceInvadersService.abort();
-              ((Stage) getScene().getWindow()).close();
               mainStage.show();
             }, "Quit")
             .setCloseRequest((e) -> {
               spaceInvadersService.abort();
               ((Stage) getScene().getWindow()).close();
-              mainStage.show();
             }).build();
-
   }
 
 }

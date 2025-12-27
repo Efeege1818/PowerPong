@@ -30,7 +30,6 @@ public class PopupProvider {
     this.popup = new Stage();
     this.popup.initOwner(owner);
     this.popup.initModality(Modality.WINDOW_MODAL);
-    elements.clear();
   }
 
   /**
@@ -55,8 +54,8 @@ public class PopupProvider {
     Button button = new Button(buttonText);
     button.setPrefWidth(150);
     button.setOnAction((e) -> {
-      ((Stage) button.getScene().getWindow()).close();
       buttonEvent.handle(e);
+      ((Stage) button.getScene().getWindow()).close();
     });
     elements.add(button);
     return this;
