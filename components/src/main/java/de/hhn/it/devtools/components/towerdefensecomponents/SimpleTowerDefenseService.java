@@ -25,7 +25,6 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
   private final WaveGenerator waveGenerator;
 
   private final long seed;
-  private Grid grid;
   private GameState currentGameState;
   private final List<TowerDefenseListener> listeners = new ArrayList<TowerDefenseListener>();
   private final GameLoop gameLoop = new GameLoop();
@@ -33,14 +32,13 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
   private Configuration configuration;
   private int currentRound;
 
-  private List<Enemy> enemies;
-
   public SimpleTowerDefenseService() {
 
     seed = new Random().nextLong();
     configuration = new Configuration();
-    grid = mapToolbox.generateMap(configuration.mapSize());
-    waveGenerator = new WaveGenerator(mapToolbox.getPath(grid).getFirst(), seed, configuration);
+
+    mapToolbox.generateMap(configuration.mapSize());
+    waveGenerator = new WaveGenerator(mapToolbox.getPath().getFirst(), seed, configuration);
 
     player = new Player(configuration.startingHealth(), configuration.startingMoney());
     currentRound = 0;
@@ -98,7 +96,7 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
 
   @Override
   public Grid getMap() throws IllegalStateException {
-    return grid;
+    return mapToolbox.getGrid();
   }
 
   @Override
@@ -111,7 +109,6 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
     return List.of();
   }
 
-  // TODO: Es wird keine Position an die Methode übergeben
   @Override
   public void placeTower(Tower tower) throws IllegalArgumentException {
 
