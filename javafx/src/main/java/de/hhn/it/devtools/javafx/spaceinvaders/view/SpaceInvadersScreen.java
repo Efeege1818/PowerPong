@@ -28,15 +28,18 @@ import org.slf4j.LoggerFactory;
  */
 public class SpaceInvadersScreen extends AnchorPane implements Initializable {
   private static final Logger logger = LoggerFactory.getLogger(SpaceInvadersScreen.class);
+  private static final double SPRITE_SIZE = 25.0;
+  // 1x1 transparent PNG as data URL to avoid NPEs when images are missing
+  private static final String TRANSPARENT_PNG_DATA =
+      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAA"
+              + "AC1HAwCAAAAC0lEQVQImWNgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII=";
+
   private final Stage mainStage;
   private final SpaceInvadersService spaceInvadersService;
   private final SpaceInvadersViewModel viewModel;
-  private final Image alien = new Image(getClass()
-          .getResource("/images/spaceinvaders/alien.png").toExternalForm());
-  private final Image ship = new Image(getClass()
-          .getResource("/images/spaceinvaders/ship.png").toExternalForm());
-  private final Image barrier = new Image(getClass()
-          .getResource("/images/spaceinvaders/barrier.png").toExternalForm());
+  private final Image alien;
+  private final Image ship;
+  private final Image barrier;
   private Stage settingsStage;
   private Stage startStage;
   private Stage nextRoundStage;
@@ -72,26 +75,53 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
     try {
       loader.load();
     } catch (IOException exception) {
-      logger.warn("Something went wrong {}", exception.getMessage());
+      logger.error("Could not load SpaceInvaders FXML: {}", exception.getMessage(), exception);
+      throw new IllegalStateException("Failed to load SpaceInvaders FXML", exception);
     }
 
-    score.textProperty().bind(viewModel.getCurrentRoundProperty().asString());
+    // FXML fields must be available after load - validate early to fail fast
+    if (score == null || level == null || settings == null || canvas == null) {
+      throw new IllegalStateException("FXML did not inject required controls: "
+             + "score/level/settings/canvas");
+    }
+
+    // safe image loading after FXML load (so logger available)
+    this.alien = loadImageSafe("/images/spaceinvaders/alien.png");
+    this.ship = loadImageSafe("/images/spaceinvaders/ship.png");
+    this.barrier = loadImageSafe("/images/spaceinvaders/barrier.png");
+
+    score.textProperty().bind(viewModel.getScoreProperty().asString());
     level.textProperty().bind(viewModel.getCurrentRoundProperty().asString());
     viewModel.getCurrentRoundProperty().addListener(((observableValue, oldRound, newRound) ->
-            Platform.runLater(this::openNextRoundPopup)));
+            openNextRoundPopup()));
     viewModel.getSyncProperty().addListener((obs, oldValue, newValue) -> {
-      if (newValue == true) {
-        Platform.runLater(this::drawCanvas);
+      if (Boolean.TRUE.equals(newValue)) {
+        drawCanvas();
       } else {
-        Platform.runLater(this::openEndingPopup);
+        openEndingPopup();
       }
     });
   }
 
+  private Image loadImageSafe(String path) {
+    try {
+      URL res = getClass().getResource(path);
+      if (res == null) {
+        logger.warn("Resource not found: {}", path);
+        // return a small transparent image to avoid NPEs in draw calls
+        return new Image(TRANSPARENT_PNG_DATA);
+      }
+      return new Image(res.toExternalForm());
+    } catch (Exception e) {
+      logger.warn("Failed to load image {}: {}", path, e.getMessage());
+      return new Image(TRANSPARENT_PNG_DATA);
+    }
+  }
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    settings.setImage(new Image(getClass()
-            .getResource("/images/spaceinvaders/setting.png").toExternalForm()));
+    // settings ImageView might be null if FXML failed earlier; we validated in ctor
+    settings.setImage(loadImageSafe("/images/spaceinvaders/setting.png"));
     settings.setOnMouseClicked((m) -> {
       spaceInvadersService.pause();
       Platform.runLater(this::openSettingsPopup);
@@ -105,21 +135,27 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
         spaceInvadersService.abort();
       });
     });
+
   }
 
   private void drawCanvas() {
+    if (canvas == null) {
+      return;
+    }
     GraphicsContext gc = canvas.getGraphicsContext2D();
 
-    gc.clearRect(0, 0, 512, 512);
+    gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
     if (!viewModel.getAliens().isEmpty()) {
       viewModel.getAliens().values().forEach((a) ->
-            gc.drawImage(alien, a.coordinate().x(), a.coordinate().y(), 25, 25));
+            gc.drawImage(alien, a.coordinate().x(), a.coordinate().y(),
+                    SPRITE_SIZE, SPRITE_SIZE));
     }
 
     if (!viewModel.getBarriers().isEmpty()) {
       viewModel.getBarriers().values().forEach((b) ->
-              gc.drawImage(barrier, b.coordinate().x(), b.coordinate().y(), 25, 25));
+              gc.drawImage(barrier, b.coordinate().x(), b.coordinate().y(),
+                      SPRITE_SIZE, SPRITE_SIZE));
     }
 
     if (!viewModel.getProjectiles().isEmpty()) {
@@ -127,9 +163,10 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
               gc.fillOval(p.coordinate().x(), p.coordinate().y(), 1, 1));
     }
 
-    if (viewModel.getShipObjectProperty() != null) {
-      Ship player = viewModel.getShipObjectProperty();
-      gc.drawImage(ship, player.coordinate().x(), player.coordinate().y(), 25, 25);
+    if (viewModel.getShipObjectPropertyProperty().get() != null) {
+      Ship player = viewModel.getShipObjectPropertyProperty().get();
+      gc.drawImage(ship, player.coordinate().x(), player.coordinate().y(),
+              SPRITE_SIZE, SPRITE_SIZE);
     }
 
   }
@@ -159,61 +196,63 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
     String finalScore = score.getText();
     String finalLevel = level.getText();
 
-    new PopupProvider((Stage) getScene().getWindow())
-            .setTitle("Game Over")
-            .addLabel("Your Score")
-            .addLabel(finalScore)
-            .addLabel("Reached Level")
-            .addLabel(finalLevel)
-            .addButton((e) -> {
-              spaceInvadersService.removeListener(viewModel);
-              ((Stage) getScene().getWindow()).close();
-              mainStage.show();
-            }, "Quit")
-            .setCloseRequest((e) -> {
-              ((Stage) getScene().getWindow()).close();
-              mainStage.show();
-            }).build().showAndWait();
+    Stage owner = (Stage) getScene().getWindow();
+    new PopupProvider(owner)
+      .setTitle("Game Over")
+      .addLabel("Your Score")
+      .addLabel(finalScore)
+      .addLabel("Reached Level")
+      .addLabel(finalLevel)
+      .addButton((e) -> {
+        spaceInvadersService.removeListener(viewModel);
+        owner.close();
+        mainStage.show();
+      }, "Quit")
+      .setCloseRequest((e) -> {
+        owner.close();
+        mainStage.show();
+      }).build().showAndWait();
   }
 
   private void createPopup() {
+    Stage owner = (Stage) getScene().getWindow();
 
     // Settings Popup.
-    this.settingsStage = new PopupProvider((Stage) getScene().getWindow())
-            .setTitle("Settings")
-            .addButton((e) -> spaceInvadersService.resume(), "Resume")
-            .addButton((e) -> spaceInvadersService.abort(), "Quit")
-            .setCloseRequest((e) -> spaceInvadersService.resume()).build();
+    this.settingsStage = new PopupProvider(owner)
+      .setTitle("Settings")
+      .addButton((e) -> spaceInvadersService.resume(), "Resume")
+      .addButton((e) -> spaceInvadersService.abort(), "Quit")
+      .setCloseRequest((e) -> spaceInvadersService.resume()).build();
 
     // Start Popup.
-    this.startStage = new PopupProvider((Stage) getScene().getWindow())
-            .setTitle("SpaceInvaders")
-            .addButton((e) -> spaceInvadersService.start(), "Start Game")
-            .addButton((e) -> {
-              spaceInvadersService.removeListener(viewModel);
-              spaceInvadersService.abort();
-              ((Stage) getScene().getWindow()).close();
-              mainStage.show();
-            }, "Quit")
-            .setCloseRequest((e) -> {
-              spaceInvadersService.removeListener(viewModel);
-              spaceInvadersService.abort();
-              ((Stage) getScene().getWindow()).close();
-              mainStage.show();
-            }).build();
+    this.startStage = new PopupProvider(owner)
+      .setTitle("SpaceInvaders")
+      .addButton((e) -> spaceInvadersService.start(), "Start Game")
+      .addButton((e) -> {
+        spaceInvadersService.removeListener(viewModel);
+        spaceInvadersService.abort();
+        owner.close();
+        mainStage.show();
+      }, "Quit")
+      .setCloseRequest((e) -> {
+        spaceInvadersService.removeListener(viewModel);
+        spaceInvadersService.abort();
+        owner.close();
+        mainStage.show();
+      }).build();
 
     // Next Round Popup.
-    this.nextRoundStage = new PopupProvider((Stage) getScene().getWindow())
-            .setTitle("Level Complete")
-            .addButton((e) -> spaceInvadersService.nextRound(), "Next Level")
-            .addButton((e) -> {
-              spaceInvadersService.abort();
-              mainStage.show();
-            }, "Quit")
-            .setCloseRequest((e) -> {
-              spaceInvadersService.abort();
-              ((Stage) getScene().getWindow()).close();
-            }).build();
+    this.nextRoundStage = new PopupProvider(owner)
+      .setTitle("Level Complete")
+      .addButton((e) -> spaceInvadersService.nextRound(), "Next Level")
+      .addButton((e) -> {
+        spaceInvadersService.abort();
+        mainStage.show();
+      }, "Quit")
+      .setCloseRequest((e) -> {
+        spaceInvadersService.abort();
+        owner.close();
+      }).build();
   }
 
 }

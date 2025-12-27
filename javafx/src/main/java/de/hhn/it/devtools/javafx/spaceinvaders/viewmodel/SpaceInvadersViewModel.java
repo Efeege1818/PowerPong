@@ -1,11 +1,20 @@
 package de.hhn.it.devtools.javafx.spaceinvaders.viewmodel;
 
-import de.hhn.it.devtools.apis.spaceinvaders.*;
+import de.hhn.it.devtools.apis.spaceinvaders.GameConfiguration;
+import de.hhn.it.devtools.apis.spaceinvaders.GameState;
+import de.hhn.it.devtools.apis.spaceinvaders.Sound;
+import de.hhn.it.devtools.apis.spaceinvaders.SpaceInvadersListener;
 import de.hhn.it.devtools.apis.spaceinvaders.entities.Alien;
 import de.hhn.it.devtools.apis.spaceinvaders.entities.Barrier;
 import de.hhn.it.devtools.apis.spaceinvaders.entities.Projectile;
 import de.hhn.it.devtools.apis.spaceinvaders.entities.Ship;
-import javafx.beans.property.*;
+import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 
@@ -22,6 +31,9 @@ public class SpaceInvadersViewModel implements SpaceInvadersListener {
   private final IntegerProperty score;
   private final BooleanProperty running;
 
+  /**
+   * Constructor for SpaceInvadersViewModel.
+   */
   public SpaceInvadersViewModel() {
     this.barriers = FXCollections.observableHashMap();
     this.currentRound = new SimpleIntegerProperty(1);
@@ -35,54 +47,64 @@ public class SpaceInvadersViewModel implements SpaceInvadersListener {
 
   @Override
   public void updateBarrier(Barrier barrier) {
-    this.barriers.put(barrier.barrierId(), barrier);
-    sync();
+    Platform.runLater(() -> {
+      this.barriers.put(barrier.barrierId(), barrier);
+      sync();
+    });
   }
 
   @Override
   public void updateAliens(Alien[] aliens) {
-    for (Alien alien : aliens) {
-      this.aliens.put(alien.alienId(), alien);
-    }
-    sync();
+    Platform.runLater(() -> {
+      for (Alien alien : aliens) {
+        this.aliens.put(alien.alienId(), alien);
+      }
+      sync();
+    });
   }
 
   @Override
   public void updateShip(Ship ship) {
-    this.shipObjectProperty.setValue(ship);
-    sync();
+    Platform.runLater((() -> {
+      this.shipObjectProperty.setValue(ship);
+      sync();
+    }));
   }
 
   @Override
   public void updateProjectile(Projectile projectile) {
-    this.projectiles.put(projectile.projectileId(), projectile);
-    sync();
+    Platform.runLater(() -> {
+      this.projectiles.put(projectile.projectileId(), projectile);
+      sync();
+    });
   }
 
   @Override
   public void damageAlien(Alien alien) {
-    this.aliens.put(alien.alienId(), alien);
-    sync();
+    Platform.runLater(() -> {
+      this.aliens.put(alien.alienId(), alien);
+      sync();
+    });
   }
 
   @Override
   public void updateSound(Sound sound) {
-    //TODO
+    // TODO: implement sound update.
   }
 
   @Override
   public void changedGameState(GameState gameState) {
-    this.gameStateObjectProperty.setValue(gameState);
+    Platform.runLater(() -> this.gameStateObjectProperty.setValue(gameState));
   }
 
   @Override
   public void updateRound(int round) {
-    currentRound.set(round);
+    Platform.runLater(() -> this.currentRound.set(round));
   }
 
   @Override
   public void updateScore(int score) {
-    this.score.set(score);
+    Platform.runLater(() -> this.score.set(score));
   }
 
   @Override
@@ -92,7 +114,7 @@ public class SpaceInvadersViewModel implements SpaceInvadersListener {
 
   @Override
   public void gameEnded() {
-    this.running.set(false);
+    Platform.runLater(() -> this.running.set(false));
   }
 
   public IntegerProperty getCurrentRoundProperty() {
@@ -115,16 +137,8 @@ public class SpaceInvadersViewModel implements SpaceInvadersListener {
     return shipObjectProperty;
   }
 
-  public ObjectProperty<GameState> getGameStateObjectPropertyProperty() {
-    return gameStateObjectProperty;
-  }
-
   public IntegerProperty getScoreProperty() {
     return score;
-  }
-
-  public Ship getShipObjectProperty() {
-    return shipObjectProperty.get();
   }
 
   public BooleanProperty getSyncProperty() {

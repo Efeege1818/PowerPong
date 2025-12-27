@@ -54,8 +54,17 @@ public class PopupProvider {
     Button button = new Button(buttonText);
     button.setPrefWidth(150);
     button.setOnAction((e) -> {
-      buttonEvent.handle(e);
-      ((Stage) button.getScene().getWindow()).close();
+      try {
+        if (buttonEvent != null) {
+          buttonEvent.handle(e);
+        }
+      } finally {
+        // ensure the popup is closed even if handler throws
+        Stage stage = (Stage) button.getScene().getWindow();
+        if (stage != null) {
+          stage.close();
+        }
+      }
     });
     elements.add(button);
     return this;
@@ -69,17 +78,6 @@ public class PopupProvider {
    */
   public PopupProvider addLabel(String labelText) {
     Label label = new Label(labelText);
-    elements.add(label);
-    return this;
-  }
-
-  /**
-   * Add label to the popup.
-   *
-   * @param label the label to add.
-   * @return the PopupProvider instance.
-   */
-  public PopupProvider addLabel(Label label) {
     elements.add(label);
     return this;
   }
@@ -104,7 +102,9 @@ public class PopupProvider {
     VBox vbox = new VBox(20);
     vbox.setAlignment(Pos.CENTER);
     vbox.setPadding(new Insets(30, 30, 30, 30));
-    vbox.getChildren().addAll(elements);
+    if (!elements.isEmpty()) {
+      vbox.getChildren().addAll(elements);
+    }
     this.popup.setScene(new Scene(vbox, 500, 400));
     this.popup.setMinWidth(300);
     this.popup.setMinHeight(200);
