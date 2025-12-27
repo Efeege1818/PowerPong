@@ -84,7 +84,7 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
       if (newValue == true) {
         drawCanvas();
       } else {
-        openEndingPopup();
+        Platform.runLater(this::openEndingPopup);
       }
     });
   }
@@ -157,10 +157,23 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
   }
 
   private void openEndingPopup() {
-    if (endingStage == null) {
-      createPopup();
-    }
-    endingStage.showAndWait();
+    String finalScore = score.getText();
+    String finalLevel = level.getText();
+
+    new PopupProvider((Stage) getScene().getWindow())
+            .setTitle("Game Over")
+            .addLabel("Your Score")
+            .addLabel(finalScore)
+            .addLabel("Reached Level")
+            .addLabel(finalLevel)
+            .addButton((e) -> {
+              ((Stage) getScene().getWindow()).close();
+              mainStage.show();
+            }, "Quit")
+            .setCloseRequest((e) -> {
+              ((Stage) getScene().getWindow()).close();
+              mainStage.show();
+            }).build().showAndWait();
   }
 
   private void createPopup() {
@@ -171,8 +184,6 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
             .addButton((e) -> spaceInvadersService.resume(), "Resume")
             .addButton((e) -> {
               spaceInvadersService.abort();
-              ((Stage) getScene().getWindow()).close();
-              mainStage.show();
             }, "Quit")
             .setCloseRequest((e) -> spaceInvadersService.resume()).build();
 
@@ -202,25 +213,6 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
             }, "Quit")
             .setCloseRequest((e) -> {
               spaceInvadersService.abort();
-              ((Stage) getScene().getWindow()).close();
-              mainStage.show();
-            }).build();
-
-    // Ending Popup.
-    String finalScore = score.getText();
-    String finalLevel = level.getText();
-
-    this.endingStage = new PopupProvider((Stage) getScene().getWindow())
-            .setTitle("Game Over")
-            .addLabel("Your Score")
-            .addLabel(finalScore)
-            .addLabel("Reached Level")
-            .addLabel(finalLevel)
-            .addButton((e) -> {
-              ((Stage) getScene().getWindow()).close();
-              mainStage.show();
-            }, "Quit")
-            .setCloseRequest((e) -> {
               ((Stage) getScene().getWindow()).close();
               mainStage.show();
             }).build();
