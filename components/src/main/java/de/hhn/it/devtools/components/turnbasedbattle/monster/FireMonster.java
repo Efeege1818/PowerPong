@@ -29,6 +29,8 @@ public class FireMonster extends SimpleMonster {
     this.focus = "FOCUS INFO PLACEHOLDER";
     this.passiveInfo = "PASSIVE INFO PLACEHOLDER";
     this.imagePath = "/Monster Sprites/FeuerMon.png";
+    this.imagePathBack = "/Monster Sprites/FeuerMon Back.png";
+
 
     logger.debug("{} created: {}", name, toString());
   }

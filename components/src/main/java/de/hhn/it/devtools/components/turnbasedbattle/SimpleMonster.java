@@ -32,6 +32,7 @@ public class SimpleMonster {
   protected String focus;
   protected String passiveInfo;
   protected String imagePath;
+  protected String imagePathBack;
 
   // ========== Internal Tracking (Buffs, DOTs, Cooldowns) ==========
 
@@ -693,5 +694,9 @@ public class SimpleMonster {
    */
   public Map<Integer, Integer> getMoveCooldowns() {
     return new HashMap<>(moveCooldowns);
+  }
+
+  public String getImagePathBack() {
+    return imagePathBack;
   }
 }

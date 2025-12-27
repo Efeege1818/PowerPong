@@ -29,6 +29,7 @@ public class WaterMonster extends SimpleMonster {
     this.focus = "Manipulates Dodge and Krit chances";
     this.passiveInfo = "Dodges are more likely";
     this.imagePath = "/Monster Sprites/WasserMon.png";
+    this.imagePathBack = "/Monster Sprites/WasserMon Back.png";
 
     logger.debug("{} created: {}", name, toString());
   }

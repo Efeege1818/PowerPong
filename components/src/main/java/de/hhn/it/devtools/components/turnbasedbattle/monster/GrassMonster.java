@@ -29,6 +29,8 @@ public class GrassMonster extends SimpleMonster {
     this.focus = "FOCUS INFO PLACEHOLDER";
     this.passiveInfo = "PASSIVE INFO PLACEHOLDER";
     this.imagePath = "/Monster Sprites/PflanzeMon.png";
+    this.imagePathBack = "/Monster Sprites/PflanzeMon Back.png";
+
 
     logger.debug("{} created: {}", name, toString());
   }

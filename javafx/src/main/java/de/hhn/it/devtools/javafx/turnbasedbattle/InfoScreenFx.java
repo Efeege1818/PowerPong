@@ -95,7 +95,7 @@ public class InfoScreenFx extends VBox {
             );
         }
         attacksList.setStyle("-fx-font-size: 12px; -fx-line-spacing: 6px;");
-
+/**
         // Special move
         Label specialTitle = new Label(specialMove.name());
         specialTitle.setStyle("-fx-font-size: 12px; -fx-font-weight: bold;");
@@ -103,12 +103,12 @@ public class InfoScreenFx extends VBox {
         specialText.setStyle("-fx-font-size: 12px;");
         TextFlow specialFlow = new TextFlow(specialText);
         specialFlow.setMaxWidth(420);
-
+*/
         leftCol.getChildren().addAll(
                 title, focus, new Region(), stats,
                 passiveTitle, passiveText,
-                attacksTitle, attacksList,
-                specialTitle, specialFlow
+                attacksTitle, attacksList
+                //specialTitle, specialFlow
         );
 
         // RIGHT COLUMN (Monster image)
