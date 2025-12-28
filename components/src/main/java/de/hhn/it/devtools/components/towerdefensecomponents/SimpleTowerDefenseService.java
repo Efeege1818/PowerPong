@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Queue;
 import java.util.Random;
 import java.util.function.Consumer;
 
@@ -32,6 +34,8 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
   private Configuration configuration;
   private int currentRound;
 
+  private Queue<Enemy> enemyQueue;
+
   public SimpleTowerDefenseService() {
 
     seed = new Random().nextLong();
@@ -49,7 +53,7 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
 
   @Override
   public GameState getCurrentGameState() {
-    return null;
+    return currentGameState;
   }
 
   @Override
@@ -64,7 +68,7 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
 
   @Override
   public void startGame() throws IllegalStateException {
-
+    currentGameState = GameState.PAUSED;
   }
 
   @Override
@@ -74,7 +78,6 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
 
   @Override
   public void resetGame() {
-
   }
 
   @Override
@@ -89,9 +92,10 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
           "Operation startNextRound is only allowed for GameState PAUSED");
     }
     currentRound += 1;
-    waveGenerator.generateWave(currentRound);
+    enemyQueue = waveGenerator.generateWave(currentRound);
 
     currentGameState = GameState.RUNNING;
+    gameLoop.startGame();
   }
 
   @Override
@@ -101,43 +105,56 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
 
   @Override
   public Map<Coordinates, Tower> getTowerBoard() throws IllegalStateException {
-    return Map.of();
+    return towerToolbox.getTowers();
   }
 
   @Override
   public List<Enemy> getCurrentEnemies() throws IllegalStateException {
-    return List.of();
+    return enemyToolbox.getEnemies();
   }
 
   @Override
   public void placeTower(Tower tower) throws IllegalArgumentException {
-
+    if (Objects.isNull(tower)) {
+      throw new IllegalArgumentException("Tower can't be null");
+    }
+    if (mapToolbox.isAllowed(tower.coordinates())) {
+      throw new IllegalArgumentException("Tower position can't be oin the path");
+    }
+    if (!Objects.isNull(towerToolbox.getTowers().get(tower.coordinates()))) {
+      throw new IllegalArgumentException("Tower position can't be at the coordinates of another Tower");
+    }
+    if (player.money() < TowerToolbox.getCost(tower.type())) {
+      throw new IllegalArgumentException("Not enough money");
+    }
+    updateMoney(-TowerToolbox.getCost(tower.type()));
+    towerToolbox.addTower(tower);
   }
 
   /**
    * Updates the player's health when damaged.
    *
-   * @param health the new health value
-   * @throws IllegalArgumentException if health is negative
+   * @param health the change of the heath value
+   * @throws IllegalArgumentException if health is positive
    */
   public void updateHealth(int health) throws IllegalArgumentException {
     if (health < 0) {
       throw new IllegalArgumentException("Health can't be negative");
     }
-    player = new Player(health, player.money());
+    player = new Player(player.health() + health, player.money());
     notifyListeners(TowerDefenseListener::updateHealth);
   }
 
   /**
    * Updates the player's money when killing enemies or spending on towers.
    *
-   * @param money the new money value
+   * @param money the change of the health value
    */
-  public void updateMoney(int money) {
-    if (money < 0) {
+  public void updateMoney(int money) throws IllegalArgumentException {
+    if (money < -player.money()) {
       throw new IllegalArgumentException("Money can't be negative");
     }
-    player = new Player(player.health(), money);
+    player = new Player(player.health(), player.money() + money);
     notifyListeners(TowerDefenseListener::updateMoney);
   }
 
@@ -150,7 +167,19 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
    * Logic that gets called by the GameLoop one per Game-Tick.
    */
   public void tick() {
-
+    if (!enemyQueue.isEmpty()) {
+      enemyToolbox.addEnemy(enemyQueue.poll());
+    }
+    towerToolbox.attack();
+    updateMoney(towerToolbox.moneyMade() + enemyToolbox.moneyPerEnemy());
+    enemyToolbox.progress();
+    updateHealth(-enemyToolbox.damagePlayer());
+    if (player.health() <= 0) {
+      roundFailed();
+    }
+    if (enemyQueue.isEmpty() && enemyToolbox.getEnemies().isEmpty()) {
+      roundCompleted();
+    }
   }
 
   private void notifyListeners(Consumer<TowerDefenseListener> consumer) {
@@ -160,6 +189,15 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
   }
 
   private void roundFailed() {
-
+    currentGameState = GameState.GAME_OVER;
+    gameLoop.stopGame();
+    notifyListeners(TowerDefenseListener::gameEnded);
   }
+
+  private void roundCompleted() {
+    currentGameState = GameState.PAUSED;
+    gameLoop.stopGame();
+  }
+
+
 }

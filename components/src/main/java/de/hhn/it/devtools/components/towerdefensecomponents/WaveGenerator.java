@@ -42,9 +42,9 @@ public class WaveGenerator {
    * @param wave the wave for which the enemies are generated
    * @return Map filled with enemies and their id
    */
-  public List<Enemy> generateWave(int wave) {
+  public LinkedList<Enemy> generateWave(int wave) {
 
-    List<Enemy> enemyList = new LinkedList<Enemy>();
+    LinkedList<Enemy> enemyList = new LinkedList<Enemy>();
 
     Random random = createRandomGenerator(wave);
     int remainingPower = calculatePower(wave);
@@ -84,7 +84,7 @@ public class WaveGenerator {
 
     }
 
-    return List.copyOf(enemyList);
+    return enemyList;
   }
 
   private Random createRandomGenerator(int wave) {

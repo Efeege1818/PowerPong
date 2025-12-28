@@ -4,6 +4,7 @@ import de.hhn.it.devtools.apis.towerdefenseapi.Coordinates;
 import de.hhn.it.devtools.apis.towerdefenseapi.Enemy;
 import de.hhn.it.devtools.apis.towerdefenseapi.EnemyType;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 // LOCKED : S.Arsenovici
@@ -178,5 +179,13 @@ public class EnemyToolbox {
 //      }
 //    }
     return newList;
+  }
+
+  public void addEnemy(Enemy newEnemy) {
+
+  }
+
+  public List<Enemy> getEnemies() {
+    return List.of();
   }
 }

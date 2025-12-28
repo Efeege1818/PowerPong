@@ -7,6 +7,7 @@ import de.hhn.it.devtools.apis.towerdefenseapi.TowerType;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 // LOCKED : S.Arsenovici
@@ -49,6 +50,10 @@ public class TowerToolbox {
     };
   }
 
+  public static int getCost(TowerType type) throws NoSuchElementException {
+    return 0;
+  }
+
 
   /**
    * Attacks the enemy in range, that has advanced the furthest on the path.
@@ -59,7 +64,7 @@ public class TowerToolbox {
    * @return {@code ArrayList<Enemy>} with updated enemies
    * @throws IllegalArgumentException if towers or enemies do not exist.
    */
-  public static List<Enemy> action()
+  public void attack()
           throws IllegalArgumentException {
 //    for (Tower tower : towers) {
 //      if (tower.type() != TowerType.MONEYMAKER) {
@@ -108,10 +113,19 @@ public class TowerToolbox {
     return money;
   }
 
-  public void addTower() {
+  public void addTower(Tower tower) {
+
   }
 
-  public void removeTower() {
+  public Map<Coordinates, Tower> getTowers() {
+    return Map.of();
+  }
+
+  public void saveData() {
+
+  }
+
+  public void loadData() {
 
   }
 }
