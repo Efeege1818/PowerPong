@@ -129,13 +129,13 @@ public class EnemyToolbox {
    *
    * @return the amount of damage dealt to the player
    */
-  public int damagePlayer(ArrayList<Enemy> enemyList, int pathLength) {
+  public int damagePlayer() {
     int damage = 0;
-    for (Enemy enemy : enemyList) {
-      if (enemy.index() >= pathLength) {
-        damage += getDamage(enemy.type());
-      }
-    }
+//    for (Enemy enemy : enemyList) {
+//      if (enemy.index() >= pathLength) {
+//        damage += getDamage(enemy.type());
+//      }
+//    }
     return damage;
   }
 
@@ -145,13 +145,13 @@ public class EnemyToolbox {
    * @param enemyList list of all current enemies including dead ones
    * @return the amount of money to the player
    */
-  public int moneyPerEnemy(ArrayList<Enemy> enemyList) {
+  public int moneyPerEnemy() {
     int money = 0;
-    for (Enemy enemy : enemyList) {
-      if (enemy.currentHealth() <= 0) {
-        money += getMaxHealth(enemy.type());
-      }
-    }
+//    for (Enemy enemy : enemyList) {
+//      if (enemy.currentHealth() <= 0) {
+//        money += getMaxHealth(enemy.type());
+//      }
+//    }
     return money;
   }
 
@@ -166,29 +166,17 @@ public class EnemyToolbox {
    * @param coordinatesList list of all coordinates associated with the index
    * @return updates enemies and their coordinate and removes if they reached the end
    */
-  public ArrayList<Enemy> progress(ArrayList<Enemy> enemyList,
-                                   ArrayList<Coordinates> coordinatesList) {
+  public ArrayList<Enemy> progress() {
 
     ArrayList<Enemy> newList = new ArrayList<>();
 
-    for (Enemy enemy : enemyList) {
-      if ((enemy.currentHealth() > 0) && !(coordinatesList.size() <= enemy.index() + 1)) {
-        newList.add(new Enemy(enemy.id(),
-                coordinatesList.get(enemy.index() + getSpeed(enemy.type())),
-                enemy.type(), enemy.currentHealth(), enemy.index() + getSpeed(enemy.type())));
-      }
-    }
+//    for (Enemy enemy : enemyList) {
+//      if ((enemy.currentHealth() > 0) && !(coordinatesList.size() <= enemy.index() + 1)) {
+//        newList.add(new Enemy(enemy.id(),
+//                coordinatesList.get(enemy.index() + getSpeed(enemy.type())),
+//                enemy.type(), enemy.currentHealth(), enemy.index() + getSpeed(enemy.type())));
+//      }
+//    }
     return newList;
-  }
-
-  /**
-   * Called when the enemy successfully reaches the end of its path.
-   *
-   * <p>Typically, this triggers damage to the player and removal of the enemy.
-   */
-  @Deprecated
-  public void endReached() {
-    // TODO: Implement behavior for when the enemy reaches the end of the path
-
   }
 }
