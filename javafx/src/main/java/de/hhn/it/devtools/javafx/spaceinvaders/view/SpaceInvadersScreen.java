@@ -2,6 +2,7 @@ package de.hhn.it.devtools.javafx.spaceinvaders.view;
 
 import de.hhn.it.devtools.apis.spaceinvaders.*;
 import de.hhn.it.devtools.apis.spaceinvaders.entities.Alien;
+import de.hhn.it.devtools.apis.spaceinvaders.entities.Barrier;
 import de.hhn.it.devtools.apis.spaceinvaders.entities.Ship;
 import de.hhn.it.devtools.components.spaceinvaders.SimpleSpaceInvadersService;
 import de.hhn.it.devtools.javafx.spaceinvaders.helper.PopupProvider;
@@ -11,7 +12,6 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
-import javafx.beans.value.ChangeListener;
 import javafx.collections.MapChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -22,6 +22,8 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.StrokeLineCap;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,6 +98,10 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
 
     score.textProperty().bind(viewModel.getScoreProperty().asString());
     level.textProperty().bind(viewModel.getCurrentRoundProperty().asString());
+    viewModel.getShipObjectPropertyProperty().addListener((obs, oldShip, newShip) -> {
+        drawEntity(this.ship, newShip.coordinate(), APIConstants.HITBOX_SIZE,
+                APIConstants.HITBOX_SIZE);
+    });
     viewModel.getAliens().addListener((MapChangeListener<Integer, Alien>)  change -> {
       if (dummyAlien != null) {
         drawEntity(this.alien, dummyAlien.coordinate(), APIConstants.HITBOX_SIZE,
@@ -116,9 +122,8 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
         dummyAlien = change.getValueRemoved();
       }
     });
-    viewModel.getBarriers().addListener((InvalidationListener) change -> drawCanvas());
-    viewModel.getProjectiles().addListener((InvalidationListener) change -> drawCanvas());
-    viewModel.getShipObjectPropertyProperty().addListener(change -> drawCanvas());
+//    viewModel.getProjectiles().addListener((InvalidationListener) change -> drawCanvas());
+//    viewModel.getShipObjectPropertyProperty().addListener(change -> drawCanvas());
     viewModel.getGameStateObjectProperty().addListener((obs, oldState, newState) -> {
       if (newState == GameState.ABORTED) {
         openEndingPopup();
@@ -171,7 +176,13 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
 
   private void drawEntity(Image image, Coordinate coordinate, int a, int b) {
     GraphicsContext gc = canvas.getGraphicsContext2D();
-    gc.drawImage(image, coordinate.x(), coordinate.y(), a, b);
+    gc.drawImage(image, coordinate.x() + 0.5, coordinate.y() + 0.5, a, b);
+  }
+
+  private void drawEntity(Color color, Coordinate coordinate) {
+    GraphicsContext gc = canvas.getGraphicsContext2D();
+    gc.setFill(color);
+    gc.fillRect(coordinate.x(), coordinate.y(), 1, 1);
   }
 
   private void drawCanvas() {

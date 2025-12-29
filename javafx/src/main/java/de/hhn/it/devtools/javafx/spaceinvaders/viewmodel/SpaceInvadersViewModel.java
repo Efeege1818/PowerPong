@@ -49,8 +49,8 @@ public class SpaceInvadersViewModel implements SpaceInvadersListener {
   @Override
   public void updateAliens(Alien[] aliens) {
     Platform.runLater(() -> {
-      for (Alien alien : aliens) {
-        this.aliens.put(alien.alienId(), alien);
+      for (int i = aliens.length - 1; i >= 0; i--) {
+        this.aliens.put(aliens[i].alienId(), aliens[i]);
       }
     });
   }

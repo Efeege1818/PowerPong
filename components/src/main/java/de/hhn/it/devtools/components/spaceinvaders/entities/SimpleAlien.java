@@ -52,15 +52,15 @@ public class SimpleAlien {
    */
   public void move(Direction direction) {
     if (direction == Direction.RIGHT) {
-      coordinate = new Coordinate(coordinate.x() + 1, coordinate.y());
+      coordinate = new Coordinate(coordinate.x() + 2, coordinate.y());
       this.hitbox = EntityProvider.fillHitBox(coordinate, APIConstants.HITBOX_SIZE,
               APIConstants.HITBOX_SIZE);
     } else if (direction == Direction.LEFT) {
-      coordinate = new Coordinate(coordinate.x() - 1, coordinate.y());
+      coordinate = new Coordinate(coordinate.x() - 2, coordinate.y());
       this.hitbox = EntityProvider.fillHitBox(coordinate, APIConstants.HITBOX_SIZE,
               APIConstants.HITBOX_SIZE);
     } else if (direction == Direction.DOWN) {
-      coordinate = new Coordinate(coordinate.x(), coordinate.y() + 1);
+      coordinate = new Coordinate(coordinate.x(), coordinate.y() + 5);
       this.hitbox = EntityProvider.fillHitBox(coordinate, APIConstants.HITBOX_SIZE,
               APIConstants.HITBOX_SIZE);
     }

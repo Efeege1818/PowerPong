@@ -7,7 +7,9 @@ import de.hhn.it.devtools.apis.spaceinvaders.GameState;
 import de.hhn.it.devtools.apis.spaceinvaders.Sound;
 import de.hhn.it.devtools.apis.spaceinvaders.SpaceInvadersListener;
 import de.hhn.it.devtools.apis.spaceinvaders.SpaceInvadersService;
+import de.hhn.it.devtools.apis.spaceinvaders.entities.Alien;
 import de.hhn.it.devtools.apis.spaceinvaders.exceptions.IllegalConfigurationException;
+import de.hhn.it.devtools.components.spaceinvaders.entities.SimpleAlien;
 import de.hhn.it.devtools.components.spaceinvaders.utils.Constants;
 import de.hhn.it.devtools.components.spaceinvaders.utils.EntityProvider;
 import java.util.ArrayList;
@@ -187,6 +189,8 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
     if (entityProvider.getAliens().isEmpty()) {
       pause();
     }
+    notifyListeners(spaceInvadersListener -> spaceInvadersListener
+            .updateAliens(entityProvider.getAliens().values().stream().map(SimpleAlien::immutableAlien).toArray(Alien[]::new)));
     entityProvider.updateProjectiles();
     entityProvider.checkCollision();
 

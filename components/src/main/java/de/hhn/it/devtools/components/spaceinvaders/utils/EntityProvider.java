@@ -10,7 +10,6 @@ import de.hhn.it.devtools.components.spaceinvaders.entities.SimpleAlien;
 import de.hhn.it.devtools.components.spaceinvaders.entities.SimpleBarrier;
 import de.hhn.it.devtools.components.spaceinvaders.entities.SimpleProjectile;
 import de.hhn.it.devtools.components.spaceinvaders.entities.SimpleShip;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,7 +30,7 @@ public class EntityProvider {
    * Default Constructor.
    */
   public EntityProvider(SimpleSpaceInvadersService service) {
-    player = new SimpleShip(new Coordinate(APIConstants.FIELD_SIZE / 2, APIConstants.FIELD_SIZE - 16));
+    player = new SimpleShip(new Coordinate(APIConstants.FIELD_SIZE / 2, APIConstants.FIELD_SIZE - 26));
     generateAliens();
     this.service = service;
   }
@@ -68,6 +67,7 @@ public class EntityProvider {
     aliens.values().forEach(alien -> alien.move(currentAlienDirection));
     service.notifyListeners(spaceInvadersListener -> spaceInvadersListener
             .updateAliens(aliens.values().stream().map(SimpleAlien::immutableAlien).toArray(Alien[]::new)));
+    service.notifyListeners((s) -> s.updateShip(player.getImmutableShip()));
   }
 
   /**
@@ -167,6 +167,7 @@ public class EntityProvider {
     toRemoveAliens.forEach(aliens.values()::remove);
     toRemoveAliens.clear();
   }
+
 
   /**
    * Method to Calculate Entity hitbox.
