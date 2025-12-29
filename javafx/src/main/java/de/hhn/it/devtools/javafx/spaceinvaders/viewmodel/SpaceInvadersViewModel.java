@@ -9,10 +9,8 @@ import de.hhn.it.devtools.apis.spaceinvaders.entities.Barrier;
 import de.hhn.it.devtools.apis.spaceinvaders.entities.Projectile;
 import de.hhn.it.devtools.apis.spaceinvaders.entities.Ship;
 import javafx.application.Platform;
-import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -29,7 +27,6 @@ public class SpaceInvadersViewModel implements SpaceInvadersListener {
   private final ObjectProperty<Ship> shipObjectProperty;
   private final ObjectProperty<GameState> gameStateObjectProperty;
   private final IntegerProperty score;
-  private final BooleanProperty running;
 
   /**
    * Constructor for SpaceInvadersViewModel.
@@ -42,7 +39,6 @@ public class SpaceInvadersViewModel implements SpaceInvadersListener {
     this.shipObjectProperty = new SimpleObjectProperty<>();
     this.gameStateObjectProperty = new SimpleObjectProperty<>();
     this.score = new SimpleIntegerProperty();
-    this.running = new SimpleBooleanProperty();
   }
 
   @Override
@@ -102,12 +98,10 @@ public class SpaceInvadersViewModel implements SpaceInvadersListener {
 
   @Override
   public void updateGameConfiguration(GameConfiguration configuration) {
-
   }
 
   @Override
   public void gameEnded() {
-    Platform.runLater(() -> this.running.set(false));
   }
 
   public IntegerProperty getCurrentRoundProperty() {
@@ -132,10 +126,6 @@ public class SpaceInvadersViewModel implements SpaceInvadersListener {
 
   public IntegerProperty getScoreProperty() {
     return score;
-  }
-
-  public BooleanProperty getSyncProperty() {
-    return running;
   }
 
   public ObjectProperty<GameState> getGameStateObjectProperty() {
