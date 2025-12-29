@@ -32,8 +32,8 @@ class SimpleEntitiesGoodCaseTest {
     alien.move(Direction.DOWN);
     assertEquals(1, alien.getCoordinate().y());
 
-    // hitbox size is 10 * 10 = 100
-    assertEquals(100, alien.getHitbox().size());
+    // hitbox size 25 * 25 = 625
+    assertEquals(625, alien.getHitbox().size());
 
     // hit points: initial 3 -> calling getHit reduces it
     assertTrue(alien.getHit()); // now 2

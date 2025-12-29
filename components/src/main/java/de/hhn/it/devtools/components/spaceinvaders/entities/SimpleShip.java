@@ -1,5 +1,6 @@
 package de.hhn.it.devtools.components.spaceinvaders.entities;
 
+import de.hhn.it.devtools.apis.spaceinvaders.APIConstants;
 import de.hhn.it.devtools.apis.spaceinvaders.Coordinate;
 import de.hhn.it.devtools.apis.spaceinvaders.Direction;
 import de.hhn.it.devtools.apis.spaceinvaders.entities.Ship;
@@ -22,7 +23,7 @@ public class SimpleShip {
    */
   public SimpleShip(Coordinate coordinate) {
     this.coordinate = coordinate;
-    this.hitbox = EntityProvider.fillHitBox(coordinate, 10, 10);
+    this.hitbox = EntityProvider.fillHitBox(coordinate, APIConstants.HITBOX_SIZE, APIConstants.HITBOX_SIZE);
     this.hitPoints = 3;
   }
 
