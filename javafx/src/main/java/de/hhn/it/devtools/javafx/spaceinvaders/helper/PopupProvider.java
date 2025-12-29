@@ -9,6 +9,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -30,6 +31,8 @@ public class PopupProvider {
     this.popup = new Stage();
     this.popup.initOwner(owner);
     this.popup.initModality(Modality.WINDOW_MODAL);
+    this.popup.getIcons().add(new Image(getClass()
+            .getResource("/images/spaceinvaders/logo.png").toExternalForm()));
   }
 
   /**
