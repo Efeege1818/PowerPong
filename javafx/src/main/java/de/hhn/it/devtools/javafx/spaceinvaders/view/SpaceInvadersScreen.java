@@ -96,25 +96,23 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
 
     score.textProperty().bind(viewModel.getScoreProperty().asString());
     level.textProperty().bind(viewModel.getCurrentRoundProperty().asString());
-    viewModel.getCurrentRoundProperty().addListener(((observableValue, oldRound, newRound) ->
-            openNextRoundPopup()));
     viewModel.getAliens().addListener((MapChangeListener<Integer, Alien>)  change -> {
       if (dummyAlien != null) {
-        drawEntity(this.alien, dummyAlien.coordinate(), APIConstants.ALIEN_HITBOX_SIZE,
-                APIConstants.ALIEN_HITBOX_SIZE);
+        drawEntity(this.alien, dummyAlien.coordinate(), APIConstants.HITBOX_SIZE,
+                APIConstants.HITBOX_SIZE);
         dummyAlien = null;
       }
       if (change.wasAdded() && change.wasRemoved()) {
-        clearEntity(change.getValueRemoved().coordinate(), APIConstants.ALIEN_HITBOX_SIZE,
-                APIConstants.ALIEN_HITBOX_SIZE);
-        drawEntity(this.alien, change.getValueAdded().coordinate(), APIConstants.ALIEN_HITBOX_SIZE,
-                APIConstants.ALIEN_HITBOX_SIZE);
+        clearEntity(change.getValueRemoved().coordinate(), APIConstants.HITBOX_SIZE,
+                APIConstants.HITBOX_SIZE);
+        drawEntity(this.alien, change.getValueAdded().coordinate(), APIConstants.HITBOX_SIZE,
+                APIConstants.HITBOX_SIZE);
       } else if (change.wasAdded()) {
-        drawEntity(this.alien, change.getValueAdded().coordinate(), APIConstants.ALIEN_HITBOX_SIZE,
-                APIConstants.ALIEN_HITBOX_SIZE);
+        drawEntity(this.alien, change.getValueAdded().coordinate(), APIConstants.HITBOX_SIZE,
+                APIConstants.HITBOX_SIZE);
       } else if (change.wasRemoved()) {
-        clearEntity(change.getValueRemoved().coordinate(), APIConstants.ALIEN_HITBOX_SIZE,
-                APIConstants.ALIEN_HITBOX_SIZE);
+        clearEntity(change.getValueRemoved().coordinate(), APIConstants.HITBOX_SIZE,
+                APIConstants.HITBOX_SIZE);
         dummyAlien = change.getValueRemoved();
       }
     });
@@ -125,7 +123,11 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
       if (newState == GameState.ABORTED) {
         openEndingPopup();
       } else if (newState == GameState.PAUSED) {
-        openSettingsPopup();
+        if (viewModel.getAliens().isEmpty()) {
+          openNextRoundPopup();
+        } else {
+          openSettingsPopup();
+        }
       }
     });
   }
@@ -183,13 +185,13 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
     if (!viewModel.getAliens().isEmpty()) {
       viewModel.getAliens().values().forEach((a) ->
             gc.drawImage(alien, a.coordinate().x(), a.coordinate().y(),
-                    APIConstants.ALIEN_HITBOX_SIZE, APIConstants.ALIEN_HITBOX_SIZE));
+                    APIConstants.HITBOX_SIZE, APIConstants.HITBOX_SIZE));
     }
 
     if (!viewModel.getBarriers().isEmpty()) {
       viewModel.getBarriers().values().forEach((b) ->
               gc.drawImage(barrier, b.coordinate().x(), b.coordinate().y(),
-                      APIConstants.ALIEN_HITBOX_SIZE, APIConstants.ALIEN_HITBOX_SIZE));
+                      APIConstants.BARRIER_HITBOX_HEIGHT, APIConstants.BARRIER_HITBOX_HEIGHT));
     }
 
     if (!viewModel.getProjectiles().isEmpty()) {
@@ -200,7 +202,7 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
     if (viewModel.getShipObjectPropertyProperty().get() != null) {
       Ship player = viewModel.getShipObjectPropertyProperty().get();
       gc.drawImage(ship, player.coordinate().x(), player.coordinate().y(),
-              APIConstants.ALIEN_HITBOX_SIZE, APIConstants.ALIEN_HITBOX_SIZE);
+              APIConstants.HITBOX_SIZE, APIConstants.HITBOX_SIZE);
     }
 
   }
