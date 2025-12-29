@@ -149,6 +149,7 @@ public class EntityProvider {
             toRemoveProjectile.add(projectile);
             if (!alien.getHit()) {
               toRemoveAliens.add(alien);
+              service.notifyListeners(spaceInvadersListener -> spaceInvadersListener.updateScore(service.score += Constants.ALIEN_DEATH_POINTS));
             }
             service.notifyListeners(spaceInvadersListener -> spaceInvadersListener.damageAlien(alien.immutableAlien()));
           }

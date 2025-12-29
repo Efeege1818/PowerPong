@@ -8,6 +8,7 @@ import de.hhn.it.devtools.apis.spaceinvaders.Sound;
 import de.hhn.it.devtools.apis.spaceinvaders.SpaceInvadersListener;
 import de.hhn.it.devtools.apis.spaceinvaders.SpaceInvadersService;
 import de.hhn.it.devtools.apis.spaceinvaders.exceptions.IllegalConfigurationException;
+import de.hhn.it.devtools.components.spaceinvaders.utils.Constants;
 import de.hhn.it.devtools.components.spaceinvaders.utils.EntityProvider;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,7 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
   private GameState gameState;
   private int round;
   boolean alienMoveAllowed = true;
-
+  public int score = 0;
   private EntityProvider entityProvider;
 
   /**
@@ -92,6 +93,7 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
     logger.debug("Service NextRound");
     checkIfGameStateIsLegal(GameState.RUNNING);
     this.gameState = GameState.PAUSED;
+    notifyListeners(l -> l.updateScore(score += Constants.ROUND_ENDING_POINTS * round));
     notifyListeners((l) -> l.updateRound(round));
   }
 
