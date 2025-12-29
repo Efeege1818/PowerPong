@@ -51,7 +51,7 @@ public class SpaceInvadersController extends Controller implements Initializable
     newStage.setResizable(false);
     newStage.setTitle("Space Invaders");
     newStage.getIcons().add(new Image(getClass()
-            .getResource("/images/spaceinvaders/alien.png").toExternalForm()));
+            .getResource("/images/spaceinvaders/logo.png").toExternalForm()));
     newStage.show();
     logger.debug("SpaceInvaders Game started");
   }
