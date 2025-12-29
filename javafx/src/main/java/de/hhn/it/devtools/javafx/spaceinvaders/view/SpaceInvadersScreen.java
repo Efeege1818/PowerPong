@@ -1,7 +1,7 @@
 package de.hhn.it.devtools.javafx.spaceinvaders.view;
 
-import de.hhn.it.devtools.apis.spaceinvaders.GameConfiguration;
-import de.hhn.it.devtools.apis.spaceinvaders.SpaceInvadersService;
+import de.hhn.it.devtools.apis.spaceinvaders.*;
+import de.hhn.it.devtools.apis.spaceinvaders.entities.Alien;
 import de.hhn.it.devtools.apis.spaceinvaders.entities.Ship;
 import de.hhn.it.devtools.components.spaceinvaders.SimpleSpaceInvadersService;
 import de.hhn.it.devtools.javafx.spaceinvaders.helper.PopupProvider;
@@ -10,6 +10,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.beans.InvalidationListener;
+import javafx.beans.value.ChangeListener;
+import javafx.collections.MapChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -28,7 +31,6 @@ import org.slf4j.LoggerFactory;
  */
 public class SpaceInvadersScreen extends AnchorPane implements Initializable {
   private static final Logger logger = LoggerFactory.getLogger(SpaceInvadersScreen.class);
-  private static final double SPRITE_SIZE = 25.0;
   // 1x1 transparent PNG as data URL to avoid NPEs when images are missing
   private static final String TRANSPARENT_PNG_DATA =
       "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAA"
@@ -43,6 +45,7 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
   private Stage settingsStage;
   private Stage startStage;
   private Stage nextRoundStage;
+  private Alien dummyAlien;
 
   @FXML
   public Label score;
@@ -59,6 +62,7 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
   /**
    * Constructor for GameScreen.
    */
+  @SuppressWarnings("checkstyle:Indentation")
   public SpaceInvadersScreen(Stage stage, GameConfiguration gameConfiguration) {
     this.spaceInvadersService = new SimpleSpaceInvadersService();
     this.viewModel = new SpaceInvadersViewModel();
@@ -94,11 +98,34 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
     level.textProperty().bind(viewModel.getCurrentRoundProperty().asString());
     viewModel.getCurrentRoundProperty().addListener(((observableValue, oldRound, newRound) ->
             openNextRoundPopup()));
-    viewModel.getSyncProperty().addListener((obs, oldValue, newValue) -> {
-      if (Boolean.TRUE.equals(newValue)) {
-        drawCanvas();
-      } else {
+    viewModel.getAliens().addListener((MapChangeListener<Integer, Alien>)  change -> {
+      if (dummyAlien != null) {
+        drawEntity(this.alien, dummyAlien.coordinate(), APIConstants.ALIEN_HITBOX_SIZE,
+                APIConstants.ALIEN_HITBOX_SIZE);
+        dummyAlien = null;
+      }
+      if (change.wasAdded() && change.wasRemoved()) {
+        clearEntity(change.getValueRemoved().coordinate(), APIConstants.ALIEN_HITBOX_SIZE,
+                APIConstants.ALIEN_HITBOX_SIZE);
+        drawEntity(this.alien, change.getValueAdded().coordinate(), APIConstants.ALIEN_HITBOX_SIZE,
+                APIConstants.ALIEN_HITBOX_SIZE);
+      } else if (change.wasAdded()) {
+        drawEntity(this.alien, change.getValueAdded().coordinate(), APIConstants.ALIEN_HITBOX_SIZE,
+                APIConstants.ALIEN_HITBOX_SIZE);
+      } else if (change.wasRemoved()) {
+        clearEntity(change.getValueRemoved().coordinate(), APIConstants.ALIEN_HITBOX_SIZE,
+                APIConstants.ALIEN_HITBOX_SIZE);
+        dummyAlien = change.getValueRemoved();
+      }
+    });
+    viewModel.getBarriers().addListener((InvalidationListener) change -> drawCanvas());
+    viewModel.getProjectiles().addListener((InvalidationListener) change -> drawCanvas());
+    viewModel.getShipObjectPropertyProperty().addListener(change -> drawCanvas());
+    viewModel.getGameStateObjectProperty().addListener((obs, oldState, newState) -> {
+      if (newState == GameState.ABORTED) {
         openEndingPopup();
+      } else if (newState == GameState.PAUSED) {
+        openSettingsPopup();
       }
     });
   }
@@ -122,10 +149,7 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     // settings ImageView might be null if FXML failed earlier; we validated in ctor
     settings.setImage(loadImageSafe("/images/spaceinvaders/setting.png"));
-    settings.setOnMouseClicked((m) -> {
-      spaceInvadersService.pause();
-      Platform.runLater(this::openSettingsPopup);
-    });
+    settings.setOnMouseClicked((m) -> spaceInvadersService.pause());
 
     Platform.runLater(() -> {
       this.openStartPopup();
@@ -136,6 +160,16 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
       });
     });
 
+  }
+
+  private void clearEntity(Coordinate coordinate, int a, int b) {
+    GraphicsContext gc = canvas.getGraphicsContext2D();
+    gc.clearRect(coordinate.x(), coordinate.y(), a, b);
+  }
+
+  private void drawEntity(Image image, Coordinate coordinate, int a, int b) {
+    GraphicsContext gc = canvas.getGraphicsContext2D();
+    gc.drawImage(image, coordinate.x(), coordinate.y(), a, b);
   }
 
   private void drawCanvas() {
@@ -149,13 +183,13 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
     if (!viewModel.getAliens().isEmpty()) {
       viewModel.getAliens().values().forEach((a) ->
             gc.drawImage(alien, a.coordinate().x(), a.coordinate().y(),
-                    SPRITE_SIZE, SPRITE_SIZE));
+                    APIConstants.ALIEN_HITBOX_SIZE, APIConstants.ALIEN_HITBOX_SIZE));
     }
 
     if (!viewModel.getBarriers().isEmpty()) {
       viewModel.getBarriers().values().forEach((b) ->
               gc.drawImage(barrier, b.coordinate().x(), b.coordinate().y(),
-                      SPRITE_SIZE, SPRITE_SIZE));
+                      APIConstants.ALIEN_HITBOX_SIZE, APIConstants.ALIEN_HITBOX_SIZE));
     }
 
     if (!viewModel.getProjectiles().isEmpty()) {
@@ -166,7 +200,7 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
     if (viewModel.getShipObjectPropertyProperty().get() != null) {
       Ship player = viewModel.getShipObjectPropertyProperty().get();
       gc.drawImage(ship, player.coordinate().x(), player.coordinate().y(),
-              SPRITE_SIZE, SPRITE_SIZE);
+              APIConstants.ALIEN_HITBOX_SIZE, APIConstants.ALIEN_HITBOX_SIZE);
     }
 
   }

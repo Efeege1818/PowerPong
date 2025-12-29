@@ -1,5 +1,6 @@
 package de.hhn.it.devtools.components.spaceinvaders.entities;
 
+import de.hhn.it.devtools.apis.spaceinvaders.APIConstants;
 import de.hhn.it.devtools.apis.spaceinvaders.Coordinate;
 import de.hhn.it.devtools.apis.spaceinvaders.Direction;
 import de.hhn.it.devtools.apis.spaceinvaders.entities.Alien;
@@ -26,7 +27,8 @@ public class SimpleAlien {
    */
   public SimpleAlien(Coordinate coordinate, AlienType alienType, int alienId) {
     this.coordinate = coordinate;
-    hitbox = EntityProvider.fillHitBox(coordinate, 10, 10);
+    hitbox = EntityProvider.fillHitBox(coordinate, APIConstants.ALIEN_HITBOX_SIZE,
+            APIConstants.ALIEN_HITBOX_SIZE);
     this.alienType = alienType;
     hitPoints = 3;
     this.alienId = alienId;
@@ -51,13 +53,16 @@ public class SimpleAlien {
   public void move(Direction direction) {
     if (direction == Direction.RIGHT) {
       coordinate = new Coordinate(coordinate.x() + 1, coordinate.y());
-      this.hitbox = EntityProvider.fillHitBox(coordinate, 10, 10);
+      this.hitbox = EntityProvider.fillHitBox(coordinate, APIConstants.ALIEN_HITBOX_SIZE,
+              APIConstants.ALIEN_HITBOX_SIZE);
     } else if (direction == Direction.LEFT) {
       coordinate = new Coordinate(coordinate.x() - 1, coordinate.y());
-      this.hitbox = EntityProvider.fillHitBox(coordinate, 10, 10);
+      this.hitbox = EntityProvider.fillHitBox(coordinate, APIConstants.ALIEN_HITBOX_SIZE,
+              APIConstants.ALIEN_HITBOX_SIZE);
     } else if (direction == Direction.DOWN) {
       coordinate = new Coordinate(coordinate.x(), coordinate.y() + 1);
-      this.hitbox = EntityProvider.fillHitBox(coordinate, 10, 10);
+      this.hitbox = EntityProvider.fillHitBox(coordinate, APIConstants.ALIEN_HITBOX_SIZE,
+              APIConstants.ALIEN_HITBOX_SIZE);
     }
   }
 
@@ -71,5 +76,6 @@ public class SimpleAlien {
   }
 
   public ArrayList<Coordinate> getHitbox() { return hitbox; }
+
   public Coordinate getCoordinate() { return coordinate; }
 }

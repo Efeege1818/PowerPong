@@ -47,10 +47,7 @@ public class SpaceInvadersViewModel implements SpaceInvadersListener {
 
   @Override
   public void updateBarrier(Barrier barrier) {
-    Platform.runLater(() -> {
-      this.barriers.put(barrier.barrierId(), barrier);
-      sync();
-    });
+    Platform.runLater(() -> this.barriers.put(barrier.barrierId(), barrier));
   }
 
   @Override
@@ -59,31 +56,27 @@ public class SpaceInvadersViewModel implements SpaceInvadersListener {
       for (Alien alien : aliens) {
         this.aliens.put(alien.alienId(), alien);
       }
-      sync();
     });
   }
 
   @Override
   public void updateShip(Ship ship) {
-    Platform.runLater((() -> {
-      this.shipObjectProperty.setValue(ship);
-      sync();
-    }));
+    Platform.runLater((() -> this.shipObjectProperty.setValue(ship)));
   }
 
   @Override
   public void updateProjectile(Projectile projectile) {
-    Platform.runLater(() -> {
-      this.projectiles.put(projectile.projectileId(), projectile);
-      sync();
-    });
+    Platform.runLater(() -> this.projectiles.put(projectile.projectileId(), projectile));
   }
 
   @Override
   public void damageAlien(Alien alien) {
     Platform.runLater(() -> {
-      this.aliens.put(alien.alienId(), alien);
-      sync();
+      if (alien.hitPoints() == 0) {
+        this.aliens.remove(alien.alienId());
+      } else {
+        this.aliens.put(alien.alienId(), alien);
+      }
     });
   }
 
@@ -145,8 +138,8 @@ public class SpaceInvadersViewModel implements SpaceInvadersListener {
     return running;
   }
 
-  private void sync() {
-    this.running.set(true);
+  public ObjectProperty<GameState> getGameStateObjectProperty() {
+    return gameStateObjectProperty;
   }
 
 }

@@ -81,6 +81,9 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
     logger.debug("Service Resume");
     checkIfGameStateIsLegal(GameState.PAUSED);
     this.gameState = GameState.RUNNING;
+    synchronized (simpleGameLoop) {
+      this.simpleGameLoop.notify();
+    }
     notifyListeners((l) -> l.changedGameState(gameState));
   }
 

@@ -22,7 +22,7 @@ public class SimpleBarrier {
    */
   public SimpleBarrier(Coordinate coordinate, int id) {
     this.coordinate = coordinate;
-    this.hitbox = EntityProvider.fillHitBox(coordinate, 20, 10);
+    this.hitbox = EntityProvider.fillHitBox(coordinate, 40, 25);
     this.id = id;
   }
 
