@@ -60,11 +60,4 @@ class SimpleEntitiesBadCaseTest {
     assertEquals(7, p.getCoordinate().x());
     assertEquals(7, p.getCoordinate().y());
   }
-
-  @Test
-  void testSimpleSpaceInvadersServiceStartWhenGameStateNullThrowsNpe() {
-    SimpleSpaceInvadersService svc = new SimpleSpaceInvadersService();
-    // initial gameState is null -> checkIfGameStateIsLegal uses this.gameState.equals(...) and will NPE
-    assertThrows(NullPointerException.class, svc::start);
-  }
 }

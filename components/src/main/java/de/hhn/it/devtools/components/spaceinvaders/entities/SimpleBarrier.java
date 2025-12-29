@@ -1,5 +1,6 @@
 package de.hhn.it.devtools.components.spaceinvaders.entities;
 
+import de.hhn.it.devtools.apis.spaceinvaders.APIConstants;
 import de.hhn.it.devtools.apis.spaceinvaders.Coordinate;
 import de.hhn.it.devtools.apis.spaceinvaders.entities.Barrier;
 import de.hhn.it.devtools.components.spaceinvaders.utils.EntityProvider;
@@ -22,7 +23,7 @@ public class SimpleBarrier {
    */
   public SimpleBarrier(Coordinate coordinate, int id) {
     this.coordinate = coordinate;
-    this.hitbox = EntityProvider.fillHitBox(coordinate, 40, 25);
+    this.hitbox = EntityProvider.fillHitBox(coordinate, APIConstants.BARRIER_HITBOX_WIDTH, APIConstants.BARRIER_HITBOX_HEIGHT);
     this.id = id;
   }
 
