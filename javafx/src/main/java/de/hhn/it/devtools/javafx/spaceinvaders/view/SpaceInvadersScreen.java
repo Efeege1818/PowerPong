@@ -42,6 +42,7 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
   private final Image alien;
   private final Image ship;
   private final Image barrier;
+  private final Image explosion;
   private Stage settingsStage;
   private Stage startStage;
   private Stage nextRoundStage;
@@ -93,6 +94,7 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
     this.alien = loadImageSafe("/images/spaceinvaders/alien.png");
     this.ship = loadImageSafe("/images/spaceinvaders/ship.png");
     this.barrier = loadImageSafe("/images/spaceinvaders/barrier.png");
+    this.explosion = loadImageSafe("/images/spaceinvaders/explosion.png");
 
     score.textProperty().bind(viewModel.getScoreProperty().asString());
     level.textProperty().bind(viewModel.getCurrentRoundProperty().asString());
@@ -100,7 +102,7 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
             openNextRoundPopup()));
     viewModel.getAliens().addListener((MapChangeListener<Integer, Alien>)  change -> {
       if (dummyAlien != null) {
-        drawEntity(this.alien, dummyAlien.coordinate(), APIConstants.ALIEN_HITBOX_SIZE,
+        clearEntity(dummyAlien.coordinate(), APIConstants.ALIEN_HITBOX_SIZE,
                 APIConstants.ALIEN_HITBOX_SIZE);
         dummyAlien = null;
       }
@@ -116,6 +118,8 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
         clearEntity(change.getValueRemoved().coordinate(), APIConstants.ALIEN_HITBOX_SIZE,
                 APIConstants.ALIEN_HITBOX_SIZE);
         dummyAlien = change.getValueRemoved();
+        drawEntity(explosion, dummyAlien.coordinate(), APIConstants.ALIEN_HITBOX_SIZE,
+                APIConstants.ALIEN_HITBOX_SIZE);
       }
     });
     viewModel.getBarriers().addListener((InvalidationListener) change -> drawCanvas());
