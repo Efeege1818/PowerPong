@@ -53,7 +53,21 @@ public class SpaceInvadersController extends Controller implements Initializable
     newStage.getIcons().add(new Image(getClass()
             .getResource("/images/spaceinvaders/alien.png").toExternalForm()));
     newStage.show();
-    logger.info("SpaceInvaders Game started");
+    logger.debug("SpaceInvaders Game started");
   }
 
+  @Override
+  void pause() {
+    logger.debug("pause: SpaceInvadersConfiguration is pausing from stage ...");
+  }
+
+  @Override
+  public void resume() {
+    logger.debug("resume: SpaceInvadersConfiguration is back on stage ...");
+  }
+
+  @Override
+  public void shutdown() {
+    logger.debug("shutdown: - SpaceInvadersConfiguration is shutting down ...");
+  }
 }
