@@ -104,7 +104,7 @@ public class EntityProvider {
   /**
    * Method to generate Aliens on the field.
    */
-  private void generateAliens() {
+  public void generateAliens() {
     int row = 1;
     int col = 1;
     for (int i = 1; i <= Constants.NUMBER_OF_ALIENS; i++) {

@@ -22,17 +22,6 @@ class SimpleServiceEdgeCaseTest {
     svc.triggeredByGameLoop();
   }
 
-  @Test
-  void testNextRoundNotifiesWhenRunning() throws Exception {
-    SimpleSpaceInvadersService svc = new SimpleSpaceInvadersService();
-    // set gameState to RUNNING
-    Field gs = svc.getClass().getDeclaredField("gameState");
-    gs.setAccessible(true);
-    gs.set(svc, GameState.RUNNING);
-
-    // should not throw when calling nextRound
-    svc.nextRound();
-  }
 
   @Test
   void testAbortSetsEntityProviderNullAndStopsLoop() throws Exception {

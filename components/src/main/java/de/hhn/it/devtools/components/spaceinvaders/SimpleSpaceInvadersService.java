@@ -24,7 +24,7 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
   private GameConfiguration gameConfiguration;
   private SimpleGameLoop simpleGameLoop;
   private GameState gameState;
-  private int round;
+  private int round = 1;
   boolean alienMoveAllowed = true;
   public int score = 0;
   private EntityProvider entityProvider;
@@ -74,6 +74,9 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
     logger.debug("Service Pause");
     checkIfGameStateIsLegal(GameState.RUNNING);
     this.gameState = GameState.PAUSED;
+    if (entityProvider.getAliens().isEmpty()) {
+      notifyListeners(l -> l.updateScore(score += Constants.ROUND_ENDING_POINTS * round));
+    }
     notifyListeners((l) -> l.changedGameState(gameState));
   }
 
@@ -91,10 +94,14 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
   @Override
   public void nextRound() throws IllegalStateException {
     logger.debug("Service NextRound");
-    checkIfGameStateIsLegal(GameState.RUNNING);
-    this.gameState = GameState.PAUSED;
-    notifyListeners(l -> l.updateScore(score += Constants.ROUND_ENDING_POINTS * round));
-    notifyListeners((l) -> l.updateRound(round));
+    entityProvider.generateAliens();
+    checkIfGameStateIsLegal(GameState.PAUSED);
+    this.gameState = GameState.RUNNING;
+    notifyListeners((l) -> l.changedGameState(gameState));
+    notifyListeners((l) -> l.updateRound(++round));
+    synchronized (simpleGameLoop) {
+      this.simpleGameLoop.notify();
+    }
   }
 
   @Override
@@ -178,7 +185,7 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
       return;
     }
     if (entityProvider.getAliens().isEmpty()) {
-      nextRound();
+      pause();
     }
     entityProvider.updateProjectiles();
     entityProvider.checkCollision();

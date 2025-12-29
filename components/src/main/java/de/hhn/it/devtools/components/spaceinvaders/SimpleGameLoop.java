@@ -1,6 +1,6 @@
 package de.hhn.it.devtools.components.spaceinvaders;
 
-import de.hhn.it.devtools.apis.spaceinvaders.APIConstants;
+import de.hhn.it.devtools.components.spaceinvaders.utils.Constants;
 import de.hhn.it.devtools.apis.spaceinvaders.GameState;
 
 
@@ -34,7 +34,7 @@ public class SimpleGameLoop extends Thread {
       service.triggeredByGameLoop();
       try {
         synchronized (this) {
-          wait(APIConstants.THREAD_WAIT);
+          wait(Constants.THREAD_WAIT);
         }
       } catch (InterruptedException e) {
         return;

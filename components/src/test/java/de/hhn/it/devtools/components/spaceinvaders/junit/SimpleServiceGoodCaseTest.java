@@ -81,8 +81,8 @@ class SimpleServiceGoodCaseTest {
       @Override public void updateProjectile(de.hhn.it.devtools.apis.spaceinvaders.entities.Projectile projectile) {}
       @Override public void damageAlien(de.hhn.it.devtools.apis.spaceinvaders.entities.Alien alien) {}
       @Override public void updateSound(de.hhn.it.devtools.apis.spaceinvaders.Sound sound) {}
-      @Override public void changedGameState(GameState gameState) {}
-      @Override public void updateRound(int round) { nextRoundCalled.set(true); }
+      @Override public void changedGameState(GameState gameState) {if (gameState == GameState.PAUSED) nextRoundCalled.set(true); }
+      @Override public void updateRound(int round) {}
       @Override public void gameEnded() {}
       @Override public void updateScore(int score) {}
       @Override public void updateGameConfiguration(de.hhn.it.devtools.apis.spaceinvaders.GameConfiguration configuration) {}
