@@ -200,4 +200,12 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
   }
 
 
+  public EnemyToolbox getEnemyToolbox() {
+    return enemyToolbox;
+  }
+
+  public TowerToolbox getTowerToolbox() {
+    return towerToolbox;
+  }
+
 }
