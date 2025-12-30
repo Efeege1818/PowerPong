@@ -24,7 +24,7 @@ import java.util.Random;
 public class PowerUpManager {
 
     private static final double POWERUP_SPAWN_INTERVAL = 6.0; // seconds
-    private static final double POWERUP_RADIUS = 12.0;
+    private static final double POWERUP_RADIUS = 20.0; // Increased from 12.0
     private static final double EFFECT_DURATION_SECONDS = 8.0;
     private static final double ENLARGE_FACTOR = 1.4;
     private static final double SHRINK_FACTOR = 0.65;
@@ -62,16 +62,50 @@ public class PowerUpManager {
         applyContinuousEffects();
     }
 
+    private double nextSpawnThreshold = 5.0; // Initial threshold
+
     private void maybeSpawnPowerUp() {
-        if (spawnTimer < POWERUP_SPAWN_INTERVAL || powerUps.size() >= 3) {
+        // Randomize spawn interval (5 to 12 seconds)
+        if (spawnTimer < nextSpawnThreshold) {
             return;
         }
-        spawnTimer -= POWERUP_SPAWN_INTERVAL;
-        double margin = PhysicsEngine.BALL_RADIUS * 2;
-        double x = margin + random.nextDouble() * (PhysicsEngine.FIELD_WIDTH - 2 * margin);
-        double y = margin + random.nextDouble() * (PhysicsEngine.FIELD_HEIGHT - 2 * margin);
-        PowerUpType type = PowerUpType.values()[random.nextInt(PowerUpType.values().length)];
-        powerUps.add(new FieldPowerUp(x, y, type));
+
+        // Reset timer and pick new random interval immediately
+        spawnTimer = 0;
+        nextSpawnThreshold = 5.0 + random.nextDouble() * 7.0;
+
+        // "Natural" density: High chance to stop if we already have 2, hard limit at 3
+        if (powerUps.size() >= 3) {
+            return;
+        }
+        if (powerUps.size() == 2 && random.nextDouble() < 0.6) {
+            // 60% chance to skip spawn if we already have 2, keeping the field cleaner
+            return;
+        }
+
+        // Try multiple times to find a non-overlapping position
+        for (int i = 0; i < 10; i++) {
+            double margin = 60.0;
+            double x = margin + random.nextDouble() * (PhysicsEngine.FIELD_WIDTH - 2 * margin);
+            double y = margin + random.nextDouble() * (PhysicsEngine.FIELD_HEIGHT - 2 * margin);
+
+            if (!isOverlapping(x, y)) {
+                PowerUpType type = PowerUpType.values()[random.nextInt(PowerUpType.values().length)];
+                powerUps.add(new FieldPowerUp(x, y, type));
+                break;
+            }
+        }
+    }
+
+    private boolean isOverlapping(double x, double y) {
+        double minDistance = POWERUP_RADIUS * 2 + 30.0; // PowerUps + 30px buffer
+        for (FieldPowerUp other : powerUps) {
+            double dist = Math.hypot(other.x - x, other.y - y);
+            if (dist < minDistance) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void handlePowerUpCollisions() {
