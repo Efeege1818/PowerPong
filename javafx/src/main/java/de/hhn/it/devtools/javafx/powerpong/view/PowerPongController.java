@@ -36,9 +36,9 @@ public class PowerPongController extends StackPane {
   @FXML
   private VBox menuBox;
   @FXML
-  private VBox gameOverBox;
+  private StackPane menuDecorations;
   @FXML
-  private VBox powerUpLegend;
+  private VBox gameOverBox;
   @FXML
   private Label scoreLabel;
   @FXML
@@ -108,12 +108,13 @@ public class PowerPongController extends StackPane {
       lastSelectedMode = mode;
       viewModel.startGame(mode);
       menuBox.setVisible(false);
+      if (menuDecorations != null) {
+        menuDecorations.setVisible(false);
+      }
       gameOverBox.setVisible(false);
       gameCanvas.setVisible(true);
-      scoreLabel.setVisible(true);
-      if (powerUpLegend != null) {
-        powerUpLegend.setVisible(mode == GameMode.POWERUP_DUEL);
-      }
+      // Score is now rendered on canvas
+      scoreLabel.setVisible(false);
 
       if (menuBox.getScene() != null) {
         menuBox.getScene().getRoot().requestFocus();
@@ -126,14 +127,19 @@ public class PowerPongController extends StackPane {
   }
 
   @FXML
+  public void onExitGame(ActionEvent event) {
+    System.exit(0);
+  }
+
+  @FXML
   public void onBackToMenu(ActionEvent event) {
     gameTimer.stop();
     gameOverBox.setVisible(false);
     menuBox.setVisible(true);
-    scoreLabel.setVisible(false);
-    if (powerUpLegend != null) {
-      powerUpLegend.setVisible(false);
+    if (menuDecorations != null) {
+      menuDecorations.setVisible(true);
     }
+    scoreLabel.setVisible(false);
     viewModel.endGame();
   }
 
@@ -185,6 +191,8 @@ public class PowerPongController extends StackPane {
     };
   }
 
+  private final GameRenderer renderer = new GameRenderer();
+
   private class GameTimer extends AnimationTimer {
     @Override
     public void handle(long now) {
@@ -201,70 +209,6 @@ public class PowerPongController extends StackPane {
 
   private void render(GameState state) {
     GraphicsContext gc = gameCanvas.getGraphicsContext2D();
-
-    gc.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
-
-    gc.setFill(Color.BLACK);
-    gc.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
-
-    drawFieldDecorations(gc);
-
-    if (state.player1Paddle() != null) {
-      drawPaddle(gc, state.player1Paddle(), Color.BLUE);
-    }
-    if (state.player2Paddle() != null) {
-      drawPaddle(gc, state.player2Paddle(), Color.RED);
-    }
-
-    gc.setFill(Color.WHITE);
-    List<BallState> balls = state.balls();
-    if (balls != null) {
-      for (BallState ball : balls) {
-        double r = ball.radius();
-        double d = r * 2;
-        gc.fillOval(ball.xPosition() - r, ball.yPosition() - r, d, d);
-      }
-    }
-
-    List<PowerUpState> powerUps = state.activePowerUpsOnField();
-    if (powerUps != null) {
-      for (PowerUpState powerUp : powerUps) {
-        drawPowerUp(gc, powerUp);
-      }
-    }
-  }
-
-  private void drawFieldDecorations(GraphicsContext gc) {
-    gc.setStroke(Color.GRAY);
-    gc.setLineWidth(2);
-    gc.setLineDashes(10);
-    gc.strokeLine(GAME_WIDTH / 2, 0, GAME_WIDTH / 2, GAME_HEIGHT);
-    gc.setLineDashes(null);
-  }
-
-  private void drawPaddle(GraphicsContext gc, PaddleState paddle, Color color) {
-    gc.setFill(color);
-    gc.fillRoundRect(paddle.xPosition(), paddle.yPosition() - paddle.height() / 2,
-        paddle.width(), paddle.height(), 10, 10);
-  }
-
-  private void drawPowerUp(GraphicsContext gc, PowerUpState powerUp) {
-    gc.setFill(getColorForPowerUp(powerUp.type()));
-    double r = powerUp.radius();
-    double d = r * 2;
-    gc.fillOval(powerUp.xPosition() - r, powerUp.yPosition() - r, d, d);
-  }
-
-  private Color getColorForPowerUp(PowerUpType type) {
-    return switch (type) {
-      case BIGGER_PADDLE -> Color.LIGHTGREEN;
-      case SMALLER_ENEMY_PADDLE -> Color.INDIANRED;
-      case DOUBLE_BALL -> Color.WHITE;
-      case SHIELD -> Color.LIGHTBLUE;
-      case BARRIERLESS -> Color.CYAN;
-      case SLOW_ENEMY_PADDLE -> Color.YELLOW;
-      case FASTER_BALL_ENEMY_SIDE -> Color.ORANGE;
-      default -> Color.MAGENTA;
-    };
+    renderer.render(gc, state);
   }
 }

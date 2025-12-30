@@ -7,123 +7,125 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Circle?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.effect.Glow?>
 <?import javafx.scene.text.Font?>
 
 <fx:root prefHeight="600.0" prefWidth="800.0" type="StackPane" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Canvas fx:id="gameCanvas" height="600.0" width="800.0" />
-      <Label fx:id="scoreLabel" text="P1: 0 - P2: 0" textFill="WHITE" StackPane.alignment="TOP_CENTER" translateY="20.0" visible="false">
+      
+      <!-- HUD / In-Game Overlay -->
+      <Label fx:id="scoreLabel" text="0 : 0" textFill="WHITE" StackPane.alignment="TOP_CENTER" translateY="30.0" visible="false">
          <font>
-            <Font name="Monospaced Bold" size="36.0" />
+            <Font name="Courier New Bold" size="48.0" />
          </font>
+         <effect>
+            <javafx.scene.effect.Glow level="0.8" />
+         </effect>
       </Label>
-      <VBox fx:id="powerUpLegend" alignment="BOTTOM_LEFT" spacing="6.0" StackPane.alignment="BOTTOM_LEFT" translateX="20.0" translateY="-20.0" visible="false" style="-fx-background-color: rgba(0,0,0,0.6); -fx-padding: 10.0;">
+      
+
+
+      <!-- Game Over Overlay -->
+      <VBox fx:id="gameOverBox" alignment="CENTER" spacing="25.0" style="-fx-background-color: rgba(0, 0, 0, 0.85);" visible="false">
          <children>
-            <Label text="Power-Ups" textFill="WHITE">
+            <Label fx:id="winnerLabel" text="WINNER" textFill="WHITE">
                <font>
-                  <Font size="16.0" />
+                  <Font name="Arial Black" size="64.0" />
                </font>
+               <effect>
+                  <javafx.scene.effect.DropShadow color="WHITE" radius="20" spread="0.4" />
+               </effect>
             </Label>
-            <HBox spacing="6.0">
-               <children>
-                  <Circle radius="5.0" fill="LIGHTGREEN" />
-                  <Label text="Bigger Paddle" textFill="WHITE" />
-               </children>
-            </HBox>
-            <HBox spacing="6.0">
-               <children>
-                  <Circle radius="5.0" fill="INDIANRED" />
-                  <Label text="Smaller Enemy Paddle" textFill="WHITE" />
-               </children>
-            </HBox>
-            <HBox spacing="6.0">
-               <children>
-                  <Circle radius="5.0" fill="YELLOW" />
-                  <Label text="Slow Enemy Paddle" textFill="WHITE" />
-               </children>
-            </HBox>
-            <HBox spacing="6.0">
-               <children>
-                  <Circle radius="5.0" fill="CYAN" />
-                  <Label text="Barrierless" textFill="WHITE" />
-               </children>
-            </HBox>
-            <HBox spacing="6.0">
-               <children>
-                  <Circle radius="5.0" fill="WHITE" />
-                  <Label text="Double Ball" textFill="WHITE" />
-               </children>
-            </HBox>
-            <HBox spacing="6.0">
-               <children>
-                  <Circle radius="5.0" fill="ORANGE" />
-                  <Label text="Faster Ball (Enemy Side)" textFill="WHITE" />
-               </children>
-            </HBox>
-            <HBox spacing="6.0">
-               <children>
-                  <Circle radius="5.0" fill="LIGHTBLUE" />
-                  <Label text="Shield" textFill="WHITE" />
-               </children>
+            
+            <HBox alignment="CENTER" spacing="20.0">
+                <Button mnemonicParsing="false" onAction="#onRestartGame" text="REMATCH" style="-fx-background-color: transparent; -fx-text-fill: #00f3ff; -fx-border-color: #00f3ff; -fx-border-width: 2px; -fx-border-radius: 5; -fx-padding: 10 30; -fx-cursor: hand; -fx-font-weight: bold; -fx-font-size: 18px;">
+                   <effect>
+                      <javafx.scene.effect.Glow level="0.5"/>
+                   </effect>
+                </Button>
+                <Button mnemonicParsing="false" onAction="#onBackToMenu" text="MENU" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-border-color: white; -fx-border-width: 2px; -fx-border-radius: 5; -fx-padding: 10 30; -fx-cursor: hand; -fx-font-weight: bold; -fx-font-size: 18px;">
+                </Button>
             </HBox>
          </children>
       </VBox>
-      <VBox fx:id="gameOverBox" alignment="CENTER" spacing="20.0" style="-fx-background-color: rgba(0,0,0,0.8);" visible="false">
+
+      <!-- Main Menu (Premium Glassmorphism Style) -->
+      <StackPane fx:id="menuDecorations" mouseTransparent="true" visible="true">
          <children>
-            <Label fx:id="winnerLabel" text="PLAYER 1 WINS!" textFill="WHITE">
-               <font>
-                  <Font name="System Bold" size="64.0" />
-               </font>
-            </Label>
-            <Button mnemonicParsing="false" onAction="#onRestartGame" text="Play Again">
-               <font>
-                  <Font size="24.0" />
-               </font>
-            </Button>
-            <Button mnemonicParsing="false" onAction="#onBackToMenu" text="Back to Menu">
-               <font>
-                  <Font size="24.0" />
-               </font>
-            </Button>
+             <!-- Subtle glowing background orb effect for atmosphere -->
+             <javafx.scene.shape.Circle radius="300" fill="radial-gradient(focus-distance 0% , center 50% 50% , radius 50% , rgba(0, 243, 255, 0.1), transparent)" />
          </children>
-      </VBox>
-      <VBox fx:id="menuBox" alignment="CENTER" spacing="16.0" style="-fx-background-color: rgba(255,255,255,0.9);">
+      </StackPane>
+
+      <VBox fx:id="menuBox" alignment="CENTER" spacing="30.0" visible="true">
+         <style>
+            -fx-background-color: rgba(10, 10, 25, 0.85);
+            -fx-background-radius: 30;
+            -fx-border-radius: 30;
+            -fx-border-color: rgba(255, 255, 255, 0.1);
+            -fx-border-width: 1;
+            -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 20, 0, 0, 0);
+            -fx-max-width: 500;
+            -fx-max-height: 520;
+            -fx-padding: 40;
+         </style>
          <children>
-            <Label text="PowerPong">
-               <font>
-                  <Font name="System Bold" size="64.0" />
-               </font>
-            </Label>
-            <Label text="Select Mode">
-               <font>
-                  <Font size="20.0" />
-               </font>
-            </Label>
-            <Button mnemonicParsing="false" onAction="#onStartClassic" prefWidth="300.0" text="Classic Duel (PvP)">
-               <font>
-                  <Font size="20.0" />
-               </font>
-            </Button>
-            <Button mnemonicParsing="false" onAction="#onStartPowerUp" prefWidth="300.0" text="Power-Up Duel">
-               <font>
-                  <Font size="20.0" />
-               </font>
-            </Button>
-            <Button mnemonicParsing="false" onAction="#onStartVsAi" prefWidth="300.0" text="Player vs AI">
-               <font>
-                  <Font size="20.0" />
-               </font>
-            </Button>
-            <Button mnemonicParsing="false" onAction="#onStartSurvival" prefWidth="300.0" text="Survival">
-               <font>
-                  <Font size="20.0" />
-               </font>
-            </Button>
-            <Label text="Controls: W/S = Left, Up/Down = Right" textFill="GRAY">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
+            <!-- Logo Section -->
+            <VBox alignment="CENTER" spacing="5">
+                <Label text="POWER" textFill="WHITE">
+                   <font>
+                      <Font name="Arial Black" size="52.0" />
+                   </font>
+                   <effect>
+                      <javafx.scene.effect.DropShadow color="#00f3ff" radius="15" spread="0.3" />
+                   </effect>
+                </Label>
+                <Label text="PONG" textFill="WHITE" translateY="-15">
+                   <font>
+                      <Font name="Arial Black" size="52.0" />
+                   </font>
+                   <effect>
+                      <javafx.scene.effect.DropShadow color="#ff00ff" radius="15" spread="0.3" />
+                   </effect>
+                </Label>
+            </VBox>
+
+            <!-- Menu Buttons -->
+            <VBox spacing="15.0" alignment="CENTER" prefWidth="400.0">
+                <!-- Classic Mode -->
+                <Button mnemonicParsing="false" onAction="#onStartClassic" text="CLASSIC DUEL" maxWidth="Infinity" style="-fx-background-color: rgba(0, 243, 255, 0.15); -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 18px; -fx-background-radius: 10; -fx-cursor: hand; -fx-border-color: rgba(0, 243, 255, 0.5); -fx-border-radius: 10;">
+                    <effect>
+                        <javafx.scene.effect.Glow level="0.3"/>
+                    </effect>
+                </Button>
+                
+                <!-- VS AI -->
+                <Button mnemonicParsing="false" onAction="#onStartVsAi" text="PLAYER VS AI" maxWidth="Infinity" style="-fx-background-color: rgba(10, 255, 10, 0.15); -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 18px; -fx-background-radius: 10; -fx-cursor: hand; -fx-border-color: rgba(10, 255, 10, 0.5); -fx-border-radius: 10;">
+                    <effect>
+                        <javafx.scene.effect.Glow level="0.3"/>
+                    </effect>
+                </Button>
+                
+                <!-- Power-Up Mode (Featured) -->
+                <Button mnemonicParsing="false" onAction="#onStartPowerUp" text="⚡ POWER-UP CHAOS ⚡" maxWidth="Infinity" style="-fx-background-color: linear-gradient(to right, #ff00cc, #333399); -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 20px; -fx-background-radius: 10; -fx-cursor: hand; -fx-effect: dropshadow(three-pass-box, rgba(255, 0, 255, 0.4), 10, 0, 0, 0);">
+                </Button>
+                
+                <!-- Survival -->
+                <Button mnemonicParsing="false" onAction="#onStartSurvival" text="SURVIVAL" maxWidth="Infinity" style="-fx-background-color: rgba(255, 255, 0, 0.15); -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 18px; -fx-background-radius: 10; -fx-cursor: hand; -fx-border-color: rgba(255, 255, 0, 0.5); -fx-border-radius: 10;">
+                </Button>
+            </VBox>
+            
+            <!-- Footer -->
+            <HBox alignment="CENTER" spacing="20.0">
+                 <padding>
+                     <Insets top="10.0" />
+                 </padding>
+                 <Button mnemonicParsing="false" text="SETTINGS" style="-fx-background-color: transparent; -fx-text-fill: gray; -fx-font-size: 14px; -fx-cursor: hand; -fx-underline: true;"/>
+                 <Button mnemonicParsing="false" onAction="#onExitGame" text="EXIT GAME" style="-fx-background-color: transparent; -fx-text-fill: #ff4444; -fx-font-size: 14px; -fx-cursor: hand; -fx-font-weight: bold;"/>
+            </HBox>
          </children>
       </VBox>
    </children>
