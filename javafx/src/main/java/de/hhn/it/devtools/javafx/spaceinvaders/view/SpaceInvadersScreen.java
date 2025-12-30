@@ -22,7 +22,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +35,7 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
   private final Stage mainStage;
   private final SpaceInvadersService spaceInvadersService;
   private final SpaceInvadersViewModel viewModel;
+  private final Stage instance;
   private CanvasProvider canvasProvider;
   private PopupConfigurations popupConfigurations;
 
@@ -53,12 +54,12 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
   /**
    * Constructor for GameScreen.
    */
-  @SuppressWarnings("checkstyle:Indentation")
-  public SpaceInvadersScreen(Stage stage, GameConfiguration gameConfiguration) {
+  public SpaceInvadersScreen(Stage stage, GameConfiguration gameConfiguration, Stage instance) {
+    this.instance = instance;
     this.spaceInvadersService = new SimpleSpaceInvadersService();
     this.viewModel = new SpaceInvadersViewModel();
     this.mainStage = stage;
-
+    setBackground();
     this.spaceInvadersService.addListener(viewModel);
     this.spaceInvadersService.configure(gameConfiguration);
 
@@ -74,12 +75,12 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
       throw new IllegalStateException("Failed to load SpaceInvaders FXML", exception);
     }
 
-    // FXML fields must be available after load - validate early to fail fast
     if (score == null || level == null || settings == null || canvas == null) {
+      spaceInvadersService.abort();
+      mainStage.show();
       throw new IllegalStateException("FXML did not inject required controls: "
              + "score/level/settings/canvas");
     }
-
     score.textProperty().bind(viewModel.getScoreProperty().asString());
     level.textProperty().bind(viewModel.getCurrentRoundProperty().asString());
     viewModel.getShipObjectPropertyProperty().addListener(new ShipListener(canvasProvider));
@@ -96,11 +97,11 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
     settings.setImage(Images.settingsImage.getImage());
     settings.setOnMouseClicked((m) -> spaceInvadersService.pause());
     canvasProvider = new CanvasProvider(canvas);
+    popupConfigurations = new PopupConfigurations(spaceInvadersService,
+            mainStage,
+            instance,
+            viewModel);
     Platform.runLater(() -> {
-      popupConfigurations = new PopupConfigurations(spaceInvadersService,
-              mainStage,
-              (Stage) getScene().getWindow(),
-              viewModel);
       popupConfigurations.openStartPopup();
       getScene().getWindow().setOnCloseRequest((e) -> {
         spaceInvadersService.removeListener(viewModel);
@@ -108,7 +109,18 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
         spaceInvadersService.abort();
       });
     });
+  }
 
+  private void setBackground() {
+    BackgroundSize bgSize = new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, true, true, false, true);
+    BackgroundImage bgImage = new BackgroundImage(
+            Images.background.getImage(),
+            BackgroundRepeat.NO_REPEAT,
+            BackgroundRepeat.NO_REPEAT,
+            BackgroundPosition.DEFAULT,
+            bgSize
+    );
+    this.setBackground(new Background(bgImage));
   }
 
 }
