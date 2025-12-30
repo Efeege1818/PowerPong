@@ -245,6 +245,7 @@ public class EntityProvider {
     for (SimpleAlien alien : aliens.values()) {
       for (SimpleBarrier barrier : getNearbyBarriers(alien.getCoordinate())) {
         if (alien.getHitbox().stream().anyMatch(barrier.getHitbox()::contains)) {
+          alien.setHitPoints(0);
           toRemoveAliens.add(alien);
           toRemoveBarriers.add(barrier);
           break;

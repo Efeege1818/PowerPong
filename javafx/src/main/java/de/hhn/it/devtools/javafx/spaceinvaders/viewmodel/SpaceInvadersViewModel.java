@@ -69,8 +69,12 @@ public class SpaceInvadersViewModel implements SpaceInvadersListener {
   @Override
   public void updateProjectiles(Projectile[] projectiles) {
     Platform.runLater(() -> {
-      for (int i = projectiles.length - 1; i >= 0; i--) {
-        this.projectiles.put(projectiles[i].projectileId(), projectiles[i]);
+      for (Projectile projectile : projectiles) {
+        if (projectile.projectileId() < 0) {
+          this.projectiles.remove(projectile.projectileId());
+        } else {
+          this.projectiles.put(projectile.projectileId(), projectile);
+        }
       }
     });
   }

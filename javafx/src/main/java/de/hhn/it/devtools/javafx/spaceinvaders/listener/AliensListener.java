@@ -13,7 +13,6 @@ import javafx.scene.image.Image;
 public class AliensListener implements MapChangeListener<Integer, Alien> {
   private final Image alienImage = Images.alienImage1.getImage();
   private final CanvasProvider canvasProvider;
-  private Alien dummyAlien;
 
   /**
    * Constructor for AliensListener.
@@ -27,12 +26,6 @@ public class AliensListener implements MapChangeListener<Integer, Alien> {
 
   @Override
   public void onChanged(Change<? extends Integer, ? extends Alien> change) {
-    if (dummyAlien != null) {
-      canvasProvider.drawEntity(this.alienImage, dummyAlien.coordinate(),
-              APIConstants.HITBOX_SIZE,
-              APIConstants.HITBOX_SIZE);
-      dummyAlien = null;
-    }
     if (change.wasAdded() && change.wasRemoved()) {
       canvasProvider.clearEntity(change.getValueRemoved().coordinate(),
               APIConstants.HITBOX_SIZE,

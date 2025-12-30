@@ -20,6 +20,8 @@ public enum Images {
           APIConstants.HITBOX_SIZE)),
   shipImage(loadImageSafe("/spaceinvaders/images/ship.png", APIConstants.HITBOX_SIZE,
           APIConstants.HITBOX_SIZE)),
+  alien_shot(loadImageSafe("/spaceinvaders/images/shot_alien.png", APIConstants.SHOT_HITBOX_SIZE,
+          APIConstants.SHOT_HITBOX_SIZE)),
   logo(loadImageSafe("/spaceinvaders/images/logo.png", 200, 150)),
   projectileImage(loadImageSafe("/spaceinvaders/images/shot.png",
           APIConstants.SHOT_HITBOX_SIZE, APIConstants.SHOT_HITBOX_SIZE)),

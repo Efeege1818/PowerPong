@@ -82,4 +82,8 @@ public class SimpleAlien {
   public int getAlienId() {
     return alienId;
   }
+
+  public void setHitPoints(int hitPoints) {
+    this.hitPoints = hitPoints;
+  }
 }
