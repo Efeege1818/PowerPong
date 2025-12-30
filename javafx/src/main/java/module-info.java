@@ -16,5 +16,4 @@ module devtools.javafx {
   exports de.hhn.it.devtools.javafx.controllers;
   exports de.hhn.it.devtools.javafx.coffeemaker.view;
 
-  opens de.hhn.it.devtools.javafx.powerPong to javafx.fxml;
 }
