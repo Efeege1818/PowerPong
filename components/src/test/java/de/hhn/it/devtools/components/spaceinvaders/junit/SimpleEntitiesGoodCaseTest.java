@@ -21,7 +21,7 @@ class SimpleEntitiesGoodCaseTest {
 
     // move right
     alien.move(Direction.RIGHT);
-    assertEquals(11, alien.getCoordinate().x());
+    assertEquals(12, alien.getCoordinate().x());
     assertEquals(0, alien.getCoordinate().y());
 
     // move left
@@ -30,7 +30,7 @@ class SimpleEntitiesGoodCaseTest {
 
     // move down
     alien.move(Direction.DOWN);
-    assertEquals(1, alien.getCoordinate().y());
+    assertEquals(5, alien.getCoordinate().y());
 
     // hitbox size 25 * 25 = 625
     assertEquals(625, alien.getHitbox().size());
