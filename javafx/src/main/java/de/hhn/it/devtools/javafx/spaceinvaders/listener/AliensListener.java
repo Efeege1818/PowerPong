@@ -11,7 +11,9 @@ import javafx.scene.image.Image;
  * AliensListener triggered by ViewModel.
  */
 public class AliensListener implements MapChangeListener<Integer, Alien> {
-  private final Image alienImage = Images.alienImage1.getImage();
+  private final Image alienImage3 = Images.alienImage3.getImage();
+  private final Image alienImage2 = Images.alienImage2.getImage();
+  private final Image alienImag1 = Images.alienImage1.getImage();
   private final CanvasProvider canvasProvider;
 
   /**
@@ -30,17 +32,26 @@ public class AliensListener implements MapChangeListener<Integer, Alien> {
       canvasProvider.clearEntity(change.getValueRemoved().coordinate(),
               APIConstants.HITBOX_SIZE,
               APIConstants.HITBOX_SIZE);
-      canvasProvider.drawEntity(this.alienImage, change.getValueAdded().coordinate(),
-              APIConstants.HITBOX_SIZE,
-              APIConstants.HITBOX_SIZE);
+      drawAlien(change.getValueAdded());
     } else if (change.wasAdded()) {
-      canvasProvider.drawEntity(this.alienImage, change.getValueAdded().coordinate(),
-              APIConstants.HITBOX_SIZE,
-              APIConstants.HITBOX_SIZE);
+      drawAlien(change.getValueAdded());
     } else if (change.wasRemoved()) {
       canvasProvider.clearEntity(change.getValueRemoved().coordinate(),
               APIConstants.HITBOX_SIZE,
               APIConstants.HITBOX_SIZE);
     }
   }
+
+  private void drawAlien(Alien alien) {
+    Image a = this.alienImage3;
+    if (alien.hitPoints() == 1) {
+      a = this.alienImag1;
+    } else if (alien.hitPoints() == 2) {
+      a = this.alienImage2;
+    }
+    canvasProvider.drawEntity(a, alien.coordinate(),
+            APIConstants.HITBOX_SIZE,
+            APIConstants.HITBOX_SIZE);
+  }
+
 }
