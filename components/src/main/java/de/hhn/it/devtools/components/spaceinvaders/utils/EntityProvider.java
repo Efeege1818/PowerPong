@@ -168,8 +168,8 @@ public class EntityProvider {
   }
 
   public void shootAliens() {
-    if (aliens.isEmpty()) return;
 
+    if (aliens.isEmpty()) return;
     if (new Random().nextInt(100) <= Constants.ALIEN_SHOOTING_CHANCE) {
       List<Integer> keys = new ArrayList<>(aliens.keySet());
       SimpleAlien a = aliens.get(keys.get(new Random().nextInt(keys.size())));
@@ -216,7 +216,7 @@ public class EntityProvider {
           service.notifyListeners(l ->
                   l.updateShip(player.getImmutableShip()));
           toRemoveProjectiles.add(p);
-          continue;
+
         }
 
         for (SimpleBarrier barrier : getNearbyBarriers(p.getCoordinate())) {
@@ -226,7 +226,7 @@ public class EntityProvider {
             break;
           }
         }
-        continue;
+
       }
 
       if (p.getdirection() == Direction.UP) {
