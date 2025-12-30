@@ -15,11 +15,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-
 public class Main extends Application {
 
-  private static final org.slf4j.Logger logger =
-          org.slf4j.LoggerFactory.getLogger(Main.class);
+  private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Main.class);
   private final int WIDTH = 1280;
 
   private final int HEIGHT = 720;
@@ -57,13 +55,16 @@ public class Main extends Application {
 
     addModule("CoffeeMakerService");
     addModule("Template");
+    addModule("PowerPong");
   }
 
   @Override
   public void stop() {
     logger.info("stop: Shutting down");
-    // This is automatically called then you terminate the application using the window controls
-    // ("x it out", "quit it", ...). It does not get called when you terminate the application
+    // This is automatically called then you terminate the application using the
+    // window controls
+    // ("x it out", "quit it", ...). It does not get called when you terminate the
+    // application
     // using control-C or an OS command like "kill".
 
     rootController.shutdown();
@@ -91,7 +92,8 @@ public class Main extends Application {
   /**
    * Allows optimized creation of the partial application.
    *
-   * @param partialApp PartialApp containing all elements of the partial application.
+   * @param partialApp PartialApp containing all elements of the partial
+   *                   application.
    */
   private void addModule(PartialApp partialApp) {
     rootController.addModule(partialApp);
