@@ -27,6 +27,10 @@ public class SimpleBarrier {
     this.id = id;
   }
 
+  public Coordinate getCoordinate() {
+    return coordinate;
+  }
+
   public ArrayList<Coordinate> getHitbox() {
     return hitbox;
   }

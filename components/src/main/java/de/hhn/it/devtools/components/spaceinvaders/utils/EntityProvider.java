@@ -11,31 +11,55 @@ import de.hhn.it.devtools.components.spaceinvaders.entities.SimpleAlien;
 import de.hhn.it.devtools.components.spaceinvaders.entities.SimpleBarrier;
 import de.hhn.it.devtools.components.spaceinvaders.entities.SimpleProjectile;
 import de.hhn.it.devtools.components.spaceinvaders.entities.SimpleShip;
-
 import java.util.*;
 
 /**
- * EntityProvider for all Entity Utils.
+ * Handles all entity-related logic for the Space Invaders game.
+ * This includes creation, movement, collision detection, and removal of
+ * aliens, player, projectiles, and barriers. A spatial hash grid is used
+ * for efficient collision detection.
  */
 public class EntityProvider {
 
-  private static final int GRID_CELL_SIZE = 16;
-
-  // spatial hash grid for barriers
+  /**
+   * Spatial hash grid storing barriers by grid cell.
+   * Used to efficiently query nearby barriers.
+   */
   private final HashMap<Long, List<SimpleBarrier>> barrierGrid = new HashMap<>();
 
+  /**
+   * Creates a unique 64-bit key for a grid cell using its x/y indices.
+   *
+   * @param cx cell x-coordinate
+   * @param cy cell y-coordinate
+   * @return unique long key representing the grid cell
+   */
   private long cellKey(int cx, int cy) {
     return (((long) cx) << 32) | (cy & 0xffffffffL);
   }
 
+  /**
+   * Computes the grid cell key for a given world coordinate.
+   *
+   * @param c world coordinate
+   * @return grid cell key
+   */
   private long cellKey(Coordinate c) {
-    return cellKey(c.x() / GRID_CELL_SIZE, c.y() / GRID_CELL_SIZE);
+    return cellKey(c.x() / Constants.GRID_CELL_SIZE,
+            c.y() / Constants.GRID_CELL_SIZE);
   }
 
+  /**
+   * Returns all barriers that are located in the same or neighboring grid
+   * cells as the given coordinate.
+   *
+   * @param c coordinate to query around
+   * @return list of nearby barriers
+   */
   private List<SimpleBarrier> getNearbyBarriers(Coordinate c) {
     List<SimpleBarrier> result = new ArrayList<>();
-    int cx = c.x() / GRID_CELL_SIZE;
-    int cy = c.y() / GRID_CELL_SIZE;
+    int cx = c.x() / Constants.GRID_CELL_SIZE;
+    int cy = c.y() / Constants.GRID_CELL_SIZE;
 
     for (int dx = -1; dx <= 1; dx++) {
       for (int dy = -1; dy <= 1; dy++) {
@@ -52,10 +76,14 @@ public class EntityProvider {
   private final HashMap<Integer, SimpleBarrier> barriers = new HashMap<>();
   private final HashMap<Integer, SimpleAlien> aliens = new HashMap<>();
   private final ArrayList<SimpleProjectile> projectiles = new ArrayList<>();
-
   private Direction currentAlienDirection = Direction.RIGHT;
   private final SimpleSpaceInvadersService service;
 
+  /**
+   * Creates a new EntityProvider and initializes all entities.
+   *
+   * @param service the game service used to notify listeners
+   */
   public EntityProvider(SimpleSpaceInvadersService service) {
     this.service = service;
     this.player = new SimpleShip(
@@ -65,6 +93,9 @@ public class EntityProvider {
     initBarriers();
   }
 
+  /**
+   * Creates all alien entities and positions them in rows.
+   */
   public void generateAliens() {
     int row = 1;
     int col = 1;
@@ -75,7 +106,6 @@ public class EntityProvider {
               AlienType.BASIC,
               i
       ));
-
       col++;
       if (i % 10 == 0) {
         row++;
@@ -84,6 +114,14 @@ public class EntityProvider {
     }
   }
 
+  /**
+   * Calculates a rectangular hitbox for an entity.
+   *
+   * @param coordinate top-left coordinate
+   * @param width      hitbox width
+   * @param height     hitbox height
+   * @return list of coordinates representing the hitbox
+   */
   public static ArrayList<Coordinate> fillHitBox(Coordinate coordinate, int width, int height) {
     if (coordinate.x() < 0 || coordinate.y() < 0
             || coordinate.x() > APIConstants.FIELD_SIZE
@@ -100,6 +138,9 @@ public class EntityProvider {
     return coords;
   }
 
+  /**
+   * Initializes all barrier blocks and places them into the spatial grid.
+   */
   private void initBarriers() {
     int numberOfBarriers = 3;
     int spacing = APIConstants.FIELD_SIZE / (numberOfBarriers + 1);
@@ -126,31 +167,34 @@ public class EntityProvider {
     }
   }
 
+  /**
+   * Updates alien movement and handles boundary collisions.
+   */
   public void updateAliens() {
-    if (aliens.isEmpty()) {
-      return;
-    }
-    for (SimpleAlien a : aliens.values()) {
-      if (a.getCoordinate().x() < 0
-              || a.getCoordinate().x() > APIConstants.FIELD_SIZE - APIConstants.HITBOX_SIZE) {
-        aliens.values().forEach(alien -> alien.move(Direction.DOWN));
-        if (this.currentAlienDirection == Direction.RIGHT) {
-          this.currentAlienDirection = Direction.LEFT;
-        } else {
-          this.currentAlienDirection = Direction.RIGHT;
-        }
+    if (aliens.isEmpty()) return;
 
-        service.notifyListeners(spaceInvadersListener -> spaceInvadersListener
-                .updateAliens(aliens.values().stream().map(SimpleAlien::immutableAlien).toArray(Alien[]::new)));
+    for (SimpleAlien alien : aliens.values()) {
+      if (alien.getCoordinate().x() < 0 ||
+              alien.getCoordinate().x() > APIConstants.FIELD_SIZE - APIConstants.HITBOX_SIZE) {
+        aliens.values().forEach(a -> a.move(Direction.DOWN));
+        currentAlienDirection =
+                (currentAlienDirection == Direction.RIGHT)
+                        ? Direction.LEFT
+                        : Direction.RIGHT;
         break;
       }
     }
-    aliens.values().forEach(alien -> alien.move(currentAlienDirection));
-    service.notifyListeners(spaceInvadersListener -> spaceInvadersListener
-            .updateAliens(aliens.values().stream().map(SimpleAlien::immutableAlien).toArray(Alien[]::new)));
-    service.notifyListeners((s) -> s.updateShip(player.getImmutableShip()));
+
+    aliens.values().forEach(a -> a.move(currentAlienDirection));
+    service.notifyListeners(l ->
+            l.updateAliens(aliens.values().stream()
+                    .map(SimpleAlien::immutableAlien)
+                    .toArray(Alien[]::new)));
   }
 
+  /**
+   * Moves all active projectiles.
+   */
   public void updateProjectiles() {
     projectiles.forEach(SimpleProjectile::move);
     service.notifyListeners(l ->
@@ -159,6 +203,9 @@ public class EntityProvider {
                     .toArray(Projectile[]::new)));
   }
 
+  /**
+   * Fires a projectile from the player's ship.
+   */
   public void shootPlayer() {
     projectiles.add(new SimpleProjectile(
             new Coordinate(player.getCoordinate().x() + 1, player.getCoordinate().y() - 1),
@@ -167,6 +214,9 @@ public class EntityProvider {
     ));
   }
 
+  /**
+   * Randomly selects an alien and fires a projectile downward.
+   */
   public void shootAliens() {
     if (aliens.isEmpty()) return;
 
@@ -181,47 +231,38 @@ public class EntityProvider {
     }
   }
 
+  /**
+   * Handles all collision detection and resolution
+   */
   public void checkCollision() {
-
     List<SimpleAlien> toRemoveAliens = new ArrayList<>();
     List<SimpleProjectile> toRemoveProjectiles = new ArrayList<>();
-
-    if (aliens.isEmpty()) {
-      return;
-    }
-
-    for (SimpleAlien alien : aliens.values()) {
+    List<SimpleBarrier> toRemoveBarriers = new ArrayList<>();
+    if (aliens.isEmpty()) { return; } for (SimpleAlien alien : aliens.values()) {
       for (SimpleBarrier barrier : getNearbyBarriers(alien.getCoordinate())) {
         if (alien.getHitbox().stream().anyMatch(barrier.getHitbox()::contains)) {
           toRemoveAliens.add(alien);
-          service.notifyListeners(l ->
-                  l.updateBarrier(barrier.getImmutableBarrier()));
+          toRemoveBarriers.add(barrier);
           break;
         }
       }
-
       if (alien.getCoordinate().y() >= player.getCoordinate().y()) {
         player.setHitPoints(0);
         service.notifyListeners(l -> l.updateShip(player.getImmutableShip()));
       }
     }
-
     for (SimpleProjectile p : projectiles) {
-
-      boolean removed = false;
       if (p.getdirection() == Direction.DOWN) {
         if (player.getHitbox().contains(p.getCoordinate())) {
           player.setHitPoints(p.getDamage());
-          service.notifyListeners(l ->
-                  l.updateShip(player.getImmutableShip()));
+          service.notifyListeners(l -> l.updateShip(player.getImmutableShip()));
           toRemoveProjectiles.add(p);
           continue;
         }
         for (SimpleBarrier barrier : getNearbyBarriers(p.getCoordinate())) {
           if (barrier.getHitbox().contains(p.getCoordinate())) {
             toRemoveProjectiles.add(p);
-            service.notifyListeners(l ->
-                    l.updateBarrier(barrier.getImmutableBarrier()));
+            toRemoveBarriers.add(barrier);
             break;
           }
         }
@@ -232,36 +273,36 @@ public class EntityProvider {
           if (alien.getHitbox().contains(p.getCoordinate())) {
             toRemoveProjectiles.add(p);
             if (!alien.getHit()) {
-              toRemoveAliens.add(alien);
-              service.notifyListeners(l ->
-                      l.updateScore(service.score += Constants.ALIEN_DEATH_POINTS));
+              toRemoveAliens.add(alien); service.notifyListeners(l -> l.updateScore(service.score += Constants.ALIEN_DEATH_POINTS));
             }
-            service.notifyListeners(l ->
-                    l.damageAlien(alien.immutableAlien()));
+            service.notifyListeners(l -> l.damageAlien(alien.immutableAlien()));
             break;
           }
         }
       }
-
-      // out of bounds
       if (p.getCoordinate().y() < 0 || p.getCoordinate().y() > APIConstants.FIELD_SIZE) {
         toRemoveProjectiles.add(p);
       }
     }
-
     projectiles.removeAll(toRemoveProjectiles);
     toRemoveAliens.forEach(aliens.values()::remove);
-
-    service.notifyListeners(l ->
-            l.updateProjectiles(projectiles.stream()
-                    .map(SimpleProjectile::getImmtProjectile)
-                    .toArray(Projectile[]::new)));
-
-    service.notifyListeners(l ->
-            l.updateAliens(aliens.values().stream()
-                    .map(SimpleAlien::immutableAlien)
-                    .toArray(Alien[]::new)));
+    for (SimpleBarrier barrier : toRemoveBarriers) {
+      barriers.values().remove(barrier);
+      long key = cellKey(barrier.getCoordinate());
+      List<SimpleBarrier> cell = barrierGrid.get(key);
+      if (cell != null) {
+        cell.remove(barrier);
+      }
+      service.notifyListeners(l -> l.updateBarrier(barrier.getImmutableBarrier()));
+    }
+    service.notifyListeners(l -> l.updateProjectiles(projectiles.stream()
+            .map(SimpleProjectile::getImmtProjectile)
+            .toArray(Projectile[]::new)));
+    service.notifyListeners(l -> l.updateAliens(aliens.values().stream()
+            .map(SimpleAlien::immutableAlien)
+            .toArray(Alien[]::new)));
   }
+
 
   public SimpleShip getPlayer() {
     return player;
