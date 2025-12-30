@@ -25,7 +25,8 @@ public class PopupConfigurations {
    * @param owner owner stage.
    * @param viewModel view model.
    */
-  public PopupConfigurations(SpaceInvadersService service, Stage mainStage, Stage owner, SpaceInvadersViewModel viewModel) {
+  public PopupConfigurations(SpaceInvadersService service, Stage mainStage, Stage owner,
+                             SpaceInvadersViewModel viewModel) {
     this.spaceInvadersViewModel = viewModel;
     this.spaceInvadersService = service;
     this.mainStage = mainStage;
