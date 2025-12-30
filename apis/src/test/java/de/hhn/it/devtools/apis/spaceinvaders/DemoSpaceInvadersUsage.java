@@ -42,7 +42,7 @@ public class DemoSpaceInvadersUsage {
     logger.debug("Callback to update ship");
     logger.debug(">>>> Right");
     service.shoot();
-    listener.updateProjectile(null);
+    listener.updateProjectiles(null);
     logger.debug("Callback to update projectile");
     logger.debug(">>>> Shoot");
 

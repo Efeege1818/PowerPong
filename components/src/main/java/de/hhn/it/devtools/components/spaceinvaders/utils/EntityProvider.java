@@ -5,6 +5,7 @@ import de.hhn.it.devtools.apis.spaceinvaders.Coordinate;
 import de.hhn.it.devtools.apis.spaceinvaders.Direction;
 import de.hhn.it.devtools.apis.spaceinvaders.entities.Alien;
 import de.hhn.it.devtools.apis.spaceinvaders.entities.AlienType;
+import de.hhn.it.devtools.apis.spaceinvaders.entities.Projectile;
 import de.hhn.it.devtools.components.spaceinvaders.SimpleSpaceInvadersService;
 import de.hhn.it.devtools.components.spaceinvaders.entities.SimpleAlien;
 import de.hhn.it.devtools.components.spaceinvaders.entities.SimpleBarrier;
@@ -76,6 +77,8 @@ public class EntityProvider {
    */
   public void updateProjectiles() {
     projectiles.forEach(SimpleProjectile::move);
+    service.notifyListeners(spaceInvadersListener -> spaceInvadersListener
+            .updateProjectiles(projectiles.stream().map(SimpleProjectile::getImmtProjectile).toArray(Projectile[]::new)));
   }
 
   /**
@@ -93,13 +96,15 @@ public class EntityProvider {
     if (aliens.isEmpty()) {
       return;
     }
-
-    Random rand = new Random();
-    List<Integer> keys = new ArrayList<>(aliens.keySet());
-    Integer randomKey = keys.get(rand.nextInt(keys.size()));
-    SimpleAlien randomAlien = aliens.get(randomKey);
-    projectiles.add(new SimpleProjectile(new Coordinate(randomAlien.getCoordinate().x() + 1,
-            randomAlien.getCoordinate().y() + 1), Direction.DOWN, Constants.BASE_DAMAGE));
+    Random chance = new Random();
+    if (chance.nextInt(100) <= Constants.ALIEN_SHOOTING_CHANCE) {
+      Random rand = new Random();
+      List<Integer> keys = new ArrayList<>(aliens.keySet());
+      Integer randomKey = keys.get(rand.nextInt(keys.size()));
+      SimpleAlien randomAlien = aliens.get(randomKey);
+      projectiles.add(new SimpleProjectile(new Coordinate(randomAlien.getCoordinate().x() + 1,
+              randomAlien.getCoordinate().y() + 1), Direction.DOWN, Constants.BASE_DAMAGE));
+    }
   }
 
   /**

@@ -2,6 +2,7 @@ package de.hhn.it.devtools.javafx.spaceinvaders.view;
 
 import de.hhn.it.devtools.apis.spaceinvaders.*;
 import de.hhn.it.devtools.apis.spaceinvaders.entities.Alien;
+import de.hhn.it.devtools.apis.spaceinvaders.entities.Projectile;
 import de.hhn.it.devtools.apis.spaceinvaders.entities.Ship;
 import de.hhn.it.devtools.components.spaceinvaders.SimpleSpaceInvadersService;
 import de.hhn.it.devtools.javafx.spaceinvaders.helper.PopupProvider;
@@ -40,6 +41,7 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
   private final SpaceInvadersViewModel viewModel;
   private final Image alien;
   private final Image ship;
+  private final Image projectile;
   private final Image barrier;
   private Stage settingsStage;
   private Stage startStage;
@@ -91,6 +93,7 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
     // safe image loading after FXML load (so logger available)
     this.alien = loadImageSafe("/spaceinvaders/images/alien.png");
     this.ship = loadImageSafe("/spaceinvaders/images/ship.png");
+    this.projectile = loadImageSafe("/spaceinvaders/images/shot.png");
     this.barrier = loadImageSafe("/spaceinvaders/images/barrier.png");
 
     score.textProperty().bind(viewModel.getScoreProperty().asString());
@@ -116,7 +119,20 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
       } else if (change.wasRemoved()) {
         clearEntity(change.getValueRemoved().coordinate(), APIConstants.HITBOX_SIZE,
                 APIConstants.HITBOX_SIZE);
-        dummyAlien = change.getValueRemoved();
+      }
+    });
+    viewModel.getProjectiles().addListener((MapChangeListener<Integer, Projectile>) change -> {
+      if (change.wasAdded() && change.wasRemoved()) {
+        clearEntity(change.getValueRemoved().coordinate(), APIConstants.SHOT_HITBOX_SIZE,
+                APIConstants.SHOT_HITBOX_SIZE);
+        drawEntity(this.projectile, change.getValueAdded().coordinate(), APIConstants.SHOT_HITBOX_SIZE,
+                APIConstants.SHOT_HITBOX_SIZE);
+      } else if (change.wasAdded()) {
+        drawEntity(this.projectile, change.getValueAdded().coordinate(), APIConstants.SHOT_HITBOX_SIZE,
+                APIConstants.SHOT_HITBOX_SIZE);
+      } else if (change.wasRemoved()) {
+        clearEntity(change.getValueRemoved().coordinate(), APIConstants.SHOT_HITBOX_SIZE,
+                APIConstants.SHOT_HITBOX_SIZE);
       }
     });
 //    viewModel.getProjectiles().addListener((InvalidationListener) change -> drawCanvas());
@@ -180,39 +196,6 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
     GraphicsContext gc = canvas.getGraphicsContext2D();
     gc.setFill(color);
     gc.fillRect(coordinate.x(), coordinate.y(), 1, 1);
-  }
-
-  private void drawCanvas() {
-    if (canvas == null) {
-      return;
-    }
-    GraphicsContext gc = canvas.getGraphicsContext2D();
-
-    gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-
-    if (!viewModel.getAliens().isEmpty()) {
-      viewModel.getAliens().values().forEach((a) ->
-            gc.drawImage(alien, a.coordinate().x(), a.coordinate().y(),
-                    APIConstants.HITBOX_SIZE, APIConstants.HITBOX_SIZE));
-    }
-
-    if (!viewModel.getBarriers().isEmpty()) {
-      viewModel.getBarriers().values().forEach((b) ->
-              gc.drawImage(barrier, b.coordinate().x(), b.coordinate().y(),
-                      APIConstants.BARRIER_HITBOX_HEIGHT, APIConstants.BARRIER_HITBOX_HEIGHT));
-    }
-
-    if (!viewModel.getProjectiles().isEmpty()) {
-      viewModel.getProjectiles().values().forEach((p) ->
-              gc.fillOval(p.coordinate().x(), p.coordinate().y(), 1, 1));
-    }
-
-    if (viewModel.getShipObjectPropertyProperty().get() != null) {
-      Ship player = viewModel.getShipObjectPropertyProperty().get();
-      gc.drawImage(ship, player.coordinate().x(), player.coordinate().y(),
-              APIConstants.HITBOX_SIZE, APIConstants.HITBOX_SIZE);
-    }
-
   }
 
   private void openSettingsPopup() {

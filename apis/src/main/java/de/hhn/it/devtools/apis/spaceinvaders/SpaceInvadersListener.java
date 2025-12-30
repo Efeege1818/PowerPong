@@ -33,7 +33,7 @@ public interface SpaceInvadersListener {
    *
    * @param projectile the updated projectile's position
    */
-  void updateProjectile(Projectile projectile);
+  void updateProjectiles(Projectile[] projectile);
 
   /**
    * Informs the listener when an alien takes damage.
