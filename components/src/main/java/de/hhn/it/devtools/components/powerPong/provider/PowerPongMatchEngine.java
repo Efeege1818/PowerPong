@@ -35,6 +35,7 @@ public class PowerPongMatchEngine implements PowerPongService {
 
   private static final double FRAME_TIME_SECONDS = 1.0 / 60.0;
   private static final int TARGET_SCORE = 5;
+  private static final double PVP_BALL_SPEED_MULTIPLIER = 0.7;
 
   private final Random random;
   private final List<PowerPongListener> listeners = new CopyOnWriteArrayList<>();
@@ -78,11 +79,19 @@ public class PowerPongMatchEngine implements PowerPongService {
     survivalTime = 0;
 
     physics.reset();
+    physics.setDifficultyMultiplier(getBallSpeedMultiplier(mode));
     powerUpManager.reset();
 
     physics.launchBall(random.nextBoolean() ? 1 : -1);
 
     rebuildSnapshot();
+  }
+
+  private double getBallSpeedMultiplier(GameMode mode) {
+    if (mode == GameMode.CLASSIC_DUEL || mode == GameMode.POWERUP_DUEL) {
+      return PVP_BALL_SPEED_MULTIPLIER;
+    }
+    return 1.0;
   }
 
   @Override
