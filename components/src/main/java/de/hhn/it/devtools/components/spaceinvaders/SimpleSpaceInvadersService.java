@@ -185,6 +185,7 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
    * This method gets triggered every loop by SimpleGameLoop.
    */
   public void triggeredByGameLoop() {
+    notifyListeners(l -> l.updateShip(entityProvider.getPlayer().getImmutableShip()));
     if (entityProvider == null) {
       logger.debug("Something went wrong; no EntityProvider");
       return;

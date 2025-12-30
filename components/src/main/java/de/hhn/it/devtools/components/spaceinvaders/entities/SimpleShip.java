@@ -35,11 +35,11 @@ public class SimpleShip {
   public void move(Direction direction) throws IllegalArgumentException {
     switch (direction) {
       case LEFT:
-        this.coordinate = new Coordinate(coordinate.x() - 1, coordinate.y());
+        this.coordinate = new Coordinate(coordinate.x() - 2, coordinate.y());
         this.hitbox = EntityProvider.fillHitBox(coordinate, 10, 10);
         break;
       case RIGHT:
-        this.coordinate = new Coordinate(coordinate.x() + 1, coordinate.y());
+        this.coordinate = new Coordinate(coordinate.x() + 2, coordinate.y());
         this.hitbox = EntityProvider.fillHitBox(coordinate, 10, 10);
         break;
       default:

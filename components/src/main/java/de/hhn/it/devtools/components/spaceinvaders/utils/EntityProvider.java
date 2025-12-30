@@ -110,7 +110,7 @@ public class EntityProvider {
         for (int x = 0; x < APIConstants.BARRIER_HITBOX_WIDTH; x++) {
           Coordinate c = new Coordinate(
                   x + (i * spacing),
-                  APIConstants.FIELD_SIZE - 60 + y
+                  APIConstants.FIELD_SIZE - 300 + y
           );
 
           SimpleBarrier barrier = new SimpleBarrier(c, id);
