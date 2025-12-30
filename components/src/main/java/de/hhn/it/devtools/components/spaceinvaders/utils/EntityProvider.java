@@ -185,10 +185,22 @@ public class EntityProvider {
           player.setHitPoints(projectile.getDamage());
         }
       }
+      if (projectile.getCoordinate().y() < 0 || projectile.getCoordinate().y() > APIConstants.FIELD_SIZE) {
+        toRemoveProjectile.add(projectile);
+      }
     }
     projectiles.removeAll(toRemoveProjectile);
+    service.notifyListeners(spaceInvadersListener -> spaceInvadersListener
+            .updateProjectiles(projectiles.stream()
+                    .map(SimpleProjectile::getImmtProjectile)
+                    .toArray(Projectile[]::new)));
     toRemoveProjectile.clear();
+
     toRemoveAliens.forEach(aliens.values()::remove);
+    service.notifyListeners(spaceInvadersListener -> spaceInvadersListener
+            .updateAliens(aliens.values().stream()
+                    .map(SimpleAlien::immutableAlien)
+                    .toArray(Alien[]::new)));
     toRemoveAliens.clear();
   }
 
