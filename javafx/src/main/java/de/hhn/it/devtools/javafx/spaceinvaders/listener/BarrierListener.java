@@ -9,7 +9,7 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 /**
- * BarrierListener triggert by ViewModel.
+ * BarrierListener triggered by ViewModel.
  */
 public class BarrierListener implements MapChangeListener<Integer, Barrier> {
   private final Image barrier = Images.barrierImage.getImage();

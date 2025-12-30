@@ -8,7 +8,7 @@ import javafx.collections.MapChangeListener;
 import javafx.scene.image.Image;
 
 /**
- * AliensListener triggert by ViewModel.
+ * AliensListener triggered by ViewModel.
  */
 public class AliensListener implements MapChangeListener<Integer, Alien> {
   private final Image alienImage = Images.alienImage1.getImage();
