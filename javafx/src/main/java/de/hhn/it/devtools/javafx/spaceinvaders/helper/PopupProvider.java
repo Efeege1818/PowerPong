@@ -13,6 +13,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 
 /**
@@ -55,7 +56,24 @@ public class PopupProvider {
    */
   public PopupProvider addButton(EventHandler<ActionEvent> buttonEvent, String buttonText) {
     Button button = new Button(buttonText);
-    button.setPrefWidth(150);
+    button.setPrefWidth(200);  // Größer
+    button.setPrefHeight(50);
+
+    button.setStyle(
+            "-fx-background-color: linear-gradient(to bottom, #FFD700, #FFA500); "
+                    + "-fx-text-fill: #1A1A1A; "
+                    + "-fx-font-family: 'Arial Black', sans-serif; "
+                    + "-fx-font-weight: bold; "
+                    + "-fx-font-size: 18px; "
+                    + "-fx-background-radius: 25; "
+                    + "-fx-border-color: #FFED4A; "
+                    + "-fx-border-width: 3; "
+                    + "-fx-border-radius: 25; "
+                    + "-fx-effect: dropshadow(three-pass-box, #D4AF37, 1, 0.6, 0, 8); "
+                    + "-fx-cursor: hand; "
+                    + "-fx-padding: 12 25 12 25;"
+    );
+
     button.setOnAction((e) -> {
       try {
         if (buttonEvent != null) {
@@ -81,6 +99,13 @@ public class PopupProvider {
    */
   public PopupProvider addLabel(String labelText) {
     Label label = new Label(labelText);
+    label.setStyle(
+            "-fx-text-fill: #FFFFFF; "
+                    + "-fx-font-weight: bold; "
+                    + "-fx-font-size: 20px; "
+                    + "-fx-effect: dropshadow(one-pass-box, black, 3, 0.0, 1, 1); "
+                    + "-fx-padding: 0 0 10 0;"
+    );
     elements.add(label);
     return this;
   }
@@ -105,12 +130,21 @@ public class PopupProvider {
     VBox vbox = new VBox(20);
     vbox.setAlignment(Pos.CENTER);
     vbox.setPadding(new Insets(30, 30, 30, 30));
+
     if (!elements.isEmpty()) {
       vbox.getChildren().addAll(elements);
     }
-    this.popup.setScene(new Scene(vbox, 500, 400));
-    this.popup.setMinWidth(300);
-    this.popup.setMinHeight(200);
+
+    vbox.setStyle("-fx-background-color: linear-gradient(to bottom, rgba(20,20,30,0.95),"
+                    + " rgba(40,40,60,0.95)); "
+                    + "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 25, 0.8, 0, 10); "
+                    + "-fx-padding: 40;");
+
+    Scene scene = new Scene(vbox, 450, 350);
+    this.popup.setScene(scene);
+    this.popup.setMinWidth(350);
+    this.popup.setMinHeight(250);
+    this.popup.setResizable(false);
     return this.popup;
   }
 

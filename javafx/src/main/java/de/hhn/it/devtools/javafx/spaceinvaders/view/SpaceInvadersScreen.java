@@ -25,7 +25,12 @@ import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -131,7 +136,8 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
   }
 
   private void setBackground() {
-    BackgroundSize bgSize = new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, true, true, false, true);
+    BackgroundSize bgSize = new BackgroundSize(BackgroundSize.AUTO,
+            BackgroundSize.AUTO, true, true, false, true);
     BackgroundImage bgImage = new BackgroundImage(
             Images.background.getImage(),
             BackgroundRepeat.NO_REPEAT,
