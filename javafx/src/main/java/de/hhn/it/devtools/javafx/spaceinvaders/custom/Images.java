@@ -2,7 +2,6 @@ package de.hhn.it.devtools.javafx.spaceinvaders.custom;
 
 import de.hhn.it.devtools.apis.spaceinvaders.APIConstants;
 import java.net.URL;
-
 import javafx.scene.image.Image;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

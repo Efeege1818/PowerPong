@@ -26,15 +26,19 @@ public class ProjectileListener implements MapChangeListener<Integer, Projectile
   @Override
   public void onChanged(Change<? extends Integer, ? extends Projectile> change) {
     if (change.wasAdded() && change.wasRemoved()) {
-      canvasProvider.clearEntity(change.getValueRemoved().coordinate(), APIConstants.SHOT_HITBOX_SIZE,
+      canvasProvider.clearEntity(change.getValueRemoved().coordinate(),
+              APIConstants.SHOT_HITBOX_SIZE,
               APIConstants.SHOT_HITBOX_SIZE);
-      canvasProvider.drawEntity(this.projectileImage, change.getValueAdded().coordinate(), APIConstants.SHOT_HITBOX_SIZE,
+      canvasProvider.drawEntity(this.projectileImage, change.getValueAdded().coordinate(),
+              APIConstants.SHOT_HITBOX_SIZE,
               APIConstants.SHOT_HITBOX_SIZE);
     } else if (change.wasAdded()) {
-      canvasProvider.drawEntity(this.projectileImage, change.getValueAdded().coordinate(), APIConstants.SHOT_HITBOX_SIZE,
+      canvasProvider.drawEntity(this.projectileImage, change.getValueAdded().coordinate(),
+              APIConstants.SHOT_HITBOX_SIZE,
               APIConstants.SHOT_HITBOX_SIZE);
     } else if (change.wasRemoved()) {
-      canvasProvider.clearEntity(change.getValueRemoved().coordinate(), APIConstants.SHOT_HITBOX_SIZE,
+      canvasProvider.clearEntity(change.getValueRemoved().coordinate(),
+              APIConstants.SHOT_HITBOX_SIZE,
               APIConstants.SHOT_HITBOX_SIZE);
     }
   }
