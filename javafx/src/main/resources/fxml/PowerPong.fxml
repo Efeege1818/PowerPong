@@ -9,7 +9,7 @@
 
 <StackPane fx:id="rootStack" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.hhn.it.devtools.javafx.controllers.PowerPongController">
    <children>
-      <Canvas fx:id="gameCanvas" height="720.0" width="1280.0" />
+      <Canvas fx:id="gameCanvas" height="600.0" width="800.0" />
       <Label fx:id="scoreLabel" text="P1: 0 - P2: 0" textFill="WHITE" StackPane.alignment="TOP_CENTER" translateY="20.0">
          <font>
             <Font name="Monospaced Bold" size="36.0" />
@@ -22,29 +22,34 @@
                   <Font name="System Bold" size="64.0" />
                </font>
             </Label>
-            <Button mnemonicParsing="false" onAction="#onStartGame" text="Play Again">
+            <Button mnemonicParsing="false" onAction="#onBackToMenu" text="Back to Menu">
                <font>
                   <Font size="24.0" />
                </font>
-            </Button>
-            <Button mnemonicParsing="false" onAction="#onBackToMenu" text="Exit to Menu">
-                <font>
-                    <Font size="18.0" />
-                </font>
             </Button>
          </children>
       </VBox>
-      <VBox fx:id="menuBox" alignment="CENTER" spacing="20.0" style="-fx-background-color: rgba(255,255,255,0.8);">
+      <VBox fx:id="menuBox" alignment="CENTER" spacing="20.0" style="-fx-background-color: rgba(255,255,255,0.9);">
          <children>
             <Label text="PowerPong">
                <font>
-                  <Font name="System Bold" size="48.0" />
+                  <Font name="System Bold" size="64.0" />
                </font>
             </Label>
-            <Button fx:id="startButton" mnemonicParsing="false" onAction="#onStartGame" text="Start Game">
+            <Button fx:id="btnClassic" mnemonicParsing="false" onAction="#onStartClassic" prefWidth="300.0" text="Classic Duel">
                <font>
                   <Font size="24.0" />
                </font>
+            </Button>
+            <Button fx:id="btnPowerUp" mnemonicParsing="false" onAction="#onStartPowerUp" prefWidth="300.0" text="Power-Up Mayhem">
+                <font>
+                    <Font size="24.0" />
+                </font>
+            </Button>
+            <Button fx:id="btnAI" mnemonicParsing="false" onAction="#onStartAI" prefWidth="300.0" text="Player vs AI">
+                <font>
+                    <Font size="24.0" />
+                </font>
             </Button>
          </children>
       </VBox>

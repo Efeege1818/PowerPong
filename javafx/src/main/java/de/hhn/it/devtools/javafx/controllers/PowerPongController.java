@@ -35,6 +35,8 @@ public class PowerPongController extends Controller implements PowerPongListener
     private GameTimer gameTimer;
 
     @FXML
+    private javafx.scene.layout.StackPane rootStack;
+    @FXML
     private Canvas gameCanvas;
     @FXML
     private VBox menuBox;
@@ -44,8 +46,17 @@ public class PowerPongController extends Controller implements PowerPongListener
     private Label scoreLabel;
     @FXML
     private Label winnerLabel;
+
+    // Buttons for referencing if needed, otherwise handled by onAction
     @FXML
-    private Button startButton;
+    private Button btnClassic;
+    @FXML
+    private Button btnPowerUp;
+    @FXML
+    private Button btnAI;
+
+    private static final double GAME_WIDTH = 800.0;
+    private static final double GAME_HEIGHT = 600.0;
 
     public PowerPongController() {
         this.service = new PowerPongMatchEngine();
@@ -54,15 +65,49 @@ public class PowerPongController extends Controller implements PowerPongListener
     @FXML
     public void initialize() {
         gameTimer = new GameTimer();
-        // Register listener.
-        // Note: In some lifecycles, service might be reset, but here it's final-ish.
-        // We'll add listener here, or in resume.
+
+        // Dynamic Resizing: Bind Canvas to StackPane
+        // These might be null if FXML isn't fully loaded, but usually in initialize
+        // it's fine.
+        if (rootStack != null) {
+            gameCanvas.widthProperty().bind(rootStack.widthProperty());
+            gameCanvas.heightProperty().bind(rootStack.heightProperty());
+        }
+
+        // Redraw on resize (optional, timer handles it mostly, but good for static
+        // state)
+        gameCanvas.widthProperty().addListener(evt -> {
+            if (service != null && service.getGameState() != null
+                    && service.getGameState().status() != GameStatus.RUNNING) {
+                render(service.getGameState());
+            }
+        });
+        gameCanvas.heightProperty().addListener(evt -> {
+            if (service != null && service.getGameState() != null
+                    && service.getGameState().status() != GameStatus.RUNNING) {
+                render(service.getGameState());
+            }
+        });
     }
 
     @FXML
-    public void onStartGame(ActionEvent event) {
+    public void onStartClassic(ActionEvent event) {
+        startGame(GameMode.CLASSIC_DUEL);
+    }
+
+    @FXML
+    public void onStartPowerUp(ActionEvent event) {
+        startGame(GameMode.POWERUP_DUEL);
+    }
+
+    @FXML
+    public void onStartAI(ActionEvent event) {
+        startGame(GameMode.PLAYER_VS_AI);
+    }
+
+    private void startGame(GameMode mode) {
         try {
-            service.startGame(GameMode.CLASSIC_DUEL);
+            service.startGame(mode);
             menuBox.setVisible(false);
             gameOverBox.setVisible(false);
             gameCanvas.setVisible(true);
@@ -70,13 +115,10 @@ public class PowerPongController extends Controller implements PowerPongListener
             updateScoreFormat(0, 0); // Reset score label
             gameCanvas.requestFocus();
 
-            // Ensure we are listening
-            service.removeListener(this); // specific hygiene
+            service.removeListener(this);
             service.addListener(this);
 
-            // Should ensure timer is running if not already handled by resume logic
             gameTimer.start();
-
         } catch (GameLogicException e) {
             e.printStackTrace();
         }
@@ -93,7 +135,7 @@ public class PowerPongController extends Controller implements PowerPongListener
     @Override
     public void resume() {
         super.resume();
-        Scene scene = menuBox.getScene();
+        Scene scene = menuBox.getScene(); // menuBox still good anchor
         if (scene != null) {
             scene.setOnKeyPressed(this::handleKeyPressed);
             scene.setOnKeyReleased(this::handleKeyReleased);
@@ -126,7 +168,6 @@ public class PowerPongController extends Controller implements PowerPongListener
     public void onPlayerScored(int scoringPlayerIndex, Score updatedScore) {
         Platform.runLater(() -> {
             updateScoreFormat(updatedScore.player1(), updatedScore.player2());
-            // Optional: Visual flash?
         });
     }
 
@@ -178,6 +219,7 @@ public class PowerPongController extends Controller implements PowerPongListener
                 render(service.getGameState());
             } catch (GameLogicException e) {
                 e.printStackTrace();
+                // If game ended abruptly
             }
         }
     }
@@ -188,11 +230,21 @@ public class PowerPongController extends Controller implements PowerPongListener
 
     private void render(GameState state) {
         GraphicsContext gc = gameCanvas.getGraphicsContext2D();
-        gc.clearRect(0, 0, gameCanvas.getWidth(), gameCanvas.getHeight());
+        double canvasWidth = gameCanvas.getWidth();
+        double canvasHeight = gameCanvas.getHeight();
+
+        gc.clearRect(0, 0, canvasWidth, canvasHeight);
 
         // Background
         gc.setFill(Color.BLACK);
-        gc.fillRect(0, 0, gameCanvas.getWidth(), gameCanvas.getHeight());
+        gc.fillRect(0, 0, canvasWidth, canvasHeight);
+
+        // Dynamic Scaling
+        double scaleX = canvasWidth / GAME_WIDTH;
+        double scaleY = canvasHeight / GAME_HEIGHT;
+
+        gc.save();
+        gc.scale(scaleX, scaleY);
 
         drawFieldDecorations(gc);
 
@@ -222,13 +274,15 @@ public class PowerPongController extends Controller implements PowerPongListener
                 drawPowerUp(gc, powerUp);
             }
         }
+
+        gc.restore();
     }
 
     private void drawFieldDecorations(GraphicsContext gc) {
         gc.setStroke(Color.GRAY);
         gc.setLineWidth(2);
         gc.setLineDashes(10);
-        gc.strokeLine(gameCanvas.getWidth() / 2, 0, gameCanvas.getWidth() / 2, gameCanvas.getHeight());
+        gc.strokeLine(GAME_WIDTH / 2, 0, GAME_WIDTH / 2, GAME_HEIGHT);
         gc.setLineDashes(null);
     }
 
@@ -244,7 +298,6 @@ public class PowerPongController extends Controller implements PowerPongListener
         double r = powerUp.radius();
         double d = r * 2;
         gc.fillOval(powerUp.xPosition() - r, powerUp.yPosition() - r, d, d);
-        // Optional: Draw symbol or letter inside?
     }
 
     private Color getColorForPowerUp(PowerUpType type) {
