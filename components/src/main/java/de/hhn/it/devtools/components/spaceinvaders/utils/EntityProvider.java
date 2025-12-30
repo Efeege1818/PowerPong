@@ -11,6 +11,7 @@ import de.hhn.it.devtools.components.spaceinvaders.entities.SimpleAlien;
 import de.hhn.it.devtools.components.spaceinvaders.entities.SimpleBarrier;
 import de.hhn.it.devtools.components.spaceinvaders.entities.SimpleProjectile;
 import de.hhn.it.devtools.components.spaceinvaders.entities.SimpleShip;
+
 import java.util.*;
 
 /**
@@ -218,17 +219,15 @@ public class EntityProvider {
    * Randomly selects an alien and fires a projectile downward.
    */
   public void shootAliens() {
-    if (projectiles.isEmpty()) {
-      if (aliens.isEmpty()) return;
-      if (new Random().nextInt(100) <= Constants.ALIEN_SHOOTING_CHANCE) {
-        List<Integer> keys = new ArrayList<>(aliens.keySet());
-        SimpleAlien a = aliens.get(keys.get(new Random().nextInt(keys.size())));
-        projectiles.add(new SimpleProjectile(
-                new Coordinate(a.getCoordinate().x() + 1, a.getCoordinate().y() + 1),
-                Direction.DOWN,
-                Constants.BASE_DAMAGE
-        ));
-      }
+    if (aliens.isEmpty()) return;
+    if (new Random().nextInt(100) <= Constants.ALIEN_SHOOTING_CHANCE) {
+      List<Integer> keys = new ArrayList<>(aliens.keySet());
+      SimpleAlien a = aliens.get(keys.get(new Random().nextInt(keys.size())));
+      projectiles.add(new SimpleProjectile(
+              new Coordinate(a.getCoordinate().x() + 1, a.getCoordinate().y() + 1),
+              Direction.DOWN,
+              Constants.BASE_DAMAGE
+      ));
     }
   }
 
@@ -300,7 +299,7 @@ public class EntityProvider {
       service.notifyListeners(l -> l.updateBarrier(barrier.getImmutableBarrier()));
     }
 
-    for(SimpleProjectile p : toRemoveProjectiles) {
+    for (SimpleProjectile p : toRemoveProjectiles) {
       p.inverse();
     }
     service.notifyListeners(l -> l.updateProjectiles(projectiles.stream()

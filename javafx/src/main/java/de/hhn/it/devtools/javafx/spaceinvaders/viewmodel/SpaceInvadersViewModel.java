@@ -71,7 +71,7 @@ public class SpaceInvadersViewModel implements SpaceInvadersListener {
     Platform.runLater(() -> {
       for (Projectile projectile : projectiles) {
         if (projectile.projectileId() < 0) {
-          this.projectiles.remove(projectile.projectileId());
+          this.projectiles.remove(projectile.projectileId() * -1);
         } else {
           this.projectiles.put(projectile.projectileId(), projectile);
         }

@@ -50,7 +50,7 @@ public class SimpleProjectile {
   }
 
   public Projectile getImmtProjectile() {
-    return new Projectile(this.coordinate, projectileID, this.direction);
+    return new Projectile(this.coordinate, this.id, this.direction);
   }
 
   @Override
