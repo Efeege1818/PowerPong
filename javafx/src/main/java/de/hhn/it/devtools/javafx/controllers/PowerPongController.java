@@ -8,22 +8,27 @@ import de.hhn.it.devtools.apis.powerPong.GameStatus;
 import de.hhn.it.devtools.apis.powerPong.InputAction;
 import de.hhn.it.devtools.apis.powerPong.PaddleState;
 import de.hhn.it.devtools.apis.powerPong.PlayerInput;
+import de.hhn.it.devtools.apis.powerPong.PowerPongListener;
 import de.hhn.it.devtools.apis.powerPong.PowerPongService;
+import de.hhn.it.devtools.apis.powerPong.PowerUpType;
+import de.hhn.it.devtools.apis.powerPong.Score;
 import de.hhn.it.devtools.components.powerPong.provider.PowerPongMatchEngine;
 import javafx.animation.AnimationTimer;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import java.util.List;
 
-public class PowerPongController extends Controller {
+public class PowerPongController extends Controller implements PowerPongListener {
 
     private PowerPongService service;
     private final PlayerInput playerInput = new PlayerInput();
@@ -34,6 +39,12 @@ public class PowerPongController extends Controller {
     @FXML
     private VBox menuBox;
     @FXML
+    private VBox gameOverBox;
+    @FXML
+    private Label scoreLabel;
+    @FXML
+    private Label winnerLabel;
+    @FXML
     private Button startButton;
 
     public PowerPongController() {
@@ -43,6 +54,9 @@ public class PowerPongController extends Controller {
     @FXML
     public void initialize() {
         gameTimer = new GameTimer();
+        // Register listener.
+        // Note: In some lifecycles, service might be reset, but here it's final-ish.
+        // We'll add listener here, or in resume.
     }
 
     @FXML
@@ -50,23 +64,42 @@ public class PowerPongController extends Controller {
         try {
             service.startGame(GameMode.CLASSIC_DUEL);
             menuBox.setVisible(false);
+            gameOverBox.setVisible(false);
             gameCanvas.setVisible(true);
-            gameCanvas.requestFocus(); // Ensure canvas or scene gets focus (handled in key listener setup mostly)
+            scoreLabel.setVisible(true);
+            updateScoreFormat(0, 0); // Reset score label
+            gameCanvas.requestFocus();
+
+            // Ensure we are listening
+            service.removeListener(this); // specific hygiene
+            service.addListener(this);
+
+            // Should ensure timer is running if not already handled by resume logic
+            gameTimer.start();
+
         } catch (GameLogicException e) {
             e.printStackTrace();
         }
     }
 
+    @FXML
+    public void onBackToMenu(ActionEvent event) {
+        gameOverBox.setVisible(false);
+        menuBox.setVisible(true);
+        scoreLabel.setVisible(false);
+        service.endGame();
+    }
+
     @Override
     public void resume() {
         super.resume();
-        // Attach Key Listeners to Scene
         Scene scene = menuBox.getScene();
         if (scene != null) {
             scene.setOnKeyPressed(this::handleKeyPressed);
             scene.setOnKeyReleased(this::handleKeyReleased);
         }
         gameTimer.start();
+        service.addListener(this);
     }
 
     @Override
@@ -78,9 +111,46 @@ public class PowerPongController extends Controller {
             scene.setOnKeyPressed(null);
             scene.setOnKeyReleased(null);
         }
-        // Pause game logic if running
         service.setPaused(true);
+        service.removeListener(this);
     }
+
+    // --- PowerPongListener Implementation ---
+
+    @Override
+    public void onBallCollision(GameState updatedState) {
+        // Optional: Play sound or particle effect
+    }
+
+    @Override
+    public void onPlayerScored(int scoringPlayerIndex, Score updatedScore) {
+        Platform.runLater(() -> {
+            updateScoreFormat(updatedScore.player1(), updatedScore.player2());
+            // Optional: Visual flash?
+        });
+    }
+
+    @Override
+    public void onGameEnd(GameStatus finalStatus, GameState finalState) {
+        Platform.runLater(() -> {
+            gameTimer.stop();
+            if (finalStatus == GameStatus.PLAYER_1_WINS) {
+                winnerLabel.setText("PLAYER 1 WINS!");
+                winnerLabel.setTextFill(Color.BLUE);
+            } else {
+                winnerLabel.setText("PLAYER 2 WINS!");
+                winnerLabel.setTextFill(Color.RED);
+            }
+            gameOverBox.setVisible(true);
+        });
+    }
+
+    @Override
+    public void onPowerUpCollected(int collectingPlayerIndex, PowerUpType powerUpType) throws GameLogicException {
+        // Handle PowerUp visual feedback if needed
+    }
+
+    // --- Input & Loop ---
 
     private void handleKeyPressed(KeyEvent event) {
         playerInput.keyPressed(mapKeyCode(event.getCode()));
@@ -112,6 +182,10 @@ public class PowerPongController extends Controller {
         }
     }
 
+    private void updateScoreFormat(int p1, int p2) {
+        scoreLabel.setText("P1: " + p1 + " - P2: " + p2);
+    }
+
     private void render(GameState state) {
         GraphicsContext gc = gameCanvas.getGraphicsContext2D();
         gc.clearRect(0, 0, gameCanvas.getWidth(), gameCanvas.getHeight());
@@ -133,39 +207,19 @@ public class PowerPongController extends Controller {
         List<BallState> balls = state.balls();
         if (balls != null) {
             for (BallState ball : balls) {
-                // BallState uses xPosition, yPosition, radius
-                // Draw oval needs top-left x/y and width/height
-                // Assuming xPosition/yPosition are CENTER of ball (common in physics)
-                // But if they are Top-Left, we use them directly.
-                // Let's assume Center for physics usually, but let's check.
-                // Looking at PhysicsEngine would confirm. For now assuming CENTER.
-                // actually typically JavaFX shapes are Top-Left.
-                // Let's stick to using xPosition() and yPosition() directly first
-                // If it looks offset, we can ADJUST.
                 double r = ball.radius();
                 double d = r * 2;
                 gc.fillOval(ball.xPosition() - r, ball.yPosition() - r, d, d);
             }
         }
 
-        // Score
-        gc.setFill(Color.WHITE);
-        // Simple Score render
-        if (state.score() != null) {
-            gc.fillText("P1: " + state.score().player1() + " - P2: " + state.score().player2(), 600, 50);
-        }
-
-        // Check for Game Over to show menu again
-        if (state.status() == GameStatus.PLAYER_1_WINS || state.status() == GameStatus.PLAYER_2_WINS) {
-            menuBox.setVisible(true);
-        }
+        // We render score in the Label now, not on Canvas directly,
+        // but we could leave it as a backup or minimal dependency.
+        // Let's rely on the Label for nicer UI.
     }
 
     private void drawPaddle(GraphicsContext gc, PaddleState paddle, Color color) {
         gc.setFill(color);
-        // paddle.yPosition() is the center Y (from PhysicsEngine analysis)
-        // fillRect expects top-left Y. So we subtract half the height.
-        // paddle.xPosition() is the left X. So we use it directly.
         gc.fillRect(paddle.xPosition(), paddle.yPosition() - paddle.height() / 2, paddle.width(), paddle.height());
     }
 }
