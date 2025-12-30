@@ -185,17 +185,18 @@ public class EntityProvider {
 
     List<SimpleAlien> toRemoveAliens = new ArrayList<>();
     List<SimpleProjectile> toRemoveProjectiles = new ArrayList<>();
+    List<SimpleBarrier> toRemoveBarriers = new ArrayList<>();
 
     if (aliens.isEmpty()) {
       return;
     }
 
     for (SimpleAlien alien : aliens.values()) {
+
       for (SimpleBarrier barrier : getNearbyBarriers(alien.getCoordinate())) {
         if (alien.getHitbox().stream().anyMatch(barrier.getHitbox()::contains)) {
           toRemoveAliens.add(alien);
-          service.notifyListeners(l ->
-                  l.updateBarrier(barrier.getImmutableBarrier()));
+          toRemoveBarriers.add(barrier);
           break;
         }
       }
@@ -208,8 +209,8 @@ public class EntityProvider {
 
     for (SimpleProjectile p : projectiles) {
 
-      boolean removed = false;
       if (p.getdirection() == Direction.DOWN) {
+
         if (player.getHitbox().contains(p.getCoordinate())) {
           player.setHitPoints(p.getDamage());
           service.notifyListeners(l ->
@@ -217,16 +218,17 @@ public class EntityProvider {
           toRemoveProjectiles.add(p);
           continue;
         }
+
         for (SimpleBarrier barrier : getNearbyBarriers(p.getCoordinate())) {
           if (barrier.getHitbox().contains(p.getCoordinate())) {
             toRemoveProjectiles.add(p);
-            service.notifyListeners(l ->
-                    l.updateBarrier(barrier.getImmutableBarrier()));
+            toRemoveBarriers.add(barrier);
             break;
           }
         }
         continue;
       }
+
       if (p.getdirection() == Direction.UP) {
         for (SimpleAlien alien : aliens.values()) {
           if (alien.getHitbox().contains(p.getCoordinate())) {
@@ -243,7 +245,6 @@ public class EntityProvider {
         }
       }
 
-      // out of bounds
       if (p.getCoordinate().y() < 0 || p.getCoordinate().y() > APIConstants.FIELD_SIZE) {
         toRemoveProjectiles.add(p);
       }
@@ -251,6 +252,17 @@ public class EntityProvider {
 
     projectiles.removeAll(toRemoveProjectiles);
     toRemoveAliens.forEach(aliens.values()::remove);
+
+    for (SimpleBarrier barrier : toRemoveBarriers) {
+      barriers.values().remove(barrier);
+      long key = cellKey(barrier.getCoordinate());
+      List<SimpleBarrier> cell = barrierGrid.get(key);
+      if (cell != null) {
+        cell.remove(barrier);
+      }
+      service.notifyListeners(l ->
+              l.updateBarrier(barrier.getImmutableBarrier()));
+    }
 
     service.notifyListeners(l ->
             l.updateProjectiles(projectiles.stream()
