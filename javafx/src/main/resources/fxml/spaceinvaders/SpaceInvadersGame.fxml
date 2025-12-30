@@ -7,11 +7,11 @@
 
 <fx:root prefHeight="720" prefWidth="1280" type="AnchorPane" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Label layoutX="14.0" layoutY="14.0" text="Score:" />
-      <Label fx:id="score" layoutX="52.0" layoutY="14.0" text="10" />
-      <Label fx:id="level" layoutX="650.0" layoutY="14.0" text="1" />
+      <Label layoutX="14.0" layoutY="14.0" style="-fx-text-fill: #00FF00; -fx-font-weight: bold; -fx-font-size: 22px; -fx-font-family: 'Courier New'; -fx-effect: dropshadow(one-pass-box, #000000, 4, 0.3, 2, 2); -fx-stroke: #333333; -fx-stroke-width: 1;" text="Score:" />
+      <Label fx:id="score" layoutX="113.0" layoutY="14.0" style="-fx-text-fill: #00FF00; -fx-font-weight: bold; -fx-font-size: 22px; -fx-font-family: 'Courier New'; -fx-effect: dropshadow(one-pass-box, #000000, 4, 0.3, 2, 2); -fx-stroke: #333333; -fx-stroke-width: 1;" text="10" />
+      <Label fx:id="level" layoutX="668.0" layoutY="14.0" style="-fx-text-fill: #00FF00; -fx-font-weight: bold; -fx-font-size: 22px; -fx-font-family: 'Courier New'; -fx-effect: dropshadow(one-pass-box, #000000, 4, 0.3, 2, 2); -fx-stroke: #333333; -fx-stroke-width: 1;" text="1" />
       <ImageView fx:id="settings" fitHeight="25.0" fitWidth="25" layoutX="1230" layoutY="14" pickOnBounds="true" preserveRatio="true" />
       <Canvas fx:id="canvas" height="512.0" layoutX="388.0" layoutY="104.0" width="512.0" AnchorPane.rightAnchor="380.0" />
-      <Label layoutX="617.0" layoutY="14.0" text="Level" />
+      <Label layoutX="583.0" layoutY="14.0" style="-fx-text-fill: #00FF00; -fx-font-weight: bold; -fx-font-size: 22px; -fx-font-family: 'Courier New'; -fx-effect: dropshadow(one-pass-box, #000000, 4, 0.3, 2, 2); -fx-stroke: #333333; -fx-stroke-width: 1;" text="Level:" />
    </children>
 </fx:root>
