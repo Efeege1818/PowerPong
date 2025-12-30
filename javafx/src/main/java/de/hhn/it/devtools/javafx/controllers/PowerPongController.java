@@ -59,35 +59,46 @@ public class PowerPongController extends Controller implements PowerPongListener
     private static final double GAME_HEIGHT = 600.0;
 
     public PowerPongController() {
-        this.service = new PowerPongMatchEngine();
+        // Empty constructor, defer heavy init to initialize
     }
 
     @FXML
     public void initialize() {
-        gameTimer = new GameTimer();
+        try {
+            this.service = new PowerPongMatchEngine();
+            this.gameTimer = new GameTimer();
 
-        // Dynamic Resizing: Bind Canvas to StackPane
-        // These might be null if FXML isn't fully loaded, but usually in initialize
-        // it's fine.
-        if (rootStack != null) {
-            gameCanvas.widthProperty().bind(rootStack.widthProperty());
-            gameCanvas.heightProperty().bind(rootStack.heightProperty());
+            // Dynamic Resizing: Bind Canvas to StackPane
+            if (rootStack != null && gameCanvas != null) {
+                gameCanvas.widthProperty().bind(rootStack.widthProperty());
+                gameCanvas.heightProperty().bind(rootStack.heightProperty());
+
+                // Redraw on resize
+                gameCanvas.widthProperty().addListener(evt -> safeRender());
+                gameCanvas.heightProperty().addListener(evt -> safeRender());
+            } else {
+                System.err.println("CRITICAL: rootStack or gameCanvas failed to inject!");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("CRITICAL ERROR during PowerPongController initialization: " + e.getMessage());
         }
+    }
 
-        // Redraw on resize (optional, timer handles it mostly, but good for static
-        // state)
-        gameCanvas.widthProperty().addListener(evt -> {
-            if (service != null && service.getGameState() != null
-                    && service.getGameState().status() != GameStatus.RUNNING) {
-                render(service.getGameState());
+    // Helper to avoid duplicate guarded logic
+    private void safeRender() {
+        try {
+            if (service != null) {
+                GameState state = service.getGameState();
+                // Render if state exists and NOT running (timer handles running state)
+                if (state != null && state.status() != GameStatus.RUNNING) {
+                    render(state);
+                }
             }
-        });
-        gameCanvas.heightProperty().addListener(evt -> {
-            if (service != null && service.getGameState() != null
-                    && service.getGameState().status() != GameStatus.RUNNING) {
-                render(service.getGameState());
-            }
-        });
+        } catch (Exception e) {
+            // Ignore render errors during resize to prevent crash loop
+        }
     }
 
     @FXML
