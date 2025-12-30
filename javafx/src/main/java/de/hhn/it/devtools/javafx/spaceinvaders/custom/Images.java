@@ -18,7 +18,7 @@ public enum Images {
           APIConstants.HITBOX_SIZE)),
   alienShot(loadImageSafe("/spaceinvaders/images/alien_shot.png", APIConstants.HITBOX_SIZE,
           APIConstants.HITBOX_SIZE)),
-  shipImage(loadImageSafe("/spaceinvaders/images/ship.png", APIConstants.HITBOX_SIZE,
+  shipImage(loadImageSafe("/spaceinvaders/images/ship.png", APIConstants.PLAYER_SIZE,
           APIConstants.HITBOX_SIZE)),
   alien_shot(loadImageSafe("/spaceinvaders/images/shot_alien.png", APIConstants.SHOT_HITBOX_SIZE,
           APIConstants.SHOT_HITBOX_SIZE)),
