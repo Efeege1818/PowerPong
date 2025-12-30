@@ -226,11 +226,21 @@ public class PowerPongController extends Controller implements PowerPongListener
         @Override
         public void handle(long now) {
             try {
-                service.updateGame(playerInput);
-                render(service.getGameState());
+                if (service != null && service.getGameState() != null
+                        && service.getGameState().status() == GameStatus.RUNNING) {
+                    service.updateGame(playerInput);
+                }
+
+                // Always try to render if state is available (even in menu/pause)
+                if (service != null && service.getGameState() != null) {
+                    render(service.getGameState());
+                }
             } catch (GameLogicException e) {
+                // If game ended abruptly or state is invalid
                 e.printStackTrace();
-                // If game ended abruptly
+            } catch (Exception e) {
+                // Catch any other rendering errors to prevent crash
+                e.printStackTrace();
             }
         }
     }
