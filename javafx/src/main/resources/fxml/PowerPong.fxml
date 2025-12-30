@@ -1,21 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="rootBox" alignment="CENTER" prefHeight="720.0" prefWidth="1280.0" spacing="20.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.hhn.it.devtools.javafx.powerPong.PowerPongController">
+<StackPane fx:id="rootStack" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.hhn.it.devtools.javafx.powerPong.PowerPongController">
    <children>
-      <Label text="PowerPong">
-         <font>
-            <Font name="System Bold" size="48.0" />
-         </font>
-      </Label>
-      <Button fx:id="startButton" mnemonicParsing="false" onAction="#onStartGame" text="Start Game">
-         <font>
-            <Font size="24.0" />
-         </font>
-      </Button>
+      <Canvas fx:id="gameCanvas" height="720.0" width="1280.0" />
+      <VBox fx:id="menuBox" alignment="CENTER" spacing="20.0" style="-fx-background-color: rgba(255,255,255,0.8);">
+         <children>
+            <Label text="PowerPong">
+               <font>
+                  <Font name="System Bold" size="48.0" />
+               </font>
+            </Label>
+            <Button fx:id="startButton" mnemonicParsing="false" onAction="#onStartGame" text="Start Game">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Button>
+         </children>
+      </VBox>
    </children>
-</VBox>
+</StackPane>
