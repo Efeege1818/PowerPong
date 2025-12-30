@@ -151,7 +151,7 @@ public class EntityProvider {
         for (int x = 0; x < APIConstants.BARRIER_HITBOX_WIDTH; x++) {
           Coordinate c = new Coordinate(
                   x + (i * spacing),
-                  APIConstants.FIELD_SIZE - 60 + y
+                  APIConstants.FIELD_SIZE - 300 + y
           );
 
           SimpleBarrier barrier = new SimpleBarrier(c, id);
@@ -218,17 +218,19 @@ public class EntityProvider {
    * Randomly selects an alien and fires a projectile downward.
    */
   public void shootAliens() {
-    if (aliens.isEmpty()) return;
-
-    if (new Random().nextInt(100) <= Constants.ALIEN_SHOOTING_CHANCE) {
-      List<Integer> keys = new ArrayList<>(aliens.keySet());
-      SimpleAlien a = aliens.get(keys.get(new Random().nextInt(keys.size())));
-      projectiles.add(new SimpleProjectile(
-              new Coordinate(a.getCoordinate().x() + 1, a.getCoordinate().y() + 1),
-              Direction.DOWN,
-              Constants.BASE_DAMAGE
-      ));
+    if(projectiles.isEmpty()){
+      if (aliens.isEmpty()) return;
+      if (new Random().nextInt(100) <= Constants.ALIEN_SHOOTING_CHANCE) {
+        List<Integer> keys = new ArrayList<>(aliens.keySet());
+        SimpleAlien a = aliens.get(keys.get(new Random().nextInt(keys.size())));
+        projectiles.add(new SimpleProjectile(
+                new Coordinate(a.getCoordinate().x() + 1, a.getCoordinate().y() + 1),
+                Direction.DOWN,
+                Constants.BASE_DAMAGE
+        ));
+      }
     }
+
   }
 
   /**
@@ -257,7 +259,7 @@ public class EntityProvider {
           player.setHitPoints(p.getDamage());
           service.notifyListeners(l -> l.updateShip(player.getImmutableShip()));
           toRemoveProjectiles.add(p);
-          continue;
+
         }
         for (SimpleBarrier barrier : getNearbyBarriers(p.getCoordinate())) {
           if (barrier.getHitbox().contains(p.getCoordinate())) {
@@ -266,7 +268,7 @@ public class EntityProvider {
             break;
           }
         }
-        continue;
+
       }
       if (p.getdirection() == Direction.UP) {
         for (SimpleAlien alien : aliens.values()) {

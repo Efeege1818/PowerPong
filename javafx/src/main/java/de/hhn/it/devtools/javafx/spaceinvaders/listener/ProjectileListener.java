@@ -8,7 +8,7 @@ import javafx.collections.MapChangeListener;
 import javafx.scene.image.Image;
 
 /**
- * ProjectileListener triggert by ViewModel.
+ * ProjectileListener triggered by ViewModel.
  */
 public class ProjectileListener implements MapChangeListener<Integer, Projectile> {
   private final Image projectileImage = Images.projectileImage.getImage();

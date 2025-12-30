@@ -6,10 +6,11 @@ import de.hhn.it.devtools.javafx.spaceinvaders.custom.Images;
 import de.hhn.it.devtools.javafx.spaceinvaders.helper.CanvasProvider;
 import javafx.collections.MapChangeListener;
 import javafx.scene.image.Image;
+import javafx.scene.image.PixelReader;
 import javafx.scene.paint.Color;
 
 /**
- * BarrierListener triggert by ViewModel.
+ * BarrierListener triggered by ViewModel.
  */
 public class BarrierListener implements MapChangeListener<Integer, Barrier> {
   private final Image barrier = Images.barrierImage.getImage();
@@ -35,7 +36,7 @@ public class BarrierListener implements MapChangeListener<Integer, Barrier> {
         int s = bar.barrierId() - (size * 2);
         int x = s % APIConstants.BARRIER_HITBOX_WIDTH;
         int y = s / APIConstants.BARRIER_HITBOX_WIDTH;
-        Color color = this.barrier.getPixelReader().getColor(x, y);
+        Color color = getSafeColor(barrierImage(), x, y);
         canvasProvider.drawEntity(color, bar.coordinate());
         System.out.println("Draw barrier part at " + bar.coordinate().x() + ", "
                 + bar.coordinate().y() + " with color " + color);
@@ -43,7 +44,7 @@ public class BarrierListener implements MapChangeListener<Integer, Barrier> {
         int s = bar.barrierId() - (size);
         int x = s % APIConstants.BARRIER_HITBOX_WIDTH;
         int y = s / APIConstants.BARRIER_HITBOX_WIDTH;
-        Color color = this.barrier.getPixelReader().getColor(x, y);
+        Color color = getSafeColor(barrierImage(), x, y);
         canvasProvider.drawEntity(color, bar.coordinate());
         System.out.println("Draw barrier part at " + x + ", "
                 + y + " with color " + color);
@@ -51,7 +52,7 @@ public class BarrierListener implements MapChangeListener<Integer, Barrier> {
         int s = bar.barrierId();
         int x = s % APIConstants.BARRIER_HITBOX_WIDTH;
         int y = s / APIConstants.BARRIER_HITBOX_WIDTH;
-        Color color = this.barrier.getPixelReader().getColor(x, y);
+        Color color = getSafeColor(barrierImage(), x, y);
         canvasProvider.drawEntity(color, bar.coordinate());
         System.out.println("Draw barrier part at " + bar.coordinate().x() + ", "
                 + bar.coordinate().y() + " with color " + color);
@@ -60,4 +61,25 @@ public class BarrierListener implements MapChangeListener<Integer, Barrier> {
       canvasProvider.clearEntity(barrier.getValueRemoved().coordinate(), 1, 1);
     }
   }
+
+  private Image barrierImage() {
+    return this.barrier;
+  }
+
+  private Color getSafeColor(Image img, int x, int y) {
+    if (img == null) {
+      return Color.TRANSPARENT;
+    }
+    PixelReader reader = img.getPixelReader();
+    if (reader == null) {
+      return Color.TRANSPARENT;
+    }
+    int width = (int) img.getWidth();
+    int height = (int) img.getHeight();
+    if (x < 0 || y < 0 || x >= width || y >= height) {
+      return Color.TRANSPARENT;
+    }
+    return reader.getColor(x, y);
+  }
 }
+

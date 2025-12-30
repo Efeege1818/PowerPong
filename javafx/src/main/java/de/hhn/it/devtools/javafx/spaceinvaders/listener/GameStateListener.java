@@ -7,7 +7,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
 /**
- * GameStateListener triggert by ViewModel.
+ * GameStateListener triggered by ViewModel.
  */
 public class GameStateListener implements ChangeListener<GameState> {
   private final PopupConfigurations popupConfigurations;
