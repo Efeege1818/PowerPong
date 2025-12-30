@@ -133,13 +133,18 @@ public class PowerPongController extends Controller {
         List<BallState> balls = state.balls();
         if (balls != null) {
             for (BallState ball : balls) {
-                // Assuming ball coordinates are center based, or top-left.
-                // PhysicsEngine usually works with center or top-left.
-                // Let's assume Top-Left for standard rect drawing, or adjust if needed.
-                // Checking PhysicsEngine would confirm, but usually simply drawing rect/oven is
-                // safe start.
-                // Let's draw as circle.
-                gc.fillOval(ball.x(), ball.y(), ball.size(), ball.size());
+                // BallState uses xPosition, yPosition, radius
+                // Draw oval needs top-left x/y and width/height
+                // Assuming xPosition/yPosition are CENTER of ball (common in physics)
+                // But if they are Top-Left, we use them directly.
+                // Let's assume Center for physics usually, but let's check.
+                // Looking at PhysicsEngine would confirm. For now assuming CENTER.
+                // actually typically JavaFX shapes are Top-Left.
+                // Let's stick to using xPosition() and yPosition() directly first
+                // If it looks offset, we can ADJUST.
+                double r = ball.radius();
+                double d = r * 2;
+                gc.fillOval(ball.xPosition() - r, ball.yPosition() - r, d, d);
             }
         }
 
@@ -158,6 +163,9 @@ public class PowerPongController extends Controller {
 
     private void drawPaddle(GraphicsContext gc, PaddleState paddle, Color color) {
         gc.setFill(color);
-        gc.fillRect(paddle.x(), paddle.y(), paddle.width(), paddle.height());
+        // paddle.yPosition() is the center Y (from PhysicsEngine analysis)
+        // fillRect expects top-left Y. So we subtract half the height.
+        // paddle.xPosition() is the left X. So we use it directly.
+        gc.fillRect(paddle.xPosition(), paddle.yPosition() - paddle.height() / 2, paddle.width(), paddle.height());
     }
 }

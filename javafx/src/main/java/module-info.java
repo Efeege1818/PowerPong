@@ -1,6 +1,6 @@
 module devtools.javafx {
   requires org.slf4j;
-  requires devtools.apis;
+  requires transitive devtools.apis;
   requires devtools.components;
   requires javafx.controls;
   requires javafx.fxml;
