@@ -26,13 +26,31 @@ public class EntityProvider {
   private ArrayList<SimpleProjectile> projectiles = new ArrayList<>();
   private Direction currentAlienDirection = Direction.RIGHT;
   private SimpleSpaceInvadersService service;
+
   /**
    * Default Constructor.
    */
   public EntityProvider(SimpleSpaceInvadersService service) {
     player = new SimpleShip(new Coordinate(APIConstants.FIELD_SIZE / 2, APIConstants.FIELD_SIZE - 26));
     generateAliens();
+    initBarriers();
     this.service = service;
+  }
+
+  private void initBarriers() {
+    int numberOfBarriers = 3;
+    int id = 0;
+    int spacing = APIConstants.FIELD_SIZE / (numberOfBarriers + 1);
+    for (int i = 1; i <= numberOfBarriers; i++) {
+      for (int y = 0; y < APIConstants.BARRIER_HITBOX_HEIGHT; y++) {
+        for (int x = 0; x < APIConstants.BARRIER_HITBOX_WIDTH; x++) {
+          Coordinate coordinate = new Coordinate(x + (i * spacing),
+                  APIConstants.FIELD_SIZE - 60 + y);
+          barriers.put(id, new SimpleBarrier(coordinate, id));
+          id++;
+        }
+      }
+    }
   }
 
   public SimpleShip getPlayer() {
@@ -129,13 +147,13 @@ public class EntityProvider {
     List<SimpleAlien> toRemoveAliens = new ArrayList<>();
     List<SimpleProjectile> toRemoveProjectile = new ArrayList<>();
     aliens.values().forEach(alien -> {
-      java.util.Optional<SimpleBarrier> barrier = barriers.values().stream().filter(barriers -> alien.getHitbox().stream().anyMatch(barriers.getHitbox()::contains)).findFirst();
+      //java.util.Optional<SimpleBarrier> barrier = barriers.values().stream().filter(barriers -> alien.getHitbox().stream().anyMatch(barriers.getHitbox()::contains)).findFirst();
 
-      if (barrier.isPresent()) {
-        service.notifyListeners(spaceInvadersListener -> spaceInvadersListener
-                .updateBarrier(barrier.get().getImmutableBarrier()));
-        toRemoveAliens.add(alien);
-      }
+      //if (barrier.isPresent()) {
+      //  service.notifyListeners(spaceInvadersListener -> spaceInvadersListener
+      //          .updateBarrier(barrier.get().getImmutableBarrier()));
+      //  toRemoveAliens.add(alien);
+      //}
       if (alien.getCoordinate().y() >= player.getCoordinate().y()) {
         player.setHitPoints(0);
         service.notifyListeners(spaceInvadersListener -> spaceInvadersListener.updateShip(player.getImmutableShip()));
@@ -191,4 +209,7 @@ public class EntityProvider {
     return coords;
   }
 
+  public HashMap<Integer, SimpleBarrier> getBarriers() {
+    return barriers;
+  }
 }

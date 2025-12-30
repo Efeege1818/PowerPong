@@ -43,7 +43,13 @@ public class SpaceInvadersViewModel implements SpaceInvadersListener {
 
   @Override
   public void updateBarrier(Barrier barrier) {
-    Platform.runLater(() -> this.barriers.put(barrier.barrierId(), barrier));
+    Platform.runLater(() -> {
+      if (barriers.containsKey(barrier.barrierId())) {
+        this.barriers.remove(barrier.barrierId());
+        return;
+      }
+      this.barriers.put(barrier.barrierId(), barrier);
+    });
   }
 
   @Override
