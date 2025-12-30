@@ -220,7 +220,7 @@ public class EntityProvider {
    */
   public void shootAliens() {
     if (aliens.isEmpty()) return;
-    if (new Random().nextInt(100) <= Constants.ALIEN_SHOOTING_CHANCE) {
+    if (new Random().nextInt(1000) <= Constants.ALIEN_SHOOTING_CHANCE) {
       List<Integer> keys = new ArrayList<>(aliens.keySet());
       SimpleAlien a = aliens.get(keys.get(new Random().nextInt(keys.size())));
       projectiles.add(new SimpleProjectile(
