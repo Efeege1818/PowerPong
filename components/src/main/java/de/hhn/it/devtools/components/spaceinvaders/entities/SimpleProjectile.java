@@ -36,9 +36,9 @@ public class SimpleProjectile {
    */
   public void move() {
     if (direction == Direction.DOWN) {
-      this.coordinate = new Coordinate(coordinate.x(), coordinate.y() + 1);
+      this.coordinate = new Coordinate(coordinate.x(), coordinate.y() + 3);
     } else if (direction == Direction.UP) {
-      this.coordinate = new Coordinate(coordinate.x(), coordinate.y() - 1);
+      this.coordinate = new Coordinate(coordinate.x(), coordinate.y() - 3);
     }
   }
 

@@ -168,17 +168,19 @@ public class EntityProvider {
   }
 
   public void shootAliens() {
-
-    if (aliens.isEmpty()) return;
-    if (new Random().nextInt(100) <= Constants.ALIEN_SHOOTING_CHANCE) {
-      List<Integer> keys = new ArrayList<>(aliens.keySet());
-      SimpleAlien a = aliens.get(keys.get(new Random().nextInt(keys.size())));
-      projectiles.add(new SimpleProjectile(
-              new Coordinate(a.getCoordinate().x() + 1, a.getCoordinate().y() + 1),
-              Direction.DOWN,
-              Constants.BASE_DAMAGE
-      ));
+    if(projectiles.isEmpty()){
+      if (aliens.isEmpty()) return;
+      if (new Random().nextInt(100) <= Constants.ALIEN_SHOOTING_CHANCE) {
+        List<Integer> keys = new ArrayList<>(aliens.keySet());
+        SimpleAlien a = aliens.get(keys.get(new Random().nextInt(keys.size())));
+        projectiles.add(new SimpleProjectile(
+                new Coordinate(a.getCoordinate().x() + 1, a.getCoordinate().y() + 1),
+                Direction.DOWN,
+                Constants.BASE_DAMAGE
+        ));
+      }
     }
+
   }
 
   public void checkCollision() {
