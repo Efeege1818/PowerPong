@@ -11,7 +11,7 @@ import javafx.scene.image.Image;
  * AliensListener triggert by ViewModel.
  */
 public class AliensListener implements MapChangeListener<Integer, Alien> {
-  private final Image alienImage = Images.alienImage.getImage();
+  private final Image alienImage = Images.alienImage1.getImage();
   private final CanvasProvider canvasProvider;
   private Alien dummyAlien;
 

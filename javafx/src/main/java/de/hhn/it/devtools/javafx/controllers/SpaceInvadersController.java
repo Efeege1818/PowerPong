@@ -3,6 +3,7 @@ package de.hhn.it.devtools.javafx.controllers;
 import de.hhn.it.devtools.apis.spaceinvaders.Difficulty;
 import de.hhn.it.devtools.apis.spaceinvaders.GameConfiguration;
 import de.hhn.it.devtools.apis.spaceinvaders.Sound;
+import de.hhn.it.devtools.javafx.spaceinvaders.custom.Images;
 import de.hhn.it.devtools.javafx.spaceinvaders.view.SpaceInvadersScreen;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -102,8 +103,7 @@ public class SpaceInvadersController extends Controller implements Initializable
     newStage.setScene(scene);
     newStage.setResizable(false);
     newStage.setTitle("Space Invaders");
-    newStage.getIcons().add(new Image(getClass()
-            .getResource("/spaceinvaders/images/logo.png").toExternalForm()));
+    newStage.getIcons().add(Images.logo.getImage());
     newStage.show();
     logger.debug("SpaceInvaders Game started");
   }
