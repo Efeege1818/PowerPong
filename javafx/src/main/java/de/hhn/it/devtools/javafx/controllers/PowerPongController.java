@@ -194,6 +194,8 @@ public class PowerPongController extends Controller implements PowerPongListener
         gc.setFill(Color.BLACK);
         gc.fillRect(0, 0, gameCanvas.getWidth(), gameCanvas.getHeight());
 
+        drawFieldDecorations(gc);
+
         // Paddles
         if (state.player1Paddle() != null) {
             drawPaddle(gc, state.player1Paddle(), Color.BLUE);
@@ -213,13 +215,48 @@ public class PowerPongController extends Controller implements PowerPongListener
             }
         }
 
-        // We render score in the Label now, not on Canvas directly,
-        // but we could leave it as a backup or minimal dependency.
-        // Let's rely on the Label for nicer UI.
+        // PowerUps
+        List<de.hhn.it.devtools.apis.powerPong.PowerUpState> powerUps = state.activePowerUpsOnField();
+        if (powerUps != null) {
+            for (de.hhn.it.devtools.apis.powerPong.PowerUpState powerUp : powerUps) {
+                drawPowerUp(gc, powerUp);
+            }
+        }
+    }
+
+    private void drawFieldDecorations(GraphicsContext gc) {
+        gc.setStroke(Color.GRAY);
+        gc.setLineWidth(2);
+        gc.setLineDashes(10);
+        gc.strokeLine(gameCanvas.getWidth() / 2, 0, gameCanvas.getWidth() / 2, gameCanvas.getHeight());
+        gc.setLineDashes(null);
     }
 
     private void drawPaddle(GraphicsContext gc, PaddleState paddle, Color color) {
         gc.setFill(color);
-        gc.fillRect(paddle.xPosition(), paddle.yPosition() - paddle.height() / 2, paddle.width(), paddle.height());
+        // Rounded corners for polish
+        gc.fillRoundRect(paddle.xPosition(), paddle.yPosition() - paddle.height() / 2, paddle.width(), paddle.height(),
+                10, 10);
+    }
+
+    private void drawPowerUp(GraphicsContext gc, de.hhn.it.devtools.apis.powerPong.PowerUpState powerUp) {
+        gc.setFill(getColorForPowerUp(powerUp.type()));
+        double r = powerUp.radius();
+        double d = r * 2;
+        gc.fillOval(powerUp.xPosition() - r, powerUp.yPosition() - r, d, d);
+        // Optional: Draw symbol or letter inside?
+    }
+
+    private Color getColorForPowerUp(PowerUpType type) {
+        return switch (type) {
+            case BIGGER_PADDLE -> Color.LIGHTGREEN;
+            case SMALLER_ENEMY_PADDLE -> Color.INDIANRED;
+            case DOUBLE_BALL -> Color.WHITE; // Maybe a different shade or border
+            case SHIELD -> Color.LIGHTBLUE;
+            case BARRIERLESS -> Color.CYAN;
+            case SLOW_ENEMY_PADDLE -> Color.YELLOW;
+            case FASTER_BALL_ENEMY_SIDE -> Color.ORANGE;
+            default -> Color.MAGENTA;
+        };
     }
 }
