@@ -238,7 +238,10 @@ public class EntityProvider {
     List<SimpleAlien> toRemoveAliens = new ArrayList<>();
     List<SimpleProjectile> toRemoveProjectiles = new ArrayList<>();
     List<SimpleBarrier> toRemoveBarriers = new ArrayList<>();
-    if (aliens.isEmpty()) { return; } for (SimpleAlien alien : aliens.values()) {
+    if (aliens.isEmpty()) {
+      return;
+    }
+    for (SimpleAlien alien : aliens.values()) {
       for (SimpleBarrier barrier : getNearbyBarriers(alien.getCoordinate())) {
         if (alien.getHitbox().stream().anyMatch(barrier.getHitbox()::contains)) {
           toRemoveAliens.add(alien);
@@ -257,7 +260,6 @@ public class EntityProvider {
           player.setHitPoints(p.getDamage());
           service.notifyListeners(l -> l.updateShip(player.getImmutableShip()));
           toRemoveProjectiles.add(p);
-          continue;
         }
         for (SimpleBarrier barrier : getNearbyBarriers(p.getCoordinate())) {
           if (barrier.getHitbox().contains(p.getCoordinate())) {
@@ -266,14 +268,14 @@ public class EntityProvider {
             break;
           }
         }
-        continue;
       }
       if (p.getdirection() == Direction.UP) {
         for (SimpleAlien alien : aliens.values()) {
           if (alien.getHitbox().contains(p.getCoordinate())) {
             toRemoveProjectiles.add(p);
             if (!alien.getHit()) {
-              toRemoveAliens.add(alien); service.notifyListeners(l -> l.updateScore(service.score += Constants.ALIEN_DEATH_POINTS));
+              toRemoveAliens.add(alien);
+              service.notifyListeners(l -> l.updateScore(service.score += Constants.ALIEN_DEATH_POINTS));
             }
             service.notifyListeners(l -> l.damageAlien(alien.immutableAlien()));
             break;
@@ -285,7 +287,6 @@ public class EntityProvider {
       }
     }
     projectiles.removeAll(toRemoveProjectiles);
-    toRemoveAliens.forEach(aliens.values()::remove);
     for (SimpleBarrier barrier : toRemoveBarriers) {
       barriers.values().remove(barrier);
       long key = cellKey(barrier.getCoordinate());
@@ -298,9 +299,12 @@ public class EntityProvider {
     service.notifyListeners(l -> l.updateProjectiles(projectiles.stream()
             .map(SimpleProjectile::getImmtProjectile)
             .toArray(Projectile[]::new)));
-    service.notifyListeners(l -> l.updateAliens(aliens.values().stream()
-            .map(SimpleAlien::immutableAlien)
-            .toArray(Alien[]::new)));
+
+    toRemoveAliens.forEach(alien -> {
+      service.notifyListeners(l -> l.damageAlien(alien.immutableAlien()));
+      aliens.remove(alien);
+    });
+
   }
 
 
