@@ -2,6 +2,8 @@ package de.hhn.it.devtools.javafx.spaceinvaders.custom;
 
 import de.hhn.it.devtools.apis.spaceinvaders.APIConstants;
 import java.net.URL;
+
+import javafx.scene.image.Image;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,6 +26,8 @@ public enum Images {
           APIConstants.SHOT_HITBOX_SIZE, APIConstants.SHOT_HITBOX_SIZE)),
   barrierImage(loadImageSafe("/spaceinvaders/images/barrier.png",
           APIConstants.BARRIER_HITBOX_WIDTH, APIConstants.BARRIER_HITBOX_HEIGHT)),
+  background(new Image(Images.class
+          .getResource("/spaceinvaders/images/background.png").toExternalForm())),
   settingsImage(loadImageSafe("/spaceinvaders/images/setting.png", 25, 25));
   private static final String TRANSPARENT_PNG_DATA =
           "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAA"

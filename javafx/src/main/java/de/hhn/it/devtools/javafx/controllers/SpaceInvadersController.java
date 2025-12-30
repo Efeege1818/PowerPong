@@ -20,7 +20,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.*;
 import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -50,6 +50,7 @@ public class SpaceInvadersController extends Controller implements Initializable
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    setBackground();
     Media media = new Media(getClass().getResource("/spaceinvaders/sounds/"
             + Sound.CHICKEN.getSound()).toString());
     MediaPlayer mediaPlayer = new MediaPlayer(media);
@@ -99,7 +100,7 @@ public class SpaceInvadersController extends Controller implements Initializable
     stage.close();
     GameConfiguration gameConfiguration = new GameConfiguration(3, difficultyChoiceBox.getValue());
     Stage newStage = new Stage();
-    Scene scene = new Scene(new SpaceInvadersScreen(stage, gameConfiguration), 1280, 720);
+    Scene scene = new Scene(new SpaceInvadersScreen(stage, gameConfiguration, newStage), 1280, 720);
     newStage.setScene(scene);
     newStage.setResizable(false);
     newStage.setTitle("Space Invaders");
@@ -122,4 +123,17 @@ public class SpaceInvadersController extends Controller implements Initializable
   public void shutdown() {
     logger.debug("shutdown: - SpaceInvadersConfiguration is shutting down ...");
   }
+
+  private void setBackground() {
+    BackgroundSize bgSize = new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, true, true, false, true);
+    BackgroundImage bgImage = new BackgroundImage(
+            Images.background.getImage(),
+            BackgroundRepeat.NO_REPEAT,
+            BackgroundRepeat.NO_REPEAT,
+            BackgroundPosition.DEFAULT,
+            bgSize
+    );
+    spaceInvadersPane.setBackground(new Background(bgImage));
+  }
+
 }
