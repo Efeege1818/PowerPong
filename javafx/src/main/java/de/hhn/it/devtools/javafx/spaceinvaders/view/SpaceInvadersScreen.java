@@ -2,7 +2,6 @@ package de.hhn.it.devtools.javafx.spaceinvaders.view;
 
 import de.hhn.it.devtools.apis.spaceinvaders.*;
 import de.hhn.it.devtools.apis.spaceinvaders.entities.Alien;
-import de.hhn.it.devtools.apis.spaceinvaders.entities.Barrier;
 import de.hhn.it.devtools.apis.spaceinvaders.entities.Ship;
 import de.hhn.it.devtools.components.spaceinvaders.SimpleSpaceInvadersService;
 import de.hhn.it.devtools.javafx.spaceinvaders.helper.PopupProvider;
@@ -11,7 +10,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
-import javafx.beans.InvalidationListener;
 import javafx.collections.MapChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -23,7 +21,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.StrokeLineCap;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,9 +89,9 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
     }
 
     // safe image loading after FXML load (so logger available)
-    this.alien = loadImageSafe("/images/spaceinvaders/alien.png");
-    this.ship = loadImageSafe("/images/spaceinvaders/ship.png");
-    this.barrier = loadImageSafe("/images/spaceinvaders/barrier.png");
+    this.alien = loadImageSafe("/spaceinvaders/images/alien.png");
+    this.ship = loadImageSafe("/spaceinvaders/images/ship.png");
+    this.barrier = loadImageSafe("/spaceinvaders/images/barrier.png");
 
     score.textProperty().bind(viewModel.getScoreProperty().asString());
     level.textProperty().bind(viewModel.getCurrentRoundProperty().asString());
@@ -155,7 +152,7 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     // settings ImageView might be null if FXML failed earlier; we validated in ctor
-    settings.setImage(loadImageSafe("/images/spaceinvaders/setting.png"));
+    settings.setImage(loadImageSafe("/spaceinvaders/images/setting.png"));
     settings.setOnMouseClicked((m) -> spaceInvadersService.pause());
 
     Platform.runLater(() -> {

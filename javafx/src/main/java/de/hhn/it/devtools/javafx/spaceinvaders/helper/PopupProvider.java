@@ -32,7 +32,7 @@ public class PopupProvider {
     this.popup.initOwner(owner);
     this.popup.initModality(Modality.WINDOW_MODAL);
     this.popup.getIcons().add(new Image(getClass()
-            .getResource("/images/spaceinvaders/logo.png").toExternalForm()));
+            .getResource("/spaceinvaders/images/logo.png").toExternalForm()));
   }
 
   /**

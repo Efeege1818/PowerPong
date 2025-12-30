@@ -51,7 +51,8 @@ public class EntityProvider {
       return;
     }
     for (SimpleAlien a : aliens.values()) {
-      if (a.getCoordinate().x() < 0 || a.getCoordinate().x() > APIConstants.FIELD_SIZE - 15) {
+      if (a.getCoordinate().x() < 0
+              || a.getCoordinate().x() > APIConstants.FIELD_SIZE - APIConstants.HITBOX_SIZE) {
         aliens.values().forEach(alien -> alien.move(Direction.DOWN));
         if (this.currentAlienDirection == Direction.RIGHT) {
           this.currentAlienDirection = Direction.LEFT;
