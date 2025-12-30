@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<StackPane fx:id="rootStack" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.hhn.it.devtools.javafx.powerPong.PowerPongController">
+<StackPane fx:id="rootStack" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.hhn.it.devtools.javafx.controllers.PowerPongController">
    <children>
       <Canvas fx:id="gameCanvas" height="720.0" width="1280.0" />
       <VBox fx:id="menuBox" alignment="CENTER" spacing="20.0" style="-fx-background-color: rgba(255,255,255,0.8);">

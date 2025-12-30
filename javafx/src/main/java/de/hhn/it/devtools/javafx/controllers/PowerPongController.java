@@ -1,4 +1,4 @@
-package de.hhn.it.devtools.javafx.powerPong;
+package de.hhn.it.devtools.javafx.controllers;
 
 import de.hhn.it.devtools.apis.exceptions.GameLogicException;
 import de.hhn.it.devtools.apis.powerPong.BallState;
@@ -10,7 +10,6 @@ import de.hhn.it.devtools.apis.powerPong.PaddleState;
 import de.hhn.it.devtools.apis.powerPong.PlayerInput;
 import de.hhn.it.devtools.apis.powerPong.PowerPongService;
 import de.hhn.it.devtools.components.powerPong.provider.PowerPongMatchEngine;
-import de.hhn.it.devtools.javafx.controllers.Controller;
 import javafx.animation.AnimationTimer;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
