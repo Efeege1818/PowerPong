@@ -1,9 +1,13 @@
 package de.hhn.it.devtools.javafx.spaceinvaders.view;
 
-import de.hhn.it.devtools.apis.spaceinvaders.*;
+import de.hhn.it.devtools.apis.spaceinvaders.APIConstants;
+import de.hhn.it.devtools.apis.spaceinvaders.Coordinate;
+import de.hhn.it.devtools.apis.spaceinvaders.GameConfiguration;
+import de.hhn.it.devtools.apis.spaceinvaders.GameState;
+import de.hhn.it.devtools.apis.spaceinvaders.SpaceInvadersService;
 import de.hhn.it.devtools.apis.spaceinvaders.entities.Alien;
+import de.hhn.it.devtools.apis.spaceinvaders.entities.Barrier;
 import de.hhn.it.devtools.apis.spaceinvaders.entities.Projectile;
-import de.hhn.it.devtools.apis.spaceinvaders.entities.Ship;
 import de.hhn.it.devtools.components.spaceinvaders.SimpleSpaceInvadersService;
 import de.hhn.it.devtools.javafx.spaceinvaders.helper.PopupProvider;
 import de.hhn.it.devtools.javafx.spaceinvaders.viewmodel.SpaceInvadersViewModel;
@@ -91,16 +95,55 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
     }
 
     // safe image loading after FXML load (so logger available)
-    this.alien = loadImageSafe("/spaceinvaders/images/alien.png");
-    this.ship = loadImageSafe("/spaceinvaders/images/ship.png");
-    this.projectile = loadImageSafe("/spaceinvaders/images/shot.png");
-    this.barrier = loadImageSafe("/spaceinvaders/images/barrier.png");
+    this.alien = loadImageSafe("/spaceinvaders/images/alien.png", APIConstants.HITBOX_SIZE,
+            APIConstants.HITBOX_SIZE);
+    this.ship = loadImageSafe("/spaceinvaders/images/ship.png", APIConstants.HITBOX_SIZE,
+            APIConstants.HITBOX_SIZE);
+    this.barrier = loadImageSafe("/spaceinvaders/images/barrier.png",
+            APIConstants.BARRIER_HITBOX_WIDTH, APIConstants.BARRIER_HITBOX_HEIGHT);
+    this.projectile = loadImageSafe("/spaceinvaders/images/shot.png",
+            APIConstants.SHOT_HITBOX_SIZE, APIConstants.SHOT_HITBOX_SIZE);
 
     score.textProperty().bind(viewModel.getScoreProperty().asString());
     level.textProperty().bind(viewModel.getCurrentRoundProperty().asString());
     viewModel.getShipObjectPropertyProperty().addListener((obs, oldShip, newShip) -> {
         drawEntity(this.ship, newShip.coordinate(), APIConstants.HITBOX_SIZE,
                 APIConstants.HITBOX_SIZE);
+    });
+    viewModel.getBarriers().addListener((MapChangeListener<Integer, Barrier>) barrier -> {
+      if (barrier.wasAdded()) {
+        int size = APIConstants.BARRIER_HITBOX_HEIGHT * APIConstants.BARRIER_HITBOX_WIDTH;
+        Barrier bar = barrier.getValueAdded();
+        if (bar.barrierId() > size * 3) {
+          return; // invalid barrier id, skip drawing
+        } else if (bar.barrierId() > size * 2) {
+          int s = bar.barrierId() - (size * 2);
+          int x = s % APIConstants.BARRIER_HITBOX_WIDTH;
+          int y = s / APIConstants.BARRIER_HITBOX_WIDTH;
+          Color color = this.barrier.getPixelReader().getColor(x, y);
+            drawEntity(color, bar.coordinate());
+            System.out.println("Draw barrier part at " + bar.coordinate().x() + ", "
+                    + bar.coordinate().y() + " with color " + color);
+        } else if (bar.barrierId() > size) {
+          int s = bar.barrierId() - (size);
+          int x = s % APIConstants.BARRIER_HITBOX_WIDTH;
+          int y = s / APIConstants.BARRIER_HITBOX_WIDTH;
+          Color color = this.barrier.getPixelReader().getColor(x, y);
+            drawEntity(color, bar.coordinate());
+          System.out.println("Draw barrier part at " + x + ", "
+                  + y + " with color " + color);
+        } else {
+          int s = bar.barrierId();
+          int x = s % APIConstants.BARRIER_HITBOX_WIDTH;
+          int y = s / APIConstants.BARRIER_HITBOX_WIDTH;
+          Color color = this.barrier.getPixelReader().getColor(x, y);
+            drawEntity(color, bar.coordinate());
+          System.out.println("Draw barrier part at " + bar.coordinate().x() + ", "
+                  + bar.coordinate().y() + " with color " + color);
+        }
+      } else if (barrier.wasRemoved()) {
+        clearEntity(barrier.getValueRemoved().coordinate(), 1, 1);
+      }
     });
     viewModel.getAliens().addListener((MapChangeListener<Integer, Alien>)  change -> {
       if (dummyAlien != null) {
@@ -135,8 +178,7 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
                 APIConstants.SHOT_HITBOX_SIZE);
       }
     });
-//    viewModel.getProjectiles().addListener((InvalidationListener) change -> drawCanvas());
-//    viewModel.getShipObjectPropertyProperty().addListener(change -> drawCanvas());
+
     viewModel.getGameStateObjectProperty().addListener((obs, oldState, newState) -> {
       if (newState == GameState.ABORTED) {
         openEndingPopup();
@@ -150,25 +192,25 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
     });
   }
 
-  private Image loadImageSafe(String path) {
+  private Image loadImageSafe(String path, int width, int height) {
     try {
       URL res = getClass().getResource(path);
       if (res == null) {
         logger.warn("Resource not found: {}", path);
         // return a small transparent image to avoid NPEs in draw calls
-        return new Image(TRANSPARENT_PNG_DATA);
+        return new Image(TRANSPARENT_PNG_DATA, width, height, true, true);
       }
-      return new Image(res.toExternalForm());
+      return new Image(res.toExternalForm(), width, height, true, true);
     } catch (Exception e) {
       logger.warn("Failed to load image {}: {}", path, e.getMessage());
-      return new Image(TRANSPARENT_PNG_DATA);
+      return new Image(TRANSPARENT_PNG_DATA, width, height, true, true);
     }
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     // settings ImageView might be null if FXML failed earlier; we validated in ctor
-    settings.setImage(loadImageSafe("/spaceinvaders/images/setting.png"));
+    settings.setImage(loadImageSafe("/spaceinvaders/images/setting.png", 25, 25));
     settings.setOnMouseClicked((m) -> spaceInvadersService.pause());
 
     Platform.runLater(() -> {

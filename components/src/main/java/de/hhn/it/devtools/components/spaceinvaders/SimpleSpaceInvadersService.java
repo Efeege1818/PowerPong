@@ -55,6 +55,9 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
     simpleGameLoop.start();
     gameState = GameState.RUNNING;
     notifyListeners((l) -> l.changedGameState(gameState));
+    entityProvider.getBarriers().values().forEach(simpleBarrier -> notifyListeners(
+            spaceInvadersListener -> spaceInvadersListener.updateBarrier(
+                    simpleBarrier.getImmutableBarrier())));
   }
 
   @Override
