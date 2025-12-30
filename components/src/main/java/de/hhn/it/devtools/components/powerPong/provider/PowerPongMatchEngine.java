@@ -147,18 +147,31 @@ public class PowerPongMatchEngine implements PowerPongService {
       return 0;
     }
 
-    // Simple AI: Follow the ball's Y position
-    // Add some reaction delay or imperfection if desired, but for now perfect
-    // tracking (limited by paddle speed)
+    // AI Logic: Predict where the ball will be
+    double targetY;
+
+    // Check if we have a secondary ball that is closer or more dangerous?
+    // For now, simpler: Focus on main ball.
+
+    // If ball is moving towards AI (Player 2 is usually Right side, so vx > 0)
+    if (ball.vx > 0) {
+      targetY = physics.predictBallY(PhysicsEngine.RIGHT_PADDLE_X, ball);
+    } else {
+      // Idle behavior: Return to center
+      targetY = PhysicsEngine.FIELD_HEIGHT / 2.0;
+    }
+
+    // Add some random error/smoothness if desired, but for "Best Possible", we want
+    // it sharp first.
+
     double paddleY = physics.getPaddle2Y();
-    double ballY = ball.y;
 
     // Deadzone to prevent jitter
-    if (Math.abs(paddleY - ballY) < 10.0) {
+    if (Math.abs(paddleY - targetY) < 10.0) {
       return 0;
     }
 
-    return ballY > paddleY ? 1 : -1;
+    return targetY > paddleY ? 1 : -1;
   }
 
   @Override
@@ -279,11 +292,11 @@ public class PowerPongMatchEngine implements PowerPongService {
 
   private GameState buildSnapshot() {
     return new GameState(
-            status,
-            physics.getLeftPaddleState(),
-            physics.getRightPaddleState(),
-            physics.getBallStates(),
-            score,
-            powerUpManager.getPowerUpStates());
+        status,
+        physics.getLeftPaddleState(),
+        physics.getRightPaddleState(),
+        physics.getBallStates(),
+        score,
+        powerUpManager.getPowerUpStates());
   }
 }

@@ -329,4 +329,56 @@ public class PhysicsEngine {
             this.vy = vy;
         }
     }
+
+    /**
+     * Predicts the Y position of the ball when it reaches a specific X coordinate.
+     * Useful for AI to anticipate where to move the paddle.
+     *
+     * @param targetX The X position where we want to know the ball's Y (e.g.,
+     *                paddle X).
+     * @param b       The ball to predict for.
+     * @return The predicted Y position, clamping for wall bounces is approximated.
+     */
+    public double predictBallY(double targetX, Ball b) {
+        if (b == null || b.vx == 0)
+            return FIELD_HEIGHT / 2.0;
+
+        double timeToTarget = (targetX - b.x) / b.vx;
+        if (timeToTarget < 0)
+            return FIELD_HEIGHT / 2.0; // Moving away
+
+        double predictedY = b.y + b.vy * timeToTarget;
+
+        // Handle wall bounces (simplified reflection logic)
+        // This math effectively "folds" the coordinate space so top/bottom walls mirror
+        // it.
+        // It's a standard trick for pong AI.
+        if (!noWalls) {
+            double effectiveHeight = FIELD_HEIGHT - 2 * BALL_RADIUS;
+            // Shift to 0-based relative to effective playing area (radius offset)
+            double relativeY = predictedY - BALL_RADIUS;
+
+            // How many times does it bounce?
+            // Java's % can be negative, so we use a custom mod or careful math.
+            // But a simpler iterative approach or abs() logic works for typical Pong.
+            // Let's use the absolute-remainder reflection:
+            // The position oscillates between 0 and effectiveHeight.
+
+            // This formula wraps 'val' into range [0, max] with "ping-pong" wrapping
+            // (0->max->0->max...)
+            // formula: y = abs( (val % 2max) - max ) ? No, that's 0->max->0 for triangle
+            // wave center at max?
+            // Easier:
+            double cycle = 2 * effectiveHeight;
+            double mod = (relativeY % cycle + cycle) % cycle; // clean positive modulus
+
+            if (mod > effectiveHeight) {
+                mod = cycle - mod;
+            }
+
+            predictedY = mod + BALL_RADIUS;
+        }
+
+        return predictedY;
+    }
 }
