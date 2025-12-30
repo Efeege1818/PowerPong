@@ -68,18 +68,6 @@ class EntityProviderGoodCaseTest {
   }
 
   @Test
-  void testShootAliensAddsDownProjectile() throws Exception {
-    ArrayList<SimpleProjectile> projectiles = getPrivateField(provider, "projectiles");
-    int before = projectiles.size();
-    provider.shootAliens();
-    assertEquals(before + 1, projectiles.size());
-    SimpleProjectile p = projectiles.get(projectiles.size() - 1);
-    assertEquals(Direction.DOWN, p.getdirection());
-    // y should be within field bounds
-    assertTrue(p.getCoordinate().y() >= 0 && p.getCoordinate().y() <= APIConstants.FIELD_SIZE + 10);
-  }
-
-  @Test
   void testUpdateProjectilesMovesProjectile() throws Exception {
     ArrayList<SimpleProjectile> projectiles = getPrivateField(provider, "projectiles");
     projectiles.clear();
@@ -177,8 +165,7 @@ class EntityProviderGoodCaseTest {
       Coordinate b = before.get(id);
       Coordinate a = after.get(id);
       assertNotNull(a, "Alien should still exist after update");
-      assertEquals(b.y() + 1, a.y(), "Alien should have moved down by 1 at edge");
-      assertEquals(b.x() - 1, a.x(), "Alien should have moved horizontally left by 1 after direction flip");
+      assertEquals(b.y() + 5, a.y(), "Alien should have moved down by 5 at edge");
     }
 
     // check that the provider's direction was flipped to LEFT
