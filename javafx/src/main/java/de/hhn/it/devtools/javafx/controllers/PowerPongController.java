@@ -146,26 +146,55 @@ public class PowerPongController extends Controller implements PowerPongListener
     @Override
     public void resume() {
         super.resume();
-        Scene scene = menuBox.getScene(); // menuBox still good anchor
-        if (scene != null) {
-            scene.setOnKeyPressed(this::handleKeyPressed);
-            scene.setOnKeyReleased(this::handleKeyReleased);
+        try {
+            System.out.println("PowerPong: resume() called. Checking components...");
+            if (menuBox != null && menuBox.getScene() != null) {
+                Scene scene = menuBox.getScene();
+                scene.setOnKeyPressed(this::handleKeyPressed);
+                scene.setOnKeyReleased(this::handleKeyReleased);
+                System.out.println("PowerPong: Input handlers registered.");
+            } else {
+                System.err.println("PowerPong: menuBox or Scene is null in resume()!");
+            }
+
+            if (gameTimer != null) {
+                gameTimer.start();
+                System.out.println("PowerPong: Timer started.");
+            }
+
+            if (service != null) {
+                service.addListener(this);
+                System.out.println("PowerPong: Listener added.");
+            } else {
+                System.err.println("PowerPong: Critical - Service is null in resume()!");
+            }
+        } catch (Exception e) {
+            System.err.println("PowerPong: CRITICAL ERROR IN RESUME:");
+            e.printStackTrace();
         }
-        gameTimer.start();
-        service.addListener(this);
     }
 
     @Override
     public void pause() {
         super.pause();
-        gameTimer.stop();
-        Scene scene = menuBox.getScene();
-        if (scene != null) {
-            scene.setOnKeyPressed(null);
-            scene.setOnKeyReleased(null);
+        try {
+            if (gameTimer != null)
+                gameTimer.stop();
+
+            if (menuBox != null && menuBox.getScene() != null) {
+                Scene scene = menuBox.getScene();
+                scene.setOnKeyPressed(null);
+                scene.setOnKeyReleased(null);
+            }
+
+            if (service != null) {
+                service.setPaused(true);
+                service.removeListener(this);
+            }
+        } catch (Exception e) {
+            System.err.println("PowerPong: Error in pause():");
+            e.printStackTrace();
         }
-        service.setPaused(true);
-        service.removeListener(this);
     }
 
     // --- PowerPongListener Implementation ---
