@@ -3,8 +3,10 @@
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
 <fx:root prefHeight="600.0" prefWidth="800.0" type="StackPane" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
@@ -15,6 +17,57 @@
             <Font name="Monospaced Bold" size="36.0" />
          </font>
       </Label>
+      <VBox fx:id="powerUpLegend" alignment="BOTTOM_LEFT" spacing="6.0" StackPane.alignment="BOTTOM_LEFT" translateX="20.0" translateY="-20.0" visible="false" style="-fx-background-color: rgba(0,0,0,0.6); -fx-padding: 10.0;">
+         <children>
+            <Label text="Power-Ups" textFill="WHITE">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+            <HBox spacing="6.0">
+               <children>
+                  <Circle radius="5.0" fill="LIGHTGREEN" />
+                  <Label text="Bigger Paddle" textFill="WHITE" />
+               </children>
+            </HBox>
+            <HBox spacing="6.0">
+               <children>
+                  <Circle radius="5.0" fill="INDIANRED" />
+                  <Label text="Smaller Enemy Paddle" textFill="WHITE" />
+               </children>
+            </HBox>
+            <HBox spacing="6.0">
+               <children>
+                  <Circle radius="5.0" fill="YELLOW" />
+                  <Label text="Slow Enemy Paddle" textFill="WHITE" />
+               </children>
+            </HBox>
+            <HBox spacing="6.0">
+               <children>
+                  <Circle radius="5.0" fill="CYAN" />
+                  <Label text="Barrierless" textFill="WHITE" />
+               </children>
+            </HBox>
+            <HBox spacing="6.0">
+               <children>
+                  <Circle radius="5.0" fill="WHITE" />
+                  <Label text="Double Ball" textFill="WHITE" />
+               </children>
+            </HBox>
+            <HBox spacing="6.0">
+               <children>
+                  <Circle radius="5.0" fill="ORANGE" />
+                  <Label text="Faster Ball (Enemy Side)" textFill="WHITE" />
+               </children>
+            </HBox>
+            <HBox spacing="6.0">
+               <children>
+                  <Circle radius="5.0" fill="LIGHTBLUE" />
+                  <Label text="Shield" textFill="WHITE" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
       <VBox fx:id="gameOverBox" alignment="CENTER" spacing="20.0" style="-fx-background-color: rgba(0,0,0,0.8);" visible="false">
          <children>
             <Label fx:id="winnerLabel" text="PLAYER 1 WINS!" textFill="WHITE">
@@ -22,6 +75,11 @@
                   <Font name="System Bold" size="64.0" />
                </font>
             </Label>
+            <Button mnemonicParsing="false" onAction="#onRestartGame" text="Play Again">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Button>
             <Button mnemonicParsing="false" onAction="#onBackToMenu" text="Back to Menu">
                <font>
                   <Font size="24.0" />
@@ -29,18 +87,43 @@
             </Button>
          </children>
       </VBox>
-      <VBox fx:id="menuBox" alignment="CENTER" spacing="20.0" style="-fx-background-color: rgba(255,255,255,0.9);">
+      <VBox fx:id="menuBox" alignment="CENTER" spacing="16.0" style="-fx-background-color: rgba(255,255,255,0.9);">
          <children>
             <Label text="PowerPong">
                <font>
                   <Font name="System Bold" size="64.0" />
                </font>
             </Label>
-            <Button fx:id="btnStart" mnemonicParsing="false" onAction="#onStartGame" prefWidth="300.0" text="Start Game">
+            <Label text="Select Mode">
                <font>
-                  <Font size="24.0" />
+                  <Font size="20.0" />
+               </font>
+            </Label>
+            <Button mnemonicParsing="false" onAction="#onStartClassic" prefWidth="300.0" text="Classic Duel (PvP)">
+               <font>
+                  <Font size="20.0" />
                </font>
             </Button>
+            <Button mnemonicParsing="false" onAction="#onStartPowerUp" prefWidth="300.0" text="Power-Up Duel">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#onStartVsAi" prefWidth="300.0" text="Player vs AI">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#onStartSurvival" prefWidth="300.0" text="Survival">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Button>
+            <Label text="Controls: W/S = Left, Up/Down = Right" textFill="GRAY">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
          </children>
       </VBox>
    </children>

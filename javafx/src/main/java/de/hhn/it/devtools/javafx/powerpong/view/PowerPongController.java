@@ -19,7 +19,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -30,6 +29,7 @@ import javafx.scene.paint.Color;
 public class PowerPongController extends StackPane {
   private final PowerPongViewModel viewModel;
   private GameTimer gameTimer;
+  private GameMode lastSelectedMode = GameMode.CLASSIC_DUEL;
 
   @FXML
   private Canvas gameCanvas;
@@ -38,11 +38,11 @@ public class PowerPongController extends StackPane {
   @FXML
   private VBox gameOverBox;
   @FXML
+  private VBox powerUpLegend;
+  @FXML
   private Label scoreLabel;
   @FXML
   private Label winnerLabel;
-  @FXML
-  private Button btnStart;
 
   private static final double GAME_WIDTH = 800.0;
   private static final double GAME_HEIGHT = 600.0;
@@ -79,13 +79,41 @@ public class PowerPongController extends StackPane {
   }
 
   @FXML
-  public void onStartGame(ActionEvent event) {
+  public void onStartClassic(ActionEvent event) {
+    startGame(GameMode.CLASSIC_DUEL);
+  }
+
+  @FXML
+  public void onStartPowerUp(ActionEvent event) {
+    startGame(GameMode.POWERUP_DUEL);
+  }
+
+  @FXML
+  public void onStartVsAi(ActionEvent event) {
+    startGame(GameMode.PLAYER_VS_AI);
+  }
+
+  @FXML
+  public void onStartSurvival(ActionEvent event) {
+    startGame(GameMode.SURVIVAL);
+  }
+
+  @FXML
+  public void onRestartGame(ActionEvent event) {
+    startGame(lastSelectedMode);
+  }
+
+  private void startGame(GameMode mode) {
     try {
-      viewModel.startGame(GameMode.CLASSIC_DUEL);
+      lastSelectedMode = mode;
+      viewModel.startGame(mode);
       menuBox.setVisible(false);
       gameOverBox.setVisible(false);
       gameCanvas.setVisible(true);
       scoreLabel.setVisible(true);
+      if (powerUpLegend != null) {
+        powerUpLegend.setVisible(mode == GameMode.POWERUP_DUEL);
+      }
 
       if (menuBox.getScene() != null) {
         menuBox.getScene().getRoot().requestFocus();
@@ -103,6 +131,9 @@ public class PowerPongController extends StackPane {
     gameOverBox.setVisible(false);
     menuBox.setVisible(true);
     scoreLabel.setVisible(false);
+    if (powerUpLegend != null) {
+      powerUpLegend.setVisible(false);
+    }
     viewModel.endGame();
   }
 
