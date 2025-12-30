@@ -23,7 +23,7 @@ public class SimpleShip {
    */
   public SimpleShip(Coordinate coordinate) {
     this.coordinate = coordinate;
-    this.hitbox = EntityProvider.fillHitBox(coordinate, APIConstants.HITBOX_SIZE, APIConstants.HITBOX_SIZE);
+    this.hitbox = EntityProvider.fillHitBox(coordinate, APIConstants.PLAYER_SIZE, APIConstants.PLAYER_SIZE);
     this.hitPoints = 3;
   }
 
@@ -35,13 +35,13 @@ public class SimpleShip {
   public void move(Direction direction) throws IllegalArgumentException {
     switch (direction) {
       case LEFT:
-        if (!(coordinate.x() <= APIConstants.HITBOX_SIZE)) {
+        if (!(coordinate.x() <= APIConstants.PLAYER_SIZE)) {
           this.coordinate = new Coordinate(coordinate.x() - 2, coordinate.y());
           this.hitbox = EntityProvider.fillHitBox(coordinate, 10, 10);
         }
         break;
       case RIGHT:
-        if (!(coordinate.x() >= APIConstants.FIELD_SIZE - APIConstants.HITBOX_SIZE)) {
+        if (!(coordinate.x() >= APIConstants.FIELD_SIZE - APIConstants.PLAYER_SIZE)) {
           this.coordinate = new Coordinate(coordinate.x() + 2, coordinate.y());
           this.hitbox = EntityProvider.fillHitBox(coordinate, 10, 10);
         }
