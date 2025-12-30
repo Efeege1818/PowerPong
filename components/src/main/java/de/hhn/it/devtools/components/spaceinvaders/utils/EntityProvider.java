@@ -19,8 +19,6 @@ import java.util.*;
  */
 public class EntityProvider {
 
-  private static final int GRID_CELL_SIZE = 16;
-
   // spatial hash grid for barriers
   private final HashMap<Long, List<SimpleBarrier>> barrierGrid = new HashMap<>();
 
@@ -29,13 +27,13 @@ public class EntityProvider {
   }
 
   private long cellKey(Coordinate c) {
-    return cellKey(c.x() / GRID_CELL_SIZE, c.y() / GRID_CELL_SIZE);
+    return cellKey(c.x() / Constants.GRID_CELL_SIZE, c.y() / Constants.GRID_CELL_SIZE);
   }
 
   private List<SimpleBarrier> getNearbyBarriers(Coordinate c) {
     List<SimpleBarrier> result = new ArrayList<>();
-    int cx = c.x() / GRID_CELL_SIZE;
-    int cy = c.y() / GRID_CELL_SIZE;
+    int cx = c.x() / Constants.GRID_CELL_SIZE;
+    int cy = c.y() / Constants.GRID_CELL_SIZE;
 
     for (int dx = -1; dx <= 1; dx++) {
       for (int dy = -1; dy <= 1; dy++) {
