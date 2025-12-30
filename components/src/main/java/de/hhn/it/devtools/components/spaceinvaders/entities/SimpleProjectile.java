@@ -42,8 +42,22 @@ public class SimpleProjectile {
     }
   }
 
+  /**
+   * Sets id to minus so fx knows when to remove.
+   */
+  public void inverse() {
+    id = -id;
+  }
+
   public Projectile getImmtProjectile() {
-    return new Projectile(this.coordinate, projectileID);
+    return new Projectile(this.coordinate, projectileID, this.direction);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == null || getClass() != o.getClass()) return false;
+    SimpleProjectile that = (SimpleProjectile) o;
+    return this.getCoordinate() == that.getCoordinate() && this.direction == that.direction;
   }
 
 }
