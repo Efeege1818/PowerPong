@@ -56,6 +56,7 @@ public class SpaceInvadersController extends Controller implements Initializable
     MediaPlayer mediaPlayer = new MediaPlayer(media);
     difficultyChoiceBox.setValue(Difficulty.NORMAL);
     difficultyChoiceBox.setItems(FXCollections.observableArrayList(Difficulty.values()));
+
     logo.setImage(new Image(getClass()
             .getResource("/spaceinvaders/images/logo.png").toExternalForm()));
 

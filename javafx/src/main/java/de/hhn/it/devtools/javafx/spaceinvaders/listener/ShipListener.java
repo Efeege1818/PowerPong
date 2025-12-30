@@ -26,6 +26,8 @@ public class ShipListener implements ChangeListener<Ship> {
 
   @Override
   public void changed(ObservableValue<? extends Ship> observableValue, Ship ship, Ship newShip) {
+    canvasProvider.clearEntity(ship.coordinate(), APIConstants.HITBOX_SIZE,
+            APIConstants.HITBOX_SIZE);
     canvasProvider.drawEntity(this.shipImage, newShip.coordinate(), APIConstants.HITBOX_SIZE,
             APIConstants.HITBOX_SIZE);
   }

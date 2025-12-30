@@ -11,7 +11,32 @@
          <cursor>
             <Cursor fx:constant="CLOSED_HAND" />
          </cursor></ImageView>
-      <Button fx:id="spaceInvadersButton" layoutX="404.0" layoutY="340.0" mnemonicParsing="false" onAction="#doActionStart" prefHeight="154.0" prefWidth="275.0" text="Start Game" />
-      <ChoiceBox fx:id="difficultyChoiceBox" layoutX="465.0" layoutY="237.0" prefWidth="150.0" />
+      <Button fx:id="spaceInvadersButton" layoutX="404.0" layoutY="340.0" mnemonicParsing="false" onAction="#doActionStart" prefHeight="154.0" prefWidth="275.0" text="Start Game"
+              style="-fx-background-color: linear-gradient(to bottom, #FFD700, #FFA500);
+               -fx-text-fill: #1A1A1A;
+               -fx-font-family: 'Montserrat', 'Arial Black', sans-serif;
+               -fx-font-weight: bold;
+               -fx-font-size: 26px;
+               -fx-background-radius: 25;
+               -fx-border-color: #FFED4A;
+               -fx-border-width: 3;
+               -fx-border-radius: 25;
+               -fx-effect: dropshadow(three-pass-box, #D4AF37, 1, 0.6, 0, 8);
+               -fx-cursor: hand;
+               -fx-padding: 15 30 15 30;"/>
+      <ChoiceBox fx:id="difficultyChoiceBox" layoutX="465.0" layoutY="237.0" prefWidth="150.0"
+                 style="-fx-background-color: linear-gradient(to bottom, #FFD700, #FFA500);
+                  -fx-text-fill: #1A1A1A;
+                  -fx-font-family: 'Arial', sans-serif;
+                  -fx-font-weight: bold;
+                  -fx-font-size: 16px;
+                  -fx-background-radius: 20;
+                  -fx-border-color: #FFED4A;
+                  -fx-border-width: 2.5;
+                  -fx-border-radius: 20;
+                  -fx-effect: dropshadow(three-pass-box, #D4AF37, 1, 0.5, 0, 5);
+                  -fx-cursor: hand;
+                  -fx-padding: 8 15 8 15;"/>
+
    </children>
 </AnchorPane>

@@ -218,16 +218,17 @@ public class EntityProvider {
    * Randomly selects an alien and fires a projectile downward.
    */
   public void shootAliens() {
-    if (aliens.isEmpty()) return;
-
-    if (new Random().nextInt(100) <= Constants.ALIEN_SHOOTING_CHANCE) {
-      List<Integer> keys = new ArrayList<>(aliens.keySet());
-      SimpleAlien a = aliens.get(keys.get(new Random().nextInt(keys.size())));
-      projectiles.add(new SimpleProjectile(
-              new Coordinate(a.getCoordinate().x() + 1, a.getCoordinate().y() + 1),
-              Direction.DOWN,
-              Constants.BASE_DAMAGE
-      ));
+    if (projectiles.isEmpty()) {
+      if (aliens.isEmpty()) return;
+      if (new Random().nextInt(100) <= Constants.ALIEN_SHOOTING_CHANCE) {
+        List<Integer> keys = new ArrayList<>(aliens.keySet());
+        SimpleAlien a = aliens.get(keys.get(new Random().nextInt(keys.size())));
+        projectiles.add(new SimpleProjectile(
+                new Coordinate(a.getCoordinate().x() + 1, a.getCoordinate().y() + 1),
+                Direction.DOWN,
+                Constants.BASE_DAMAGE
+        ));
+      }
     }
   }
 
@@ -260,6 +261,7 @@ public class EntityProvider {
           player.setHitPoints(p.getDamage());
           service.notifyListeners(l -> l.updateShip(player.getImmutableShip()));
           toRemoveProjectiles.add(p);
+
         }
         for (SimpleBarrier barrier : getNearbyBarriers(p.getCoordinate())) {
           if (barrier.getHitbox().contains(p.getCoordinate())) {
@@ -268,6 +270,7 @@ public class EntityProvider {
             break;
           }
         }
+
       }
       if (p.getdirection() == Direction.UP) {
         for (SimpleAlien alien : aliens.values()) {
@@ -302,7 +305,7 @@ public class EntityProvider {
 
     toRemoveAliens.forEach(alien -> {
       service.notifyListeners(l -> l.damageAlien(alien.immutableAlien()));
-      aliens.remove(alien);
+      aliens.remove(alien.getAlienId());
     });
 
   }

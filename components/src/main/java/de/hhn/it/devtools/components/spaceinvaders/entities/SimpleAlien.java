@@ -78,4 +78,8 @@ public class SimpleAlien {
   public ArrayList<Coordinate> getHitbox() { return hitbox; }
 
   public Coordinate getCoordinate() { return coordinate; }
+
+  public int getAlienId() {
+    return alienId;
+  }
 }
