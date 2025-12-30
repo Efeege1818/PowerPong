@@ -114,4 +114,8 @@ public class PopupProvider {
     return this.popup;
   }
 
+  public Stage getPopup() {
+    return popup;
+  }
+
 }
