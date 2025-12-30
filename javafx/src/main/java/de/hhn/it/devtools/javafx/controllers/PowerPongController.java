@@ -157,21 +157,27 @@ public class PowerPongController extends Controller implements PowerPongListener
                 System.err.println("PowerPong: menuBox or Scene is null in resume()!");
             }
 
-            if (gameTimer != null) {
-                gameTimer.start();
-                System.out.println("PowerPong: Timer started.");
-            }
-
-            if (service != null) {
-                service.addListener(this);
                 System.out.println("PowerPong: Listener added.");
             } else {
                 System.err.println("PowerPong: Critical - Service is null in resume()!");
             }
-        } catch (Exception e) {
-            System.err.println("PowerPong: CRITICAL ERROR IN RESUME:");
-            e.printStackTrace();
-        }
+
+            // DIAGNOSTIC CHECK: Commenting out start() to see if crash is in loop
+            /*
+            if (gameTimer != null) {
+                // gameTimer.start(); // <-- DISABLED
+                System.out.println("PowerPong: Timer started (DISABLED).");
+            }
+            */
+            System.out.println("PowerPong: Resume finished (Timer DISABLED).");
+
+        }catch(
+
+    Exception e)
+    {
+        System.err.println("PowerPong: CRITICAL ERROR IN RESUME:");
+        e.printStackTrace();
+    }
     }
 
     @Override
