@@ -13,6 +13,7 @@ import de.hhn.it.devtools.components.spaceinvaders.entities.SimpleProjectile;
 import de.hhn.it.devtools.components.spaceinvaders.entities.SimpleShip;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Handles all entity-related logic for the Space Invaders game.
@@ -76,7 +77,7 @@ public class EntityProvider {
   private final SimpleShip player;
   private final HashMap<Integer, SimpleBarrier> barriers = new HashMap<>();
   private final HashMap<Integer, SimpleAlien> aliens = new HashMap<>();
-  private final ArrayList<SimpleProjectile> projectiles = new ArrayList<>();
+  private final CopyOnWriteArrayList<SimpleProjectile> projectiles = new CopyOnWriteArrayList<>();
   private Direction currentAlienDirection = Direction.RIGHT;
   private final SimpleSpaceInvadersService service;
 
@@ -209,7 +210,7 @@ public class EntityProvider {
    */
   public void shootPlayer() {
     projectiles.add(new SimpleProjectile(
-            new Coordinate(player.getCoordinate().x() + 1, player.getCoordinate().y() - 1),
+            new Coordinate(player.getCoordinate().x() + 1, player.getCoordinate().y() - 45),
             Direction.UP,
             Constants.BASE_DAMAGE
     ));
@@ -279,7 +280,6 @@ public class EntityProvider {
               toRemoveAliens.add(alien);
               service.notifyListeners(l -> l.updateScore(service.score += Constants.ALIEN_DEATH_POINTS));
             }
-            service.notifyListeners(l -> l.damageAlien(alien.immutableAlien()));
             break;
           }
         }
@@ -308,8 +308,9 @@ public class EntityProvider {
     projectiles.removeAll(toRemoveProjectiles);
 
     toRemoveAliens.forEach(alien -> {
-      service.notifyListeners(l -> l.damageAlien(alien.immutableAlien()));
+      alien.setHitPoints(0);
       aliens.remove(alien.getAlienId());
+      service.notifyListeners(l -> l.damageAlien(alien.immutableAlien()));
     });
 
   }

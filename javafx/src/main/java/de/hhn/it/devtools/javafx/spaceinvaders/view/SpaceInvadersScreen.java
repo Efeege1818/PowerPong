@@ -13,18 +13,21 @@ import de.hhn.it.devtools.javafx.spaceinvaders.listener.GameStateListener;
 import de.hhn.it.devtools.javafx.spaceinvaders.listener.ProjectileListener;
 import de.hhn.it.devtools.javafx.spaceinvaders.listener.ShipListener;
 import de.hhn.it.devtools.javafx.spaceinvaders.viewmodel.SpaceInvadersViewModel;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
@@ -32,10 +35,9 @@ import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javafx.scene.input.KeyCode;
-import javafx.scene.Scene;
 
 /**
  * Class for SpaceInvaders Game Screen.
@@ -48,6 +50,7 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
   private final Stage instance;
   private CanvasProvider canvasProvider;
   private PopupConfigurations popupConfigurations;
+  private Timeline shooting = new Timeline(new KeyFrame(Duration.seconds(0.1)));
 
   @FXML
   public Label score;
@@ -60,6 +63,9 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
 
   @FXML
   public Canvas canvas;
+
+  @FXML
+  public Canvas canvas1;
 
   /**
    * Constructor for GameScreen.
@@ -91,12 +97,13 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
       throw new IllegalStateException("FXML did not inject required controls: "
               + "score/level/settings/canvas");
     }
+
     score.textProperty().bind(viewModel.getScoreProperty().asString());
     level.textProperty().bind(viewModel.getCurrentRoundProperty().asString());
     viewModel.getShipObjectPropertyProperty().addListener(new ShipListener(canvasProvider));
     viewModel.getBarriers().addListener(new BarrierListener(canvasProvider));
     viewModel.getAliens().addListener(new AliensListener(canvasProvider));
-    viewModel.getProjectiles().addListener(new ProjectileListener(canvasProvider));
+    viewModel.getProjectiles().addListener(new ProjectileListener(new CanvasProvider(canvas1)));
     viewModel.getGameStateObjectProperty().addListener(new GameStateListener(
             popupConfigurations,
             viewModel));
@@ -130,7 +137,6 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
           onSpacePressed();
         }
       });
-
       canvas.requestFocus();
     });
   }
@@ -157,6 +163,11 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
   }
 
   private void onSpacePressed() {
-    spaceInvadersService.shoot();
+    if (shooting.getStatus() == Animation.Status.STOPPED) {
+      spaceInvadersService.shoot();
+      shooting.setCycleCount(1);
+      shooting.play();
+    }
   }
+
 }
