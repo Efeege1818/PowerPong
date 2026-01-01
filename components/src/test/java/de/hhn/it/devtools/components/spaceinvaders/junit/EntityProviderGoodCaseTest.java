@@ -68,6 +68,28 @@ class EntityProviderGoodCaseTest {
   }
 
   @Test
+  void testProjectileRemoveBarrier() throws Exception {
+    ArrayList<SimpleProjectile> projectiles = getPrivateField(provider, "projectiles");
+    Coordinate c = provider.getBarriers().get(1).getCoordinate();
+
+    projectiles.add(new SimpleProjectile(new Coordinate(c.x(), c.y() - 1), Direction.DOWN, 1));
+    int projectilesBefore = projectiles.size();
+    int barrierBefore = provider.getBarriers().size();
+    int nearByBarrierBefore = provider.barrierGrid.get(provider.cellKey(c)).size();
+
+    provider.checkCollision();
+    assertEquals(projectilesBefore, projectiles.size());
+    assertEquals(barrierBefore, provider.getBarriers().size());
+    assertEquals(nearByBarrierBefore, provider.barrierGrid.get(provider.cellKey(c)).size());
+
+    provider.updateProjectiles();
+    provider.checkCollision();
+    assertEquals(projectilesBefore -1, projectiles.size());
+    assertEquals(barrierBefore - 1, provider.getBarriers().size());
+    assertEquals(nearByBarrierBefore - 1, provider.barrierGrid.get(provider.cellKey(c)).size());
+  }
+
+  @Test
   void testUpdateProjectilesMovesProjectile() throws Exception {
     ArrayList<SimpleProjectile> projectiles = getPrivateField(provider, "projectiles");
     projectiles.clear();
