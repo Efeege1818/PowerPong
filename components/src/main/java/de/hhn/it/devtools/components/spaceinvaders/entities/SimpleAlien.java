@@ -60,7 +60,7 @@ public class SimpleAlien {
       this.hitbox = EntityProvider.fillHitBox(coordinate, APIConstants.HITBOX_SIZE,
               APIConstants.HITBOX_SIZE);
     } else if (direction == Direction.DOWN) {
-      coordinate = new Coordinate(coordinate.x(), coordinate.y() + 5);
+      coordinate = new Coordinate(coordinate.x(), coordinate.y() + 10);
       this.hitbox = EntityProvider.fillHitBox(coordinate, APIConstants.HITBOX_SIZE,
               APIConstants.HITBOX_SIZE);
     }

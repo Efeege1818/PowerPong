@@ -105,7 +105,6 @@ public class PopupConfigurations {
             .addButton((e) -> spaceInvadersService.nextRound(), "Next Level")
             .addButton((e) -> {
               spaceInvadersService.abort();
-              mainStage.show();
             }, "Quit")
             .setCloseRequest((e) -> {
               spaceInvadersService.abort();

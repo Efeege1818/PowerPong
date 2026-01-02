@@ -31,7 +31,6 @@ public class GameStateListener implements ChangeListener<GameState> {
     if (newState == GameState.ABORTED) {
       popupConfigurations.openEndingPopup();
     } else if (newState == GameState.PAUSED) {
-      System.out.println(viewModel.getAliens().size());
       if (viewModel.getAliens().isEmpty()) {
         popupConfigurations.openNextRoundPopup();
       } else {

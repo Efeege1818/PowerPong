@@ -50,7 +50,7 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
   private final Stage instance;
   private CanvasProvider canvasProvider;
   private PopupConfigurations popupConfigurations;
-  private Timeline shooting = new Timeline(new KeyFrame(Duration.seconds(0.1)));
+  private final Timeline shooting = new Timeline(new KeyFrame(Duration.seconds(0.1)));
 
   @FXML
   public Label score;
