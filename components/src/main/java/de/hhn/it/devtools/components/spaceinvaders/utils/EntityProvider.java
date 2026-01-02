@@ -27,7 +27,7 @@ public class EntityProvider {
    * Spatial hash grid storing barriers by grid cell.
    * Used to efficiently query nearby barriers.
    */
-  private final HashMap<Long, List<SimpleBarrier>> barrierGrid = new HashMap<>();
+  public HashMap<Long, List<SimpleBarrier>> barrierGrid = new HashMap<>();
 
   /**
    * Creates a unique 64-bit key for a grid cell using its x/y indices.
@@ -46,7 +46,7 @@ public class EntityProvider {
    * @param c world coordinate
    * @return grid cell key
    */
-  private long cellKey(Coordinate c) {
+  public long cellKey(Coordinate c) {
     return cellKey(c.x() / Constants.GRID_CELL_SIZE,
             c.y() / Constants.GRID_CELL_SIZE);
   }
