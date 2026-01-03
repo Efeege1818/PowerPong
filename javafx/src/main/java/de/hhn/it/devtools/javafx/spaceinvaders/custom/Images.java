@@ -16,6 +16,8 @@ public enum Images {
           APIConstants.HITBOX_SIZE)),
   alienImage3(loadImageSafe("/spaceinvaders/images/alien_3.png", APIConstants.HITBOX_SIZE,
           APIConstants.HITBOX_SIZE)),
+  explosion(loadImageSafe("/spaceinvaders/images/explosion.png", APIConstants.HITBOX_SIZE,
+          APIConstants.HITBOX_SIZE)),
   alienShot(loadImageSafe("/spaceinvaders/images/alien_shot.png", APIConstants.HITBOX_SIZE,
           APIConstants.HITBOX_SIZE)),
   shipImage(loadImageSafe("/spaceinvaders/images/ship.png", APIConstants.PLAYER_SIZE,
@@ -53,7 +55,7 @@ public enum Images {
         // return a small transparent image to avoid NPEs in draw calls
         return new javafx.scene.image.Image(TRANSPARENT_PNG_DATA, width, height, true, true);
       }
-      return new javafx.scene.image.Image(res.toExternalForm(), width, height, true, true);
+      return new javafx.scene.image.Image(res.toExternalForm(), width, height, false, true);
     } catch (Exception e) {
       logger.warn("Failed to load image {}: {}", path, e.getMessage());
       return new javafx.scene.image.Image(TRANSPARENT_PNG_DATA, width, height, true, true);

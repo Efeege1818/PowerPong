@@ -14,6 +14,8 @@ public class AliensListener implements MapChangeListener<Integer, Alien> {
   private final Image alienImage3 = Images.alienImage3.getImage();
   private final Image alienImage2 = Images.alienImage2.getImage();
   private final Image alienImag1 = Images.alienImage1.getImage();
+  private final Image explosion = Images.explosion.getImage();
+  private Alien dummyAlien;
   private final CanvasProvider canvasProvider;
 
   /**
@@ -28,6 +30,12 @@ public class AliensListener implements MapChangeListener<Integer, Alien> {
 
   @Override
   public void onChanged(Change<? extends Integer, ? extends Alien> change) {
+    if (dummyAlien != null) {
+      canvasProvider.clearEntity(dummyAlien.coordinate(),
+              APIConstants.HITBOX_SIZE,
+              APIConstants.HITBOX_SIZE);
+      dummyAlien = null;
+    }
     if (change.wasAdded() && change.wasRemoved()) {
       canvasProvider.clearEntity(change.getValueRemoved().coordinate(),
               APIConstants.HITBOX_SIZE,
@@ -36,7 +44,11 @@ public class AliensListener implements MapChangeListener<Integer, Alien> {
     } else if (change.wasAdded()) {
       drawAlien(change.getValueAdded());
     } else if (change.wasRemoved()) {
+      dummyAlien = change.getValueRemoved();
       canvasProvider.clearEntity(change.getValueRemoved().coordinate(),
+              APIConstants.HITBOX_SIZE,
+              APIConstants.HITBOX_SIZE);
+      canvasProvider.drawEntity(explosion, dummyAlien.coordinate(),
               APIConstants.HITBOX_SIZE,
               APIConstants.HITBOX_SIZE);
     }
