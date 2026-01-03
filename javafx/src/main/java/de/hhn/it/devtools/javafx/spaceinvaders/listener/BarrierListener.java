@@ -38,24 +38,18 @@ public class BarrierListener implements MapChangeListener<Integer, Barrier> {
         int y = s / APIConstants.BARRIER_HITBOX_WIDTH;
         Color color = getSafeColor(barrierImage(), x, y);
         canvasProvider.drawEntity(color, bar.coordinate());
-        System.out.println("Draw barrier part at " + bar.coordinate().x() + ", "
-                + bar.coordinate().y() + " with color " + color);
       } else if (bar.barrierId() > size) {
         int s = bar.barrierId() - (size);
         int x = s % APIConstants.BARRIER_HITBOX_WIDTH;
         int y = s / APIConstants.BARRIER_HITBOX_WIDTH;
         Color color = getSafeColor(barrierImage(), x, y);
         canvasProvider.drawEntity(color, bar.coordinate());
-        System.out.println("Draw barrier part at " + x + ", "
-                + y + " with color " + color);
       } else {
         int s = bar.barrierId();
         int x = s % APIConstants.BARRIER_HITBOX_WIDTH;
         int y = s / APIConstants.BARRIER_HITBOX_WIDTH;
         Color color = getSafeColor(barrierImage(), x, y);
         canvasProvider.drawEntity(color, bar.coordinate());
-        System.out.println("Draw barrier part at " + bar.coordinate().x() + ", "
-                + bar.coordinate().y() + " with color " + color);
       }
     } else if (barrier.wasRemoved()) {
       canvasProvider.clearEntity(barrier.getValueRemoved().coordinate(), 1, 1);

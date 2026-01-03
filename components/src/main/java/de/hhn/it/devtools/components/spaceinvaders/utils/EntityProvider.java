@@ -91,7 +91,6 @@ public class EntityProvider {
     this.player = new SimpleShip(
             new Coordinate(APIConstants.FIELD_SIZE / 2, APIConstants.FIELD_SIZE - 26)
     );
-    service.notifyListeners(l -> l.updateShip(player.getImmutableShip()));
     generateAliens();
     initBarriers();
   }
@@ -262,6 +261,7 @@ public class EntityProvider {
     for (SimpleProjectile p : projectiles) {
       if (p.getdirection() == Direction.DOWN) {
         if (!Collections.disjoint(player.getHitbox(), p.getHitbox())) {
+
           player.setHitPoints(p.getDamage());
           service.notifyListeners(l -> l.updateShip(player.getImmutableShip()));
           toRemoveProjectiles.add(p);

@@ -55,6 +55,7 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
     simpleGameLoop.start();
     gameState = GameState.RUNNING;
     notifyListeners((l) -> l.changedGameState(gameState));
+    notifyListeners((l) -> l.updateShip(entityProvider.getPlayer().getImmutableShip()));
     entityProvider.getBarriers().values().forEach(simpleBarrier -> notifyListeners(
             spaceInvadersListener -> spaceInvadersListener.updateBarrier(
                     simpleBarrier.getImmutableBarrier())));
@@ -185,7 +186,6 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
    * This method gets triggered every loop by SimpleGameLoop.
    */
   public void triggeredByGameLoop() {
-    notifyListeners(l -> l.updateShip(entityProvider.getPlayer().getImmutableShip()));
     if (entityProvider == null) {
       logger.debug("Something went wrong; no EntityProvider");
       return;
