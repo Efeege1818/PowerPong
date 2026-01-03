@@ -6,9 +6,12 @@ module devtools.javafx {
   requires javafx.fxml;
   uses de.hhn.it.devtools.apis.examples.coffeemakerservice.CoffeeMakerService;
   uses de.hhn.it.devtools.apis.examples.coffeemakerservice.AdminCoffeeMakerService;
+  uses de.hhn.it.devtools.components.shapesurvivor.SimpleShapeSurvivorService;
   opens de.hhn.it.devtools.javafx.controllers to javafx.fxml;
   opens de.hhn.it.devtools.javafx.coffeemaker.view to javafx.fxml;
   opens de.hhn.it.devtools.javafx.controllers.template to javafx.fxml;
+  opens de.hhn.it.devtools.javafx.shapesurvivor.view to javafx.fxml;
+  opens de.hhn.it.devtools.javafx.shapesurvivor.viewmodel to javafx.fxml;
   exports de.hhn.it.devtools.javafx;
   exports de.hhn.it.devtools.javafx.controllers;
   exports de.hhn.it.devtools.javafx.coffeemaker.view;

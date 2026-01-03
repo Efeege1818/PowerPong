@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.canvas.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            prefWidth="800"
+            prefHeight="600"
+            style="-fx-background-color: #1a1a1e;">
+
+    <children>
+
+        <!-- HUD Background -->
+        <Rectangle width="800"
+                   height="50"
+                   fill="rgba(0,0,0,0.75)"
+                   mouseTransparent="true"/>
+
+        <!-- Score -->
+        <Label text="Score:"
+               layoutX="15"
+               layoutY="15"
+               style="-fx-text-fill: lime; -fx-font-size: 18px;"/>
+
+        <Label fx:id="scoreLabel"
+               layoutX="75"
+               layoutY="15"
+               text="0"
+               style="-fx-text-fill: lime; -fx-font-size: 18px;"/>
+
+        <!-- Level -->
+        <Label text="Level:"
+               layoutX="350"
+               layoutY="15"
+               style="-fx-text-fill: lime; -fx-font-size: 18px;"/>
+
+        <Label fx:id="levelLabel"
+               layoutX="410"
+               layoutY="15"
+               text="1"
+               style="-fx-text-fill: lime; -fx-font-size: 18px;"/>
+
+        <!-- Main Canvas -->
+        <Canvas fx:id="canvas"
+                layoutX="144"
+                layoutY="64"
+                width="512"
+                height="512"/>
+
+    </children>
+</AnchorPane>

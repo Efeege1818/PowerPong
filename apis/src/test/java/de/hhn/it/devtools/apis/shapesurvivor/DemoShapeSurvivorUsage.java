@@ -1,4 +1,5 @@
 package de.hhn.it.devtools.apis.shapesurvivor;
+import de.hhn.it.devtools.apis.exceptions.IllegalParameterException;
 import de.hhn.it.devtools.apis.shapesurvivor.*;
 import de.hhn.it.devtools.apis.shapesurvivor.exceptions.IllegalConfigurationException;
 import org.slf4j.Logger;
@@ -16,6 +17,8 @@ public class DemoShapeSurvivorUsage {
             service.configure(config);
         }catch (IllegalConfigurationException e) {
             e.printStackTrace();
+        } catch (IllegalParameterException e) {
+            throw new RuntimeException(e);
         }
 
         ShapeSurvivorListener listener = null;
