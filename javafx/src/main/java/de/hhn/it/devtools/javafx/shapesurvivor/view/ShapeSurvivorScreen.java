@@ -98,6 +98,12 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
         });
 
         root.requestFocus();
+
+        viewModel.gameOverProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal) {
+                Platform.runLater(this::showDeathPopup);
+            }
+        });
     }
 
     private void handleKeyPress(KeyEvent e) {
@@ -339,7 +345,7 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
         }, "Continue");
 
         provider.addButton(e -> {
-            viewModel.restartGame((int) canvas.getWidth(), (int) canvas.getHeight());
+            viewModel.resetGame((int) canvas.getWidth(), (int) canvas.getHeight());
             closePopup(e);
         }, "Restart");
 
@@ -361,4 +367,36 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
                 .getScene().getWindow()).close();
         Platform.runLater(root::requestFocus);
     }
+
+    private void showDeathPopup() {
+        PopupProvider provider = new PopupProvider(mainStage)
+                .setTitle("You Died!")
+                .addLabel("Game Over");
+
+        provider.addButton(e -> {
+            viewModel.resetGameOver();
+            viewModel.exitGame();   // ensure game loop is stopped
+            viewModel.resetGame();  // new method (see below)
+            closePopup(e);
+
+            Platform.runLater(() -> {
+                showStartupPopup(); // <-- THIS is the key
+                root.requestFocus();
+            });
+        }, "New Game");
+
+        // Exit to module (back to Shapesurvivor.fxml)
+        provider.addButton(e -> {
+            viewModel.exitGame(); // stop game logic
+            closePopup(e);
+
+            if (onExitCallback != null) {
+                onExitCallback.run(); // navigate back to initial module
+            }
+        }, "Exit");
+
+        provider.build().show();
+    }
+
+
 }

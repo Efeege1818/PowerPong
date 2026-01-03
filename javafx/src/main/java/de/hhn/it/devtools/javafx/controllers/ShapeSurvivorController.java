@@ -31,7 +31,6 @@ public class ShapeSurvivorController extends Controller implements Initializable
 
         ShapeSurvivorScreen screen = new ShapeSurvivorScreen(mainStage);
         screen.setOnExit(() -> {
-            // Reload the original ShapeSurvivor module view (reset)
             shapeSurvivorPane.getChildren().clear();
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ShapeSurvivor.fxml"));
@@ -56,7 +55,15 @@ public class ShapeSurvivorController extends Controller implements Initializable
         AnchorPane.setRightAnchor(gameView, 0.0);
     }
 
-    @Override public void pause() {}
-    @Override public void resume() {}
-    @Override public void shutdown() {}
+    @Override
+    public void pause() {
+    }
+
+    @Override
+    public void resume() {
+    }
+
+    @Override
+    public void shutdown() {
+    }
 }

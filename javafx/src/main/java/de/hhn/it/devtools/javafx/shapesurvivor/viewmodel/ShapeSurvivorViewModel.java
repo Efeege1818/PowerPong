@@ -4,11 +4,7 @@ import de.hhn.it.devtools.apis.shapesurvivor.*;
 import de.hhn.it.devtools.apis.exceptions.IllegalParameterException;
 import de.hhn.it.devtools.components.shapesurvivor.WeaponAnimationState;
 import javafx.application.Platform;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.stage.Stage;
+import javafx.beans.property.*;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,6 +20,7 @@ public class ShapeSurvivorViewModel implements ShapeSurvivorListener {
     private final Map<Integer, Enemy> enemiesMap;
     private final IntegerProperty scoreProperty;
     private final IntegerProperty levelProperty;
+    private final BooleanProperty gameOverProperty;
 
     public ShapeSurvivorViewModel(ShapeSurvivorService gameService) {
         this.gameService = gameService;
@@ -31,6 +28,7 @@ public class ShapeSurvivorViewModel implements ShapeSurvivorListener {
         this.enemiesMap = Collections.synchronizedMap(new HashMap<>());
         this.scoreProperty = new SimpleIntegerProperty(0);
         this.levelProperty = new SimpleIntegerProperty(1);
+        gameOverProperty = new SimpleBooleanProperty(false);
     }
 
     // ViewModel public interface
@@ -156,7 +154,9 @@ public class ShapeSurvivorViewModel implements ShapeSurvivorListener {
 
     @Override
     public void gameEnded(boolean victory) {
-        // Optional: show end game popup
+        if (!victory) {
+            Platform.runLater(() -> gameOverProperty.set(true));
+        }
     }
 
     @Override
@@ -172,22 +172,57 @@ public class ShapeSurvivorViewModel implements ShapeSurvivorListener {
     public void pauseGame() {
         try {
             gameService.pause();
-        } catch (IllegalStateException ignored) {}
+        } catch (IllegalStateException ignored) {
+        }
     }
 
     public void resumeGame() {
         try {
             gameService.resume();
-        } catch (IllegalStateException ignored) {}
+        } catch (IllegalStateException ignored) {
+        }
     }
 
-    public void restartGame(int fieldWidth, int fieldHeight) {
-        gameService.abort();
+    public void resetGame(int width, int height) {
+        if (gameService.getGameState() != GameState.ABORTED) {
+            gameService.abort();
+        }
         gameService.reset();
-        startGame("Normal", WeaponType.SWORD, fieldWidth, fieldHeight);
+    }
+
+    public void resetGame() {
+        try {
+            if (gameService.getGameState() != GameState.ABORTED) {
+                gameService.abort();
+            }
+        } catch (IllegalStateException ignored) {}
+
+        gameService.reset();
+
+        Platform.runLater(() -> {
+            playerProperty.set(null);
+            enemiesMap.clear();
+            scoreProperty.set(0);
+            levelProperty.set(1);
+        });
+    }
+
+
+    public void resetGameOver() {
+        gameOverProperty.set(false);
+    }
+
+    public BooleanProperty gameOverProperty() {
+        return gameOverProperty;
     }
 
     public void exitGame() {
-        gameService.abort();
+        try {
+            if (gameService.getGameState() != GameState.ABORTED &&
+                    gameService.getGameState() != GameState.PREPARED) {
+                gameService.abort();
+            }
+        } catch (IllegalStateException ignored) {
+        }
     }
 }

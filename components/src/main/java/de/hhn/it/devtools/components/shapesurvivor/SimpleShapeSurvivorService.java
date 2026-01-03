@@ -147,6 +147,7 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
         nextEnemyId = 0;
         currentWave = 0;
         levelUpPending = false;
+        lastPlayerHitTime = 0;
         availableWeaponUpgrades.clear();
         availableAttributeUpgrades.clear();
         weaponStates.clear();
@@ -335,16 +336,16 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
         switch (attribute) {
             case MAX_HEALTH -> {
                 newMaxHealth = isMultiplier ?
-                        (int)(player.maxHealth() * value) :
-                        player.maxHealth() + (int)value;
+                        (int) (player.maxHealth() * value) :
+                        player.maxHealth() + (int) value;
                 newCurrentHealth = newMaxHealth;
             }
             case MOVEMENT_SPEED -> newMovementSpeed = isMultiplier ?
                     player.movementSpeed() * value :
                     player.movementSpeed() + value;
             case DAMAGE -> newBaseDamage = isMultiplier ?
-                    (int)(player.baseDamage() * value) :
-                    player.baseDamage() + (int)value;
+                    (int) (player.baseDamage() * value) :
+                    player.baseDamage() + (int) value;
             case ATTACK_SPEED -> newAttackSpeed = isMultiplier ?
                     player.attackSpeed() * value :
                     player.attackSpeed() + value;
@@ -477,7 +478,7 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
         if (gameState == GameState.PREPARED || gameState == GameState.ABORTED) {
             throw new IllegalStateException("No time elapsed in " + gameState + " state");
         }
-        return (int)((System.currentTimeMillis() - gameStartTime) / 1000);
+        return (int) ((System.currentTimeMillis() - gameStartTime) / 1000);
     }
 
     @Override
@@ -522,7 +523,7 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
         // Spawn wave every 10 seconds
         if (timeSinceLastWave >= 10000) {
             currentWave++;
-            int enemyCount = (int)(5 * currentWave * configuration.enemySpawnRate());
+            int enemyCount = (int) (5 * currentWave * configuration.enemySpawnRate());
 
             for (int i = 0; i < enemyCount; i++) {
                 spawnEnemy();
@@ -568,7 +569,7 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
             }
         };
 
-        int health = (int)(50 * configuration.difficultyMultiplier());
+        int health = (int) (50 * configuration.difficultyMultiplier());
 
         Enemy enemy = new Enemy(
                 nextEnemyId++,
@@ -594,8 +595,8 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
             double distance = Math.sqrt(dx * dx + dy * dy);
 
             if (distance > 0) {
-                int newX = enemyPos.x() + (int)((dx / distance) * enemy.movementSpeed());
-                int newY = enemyPos.y() + (int)((dy / distance) * enemy.movementSpeed());
+                int newX = enemyPos.x() + (int) ((dx / distance) * enemy.movementSpeed());
+                int newY = enemyPos.y() + (int) ((dy / distance) * enemy.movementSpeed());
 
                 Enemy movedEnemy = new Enemy(
                         enemy.id(),
@@ -712,8 +713,8 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
 
     private boolean checkSwordHit(Enemy enemy, Weapon weapon, WeaponAnimationState state) {
         double angle = state.getAngle();
-        int swordX = player.position().x() + (int)(Math.cos(angle) * weapon.range());
-        int swordY = player.position().y() + (int)(Math.sin(angle) * weapon.range());
+        int swordX = player.position().x() + (int) (Math.cos(angle) * weapon.range());
+        int swordY = player.position().y() + (int) (Math.sin(angle) * weapon.range());
 
         double distance = getDistance(new Position(swordX, swordY), enemy.position());
         return distance < 30; // Sword hitbox radius
@@ -744,7 +745,7 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
     }
 
     private void damagePlayer(int damage) {
-        int actualDamage = (int)(damage * (1 - player.damageResistance()));
+        int actualDamage = (int) (damage * (1 - player.damageResistance()));
         int newHealth = Math.max(0, player.currentHealth() - actualDamage);
 
         player = new Player(
@@ -793,7 +794,7 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
             // Level up
             int newLevel = player.level() + 1;
             newExp -= expToNext;
-            expToNext = (int)(expToNext * 1.5);
+            expToNext = (int) (expToNext * 1.5);
 
             player = new Player(
                     player.position(),
@@ -908,6 +909,10 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
     }
 
     private void notifyTimeUpdate() {
+        if (gameState != GameState.RUNNING) {
+            return;
+        }
+
         int remaining = getRemainingTime();
         for (ShapeSurvivorListener listener : listeners) {
             listener.updateRemainingTime(remaining);
