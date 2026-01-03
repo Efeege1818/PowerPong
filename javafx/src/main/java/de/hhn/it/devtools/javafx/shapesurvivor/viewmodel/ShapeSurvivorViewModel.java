@@ -193,7 +193,7 @@ public class ShapeSurvivorViewModel implements ShapeSurvivorListener {
         });
     }
 
-    public void resetAndStartDefault(int width, int height) {
+    public void resetAndStartDefault() {
         gameService.reset();
         gameService.start();
     }
