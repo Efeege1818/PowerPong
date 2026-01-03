@@ -13,7 +13,6 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 
 /**
@@ -146,10 +145,6 @@ public class PopupProvider {
     this.popup.setMinHeight(250);
     this.popup.setResizable(false);
     return this.popup;
-  }
-
-  public Stage getPopup() {
-    return popup;
   }
 
 }

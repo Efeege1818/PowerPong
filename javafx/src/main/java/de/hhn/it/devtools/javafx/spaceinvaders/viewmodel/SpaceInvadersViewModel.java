@@ -16,6 +16,9 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+
 /**
  * ViewModel for SpaceInvadersScreen.
  */
@@ -26,6 +29,7 @@ public class SpaceInvadersViewModel implements SpaceInvadersListener {
   private final ObservableMap<Integer, Projectile> projectiles;
   private final ObjectProperty<Ship> shipObjectProperty;
   private final ObjectProperty<GameState> gameStateObjectProperty;
+  private final PropertyChangeSupport propertyChangeSupport;
   private final IntegerProperty score;
 
   /**
@@ -38,6 +42,7 @@ public class SpaceInvadersViewModel implements SpaceInvadersListener {
     this.projectiles = FXCollections.observableHashMap();
     this.shipObjectProperty = new SimpleObjectProperty<>();
     this.gameStateObjectProperty = new SimpleObjectProperty<>();
+    this.propertyChangeSupport = new PropertyChangeSupport(this);
     this.score = new SimpleIntegerProperty();
   }
 
@@ -92,7 +97,7 @@ public class SpaceInvadersViewModel implements SpaceInvadersListener {
 
   @Override
   public void updateSound(Sound sound) {
-    // TODO: implement sound update.
+    Platform.runLater(() -> this.propertyChangeSupport.firePropertyChange("SOUND", null, sound));
   }
 
   @Override
@@ -146,4 +151,7 @@ public class SpaceInvadersViewModel implements SpaceInvadersListener {
     return gameStateObjectProperty;
   }
 
+  public PropertyChangeSupport getPropertyChangeSupport() {
+    return propertyChangeSupport;
+  }
 }

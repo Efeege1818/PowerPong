@@ -3,6 +3,7 @@ package de.hhn.it.devtools.javafx.spaceinvaders.custom;
 import de.hhn.it.devtools.apis.spaceinvaders.SpaceInvadersService;
 import de.hhn.it.devtools.javafx.spaceinvaders.helper.PopupProvider;
 import de.hhn.it.devtools.javafx.spaceinvaders.viewmodel.SpaceInvadersViewModel;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 
 /**
@@ -11,6 +12,7 @@ import javafx.stage.Stage;
 public class PopupConfigurations {
   private final SpaceInvadersService spaceInvadersService;
   private final SpaceInvadersViewModel spaceInvadersViewModel;
+  private final MediaPlayer soundTrack;
   private final Stage mainStage;
   private final Stage owner;
   private Stage settingsStage;
@@ -24,13 +26,15 @@ public class PopupConfigurations {
    * @param mainStage main stage.
    * @param owner owner stage.
    * @param viewModel view model.
+   * @param soundTrack soundtrack media player.
    */
   public PopupConfigurations(SpaceInvadersService service, Stage mainStage, Stage owner,
-                             SpaceInvadersViewModel viewModel) {
+                             SpaceInvadersViewModel viewModel, MediaPlayer soundTrack) {
     this.spaceInvadersViewModel = viewModel;
     this.spaceInvadersService = service;
     this.mainStage = mainStage;
     this.owner = owner;
+    this.soundTrack = soundTrack;
     initPopup();
   }
 
@@ -69,10 +73,12 @@ public class PopupConfigurations {
               spaceInvadersService.removeListener(spaceInvadersViewModel);
               owner.close();
               mainStage.show();
+              soundTrack.stop();
             }, "Quit")
             .setCloseRequest((e) -> {
               owner.close();
               mainStage.show();
+              soundTrack.stop();
             }).build().showAndWait();
   }
 
@@ -92,20 +98,20 @@ public class PopupConfigurations {
               spaceInvadersService.abort();
               owner.close();
               mainStage.show();
+              soundTrack.stop();
             }, "Quit")
             .setCloseRequest((e) -> {
               spaceInvadersService.removeListener(spaceInvadersViewModel);
               spaceInvadersService.abort();
               owner.close();
               mainStage.show();
+              soundTrack.stop();
             }).build();
     // Next Round Popup.
     this.nextRoundStage = new PopupProvider(owner)
             .setTitle("Level Complete")
             .addButton((e) -> spaceInvadersService.nextRound(), "Next Level")
-            .addButton((e) -> {
-              spaceInvadersService.abort();
-            }, "Quit")
+            .addButton((e) -> spaceInvadersService.abort(), "Quit")
             .setCloseRequest((e) -> {
               spaceInvadersService.abort();
               owner.close();

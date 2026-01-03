@@ -2,6 +2,7 @@ package de.hhn.it.devtools.javafx.spaceinvaders.view;
 
 import de.hhn.it.devtools.apis.spaceinvaders.Direction;
 import de.hhn.it.devtools.apis.spaceinvaders.GameConfiguration;
+import de.hhn.it.devtools.apis.spaceinvaders.Sound;
 import de.hhn.it.devtools.apis.spaceinvaders.SpaceInvadersService;
 import de.hhn.it.devtools.components.spaceinvaders.SimpleSpaceInvadersService;
 import de.hhn.it.devtools.javafx.spaceinvaders.custom.Images;
@@ -12,6 +13,7 @@ import de.hhn.it.devtools.javafx.spaceinvaders.listener.BarrierListener;
 import de.hhn.it.devtools.javafx.spaceinvaders.listener.GameStateListener;
 import de.hhn.it.devtools.javafx.spaceinvaders.listener.ProjectileListener;
 import de.hhn.it.devtools.javafx.spaceinvaders.listener.ShipListener;
+import de.hhn.it.devtools.javafx.spaceinvaders.listener.SoundListener;
 import de.hhn.it.devtools.javafx.spaceinvaders.viewmodel.SpaceInvadersViewModel;
 import java.io.IOException;
 import java.net.URL;
@@ -34,6 +36,8 @@ import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.slf4j.Logger;
@@ -51,6 +55,8 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
   private CanvasProvider canvasProvider;
   private PopupConfigurations popupConfigurations;
   private final Timeline shooting = new Timeline(new KeyFrame(Duration.seconds(0.25)));
+  private final MediaPlayer soundTrack = new MediaPlayer(new Media(getClass()
+          .getResource("/spaceinvaders/sounds/" + Sound.TRACK.getSound()).toExternalForm()));
 
   @FXML
   public Label score;
@@ -66,6 +72,15 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
 
   @FXML
   public Canvas canvas1;
+
+  @FXML
+  public ImageView leben1;
+
+  @FXML
+  public ImageView leben2;
+
+  @FXML
+  public ImageView leben3;
 
   /**
    * Constructor for GameScreen.
@@ -100,13 +115,18 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
 
     score.textProperty().bind(viewModel.getScoreProperty().asString());
     level.textProperty().bind(viewModel.getCurrentRoundProperty().asString());
-    viewModel.getShipObjectPropertyProperty().addListener(new ShipListener(canvasProvider));
+    viewModel.getPropertyChangeSupport().addPropertyChangeListener(new SoundListener());
+    viewModel.getShipObjectPropertyProperty().addListener(new ShipListener(canvasProvider,
+            leben1, leben2, leben3));
     viewModel.getBarriers().addListener(new BarrierListener(canvasProvider));
     viewModel.getAliens().addListener(new AliensListener(canvasProvider));
     viewModel.getProjectiles().addListener(new ProjectileListener(new CanvasProvider(canvas1)));
     viewModel.getGameStateObjectProperty().addListener(new GameStateListener(
             popupConfigurations,
             viewModel));
+    soundTrack.setVolume(0.05);
+    soundTrack.setCycleCount(MediaPlayer.INDEFINITE);
+    soundTrack.play();
   }
 
   @Override
@@ -117,13 +137,15 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
     popupConfigurations = new PopupConfigurations(spaceInvadersService,
             mainStage,
             instance,
-            viewModel);
+            viewModel,
+            soundTrack);
     canvas.setFocusTraversable(true);
     Platform.runLater(() -> {
       popupConfigurations.openStartPopup();
       getScene().getWindow().setOnCloseRequest((e) -> {
         spaceInvadersService.removeListener(viewModel);
         this.mainStage.show();
+        this.soundTrack.stop();
         spaceInvadersService.abort();
       });
       Scene scene = getScene();
@@ -135,6 +157,8 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
           onRightPressed();
         } else if (code == KeyCode.SPACE) {
           onSpacePressed();
+        } else if (code == KeyCode.ESCAPE) {
+          spaceInvadersService.pause();
         }
       });
       canvas.requestFocus();

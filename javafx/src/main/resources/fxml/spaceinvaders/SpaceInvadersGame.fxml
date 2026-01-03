@@ -17,5 +17,8 @@
       <Canvas fx:id="canvas" height="512.0" layoutX="384.0" layoutY="104.0" width="512.0" />
       <Canvas fx:id="canvas1" height="512.0" layoutX="384.0" layoutY="104.0" width="512.0" />
       <Label layoutX="583.0" layoutY="14.0" style="-fx-text-fill: #00FF00; -fx-font-weight: bold; -fx-font-size: 22px; -fx-font-family: 'Courier New'; -fx-effect: dropshadow(one-pass-box, #000000, 4, 0.3, 2, 2); -fx-stroke: #333333; -fx-stroke-width: 1;" text="Level:" />
+      <ImageView fx:id="leben1" fitHeight="32.0" fitWidth="32.0" layoutX="1116.0" layoutY="12.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="leben2" fitHeight="32.0" fitWidth="32.0" layoutX="1148.0" layoutY="12.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="leben3" fitHeight="32.0" fitWidth="32.0" layoutX="1180.0" layoutY="12.0" pickOnBounds="true" preserveRatio="true" />
    </children>
 </fx:root>
