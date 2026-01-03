@@ -235,7 +235,7 @@ public class EntityProvider {
   }
 
   /**
-   * Handles all collision detection and resolution
+   * Handles all collision detection and resolution.
    */
   public void checkCollision() {
     Set<SimpleAlien> toRemoveAliens = new HashSet<>();
@@ -295,9 +295,9 @@ public class EntityProvider {
     for (SimpleProjectile p : toRemoveProjectiles) {
       p.inverse();
     }
-    service.notifyListeners(l -> l.updateProjectiles(projectiles.stream()
-            .map(SimpleProjectile::getImmtProjectile)
-            .toArray(Projectile[]::new)));
+    service.notifyListeners(l ->
+            l.updateProjectiles(toRemoveProjectiles.stream()
+                    .map(SimpleProjectile::getImmtProjectile).toArray(Projectile[]::new)));
     projectiles.removeAll(toRemoveProjectiles);
 
     for (SimpleBarrier barrier : toRemoveBarriers) {
