@@ -3,47 +3,24 @@ package de.hhn.it.devtools.components.towerdefensecomponents;
 import de.hhn.it.devtools.apis.towerdefenseapi.Coordinates;
 import de.hhn.it.devtools.apis.towerdefenseapi.Enemy;
 import de.hhn.it.devtools.apis.towerdefenseapi.EnemyType;
-import de.hhn.it.devtools.apis.towerdefenseapi.Tower;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-// LOCKED : S.Arsenovici
 /**
- * Makes service between the actual class and enemy operable through new creations of the records.
+ * A class that provides general functionality for the management of enemies.
  */
 public class EnemyToolbox {
-  // TODO: add exception throws and fix logic/comments when necessary
-
-  private List<Enemy> enemies = new ArrayList<>();
+  private final List<Enemy> enemies = new ArrayList<>();
   private final SimpleTowerDefenseService service;
 
-
+  /**
+   * Creates a new EnemyToolbox.
+   *
+   * @param service that uses this Toolbox
+   */
   public  EnemyToolbox(SimpleTowerDefenseService service) {
     this.service = service;
-  }
-  
-  /**
-   * Reduces the enemy’s health by the given amount and marks it as dead
-   * if its health reaches zero or below.
-   *
-   * @param amount the amount of damage to apply (must be non-negative)
-   * @param enemy  this is the object which damageEnemy is called on
-   * @throws IllegalArgumentException if the damage amount is negative
-   */
-  public static Enemy damageEnemy(int amount, Enemy enemy) {
-    // TODO: Check throwable and logic here
-    // TODO: Check if enemy is dead in towerToolbox or Service
-    // TODO: Money in towerToolbox when enemy dies
-
-    if (enemy.currentHealth() - amount <= 0) {
-      return new Enemy(enemy.id(), enemy.coordinates(), enemy.type(),
-              0, enemy.index());
-    }
-
-    return new Enemy(enemy.id(), enemy.coordinates(), enemy.type(),
-            enemy.currentHealth() - amount, enemy.index());
   }
 
   /**
@@ -55,9 +32,9 @@ public class EnemyToolbox {
    */
   public static int getSpeed(EnemyType type) throws NoSuchElementException {
     return switch (type) {
-      case SMALL -> 10;
-      case MEDIUM -> 8;
-      case LARGE -> 5;
+      case SMALL -> 3;
+      case MEDIUM -> 2;
+      case LARGE -> 1;
       default -> throw new NoSuchElementException();
     };
   }
@@ -86,7 +63,6 @@ public class EnemyToolbox {
    * @throws NoSuchElementException if the given EnemyType isn't supported
    */
   public static int getMoney(EnemyType type) throws NoSuchElementException {
-    // TODO: add good money value
     return switch (type) {
       case SMALL -> 1;
       case MEDIUM -> 2;
@@ -131,12 +107,26 @@ public class EnemyToolbox {
     };
   }
 
+  /**
+   * Reduces the enemy’s health by the given amount and marks it as dead
+   * if its health reaches zero or below.
+   *
+   * @param amount the amount of damage to apply (must be non-negative)
+   * @param enemy  this is the object which damageEnemy is called on
+   * @throws IllegalArgumentException if the damage amount is negative
+   */
+  public static Enemy damageEnemy(int amount, Enemy enemy) {
+    if (enemy.currentHealth() - amount <= 0) {
+      return new Enemy(enemy.id(), enemy.coordinates(), enemy.type(),
+              0, enemy.index());
+    }
 
+    return new Enemy(enemy.id(), enemy.coordinates(), enemy.type(),
+            enemy.currentHealth() - amount, enemy.index());
+  }
 
   /**
    * Deals damage to the player when the enemy reaches the end of its path.
-   *
-   * <p>The amount of damage is determined by the enemy type.
    *
    * @return the amount of damage dealt to the player
    */
@@ -169,28 +159,25 @@ public class EnemyToolbox {
 
   /**
    * Moves the enemy forward along its path based on its speed.
-   * The enemy gets deleted when it is currently on the end.
-   *
-   * <p>The implementation should calculate the next position
-   * using the current path progress and enemy speed.
-   * @return updates enemies and their coordinate and removes if they reached the end
    */
-  public ArrayList<Enemy> progress() {
+  public void progress() {
 
     List<Coordinates> coordinatesList = service.getMapToolbox().getPath();
 
-    ArrayList<Enemy> newList = new ArrayList<>();
-
     for (Enemy enemy : enemies) {
-      if ((enemy.currentHealth() > 0) && !(coordinatesList.size() <= enemy.index() + 1)) {
-        newList.add(new Enemy(enemy.id(),
-                coordinatesList.get(enemy.index() + getSpeed(enemy.type())),
-                enemy.type(), enemy.currentHealth(), enemy.index() + getSpeed(enemy.type())));
+      if (!(enemy.currentHealth() > 0) && !(coordinatesList.size() <= enemy.index() + 1)) {
+        enemies.remove(enemy);
+        continue;
       }
+      enemies.set(enemies.indexOf(enemy), new Enemy(enemy.id(), coordinatesList.get(enemy.index()
+              + getSpeed(enemy.type())), enemy.type(), enemy.currentHealth(), enemy.index()
+              + getSpeed(enemy.type())));
     }
-    return newList;
   }
 
+  /**
+   * Adds an enemy to the list.
+   */
   public void addEnemy(Enemy newEnemy) {
     enemies.add(newEnemy);
   }

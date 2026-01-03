@@ -4,24 +4,25 @@ import de.hhn.it.devtools.apis.towerdefenseapi.Coordinates;
 import de.hhn.it.devtools.apis.towerdefenseapi.Enemy;
 import de.hhn.it.devtools.apis.towerdefenseapi.Tower;
 import de.hhn.it.devtools.apis.towerdefenseapi.TowerType;
-
-import java.util.*;
-
-// LOCKED : S.Arsenovici
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
 
 /**
- * A class that provides general functionality for the Management of Towers.
+ * A class that provides general functionality for the management of towers.
  */
 public class TowerToolbox {
   private List<Tower> towers = new ArrayList<>();
   private List<Tower> savedTowers = new ArrayList<>();
   private final SimpleTowerDefenseService service;
 
-
-
-
-
-
+  /**
+   * Creates a new TowerToolbox.
+   *
+   * @param service that uses this Toolbox
+   * */
   public  TowerToolbox(SimpleTowerDefenseService service) {
     this.service = service;
   }
@@ -58,14 +59,25 @@ public class TowerToolbox {
     };
   }
 
+  /**
+   * Returns the default damage values for different tower types.
+   *
+   * @param type the TowerType of the Tower
+   * @return the damage for a tower of the given type
+   * @throws NoSuchElementException if the given TowerType isn't supported
+   */
   public static int getCost(TowerType type) throws NoSuchElementException {
-    return 0;
+    return switch (type) {
+      case MELEE -> 10;
+      case RANGED -> 15;
+      case MONEYMAKER -> 20;
+      default -> throw new NoSuchElementException();
+    };
   }
 
   /**
    * Attacks the enemy in range, that has advanced the furthest on the path.
    *
-   * @return {@code ArrayList<Enemy>} with updated enemies
    * @throws IllegalArgumentException if towers or enemies do not exist.
    */
   public void attack() {
@@ -101,8 +113,7 @@ public class TowerToolbox {
   /**
    * Attacks the enemy in range, that has advanced the furthest on the path.
    *
-   * @return {@code int} how much money was made
-   * @throws IllegalArgumentException if towers or enemies do not exist.
+   * @return how much money was made
    */
   public int moneyMade()
           throws IllegalArgumentException {
@@ -116,22 +127,36 @@ public class TowerToolbox {
     return money;
   }
 
+  /**
+   * Add a tower to the list.
+   */
   public void addTower(Tower tower) {
     towers.add(tower);
   }
 
+  /**
+   * Attacks the enemy in range, that has advanced the furthest on the path.
+   *
+   * @return map of the current towers.
+   */
   public Map<Coordinates, Tower> getTowers() {
     Map<Coordinates, Tower> map = new HashMap<>();
-    for(Tower tower : towers) {
+    for (Tower tower : towers) {
       map.put(tower.coordinates(), tower);
     }
     return map;
   }
 
+  /**
+   * Saves the current tower list to load it back if the player loses.
+   */
   public void saveData() {
     savedTowers = List.copyOf(towers);
   }
 
+  /**
+   * Loads the latest saved tower list.
+   */
   public void loadData() {
     towers = List.copyOf(savedTowers);
   }
