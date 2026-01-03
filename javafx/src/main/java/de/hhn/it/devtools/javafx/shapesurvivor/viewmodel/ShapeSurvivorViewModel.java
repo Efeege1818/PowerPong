@@ -183,13 +183,6 @@ public class ShapeSurvivorViewModel implements ShapeSurvivorListener {
         }
     }
 
-    public void resetGame(int width, int height) {
-        if (gameService.getGameState() != GameState.ABORTED) {
-            gameService.abort();
-        }
-        gameService.reset();
-    }
-
     public void resetGame() {
         try {
             if (gameService.getGameState() != GameState.ABORTED) {

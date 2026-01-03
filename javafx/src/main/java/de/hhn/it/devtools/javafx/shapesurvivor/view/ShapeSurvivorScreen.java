@@ -345,7 +345,7 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
         }, "Continue");
 
         provider.addButton(e -> {
-            viewModel.resetGame((int) canvas.getWidth(), (int) canvas.getHeight());
+            viewModel.resetGame();
             closePopup(e);
         }, "Restart");
 
