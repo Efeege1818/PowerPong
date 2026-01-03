@@ -1,5 +1,6 @@
 package de.hhn.it.devtools.apis.shapesurvivor;
 
+import de.hhn.it.devtools.apis.exceptions.IllegalParameterException;
 import de.hhn.it.devtools.apis.shapesurvivor.exceptions.IllegalConfigurationException;
 
 /**
@@ -97,7 +98,7 @@ public interface ShapeSurvivorService {
      * @throws IllegalArgumentException if configuration is null
      */
     void configure(GameConfiguration configuration)
-            throws IllegalStateException, IllegalConfigurationException;
+            throws IllegalStateException, IllegalConfigurationException, IllegalParameterException;
 
     /**
      * Returns the current game configuration.
