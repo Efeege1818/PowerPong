@@ -184,14 +184,7 @@ public class ShapeSurvivorViewModel implements ShapeSurvivorListener {
     }
 
     public void resetGame() {
-        try {
-            if (gameService.getGameState() != GameState.ABORTED) {
-                gameService.abort();
-            }
-        } catch (IllegalStateException ignored) {}
-
         gameService.reset();
-
         Platform.runLater(() -> {
             playerProperty.set(null);
             enemiesMap.clear();
@@ -200,6 +193,10 @@ public class ShapeSurvivorViewModel implements ShapeSurvivorListener {
         });
     }
 
+    public void resetAndStartDefault(int width, int height) {
+        gameService.reset();
+        gameService.start();
+    }
 
     public void resetGameOver() {
         gameOverProperty.set(false);
