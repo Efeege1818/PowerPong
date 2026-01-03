@@ -8,6 +8,7 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.stage.Stage;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -166,5 +167,27 @@ public class ShapeSurvivorViewModel implements ShapeSurvivorListener {
     @Override
     public void updateGameConfiguration(GameConfiguration configuration) {
         // Optional: handle config updates
+    }
+
+    public void pauseGame() {
+        try {
+            gameService.pause();
+        } catch (IllegalStateException ignored) {}
+    }
+
+    public void resumeGame() {
+        try {
+            gameService.resume();
+        } catch (IllegalStateException ignored) {}
+    }
+
+    public void restartGame(int fieldWidth, int fieldHeight) {
+        gameService.abort();
+        gameService.reset();
+        startGame("Normal", WeaponType.SWORD, fieldWidth, fieldHeight);
+    }
+
+    public void exitGame() {
+        gameService.abort();
     }
 }

@@ -2,11 +2,13 @@ package de.hhn.it.devtools.javafx.controllers;
 
 import de.hhn.it.devtools.javafx.shapesurvivor.view.ShapeSurvivorScreen;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -24,9 +26,25 @@ public class ShapeSurvivorController extends Controller implements Initializable
 
     @FXML
     public void doActionStart() {
+
         Stage mainStage = (Stage) shapeSurvivorPane.getScene().getWindow();
 
         ShapeSurvivorScreen screen = new ShapeSurvivorScreen(mainStage);
+        screen.setOnExit(() -> {
+            // Reload the original ShapeSurvivor module view (reset)
+            shapeSurvivorPane.getChildren().clear();
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ShapeSurvivor.fxml"));
+                Parent root = loader.load();
+                shapeSurvivorPane.getChildren().add(root);
+                AnchorPane.setTopAnchor(root, 0.0);
+                AnchorPane.setBottomAnchor(root, 0.0);
+                AnchorPane.setLeftAnchor(root, 0.0);
+                AnchorPane.setRightAnchor(root, 0.0);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        });
         Parent gameView = screen.getView();
 
         shapeSurvivorPane.getChildren().clear();

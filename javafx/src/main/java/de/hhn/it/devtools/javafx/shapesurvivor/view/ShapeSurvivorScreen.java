@@ -25,15 +25,19 @@ import java.util.ResourceBundle;
 
 public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
 
-    @FXML private Canvas canvas;
-    @FXML private Label scoreLabel;
-    @FXML private Label levelLabel;
+    @FXML
+    private Canvas canvas;
+    @FXML
+    private Label scoreLabel;
+    @FXML
+    private Label levelLabel;
 
     private final Parent root;
     private final Stage mainStage;
     private final ShapeSurvivorViewModel viewModel;
     private SimpleGameLoopService renderLoop;
     private GraphicsContext gc;
+    private Runnable onExitCallback;
 
     public ShapeSurvivorScreen(Stage mainStage) {
         this.mainStage = mainStage;
@@ -52,6 +56,10 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
         }
     }
 
+    public void setOnExit(Runnable callback) {
+        this.onExitCallback = callback;
+    }
+
     public Parent getView() {
         return root;
     }
@@ -63,7 +71,6 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
         // Bind UI to ViewModel
         scoreLabel.textProperty().bind(viewModel.getScoreProperty().asString());
         levelLabel.textProperty().bind(viewModel.getLevelProperty().asString());
-
         renderLoop = new SimpleGameLoopService(this::render);
 
         Platform.runLater(() -> {
@@ -94,6 +101,11 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
     }
 
     private void handleKeyPress(KeyEvent e) {
+        if (e.getCode() == javafx.scene.input.KeyCode.ESCAPE) {
+            showPausePopup();
+            return;
+        }
+
         Direction direction = switch (e.getCode()) {
             case UP, W -> Direction.UP;
             case DOWN, S -> Direction.DOWN;
@@ -121,7 +133,7 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
             String difficulty = difficultyBox.getSelectionModel().getSelectedItem();
             WeaponType weapon = weaponBox.getSelectionModel().getSelectedItem();
 
-            viewModel.startGame(difficulty, weapon, (int)canvas.getWidth(), (int)canvas.getHeight());
+            viewModel.startGame(difficulty, weapon, (int) canvas.getWidth(), (int) canvas.getHeight());
             Platform.runLater(root::requestFocus);
         }, "Start Game");
 
@@ -231,7 +243,6 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
     }
 
 
-
     private void drawAura(Player player, Weapon weapon, WeaponAnimationState state) {
         // Pulsing aura effect
         double pulse = Math.sin(state.getAngle() * 3) * 10 + weapon.range();
@@ -253,7 +264,7 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
         boolean isLeft = state.isAttackingLeft();
 
         // Whip extends from player position
-        int whipLength = (int)(weapon.range() * progress);
+        int whipLength = (int) (weapon.range() * progress);
         int whipWidth = 80;
 
         // Calculate whip position based on side
@@ -270,11 +281,11 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
             double t = i / 4.0;
             double curve = Math.sin(t * Math.PI) * 20 * progress;
 
-            int x1 = (int)(startX + (endX - startX) * t);
-            int y1 = (int)(startY + curve);
+            int x1 = (int) (startX + (endX - startX) * t);
+            int y1 = (int) (startY + curve);
 
-            int x2 = (int)(startX + (endX - startX) * (t + 0.25));
-            int y2 = (int)(startY + Math.sin((t + 0.25) * Math.PI) * 20 * progress);
+            int x2 = (int) (startX + (endX - startX) * (t + 0.25));
+            int y2 = (int) (startY + Math.sin((t + 0.25) * Math.PI) * 20 * progress);
 
             gc.strokeLine(x1, y1, x2, y2);
         }
@@ -315,4 +326,39 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
         gc.strokeRect(x, y, barWidth, barHeight);
     }
 
+    private void showPausePopup() {
+        viewModel.pauseGame();
+
+        PopupProvider provider = new PopupProvider(mainStage)
+                .setTitle("Game Paused")
+                .addLabel("What do you want to do?");
+
+        provider.addButton(e -> {
+            viewModel.resumeGame();
+            closePopup(e);
+        }, "Continue");
+
+        provider.addButton(e -> {
+            viewModel.restartGame((int) canvas.getWidth(), (int) canvas.getHeight());
+            closePopup(e);
+        }, "Restart");
+
+        provider.addButton(e -> {
+            viewModel.exitGame(); // stop game logic
+            closePopup(e);
+
+            // Trigger navigation back to the module screen
+            if (onExitCallback != null) {
+                onExitCallback.run();
+            }
+        }, "Exit Game");
+
+        provider.build().show();
+    }
+
+    private void closePopup(javafx.event.ActionEvent e) {
+        ((Stage) ((javafx.scene.Node) e.getSource())
+                .getScene().getWindow()).close();
+        Platform.runLater(root::requestFocus);
+    }
 }
