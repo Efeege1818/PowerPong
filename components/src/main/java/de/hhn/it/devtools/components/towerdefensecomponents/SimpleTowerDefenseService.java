@@ -22,8 +22,8 @@ import java.util.function.Consumer;
 public class SimpleTowerDefenseService implements TowerDefenseService {
 
   private final MapToolbox mapToolbox = new MapToolbox();
-  private final EnemyToolbox enemyToolbox = new EnemyToolbox();
-  private final TowerToolbox towerToolbox = new TowerToolbox();
+  private final EnemyToolbox enemyToolbox = new EnemyToolbox(this);
+  private final TowerToolbox towerToolbox = new TowerToolbox(this);
   private final WaveGenerator waveGenerator;
 
   private final long seed;
@@ -206,6 +206,10 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
 
   public TowerToolbox getTowerToolbox() {
     return towerToolbox;
+  }
+
+  public MapToolbox getMapToolbox() {
+    return  mapToolbox;
   }
 
 }

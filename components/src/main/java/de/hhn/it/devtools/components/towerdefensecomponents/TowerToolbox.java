@@ -5,10 +5,7 @@ import de.hhn.it.devtools.apis.towerdefenseapi.Enemy;
 import de.hhn.it.devtools.apis.towerdefenseapi.Tower;
 import de.hhn.it.devtools.apis.towerdefenseapi.TowerType;
 
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 // LOCKED : S.Arsenovici
 
@@ -16,7 +13,18 @@ import java.util.NoSuchElementException;
  * A class that provides general functionality for the Management of Towers.
  */
 public class TowerToolbox {
+  private List<Tower> towers = new ArrayList<>();
+  private List<Tower> savedTowers = new ArrayList<>();
+  private final SimpleTowerDefenseService service;
 
+
+
+
+
+
+  public  TowerToolbox(SimpleTowerDefenseService service) {
+    this.service = service;
+  }
 
   /**
    * Returns the default range values for different tower types.
@@ -54,78 +62,77 @@ public class TowerToolbox {
     return 0;
   }
 
-
   /**
    * Attacks the enemy in range, that has advanced the furthest on the path.
    *
-   * @param enemies as list of enemies
-   * @param towers  as list of towers
-   * @param pathLength as the length of the enemies path
    * @return {@code ArrayList<Enemy>} with updated enemies
    * @throws IllegalArgumentException if towers or enemies do not exist.
    */
-  public void attack()
-          throws IllegalArgumentException {
-//    for (Tower tower : towers) {
-//      if (tower.type() != TowerType.MONEYMAKER) {
-//        int furthestEnemy = -1;
-//        Enemy enemyToBeAttacked = null;
-//        for (Enemy enemy : enemies) {
-//          if (enemy.index() >= pathLength) {
-//            enemies.remove(enemy);
-//            continue;
-//          }
-//          double testDistance = Math.abs(Math.pow((tower.coordinates().x()
-//                  - enemy.coordinates().x()), 2) + Math.pow((tower.coordinates().y()
-//                  - enemy.coordinates().y()), 2));
-//          if ((testDistance < getRange(tower.type()))
-//                  && (furthestEnemy == -1 || enemy.index() > furthestEnemy)) {
-//            furthestEnemy = enemy.index();
-//            enemyToBeAttacked = enemy;
-//          }
-//        }
-//        if (enemyToBeAttacked != null) {
-//          enemies.set(enemies.indexOf(enemyToBeAttacked),
-//                  EnemyToolbox.damageEnemy(getDamage(tower.type()), enemyToBeAttacked));
-//        }
-//      }
-//    }
-//    return enemies;
-    return null;
+  public void attack() {
+    int pathLength = service.getMapToolbox().getPath().size();
+    List<Enemy> enemies = service.getEnemyToolbox().getEnemies();
+    for (Tower tower : towers) {
+      if (tower.type() != TowerType.MONEYMAKER) {
+        int furthestEnemy = -1;
+        Enemy enemyToBeAttacked = null;
+        for (Enemy enemy : enemies) {
+          if (enemy.index() >= pathLength) {
+            enemies.remove(enemy);
+            continue;
+          }
+          double testDistance = Math.abs(Math.pow((tower.coordinates().x()
+                  - enemy.coordinates().x()), 2) + Math.pow((tower.coordinates().y()
+                  - enemy.coordinates().y()), 2));
+          if ((testDistance < getRange(tower.type()))
+                  && (furthestEnemy == -1 || enemy.index() > furthestEnemy)) {
+            furthestEnemy = enemy.index();
+            enemyToBeAttacked = enemy;
+          }
+        }
+        if (enemyToBeAttacked != null) {
+          enemies.set(enemies.indexOf(enemyToBeAttacked),
+                  EnemyToolbox.damageEnemy(getDamage(tower.type()), enemyToBeAttacked));
+        }
+      }
+    }
   }
 
 
   /**
    * Attacks the enemy in range, that has advanced the furthest on the path.
    *
-   * @param towers as list of towers
    * @return {@code int} how much money was made
    * @throws IllegalArgumentException if towers or enemies do not exist.
    */
-  public int moneyMade() {
+  public int moneyMade()
+          throws IllegalArgumentException {
 
     int money = 0;
-//    for (Tower tower : towers) {
-//      if (tower.type().equals(TowerType.MONEYMAKER)) {
-//        money += 50;
-//      }
-//    }
+    for (Tower tower : towers) {
+      if (tower.type().equals(TowerType.MONEYMAKER)) {
+        money += 50;
+      }
+    }
     return money;
   }
 
   public void addTower(Tower tower) {
-
+    towers.add(tower);
   }
 
   public Map<Coordinates, Tower> getTowers() {
-    return Map.of();
+    Map<Coordinates, Tower> map = new HashMap<>();
+    for(Tower tower : towers) {
+      map.put(tower.coordinates(), tower);
+    }
+    return map;
   }
 
   public void saveData() {
-
+    savedTowers = List.copyOf(towers);
   }
 
   public void loadData() {
-
+    towers = List.copyOf(savedTowers);
   }
 }

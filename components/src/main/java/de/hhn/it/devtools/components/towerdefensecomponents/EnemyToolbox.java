@@ -3,6 +3,8 @@ package de.hhn.it.devtools.components.towerdefensecomponents;
 import de.hhn.it.devtools.apis.towerdefenseapi.Coordinates;
 import de.hhn.it.devtools.apis.towerdefenseapi.Enemy;
 import de.hhn.it.devtools.apis.towerdefenseapi.EnemyType;
+import de.hhn.it.devtools.apis.towerdefenseapi.Tower;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -14,6 +16,14 @@ import java.util.NoSuchElementException;
 public class EnemyToolbox {
   // TODO: add exception throws and fix logic/comments when necessary
 
+  private List<Enemy> enemies = new ArrayList<>();
+  private final SimpleTowerDefenseService service;
+
+
+  public  EnemyToolbox(SimpleTowerDefenseService service) {
+    this.service = service;
+  }
+  
   /**
    * Reduces the enemy’s health by the given amount and marks it as dead
    * if its health reaches zero or below.
@@ -131,28 +141,29 @@ public class EnemyToolbox {
    * @return the amount of damage dealt to the player
    */
   public int damagePlayer() {
+    int pathLength = service.getMapToolbox().getPath().size();
+
     int damage = 0;
-//    for (Enemy enemy : enemyList) {
-//      if (enemy.index() >= pathLength) {
-//        damage += getDamage(enemy.type());
-//      }
-//    }
+    for (Enemy enemy : enemies) {
+      if (enemy.index() >= pathLength) {
+        damage += getDamage(enemy.type());
+      }
+    }
     return damage;
   }
 
   /**
    * Takes the enemyList and gives the player money for each dead enemy.
    *
-   * @param enemyList list of all current enemies including dead ones
    * @return the amount of money to the player
    */
   public int moneyPerEnemy() {
     int money = 0;
-//    for (Enemy enemy : enemyList) {
-//      if (enemy.currentHealth() <= 0) {
-//        money += getMaxHealth(enemy.type());
-//      }
-//    }
+    for (Enemy enemy : enemies) {
+      if (enemy.currentHealth() <= 0) {
+        money += getMaxHealth(enemy.type());
+      }
+    }
     return money;
   }
 
@@ -162,30 +173,29 @@ public class EnemyToolbox {
    *
    * <p>The implementation should calculate the next position
    * using the current path progress and enemy speed.
-   *
-   * @param enemyList       list of all current enemies
-   * @param coordinatesList list of all coordinates associated with the index
    * @return updates enemies and their coordinate and removes if they reached the end
    */
   public ArrayList<Enemy> progress() {
 
+    List<Coordinates> coordinatesList = service.getMapToolbox().getPath();
+
     ArrayList<Enemy> newList = new ArrayList<>();
 
-//    for (Enemy enemy : enemyList) {
-//      if ((enemy.currentHealth() > 0) && !(coordinatesList.size() <= enemy.index() + 1)) {
-//        newList.add(new Enemy(enemy.id(),
-//                coordinatesList.get(enemy.index() + getSpeed(enemy.type())),
-//                enemy.type(), enemy.currentHealth(), enemy.index() + getSpeed(enemy.type())));
-//      }
-//    }
+    for (Enemy enemy : enemies) {
+      if ((enemy.currentHealth() > 0) && !(coordinatesList.size() <= enemy.index() + 1)) {
+        newList.add(new Enemy(enemy.id(),
+                coordinatesList.get(enemy.index() + getSpeed(enemy.type())),
+                enemy.type(), enemy.currentHealth(), enemy.index() + getSpeed(enemy.type())));
+      }
+    }
     return newList;
   }
 
   public void addEnemy(Enemy newEnemy) {
-
+    enemies.add(newEnemy);
   }
 
   public List<Enemy> getEnemies() {
-    return List.of();
+    return enemies;
   }
 }
