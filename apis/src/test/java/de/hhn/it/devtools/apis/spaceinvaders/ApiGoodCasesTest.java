@@ -33,7 +33,7 @@ class ApiGoodCasesTest {
     Alien alien = new Alien(coord, 3, AlienType.BASIC, 42);
     Barrier barrier = new Barrier(coord, 7);
     Ship ship = new Ship(coord, 5);
-    Projectile proj = new Projectile(coord, 1);
+    Projectile proj = new Projectile(coord, 1, Direction.DOWN);
     GameConfiguration cfg = new GameConfiguration(2, Difficulty.NORMAL);
 
     assertEquals(coord, alien.coordinate());

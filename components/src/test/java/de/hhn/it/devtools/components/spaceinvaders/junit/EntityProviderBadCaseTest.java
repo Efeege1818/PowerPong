@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -60,7 +61,7 @@ class EntityProviderBadCaseTest {
     HashMap<Integer, ?> aliens = getPrivateField(provider, "aliens");
     aliens.clear();
 
-    ArrayList<SimpleProjectile> projectiles = getPrivateField(provider, "projectiles");
+    CopyOnWriteArrayList<SimpleProjectile> projectiles = getPrivateField(provider, "projectiles");
     int before = projectiles.size();
 
     // should not throw and should not add projectiles
@@ -75,7 +76,7 @@ class EntityProviderBadCaseTest {
     HashMap<Integer, ?> aliens = getPrivateField(provider, "aliens");
     aliens.clear();
 
-    ArrayList<SimpleProjectile> projectiles = getPrivateField(provider, "projectiles");
+    CopyOnWriteArrayList<SimpleProjectile> projectiles = getPrivateField(provider, "projectiles");
     SimpleShip player = getPrivateField(provider, "player");
 
     projectiles.clear();

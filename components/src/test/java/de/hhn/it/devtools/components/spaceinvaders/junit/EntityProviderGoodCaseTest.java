@@ -17,6 +17,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -54,7 +55,7 @@ class EntityProviderGoodCaseTest {
 
   @Test
   void testShootPlayerAddsProjectile() throws Exception {
-    ArrayList<SimpleProjectile> projectiles = getPrivateField(provider, "projectiles");
+    CopyOnWriteArrayList<SimpleProjectile> projectiles = getPrivateField(provider, "projectiles");
     int before = projectiles.size();
     // shoot
     provider.shootPlayer();
@@ -62,17 +63,17 @@ class EntityProviderGoodCaseTest {
     SimpleProjectile p = projectiles.get(projectiles.size() - 1);
     SimpleShip player = getPrivateField(provider, "player");
     assertEquals(player.getCoordinate().x() + 1, p.getCoordinate().x());
-    assertEquals(player.getCoordinate().y() - 1, p.getCoordinate().y());
+    assertEquals(player.getCoordinate().y() - 45, p.getCoordinate().y());
     assertEquals(Direction.UP, p.getdirection());
     assertEquals(Constants.BASE_DAMAGE, p.getDamage());
   }
 
   @Test
   void testProjectileRemoveBarrier() throws Exception {
-    ArrayList<SimpleProjectile> projectiles = getPrivateField(provider, "projectiles");
+    CopyOnWriteArrayList<SimpleProjectile> projectiles = getPrivateField(provider, "projectiles");
     Coordinate c = provider.getBarriers().get(1).getCoordinate();
 
-    projectiles.add(new SimpleProjectile(new Coordinate(c.x(), c.y() - 1), Direction.DOWN, 1));
+    projectiles.add(new SimpleProjectile(new Coordinate(c.x(), c.y() - 5), Direction.DOWN, 1));
     int projectilesBefore = projectiles.size();
     int barrierBefore = provider.getBarriers().size();
     int nearByBarrierBefore = provider.barrierGrid.get(provider.cellKey(c)).size();
@@ -84,18 +85,18 @@ class EntityProviderGoodCaseTest {
 
     provider.updateProjectiles();
     provider.checkCollision();
-    assertEquals(projectilesBefore -1, projectiles.size());
-    assertEquals(barrierBefore - 1, provider.getBarriers().size());
-    assertEquals(nearByBarrierBefore - 1, provider.barrierGrid.get(provider.cellKey(c)).size());
+    assertEquals(projectilesBefore - 1, projectiles.size());
+    assertEquals(barrierBefore - 15, provider.getBarriers().size());
+    assertEquals(nearByBarrierBefore - 15, provider.barrierGrid.get(provider.cellKey(c)).size());
   }
 
   @Test
   void testUpdateProjectilesMovesProjectile() throws Exception {
-    ArrayList<SimpleProjectile> projectiles = getPrivateField(provider, "projectiles");
+    CopyOnWriteArrayList<SimpleProjectile> projectiles = getPrivateField(provider, "projectiles");
     projectiles.clear();
     projectiles.add(new SimpleProjectile(new Coordinate(50, 50), Direction.UP, 1));
     provider.updateProjectiles();
-    assertEquals(49, projectiles.get(0).getCoordinate().y());
+    assertEquals(47, projectiles.get(0).getCoordinate().y());
   }
 
   @Test
@@ -113,7 +114,7 @@ class EntityProviderGoodCaseTest {
     alien.getHit(); // now 1
 
     // create projectile that hits alien
-    ArrayList<SimpleProjectile> projectiles = getPrivateField(provider, "projectiles");
+    CopyOnWriteArrayList<SimpleProjectile> projectiles = getPrivateField(provider, "projectiles");
     projectiles.clear();
     Coordinate hitCoord = alien.getCoordinate(); // top-left of alien, inside hitbox
     projectiles.add(new SimpleProjectile(new Coordinate(hitCoord.x(), hitCoord.y()), Direction.UP, 1));
@@ -130,7 +131,7 @@ class EntityProviderGoodCaseTest {
 
   @Test
   void testCheckCollisionPlayerHitPointsUpdated() throws Exception {
-    ArrayList<SimpleProjectile> projectiles = getPrivateField(provider, "projectiles");
+    CopyOnWriteArrayList<SimpleProjectile> projectiles = getPrivateField(provider, "projectiles");
     SimpleShip player = getPrivateField(provider, "player");
 
     projectiles.clear();
@@ -187,7 +188,7 @@ class EntityProviderGoodCaseTest {
       Coordinate b = before.get(id);
       Coordinate a = after.get(id);
       assertNotNull(a, "Alien should still exist after update");
-      assertEquals(b.y() + 5, a.y(), "Alien should have moved down by 5 at edge");
+      assertEquals(b.y() + 10, a.y(), "Alien should have moved down by 10 at edge");
     }
 
     // check that the provider's direction was flipped to LEFT
