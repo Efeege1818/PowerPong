@@ -75,9 +75,13 @@ public class SimpleAlien {
     return new Alien(coordinate, hitPoints, alienType, alienId);
   }
 
-  public ArrayList<Coordinate> getHitbox() { return hitbox; }
+  public ArrayList<Coordinate> getHitbox() {
+    return hitbox;
+  }
 
-  public Coordinate getCoordinate() { return coordinate; }
+  public Coordinate getCoordinate() {
+    return coordinate;
+  }
 
   public int getAlienId() {
     return alienId;
@@ -85,5 +89,25 @@ public class SimpleAlien {
 
   public void setHitPoints(int hitPoints) {
     this.hitPoints = hitPoints;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+
+    SimpleAlien that = (SimpleAlien) o;
+    return this.alienId == that.alienId && this.coordinate.equals(that.coordinate);
+  }
+
+  @Override
+  public int hashCode() {
+    int result = coordinate.hashCode();
+    result = 31 * result + alienId;
+    return result;
   }
 }

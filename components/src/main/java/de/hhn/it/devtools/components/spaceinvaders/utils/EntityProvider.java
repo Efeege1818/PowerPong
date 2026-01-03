@@ -91,6 +91,7 @@ public class EntityProvider {
     this.player = new SimpleShip(
             new Coordinate(APIConstants.FIELD_SIZE / 2, APIConstants.FIELD_SIZE - 26)
     );
+    service.notifyListeners(l -> l.updateShip(player.getImmutableShip()));
     generateAliens();
     initBarriers();
   }
@@ -209,8 +210,10 @@ public class EntityProvider {
    * Fires a projectile from the player's ship.
    */
   public void shootPlayer() {
+    int calledFromX = player.getCoordinate().x() + (APIConstants.PLAYER_SIZE / 2)
+            - (APIConstants.SHOT_HITBOX_SIZE / 2);
     projectiles.add(new SimpleProjectile(
-            new Coordinate(player.getCoordinate().x() + 1, player.getCoordinate().y() - 45),
+            new Coordinate(calledFromX, player.getCoordinate().y()),
             Direction.UP,
             Constants.BASE_DAMAGE
     ));
@@ -236,15 +239,15 @@ public class EntityProvider {
    * Handles all collision detection and resolution
    */
   public void checkCollision() {
-    List<SimpleAlien> toRemoveAliens = new ArrayList<>();
-    List<SimpleProjectile> toRemoveProjectiles = new ArrayList<>();
-    List<SimpleBarrier> toRemoveBarriers = new ArrayList<>();
+    Set<SimpleAlien> toRemoveAliens = new HashSet<>();
+    Set<SimpleBarrier> toRemoveBarriers = new HashSet<>();
+    Set<SimpleProjectile> toRemoveProjectiles = new HashSet<>();
     if (aliens.isEmpty()) {
       return;
     }
     for (SimpleAlien alien : aliens.values()) {
       for (SimpleBarrier barrier : getNearbyBarriers(alien.getCoordinate())) {
-        if (alien.getHitbox().stream().anyMatch(barrier.getHitbox()::contains)) {
+        if (alien.getHitbox().contains(barrier.getCoordinate())) {
           alien.setHitPoints(0);
           toRemoveAliens.add(alien);
           toRemoveBarriers.add(barrier);
@@ -258,20 +261,20 @@ public class EntityProvider {
     }
     for (SimpleProjectile p : projectiles) {
       if (p.getdirection() == Direction.DOWN) {
-        if (player.getHitbox().contains(p.getCoordinate())) {
+        if (!Collections.disjoint(player.getHitbox(), p.getHitbox())) {
           player.setHitPoints(p.getDamage());
           service.notifyListeners(l -> l.updateShip(player.getImmutableShip()));
           toRemoveProjectiles.add(p);
         }
+
         for (SimpleBarrier barrier : getNearbyBarriers(p.getCoordinate())) {
-          if (barrier.getHitbox().contains(p.getCoordinate())) {
-            toRemoveProjectiles.add(p);
+          if (p.getHitbox().contains(barrier.getCoordinate())) {
             toRemoveBarriers.add(barrier);
-            break;
+            toRemoveProjectiles.add(p);
           }
         }
-
       }
+
       if (p.getdirection() == Direction.UP) {
         for (SimpleAlien alien : aliens.values()) {
           if (alien.getHitbox().contains(p.getCoordinate())) {

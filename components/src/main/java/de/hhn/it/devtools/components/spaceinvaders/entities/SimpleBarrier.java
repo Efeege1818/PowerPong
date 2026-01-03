@@ -12,7 +12,6 @@ import java.util.ArrayList;
 public class SimpleBarrier {
 
   private final Coordinate coordinate;
-  private final ArrayList<Coordinate> hitbox;
   private final int id;
 
   /**
@@ -23,7 +22,6 @@ public class SimpleBarrier {
    */
   public SimpleBarrier(Coordinate coordinate, int id) {
     this.coordinate = coordinate;
-    this.hitbox = EntityProvider.fillHitBox(coordinate, APIConstants.BARRIER_HITBOX_WIDTH, APIConstants.BARRIER_HITBOX_HEIGHT);
     this.id = id;
   }
 
@@ -31,12 +29,27 @@ public class SimpleBarrier {
     return coordinate;
   }
 
-  public ArrayList<Coordinate> getHitbox() {
-    return hitbox;
-  }
-
   public Barrier getImmutableBarrier() {
     return new Barrier(this.coordinate, id);
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+
+    SimpleBarrier that = (SimpleBarrier) o;
+    return this.id == that.id && this.coordinate.equals(that.coordinate);
+  }
+
+  @Override
+  public int hashCode() {
+    int result = coordinate.hashCode();
+    result = 31 * result + this.id;
+    return result;
+  }
 }

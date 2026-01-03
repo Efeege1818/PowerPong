@@ -30,7 +30,7 @@ class SimpleEntitiesGoodCaseTest {
 
     // move down
     alien.move(Direction.DOWN);
-    assertEquals(5, alien.getCoordinate().y());
+    assertEquals(10, alien.getCoordinate().y());
 
     // hitbox size 25 * 25 = 625
     assertEquals(625, alien.getHitbox().size());
@@ -45,28 +45,29 @@ class SimpleEntitiesGoodCaseTest {
   void testSimpleProjectileMove() {
     SimpleProjectile pUp = new SimpleProjectile(new Coordinate(5, 5), Direction.UP, 1);
     pUp.move();
-    assertEquals(4, pUp.getCoordinate().y());
+    assertEquals(2, pUp.getCoordinate().y());
 
     SimpleProjectile pDown = new SimpleProjectile(new Coordinate(5, 5), Direction.DOWN, 1);
     pDown.move();
-    assertEquals(6, pDown.getCoordinate().y());
+    assertEquals(8, pDown.getCoordinate().y());
   }
 
   @Test
   void testSimpleShipMoveAndHitbox() {
-    SimpleShip ship = new SimpleShip(new Coordinate(10, 10));
-    assertEquals(10, ship.getCoordinate().x());
-    assertEquals(10, ship.getCoordinate().y());
+    Coordinate c = new Coordinate(100, 100);
+    SimpleShip ship = new SimpleShip(c);
+    assertEquals(c.x(), ship.getCoordinate().x());
+    assertEquals(c.y(), ship.getCoordinate().y());
 
     ship.move(Direction.LEFT);
-    assertEquals(9, ship.getCoordinate().x());
+    assertEquals(c.x()-2, ship.getCoordinate().x());
 
     ship.move(Direction.RIGHT);
     ship.move(Direction.RIGHT);
-    assertEquals(11, ship.getCoordinate().x());
+    assertEquals(c.x()+2, ship.getCoordinate().x());
 
-    // hitbox size 10 * 10 = 100
-    assertEquals(100, ship.getHitbox().size());
+    // hitbox size 35 * 35 = 1225
+    assertEquals(1225, ship.getHitbox().size());
   }
 
 }

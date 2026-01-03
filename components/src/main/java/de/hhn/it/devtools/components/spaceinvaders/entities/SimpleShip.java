@@ -37,13 +37,13 @@ public class SimpleShip {
       case LEFT:
         if (!(coordinate.x() <= APIConstants.PLAYER_SIZE)) {
           this.coordinate = new Coordinate(coordinate.x() - 2, coordinate.y());
-          this.hitbox = EntityProvider.fillHitBox(coordinate, 10, 10);
+          this.hitbox = EntityProvider.fillHitBox(coordinate, APIConstants.PLAYER_SIZE, APIConstants.PLAYER_SIZE);
         }
         break;
       case RIGHT:
         if (!(coordinate.x() >= APIConstants.FIELD_SIZE - APIConstants.PLAYER_SIZE)) {
           this.coordinate = new Coordinate(coordinate.x() + 2, coordinate.y());
-          this.hitbox = EntityProvider.fillHitBox(coordinate, 10, 10);
+          this.hitbox = EntityProvider.fillHitBox(coordinate, APIConstants.PLAYER_SIZE, APIConstants.PLAYER_SIZE);
         }
         break;
       default:
