@@ -8,11 +8,14 @@ import javafx.collections.MapChangeListener;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.paint.Color;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * BarrierListener triggered by ViewModel.
  */
 public class BarrierListener implements MapChangeListener<Integer, Barrier> {
+  private final Logger logger = LoggerFactory.getLogger(BarrierListener.class);
   private final Image barrier = Images.barrierImage.getImage();
   private final CanvasProvider canvasProvider;
 
@@ -38,18 +41,21 @@ public class BarrierListener implements MapChangeListener<Integer, Barrier> {
         int y = s / APIConstants.BARRIER_HITBOX_WIDTH;
         Color color = getSafeColor(barrierImage(), x, y);
         canvasProvider.drawEntity(color, bar.coordinate());
+        logDrawnBarrierPart(x, y, color);
       } else if (bar.barrierId() > size) {
         int s = bar.barrierId() - (size);
         int x = s % APIConstants.BARRIER_HITBOX_WIDTH;
         int y = s / APIConstants.BARRIER_HITBOX_WIDTH;
         Color color = getSafeColor(barrierImage(), x, y);
         canvasProvider.drawEntity(color, bar.coordinate());
+        logDrawnBarrierPart(x, y, color);
       } else {
         int s = bar.barrierId();
         int x = s % APIConstants.BARRIER_HITBOX_WIDTH;
         int y = s / APIConstants.BARRIER_HITBOX_WIDTH;
         Color color = getSafeColor(barrierImage(), x, y);
         canvasProvider.drawEntity(color, bar.coordinate());
+        logDrawnBarrierPart(x, y, color);
       }
     } else if (barrier.wasRemoved()) {
       canvasProvider.clearEntity(barrier.getValueRemoved().coordinate(), 1, 1);
@@ -75,5 +81,11 @@ public class BarrierListener implements MapChangeListener<Integer, Barrier> {
     }
     return reader.getColor(x, y);
   }
+
+  private void logDrawnBarrierPart(int x, int y, Color color) {
+    logger.debug("Drawing barrier part at ({}, {}) with color {}",
+            x, y, color);
+  }
+
 }
 
