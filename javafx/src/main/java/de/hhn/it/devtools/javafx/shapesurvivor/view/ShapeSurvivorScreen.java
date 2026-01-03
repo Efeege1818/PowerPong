@@ -151,6 +151,13 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
             viewModel.getEnemiesMap().values().forEach(enemy -> {
                 gc.setFill(Color.RED);
                 gc.fillOval(enemy.position().x() - 10, enemy.position().y() - 10, 20, 20);
+                double ratio = (double) enemy.currentHealth() / enemy.maxHealth();
+
+                gc.setFill(Color.DARKRED);
+                gc.fillRect(enemy.position().x() - 12, enemy.position().y() - 18, 24, 4);
+
+                gc.setFill(Color.RED);
+                gc.fillRect(enemy.position().x() - 12, enemy.position().y() - 18, 24 * ratio, 4);
             });
         });
     }

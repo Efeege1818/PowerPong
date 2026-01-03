@@ -36,7 +36,6 @@ public class ShapeSurvivorViewModel implements ShapeSurvivorListener {
     public void startGame(String difficulty, WeaponType weapon, int fieldWidth, int fieldHeight) {
         double difficultyMultiplier = switch (difficulty) {
             case "Easy" -> 0.75;
-            case "Normal" -> 1.0;
             case "Hard" -> 1.5;
             case "Nightmare" -> 2.0;
             default -> 1.0;
