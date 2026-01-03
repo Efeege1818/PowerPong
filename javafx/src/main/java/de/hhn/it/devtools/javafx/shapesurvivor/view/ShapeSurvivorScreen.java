@@ -179,17 +179,58 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
 
     private void drawSword(Player player, Weapon weapon, WeaponAnimationState state) {
         double angle = state.getAngle();
-        int swordX = player.position().x() + (int)(Math.cos(angle) * weapon.range());
-        int swordY = player.position().y() + (int)(Math.sin(angle) * weapon.range());
 
+        int px = player.position().x();
+        int py = player.position().y();
+
+        double gripOffset = 50;
+        double radius = weapon.range() - gripOffset;
+
+        double sx = px + Math.cos(angle) * radius;
+        double sy = py + Math.sin(angle) * radius;
+
+        // Sword dimensions
+        double bladeLength = 90;
+        double bladeWidth = 6;
+        double handleLength = 10;
+        double handleWidth = 8;
+        double guardWidth = 16;
+        double guardHeight = 4;
+
+        gc.save();
+        gc.translate(sx, sy);
+        gc.rotate(Math.toDegrees(angle) + 90);
+
+        // Blade
         gc.setFill(Color.SILVER);
-        gc.fillOval(swordX - 12, swordY - 12, 24, 24);
+        gc.fillRect(-bladeWidth / 2, -bladeLength, bladeWidth, bladeLength);
 
-        // Draw connecting line
+        // Blade highlight
         gc.setStroke(Color.LIGHTGRAY);
-        gc.setLineWidth(2);
-        gc.strokeLine(player.position().x(), player.position().y(), swordX, swordY);
+        gc.setLineWidth(1);
+        gc.strokeLine(0, -bladeLength, 0, 0);
+
+        // Crossguard
+        gc.setFill(Color.DARKGRAY);
+        gc.fillRect(-guardWidth / 2, 0, guardWidth, guardHeight);
+
+        // Handle
+        gc.setFill(Color.SADDLEBROWN);
+        gc.fillRect(-handleWidth / 2, guardHeight, handleWidth, handleLength);
+
+        // Pommel
+        gc.setFill(Color.GOLD);
+        gc.fillOval(
+                -handleWidth / 2,
+                guardHeight + handleLength,
+                handleWidth,
+                handleWidth
+        );
+
+        gc.restore();
     }
+
+
 
     private void drawAura(Player player, Weapon weapon, WeaponAnimationState state) {
         // Pulsing aura effect
