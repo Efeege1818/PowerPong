@@ -51,25 +51,24 @@ public interface ShapeSurvivorService {
     void movePlayer(Direction direction) throws IllegalStateException, IllegalArgumentException;
 
     /**
-     * Selects a weapon upgrade when the player levels up.
+     * Applies a selected upgrade option when a level up is pending.
+     * Can be called when the game is running or paused (e.g., during level-up selection).
      *
-     * @param weaponType the type of weapon to unlock or upgrade
-     * @throws IllegalStateException if the GameState is not RUNNING or if no level up is pending
-     * @throws IllegalArgumentException if weaponType is null or invalid
+     * @param option the upgrade option to apply
+     * @throws IllegalStateException if game is not running/paused or no level up is pending
+     * @throws IllegalArgumentException if option is null or not available
      */
-    void selectWeapon(WeaponType weaponType) throws IllegalStateException, IllegalArgumentException;
+    void applyUpgrade(UpgradeOption option)
+            throws IllegalStateException, IllegalArgumentException;
 
     /**
-     * Upgrades a specific player attribute when leveling up.
+     * Gets the available upgrade options for the current level up.
+     * Returns 3 random options that can be weapon upgrades, new weapons, or attribute upgrades.
      *
-     * @param attribute the attribute to upgrade
-     * @param value the value to apply (either multiplier or fixed increase)
-     * @param isMultiplier if true, applies value as multiplier; if false, applies as fixed increase
-     * @throws IllegalStateException if the GameState is not RUNNING or if no level up is pending
-     * @throws IllegalArgumentException if attribute is null or invalid, or if value is invalid
+     * @return array of available upgrade options (typically 3 options)
+     * @throws IllegalStateException if no level up is pending
      */
-    void upgradeAttribute(PlayerAttribute attribute, double value, boolean isMultiplier) 
-            throws IllegalStateException, IllegalArgumentException;
+    UpgradeOption[] getAvailableUpgrades() throws IllegalStateException;
 
     /**
      * Adds a listener for game updates and events.
@@ -134,22 +133,6 @@ public interface ShapeSurvivorService {
      * @return true if the player has leveled up and needs to select an upgrade, false otherwise
      */
     boolean isLevelUpPending();
-
-    /**
-     * Returns the available weapon types that can be selected or upgraded.
-     *
-     * @return array of WeaponType that are available for selection
-     * @throws IllegalStateException if no level up is pending
-     */
-    WeaponType[] getAvailableWeaponUpgrades() throws IllegalStateException;
-
-    /**
-     * Returns the available player attributes that can be upgraded.
-     *
-     * @return array of PlayerAttribute that are available for upgrade
-     * @throws IllegalStateException if no level up is pending
-     */
-    PlayerAttribute[] getAvailableAttributeUpgrades() throws IllegalStateException;
 
     /**
      * Returns the current game statistics.

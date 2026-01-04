@@ -3,6 +3,7 @@ package de.hhn.it.devtools.javafx.shapesurvivor.viewmodel;
 import de.hhn.it.devtools.apis.shapesurvivor.*;
 import de.hhn.it.devtools.apis.exceptions.IllegalParameterException;
 import de.hhn.it.devtools.components.shapesurvivor.WeaponAnimationState;
+import de.hhn.it.devtools.apis.shapesurvivor.UpgradeOption;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 
@@ -21,6 +22,8 @@ public class ShapeSurvivorViewModel implements ShapeSurvivorListener {
     private final IntegerProperty scoreProperty;
     private final IntegerProperty levelProperty;
     private final BooleanProperty gameOverProperty;
+    private final BooleanProperty levelUpAvailableProperty;
+    private final ObjectProperty<UpgradeOption[]> availableUpgradesProperty;
 
     public ShapeSurvivorViewModel(ShapeSurvivorService gameService) {
         this.gameService = gameService;
@@ -29,9 +32,10 @@ public class ShapeSurvivorViewModel implements ShapeSurvivorListener {
         this.scoreProperty = new SimpleIntegerProperty(0);
         this.levelProperty = new SimpleIntegerProperty(1);
         gameOverProperty = new SimpleBooleanProperty(false);
+        this.levelUpAvailableProperty = new SimpleBooleanProperty(false);
+        this.availableUpgradesProperty = new SimpleObjectProperty<>(new UpgradeOption[0]);
     }
 
-    // ViewModel public interface
     public void startGame(String difficulty, WeaponType weapon, int fieldWidth, int fieldHeight) {
         double difficultyMultiplier = switch (difficulty) {
             case "Easy" -> 0.75;
@@ -73,7 +77,6 @@ public class ShapeSurvivorViewModel implements ShapeSurvivorListener {
         return new HashMap<>();
     }
 
-    // Properties
     public ObjectProperty<Player> getPlayerProperty() {
         return playerProperty;
     }
@@ -90,7 +93,6 @@ public class ShapeSurvivorViewModel implements ShapeSurvivorListener {
         return levelProperty;
     }
 
-    // Listener implementation
     @Override
     public void updatePlayer(Player player) {
         Platform.runLater(() -> {
@@ -134,7 +136,17 @@ public class ShapeSurvivorViewModel implements ShapeSurvivorListener {
 
     @Override
     public void playerLeveledUp() {
-        // Optional: trigger UI popup
+        Platform.runLater(() -> {
+            if (gameService instanceof de.hhn.it.devtools.components.shapesurvivor.SimpleShapeSurvivorService) {
+                try {
+                    UpgradeOption[] upgrades = gameService.getAvailableUpgrades();
+                    availableUpgradesProperty.set(upgrades);
+                    levelUpAvailableProperty.set(true);
+                } catch (IllegalStateException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     @Override
@@ -214,5 +226,22 @@ public class ShapeSurvivorViewModel implements ShapeSurvivorListener {
             }
         } catch (IllegalStateException ignored) {
         }
+    }
+
+    public BooleanProperty levelUpAvailableProperty() {
+        return levelUpAvailableProperty;
+    }
+
+    public ObjectProperty<UpgradeOption[]> availableUpgradesProperty() {
+        return availableUpgradesProperty;
+    }
+
+    public void selectUpgrade(UpgradeOption option) {
+            try {
+                gameService.applyUpgrade(option);
+                Platform.runLater(() -> levelUpAvailableProperty.set(false));
+            } catch (IllegalStateException | IllegalArgumentException e) {
+                e.printStackTrace();
+            }
     }
 }

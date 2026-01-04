@@ -22,8 +22,7 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
 
     private long gameStartTime;
     private boolean levelUpPending;
-    private final List<WeaponType> availableWeaponUpgrades;
-    private final List<PlayerAttribute> availableAttributeUpgrades;
+    private final List<UpgradeOption> availableUpgrades;
 
     private int nextEnemyId;
     private int currentWave;
@@ -42,8 +41,7 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
         this.gameState = GameState.PREPARED;
         this.enemies = new ArrayList<>();
         this.listeners = new CopyOnWriteArrayList<>();
-        this.availableWeaponUpgrades = new ArrayList<>();
-        this.availableAttributeUpgrades = new ArrayList<>();
+        this.availableUpgrades = new ArrayList<>();
         this.nextEnemyId = 0;
         this.currentWave = 0;
         this.weaponStates = new HashMap<>();
@@ -148,8 +146,7 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
         currentWave = 0;
         levelUpPending = false;
         lastPlayerHitTime = 0;
-        availableWeaponUpgrades.clear();
-        availableAttributeUpgrades.clear();
+        availableUpgrades.clear();
         weaponStates.clear();
 
         initializePlayer();
@@ -247,44 +244,42 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
     }
 
     @Override
-    public void selectWeapon(WeaponType weaponType)
+    public void applyUpgrade(UpgradeOption option)
             throws IllegalStateException, IllegalArgumentException {
-        if (weaponType == null) {
-            throw new IllegalArgumentException("WeaponType cannot be null");
+        if (option == null) {
+            throw new IllegalArgumentException("UpgradeOption cannot be null");
         }
-        if (gameState != GameState.RUNNING) {
-            throw new IllegalStateException("Can only select weapons when game is RUNNING");
+        if (gameState != GameState.RUNNING && gameState != GameState.PAUSED) {
+            throw new IllegalStateException("Can only apply upgrades when game is RUNNING or PAUSED");
         }
         if (!levelUpPending) {
             throw new IllegalStateException("No level up is pending");
         }
-
-        if (!availableWeaponUpgrades.contains(weaponType)) {
-            throw new IllegalArgumentException("WeaponType not available for upgrade");
+        if (!availableUpgrades.contains(option)) {
+            throw new IllegalArgumentException("UpgradeOption not available");
         }
 
-        // Check if player already has this weapon
+        switch (option.type()) {
+            case WEAPON -> upgradeExistingWeapon(option.weaponType());
+            case NEW_WEAPON -> addNewWeapon(option.weaponType());
+            case ATTRIBUTE -> upgradePlayerAttribute(option.attribute(), option.value(), option.isMultiplier());
+        }
+
+        levelUpPending = false;
+        availableUpgrades.clear();
+    }
+
+    private void upgradeExistingWeapon(WeaponType weaponType) {
         List<Weapon> weapons = new ArrayList<>(Arrays.asList(player.equippedWeapons()));
-        boolean hasWeapon = false;
 
         for (int i = 0; i < weapons.size(); i++) {
             if (weapons.get(i).type() == weaponType) {
-                // Upgrade existing weapon
                 Weapon oldWeapon = weapons.get(i);
                 Weapon upgradedWeapon = createWeapon(weaponType, oldWeapon.level() + 1);
                 weapons.set(i, upgradedWeapon);
-                hasWeapon = true;
                 notifyWeaponUpdated(upgradedWeapon);
                 break;
             }
-        }
-
-        if (!hasWeapon) {
-            // Add new weapon
-            Weapon newWeapon = createWeapon(weaponType, 1);
-            weapons.add(newWeapon);
-            weaponStates.put(weaponType, new WeaponAnimationState());
-            notifyWeaponUpdated(newWeapon);
         }
 
         player = new Player(
@@ -300,32 +295,31 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
                 player.experienceToNextLevel(),
                 weapons.toArray(new Weapon[0])
         );
-
-        levelUpPending = false;
-        availableWeaponUpgrades.clear();
-        availableAttributeUpgrades.clear();
     }
 
-    @Override
-    public void upgradeAttribute(PlayerAttribute attribute, double value, boolean isMultiplier)
-            throws IllegalStateException, IllegalArgumentException {
-        if (attribute == null) {
-            throw new IllegalArgumentException("PlayerAttribute cannot be null");
-        }
-        if (value <= 0) {
-            throw new IllegalArgumentException("Value must be positive");
-        }
+    private void addNewWeapon(WeaponType weaponType) {
+        List<Weapon> weapons = new ArrayList<>(Arrays.asList(player.equippedWeapons()));
+        Weapon newWeapon = createWeapon(weaponType, 1);
+        weapons.add(newWeapon);
+        weaponStates.put(weaponType, new WeaponAnimationState());
+        notifyWeaponUpdated(newWeapon);
 
-        if (gameState != GameState.RUNNING) {
-            throw new IllegalStateException("Can only upgrade attributes when game is RUNNING");
-        }
-        if (!levelUpPending) {
-            throw new IllegalStateException("No level up is pending");
-        }
-        if (!availableAttributeUpgrades.contains(attribute)) {
-            throw new IllegalArgumentException("PlayerAttribute not available for upgrade");
-        }
+        player = new Player(
+                player.position(),
+                player.currentHealth(),
+                player.maxHealth(),
+                player.movementSpeed(),
+                player.baseDamage(),
+                player.attackSpeed(),
+                player.damageResistance(),
+                player.level(),
+                player.experience(),
+                player.experienceToNextLevel(),
+                weapons.toArray(new Weapon[0])
+        );
+    }
 
+    private void upgradePlayerAttribute(PlayerAttribute attribute, double value, boolean isMultiplier) {
         int newMaxHealth = player.maxHealth();
         int newCurrentHealth = player.currentHealth();
         double newMovementSpeed = player.movementSpeed();
@@ -368,10 +362,15 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
                 player.equippedWeapons()
         );
 
-        levelUpPending = false;
-        availableWeaponUpgrades.clear();
-        availableAttributeUpgrades.clear();
         notifyPlayerUpdated();
+    }
+
+    @Override
+    public UpgradeOption[] getAvailableUpgrades() throws IllegalStateException {
+        if (!levelUpPending) {
+            throw new IllegalStateException("No level up is pending");
+        }
+        return availableUpgrades.toArray(new UpgradeOption[0]);
     }
 
     @Override
@@ -450,22 +449,6 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
     @Override
     public boolean isLevelUpPending() {
         return levelUpPending;
-    }
-
-    @Override
-    public WeaponType[] getAvailableWeaponUpgrades() throws IllegalStateException {
-        if (!levelUpPending) {
-            throw new IllegalStateException("No level up is pending");
-        }
-        return availableWeaponUpgrades.toArray(new WeaponType[0]);
-    }
-
-    @Override
-    public PlayerAttribute[] getAvailableAttributeUpgrades() throws IllegalStateException {
-        if (!levelUpPending) {
-            throw new IllegalStateException("No level up is pending");
-        }
-        return availableAttributeUpgrades.toArray(new PlayerAttribute[0]);
     }
 
     @Override
@@ -833,13 +816,81 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
     }
 
     private void generateUpgradeOptions() {
-        availableWeaponUpgrades.clear();
-        availableAttributeUpgrades.clear();
+        availableUpgrades.clear();
 
         if (player.level() % 5 == 0) {
-            availableWeaponUpgrades.addAll(Arrays.asList(WeaponType.values()));
+            List<WeaponType> unownedWeapons = new ArrayList<>();
+            for (WeaponType type : WeaponType.values()) {
+                boolean hasWeapon = false;
+                for (Weapon w : player.equippedWeapons()) {
+                    if (w.type() == type) {
+                        hasWeapon = true;
+                        break;
+                    }
+                }
+                if (!hasWeapon) {
+                    unownedWeapons.add(type);
+                }
+            }
+
+            if (unownedWeapons.isEmpty()) {
+                List<Weapon> weapons = Arrays.asList(player.equippedWeapons());
+                Collections.shuffle(weapons);
+                for (int i = 0; i < Math.min(3, weapons.size()); i++) {
+                    availableUpgrades.add(
+                            UpgradeOptionFactory.createWeaponUpgrade(weapons.get(i).type())
+                    );
+                }
+            } else {
+                // Offer up to 3 new weapons
+                Collections.shuffle(unownedWeapons);
+                for (int i = 0; i < Math.min(3, unownedWeapons.size()); i++) {
+                    availableUpgrades.add(
+                            UpgradeOptionFactory.createNewWeapon(unownedWeapons.get(i))
+                    );
+                }
+            }
         } else {
-            availableAttributeUpgrades.addAll(Arrays.asList(PlayerAttribute.values()));
+            List<UpgradeOption> possibleUpgrades = new ArrayList<>();
+
+            for (Weapon weapon : player.equippedWeapons()) {
+                possibleUpgrades.add(
+                        UpgradeOptionFactory.createWeaponUpgrade(weapon.type())
+                );
+            }
+
+            possibleUpgrades.add(
+                    UpgradeOptionFactory.createAttributeUpgrade(PlayerAttribute.MAX_HEALTH, 1.2, true)
+            );
+            possibleUpgrades.add(
+                    UpgradeOptionFactory.createAttributeUpgrade(PlayerAttribute.MAX_HEALTH, 20, false)
+            );
+            possibleUpgrades.add(
+                    UpgradeOptionFactory.createAttributeUpgrade(PlayerAttribute.MOVEMENT_SPEED, 1.15, true)
+            );
+            possibleUpgrades.add(
+                    UpgradeOptionFactory.createAttributeUpgrade(PlayerAttribute.MOVEMENT_SPEED, 1.5, false)
+            );
+            possibleUpgrades.add(
+                    UpgradeOptionFactory.createAttributeUpgrade(PlayerAttribute.DAMAGE, 1.1, true)
+            );
+            possibleUpgrades.add(
+                    UpgradeOptionFactory.createAttributeUpgrade(PlayerAttribute.DAMAGE, 5, false)
+            );
+            possibleUpgrades.add(
+                    UpgradeOptionFactory.createAttributeUpgrade(PlayerAttribute.ATTACK_SPEED, 1.2, true)
+            );
+            possibleUpgrades.add(
+                    UpgradeOptionFactory.createAttributeUpgrade(PlayerAttribute.ATTACK_SPEED, 0.2, false)
+            );
+            possibleUpgrades.add(
+                    UpgradeOptionFactory.createAttributeUpgrade(PlayerAttribute.DAMAGE_RESISTANCE, 0.05, false)
+            );
+
+            Collections.shuffle(possibleUpgrades);
+            for (int i = 0; i < Math.min(3, possibleUpgrades.size()); i++) {
+                availableUpgrades.add(possibleUpgrades.get(i));
+            }
         }
     }
 
