@@ -1,5 +1,8 @@
 package de.hhn.it.devtools.components.spaceinvaders.utils;
 
+/**
+ * Constants used in the SpaceInvaders game.
+ */
 public class Constants {
   public static final int THREAD_WAIT = 10; // in milliseconds
   public static final int NUMBER_OF_ALIENS = 50;
