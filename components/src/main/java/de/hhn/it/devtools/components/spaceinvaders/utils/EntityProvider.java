@@ -252,7 +252,8 @@ public class EntityProvider {
           toRemoveBarriers.add(barrier);
         }
       }
-      if (alien.getCoordinate().y() >= player.getCoordinate().y() - 15) {
+      if (alien.getCoordinate().y() >= player.getCoordinate().y() - (APIConstants.PLAYER_SIZE / 2)
+              - (APIConstants.SHOT_HITBOX_SIZE / 2)) {
         player.setHitPoints(0);
         service.notifyListeners(l -> l.updateShip(player.getImmutableShip()));
       }
