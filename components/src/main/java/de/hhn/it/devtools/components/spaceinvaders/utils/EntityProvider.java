@@ -250,10 +250,9 @@ public class EntityProvider {
           alien.setHitPoints(0);
           toRemoveAliens.add(alien);
           toRemoveBarriers.add(barrier);
-          break;
         }
       }
-      if (alien.getCoordinate().y() >= player.getCoordinate().y()) {
+      if (alien.getCoordinate().y() >= player.getCoordinate().y() - 15) {
         player.setHitPoints(0);
         service.notifyListeners(l -> l.updateShip(player.getImmutableShip()));
       }
