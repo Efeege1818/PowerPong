@@ -6,6 +6,7 @@ import de.hhn.it.devtools.apis.spaceinvaders.Direction;
 import de.hhn.it.devtools.apis.spaceinvaders.entities.AlienType;
 import de.hhn.it.devtools.components.spaceinvaders.SimpleSpaceInvadersService;
 import de.hhn.it.devtools.components.spaceinvaders.entities.SimpleAlien;
+import de.hhn.it.devtools.components.spaceinvaders.entities.SimpleBarrier;
 import de.hhn.it.devtools.components.spaceinvaders.entities.SimpleProjectile;
 import de.hhn.it.devtools.components.spaceinvaders.entities.SimpleShip;
 import de.hhn.it.devtools.components.spaceinvaders.utils.Constants;
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -72,22 +74,34 @@ class EntityProviderGoodCaseTest {
   void testProjectileRemoveBarrier() throws Exception {
     CopyOnWriteArrayList<SimpleProjectile> projectiles = getPrivateField(provider, "projectiles");
     Coordinate c = provider.getBarriers().get(1).getCoordinate();
+    projectiles.add(new SimpleProjectile(new Coordinate(c.x(), c.y()), Direction.DOWN, 1));
 
-    projectiles.add(new SimpleProjectile(new Coordinate(c.x(), c.y() - 5), Direction.DOWN, 1));
-    int projectilesBefore = projectiles.size();
-    int barrierBefore = provider.getBarriers().size();
-    int nearByBarrierBefore = provider.barrierGrid.get(provider.cellKey(c)).size();
+    ArrayList<Coordinate> list = projectiles.getFirst().getHitbox();
+    ArrayList<Coordinate> barrierHitbox = new ArrayList<>();
+    for (SimpleBarrier barrier : provider.getBarriers().values()) {
+      barrierHitbox.add(barrier.getCoordinate());
+    }
+    barrierHitbox.removeAll(list);
 
     provider.checkCollision();
-    assertEquals(projectilesBefore, projectiles.size());
-    assertEquals(barrierBefore, provider.getBarriers().size());
-    assertEquals(nearByBarrierBefore, provider.barrierGrid.get(provider.cellKey(c)).size());
 
-    provider.updateProjectiles();
-    provider.checkCollision();
-    assertEquals(projectilesBefore - 1, projectiles.size());
-    assertEquals(barrierBefore - 15, provider.getBarriers().size());
-    assertEquals(nearByBarrierBefore - 15, provider.barrierGrid.get(provider.cellKey(c)).size());
+    ArrayList<Coordinate> barrierHitbox2 = new ArrayList<>();
+    for (SimpleBarrier barrier : provider.getBarriers().values()) {
+      barrierHitbox2.add(barrier.getCoordinate());
+    }
+    assertEquals(barrierHitbox, barrierHitbox2);
+    assertFalse(barrierHitbox2.stream().anyMatch(list::contains));
+  }
+
+  @Test
+  void testBarrierGrid() throws Exception {
+    Coordinate c = provider.getBarriers().get(0).getCoordinate();
+    long key = provider.cellKey(c);
+    long key2 = provider.cellKey(new Coordinate(c.x() + 11, c.y() + 11));
+    assertEquals(key, key2);
+    List<SimpleBarrier> list = provider.barrierGrid.get(key);
+    assertNotNull(list);
+    assertTrue(list.stream().anyMatch(b -> b.getCoordinate().equals(c)));
   }
 
   @Test
