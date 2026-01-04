@@ -8,8 +8,7 @@ public class SimpleScreenManager implements ScreenManager {
 
   Pane pane;
   private SelectScreen selectScreen;
-  private P1Screen p1Screen;
-  private P2Screen p2Screen;
+  private BattleScreen battleScreen;
 
   public SimpleScreenManager(final Pane pane) {
     this.pane = pane;
@@ -22,18 +21,11 @@ public class SimpleScreenManager implements ScreenManager {
     return selectScreen;
   }
 
-  private P1Screen getP1Screen() {
-    if(p1Screen == null) {
-      p1Screen = new P1Screen();
+  private BattleScreen getBattleScreen() {
+    if(battleScreen == null) {
+      battleScreen = new BattleScreen(this);
     }
-    return p1Screen;
-  }
-
-  private P2Screen getP2Screen() {
-    if(p2Screen == null) {
-      p2Screen = new P2Screen();
-    }
-    return p2Screen;
+    return battleScreen;
   }
 
   @Override
@@ -43,14 +35,11 @@ public class SimpleScreenManager implements ScreenManager {
         pane.getChildren().clear();
         pane.getChildren().add(getSelectScreen());
         break;
-      case P1Screen.SCREEN_NAME:
+      case BattleScreen.SCREEN_NAME:
         pane.getChildren().clear();
-        pane.getChildren().add(getP1Screen());
+        pane.getChildren().add(getBattleScreen());
         break;
-      case P2Screen.SCREEN_NAME:
-        pane.getChildren().clear();
-        pane.getChildren().add(getP2Screen());
-        break;
+
 
       default: throw new UnknownTransitionException("Unknown screen: ", fromScreen, toScreen);
     }
