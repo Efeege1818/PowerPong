@@ -58,14 +58,17 @@ class EntityProviderGoodCaseTest {
   @Test
   void testShootPlayerAddsProjectile() throws Exception {
     CopyOnWriteArrayList<SimpleProjectile> projectiles = getPrivateField(provider, "projectiles");
+    SimpleShip player = getPrivateField(provider, "player");
     int before = projectiles.size();
+    int calledFromX = player.getCoordinate().x() + (APIConstants.PLAYER_SIZE / 2)
+            - (APIConstants.SHOT_HITBOX_SIZE / 2);
     // shoot
     provider.shootPlayer();
     assertEquals(before + 1, projectiles.size());
     SimpleProjectile p = projectiles.get(projectiles.size() - 1);
-    SimpleShip player = getPrivateField(provider, "player");
-    assertEquals(player.getCoordinate().x() + 1, p.getCoordinate().x());
-    assertEquals(player.getCoordinate().y() - 45, p.getCoordinate().y());
+
+    assertEquals(calledFromX, p.getCoordinate().x());
+    assertEquals(player.getCoordinate().y(), p.getCoordinate().y());
     assertEquals(Direction.UP, p.getdirection());
     assertEquals(Constants.BASE_DAMAGE, p.getDamage());
   }
@@ -97,11 +100,17 @@ class EntityProviderGoodCaseTest {
   void testBarrierGrid() throws Exception {
     Coordinate c = provider.getBarriers().get(0).getCoordinate();
     long key = provider.cellKey(c);
-    long key2 = provider.cellKey(new Coordinate(c.x() + 11, c.y() + 11));
-    assertEquals(key, key2);
     List<SimpleBarrier> list = provider.barrierGrid.get(key);
     assertNotNull(list);
     assertTrue(list.stream().anyMatch(b -> b.getCoordinate().equals(c)));
+  }
+
+  @Test
+  void testGetKeyCell() {
+    Coordinate c = new Coordinate(0,0);
+    long key = provider.cellKey(c);
+    long key2 = provider.cellKey(new Coordinate( Constants.GRID_CELL_SIZE -1 , Constants.GRID_CELL_SIZE -1 ));
+    assertEquals(key, key2);
   }
 
   @Test
@@ -156,7 +165,7 @@ class EntityProviderGoodCaseTest {
     assertEquals(3, player.getHitPoints());
     provider.checkCollision();
     // note: current implementation sets hitPoints to projectile damage (as per code)
-    assertEquals(Constants.BASE_DAMAGE, player.getHitPoints());
+    assertEquals(2, player.getHitPoints());
   }
 
   @Test

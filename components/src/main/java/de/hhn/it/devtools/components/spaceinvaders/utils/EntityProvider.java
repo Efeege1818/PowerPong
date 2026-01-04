@@ -11,8 +11,13 @@ import de.hhn.it.devtools.components.spaceinvaders.entities.SimpleAlien;
 import de.hhn.it.devtools.components.spaceinvaders.entities.SimpleBarrier;
 import de.hhn.it.devtools.components.spaceinvaders.entities.SimpleProjectile;
 import de.hhn.it.devtools.components.spaceinvaders.entities.SimpleShip;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -173,11 +178,13 @@ public class EntityProvider {
    * Updates alien movement and handles boundary collisions.
    */
   public void updateAliens() {
-    if (aliens.isEmpty()) return;
+    if (aliens.isEmpty()) {
+      return;
+    }
 
     for (SimpleAlien alien : aliens.values()) {
-      if (alien.getCoordinate().x() < 0 ||
-              alien.getCoordinate().x() > APIConstants.FIELD_SIZE - APIConstants.HITBOX_SIZE) {
+      if (alien.getCoordinate().x() < 0
+              || alien.getCoordinate().x() > APIConstants.FIELD_SIZE - APIConstants.HITBOX_SIZE) {
         aliens.values().forEach(a -> a.move(Direction.DOWN));
         currentAlienDirection =
                 (currentAlienDirection == Direction.RIGHT)
@@ -222,7 +229,10 @@ public class EntityProvider {
    * Randomly selects an alien and fires a projectile downward.
    */
   public void shootAliens() {
-    if (aliens.isEmpty()) return;
+    if (aliens.isEmpty()) {
+      return;
+    }
+
     if (new Random().nextInt(1000) <= Constants.ALIEN_SHOOTING_CHANCE) {
       List<Integer> keys = new ArrayList<>(aliens.keySet());
       SimpleAlien a = aliens.get(keys.get(new Random().nextInt(keys.size())));
@@ -281,7 +291,8 @@ public class EntityProvider {
             toRemoveProjectiles.add(p);
             if (!alien.getHit()) {
               toRemoveAliens.add(alien);
-              service.notifyListeners(l -> l.updateScore(service.score += Constants.ALIEN_DEATH_POINTS));
+              service.notifyListeners(l ->
+                      l.updateScore(service.score += Constants.ALIEN_DEATH_POINTS));
             }
             break;
           }

@@ -23,7 +23,9 @@ public class SimpleShip {
    */
   public SimpleShip(Coordinate coordinate) {
     this.coordinate = coordinate;
-    this.hitbox = EntityProvider.fillHitBox(coordinate, APIConstants.PLAYER_SIZE, APIConstants.PLAYER_SIZE);
+    this.hitbox = EntityProvider.fillHitBox(coordinate,
+            APIConstants.PLAYER_SIZE,
+            APIConstants.PLAYER_SIZE);
     this.hitPoints = 3;
   }
 
@@ -37,13 +39,17 @@ public class SimpleShip {
       case LEFT:
         if (!(coordinate.x() <= APIConstants.PLAYER_SIZE)) {
           this.coordinate = new Coordinate(coordinate.x() - 2, coordinate.y());
-          this.hitbox = EntityProvider.fillHitBox(coordinate, APIConstants.PLAYER_SIZE, APIConstants.PLAYER_SIZE);
+          this.hitbox = EntityProvider.fillHitBox(coordinate,
+                  APIConstants.PLAYER_SIZE,
+                  APIConstants.PLAYER_SIZE);
         }
         break;
       case RIGHT:
         if (!(coordinate.x() >= APIConstants.FIELD_SIZE - APIConstants.PLAYER_SIZE)) {
           this.coordinate = new Coordinate(coordinate.x() + 2, coordinate.y());
-          this.hitbox = EntityProvider.fillHitBox(coordinate, APIConstants.PLAYER_SIZE, APIConstants.PLAYER_SIZE);
+          this.hitbox = EntityProvider.fillHitBox(coordinate,
+                  APIConstants.PLAYER_SIZE,
+                  APIConstants.PLAYER_SIZE);
         }
         break;
       default:
@@ -51,9 +57,13 @@ public class SimpleShip {
     }
   }
 
-  public Coordinate getCoordinate() { return coordinate; }
+  public Coordinate getCoordinate() {
+    return coordinate;
+  }
 
-  public int getHitPoints() { return this.hitPoints; }
+  public int getHitPoints() {
+    return this.hitPoints;
+  }
 
   public void setHitPoints(int hitPoints) {
     this.hitPoints = hitPoints;

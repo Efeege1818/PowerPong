@@ -31,6 +31,7 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
   public int score = 0;
   private EntityProvider entityProvider;
   public boolean test = false;
+
   /**
    * Default constructor. Load default values for configuration.
    */
@@ -195,7 +196,11 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
     }
 
     notifyListeners(spaceInvadersListener -> spaceInvadersListener
-            .updateAliens(entityProvider.getAliens().values().stream().map(SimpleAlien::immutableAlien).toArray(Alien[]::new)));
+            .updateAliens(entityProvider
+                    .getAliens()
+                    .values()
+                    .stream()
+                    .map(SimpleAlien::immutableAlien).toArray(Alien[]::new)));
     entityProvider.updateProjectiles();
     entityProvider.checkCollision();
     entityProvider.shootAliens();

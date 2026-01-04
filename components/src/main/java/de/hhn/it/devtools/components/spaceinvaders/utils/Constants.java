@@ -1,5 +1,11 @@
 package de.hhn.it.devtools.components.spaceinvaders.utils;
 
+/**
+ * Contains global, immutable constants used throughout the game.
+ * This class centralizes fixed configuration values such as timing,
+ * game mechanics, scoring, and grid layout to improve maintainability
+ * and readability.
+ */
 public class Constants {
   public static final int THREAD_WAIT = 10; // in milliseconds
   public static final int NUMBER_OF_ALIENS = 50;
