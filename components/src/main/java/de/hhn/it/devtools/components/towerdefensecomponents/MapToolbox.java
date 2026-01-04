@@ -10,31 +10,37 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Random;
 
-// LOCKED : L.Alischer
-
-// TODO: Fix generative algorithm
-// TODO: Implement tests
+/*
+ LOCKED : L.Alischer
+ TODO: Check algorithm
+ TODO: Implement tests
+ TODO: Check Seed implementation (maybe in Constructor)
+*/
 
 /**
  * Utility class responsible for generating and managing the game map
  * for the tower defense component.
  *
- * <p>This class encapsulates all logic related to grid creation,
+ * <p>
+ * This class encapsulates all logic related to grid creation,
  * path generation and validation of grid coordinates. It does not
- * handle enemies, towers or game logic.</p>
+ * handle enemies, towers or game logic.
+ * </p>
  */
 public class MapToolbox {
 
   private Grid grid;
   private List<Coordinates> path;
   private int originSize;
+  private final Random random = new Random(40);
 
   /**
    * Initializes a new grid of the given size and triggers
    * the generation of a valid enemy path.
    *
    * @param size the width and height of the grid; must be greater than zero
-   * @throws IllegalArgumentException if {@code size} is less than or equal to zero
+   * @throws IllegalArgumentException if {@code size} is less than or equal to
+   *                                  zero
    */
 
   public void generateMap(int size) {
@@ -87,14 +93,15 @@ public class MapToolbox {
    * @return {@code true} if the coordinate can be used, {@code false} otherwise
    * @throws IllegalStateException    if the grid or path has not been generated
    *                                  or the size is negative
-   * @throws IllegalArgumentException if the coordinate is {@code null} or out of bounds
+   * @throws IllegalArgumentException if the coordinate is {@code null} or out of
+   *                                  bounds
    */
   public boolean isAllowed(Coordinates coordinates) throws IllegalStateException {
     if (this.path == null || this.grid == null || originSize <= 0 || this.path.isEmpty()) {
       throw new IllegalStateException("No path or grid has been generated.");
     } else if (coordinates == null
-            || coordinates.x() > originSize
-            || coordinates.y() > originSize
+            || coordinates.x() >= originSize
+            || coordinates.y() >= originSize
             || coordinates.x() < 0
             || coordinates.y() < 0) {
       throw new IllegalArgumentException("Invalid coordinates provided.");
@@ -123,8 +130,10 @@ public class MapToolbox {
   /**
    * Calculates the absolute distance between two scalar values.
    *
-   * <p>This method serves as a helper for distance calculations
-   * and returns the absolute difference of the two values.</p>
+   * <p>
+   * This method serves as a helper for distance calculations
+   * and returns the absolute difference of the two values.
+   * </p>
    *
    * @param coordinate1 the first value
    * @param coordinate2 the second value
@@ -138,8 +147,10 @@ public class MapToolbox {
   /**
    * Returns the starting coordinate of the generated enemy path.
    *
-   * <p>The start point corresponds to the first coordinate in the internally
-   * stored path and is located on the left border of the grid.</p>
+   * <p>
+   * The start point corresponds to the first coordinate in the internally
+   * stored path and is located on the left border of the grid.
+   * </p>
    *
    * @return the start coordinate of the enemy path
    * @throws IllegalStateException if no path has been generated
@@ -154,10 +165,14 @@ public class MapToolbox {
   /**
    * Returns the end coordinate of the generated enemy path.
    *
-   * <p>The end point corresponds to the last coordinate in the internally
-   * stored path and is located on the right border of the grid.</p>
+   * <p>
+   * The end point corresponds to the last coordinate in the internally
+   * stored path and is located on the right border of the grid.
+   * </p>
    *
-   * <p>The goal always points {@link Direction#EAST}.</p>
+   * <p>
+   * The goal always points {@link Direction#EAST}.
+   * </p>
    *
    * @return the goal coordinate of the enemy path
    * @throws IllegalStateException if no path has been generated
@@ -172,22 +187,25 @@ public class MapToolbox {
   /**
    * Generates a valid enemy path on the grid.
    *
-   * <p>The method creates a path consisting of three segments:
+   * <p>
+   * The method creates a path consisting of three segments:
    * the start point on the left border,
    * a randomly chosen midpoint on either the top or bottom border,
    * and a goal point on the right border.
-   * The full path is calculated using the Dijkstra algorithm.</p>
+   * The full path is calculated using the Dijkstra algorithm.
+   * </p>
    *
-   * <p>The resulting path is written into the grid as {@link Direction} values
-   * and stored internally as a list of {@link Coordinates}.</p>
+   * <p>
+   * The resulting path is written into the grid as {@link Direction} values
+   * and stored internally as a list of {@link Coordinates}.
+   * </p>
    *
    * @throws IllegalStateException if the grid has not been initialized
    *                               or the grid size is invalid or too small
-   * @throws RuntimeException      if no valid path can be generated between the required points
+   * @throws RuntimeException      if no valid path can be generated between the
+   *                               required points
    */
   private void generatePath() {
-    // TODO: Tests
-    // TODO: Logic-check
     if (grid == null) {
       throw new IllegalStateException("No grid has been generated for a path to be generated.");
     }
@@ -195,7 +213,6 @@ public class MapToolbox {
       throw new IllegalStateException("Grid size must be greater than zero.");
     }
     int size = originSize;
-    Random random = new Random();
 
     Coordinates midPoint = random.nextBoolean()
             ? new Coordinates(random.nextInt(size), 0)
@@ -268,18 +285,25 @@ public class MapToolbox {
   }
 
   /**
-   * Computes the shortest path between two coordinates using the Dijkstra algorithm.
+   * Computes the shortest path between two coordinates using the Dijkstra
+   * algorithm.
    *
-   * <p>The algorithm operates on a two-dimensional grid with uniform movement
-   * costs. Optionally, specific tiles can be blocked to prevent traversal.</p>
+   * <p>
+   * The algorithm operates on a two-dimensional grid with uniform movement
+   * costs. Optionally, specific tiles can be blocked to prevent traversal.
+   * </p>
    *
-   * <p>The resulting path includes both the start and goal coordinates.
-   * If no path can be found, an empty list is returned.</p>
+   * <p>
+   * The resulting path includes both the start and goal coordinates.
+   * If no path can be found, an empty list is returned.
+   * </p>
    *
    * @param start        the starting coordinate
    * @param goal         the target coordinate
-   * @param blockedTiles a grid of blocked tiles; may be {@code null} for the first path
-   * @return a list of coordinates representing the path, or an empty list if no path exists
+   * @param blockedTiles a grid of blocked tiles; may be {@code null} for the
+   *                     first path
+   * @return a list of coordinates representing the path, or an empty list if no
+   *         path exists
    */
   private List<Coordinates> dijkstra(Coordinates start,
                                      Coordinates goal,
@@ -295,10 +319,8 @@ public class MapToolbox {
 
     distance[(int) start.y()][(int) start.x()] = 0;
 
-    PriorityQueue<Coordinates> queue =
-            new PriorityQueue<>(Comparator.comparingDouble(
-                    c -> distance[(int) c.y()][(int) c.x()])
-            );
+    PriorityQueue<Coordinates> queue = new PriorityQueue<>(Comparator.comparingDouble(
+            c -> distance[(int) c.y()][(int) c.x()]));
 
     queue.add(start);
 
@@ -323,8 +345,7 @@ public class MapToolbox {
               new Coordinates(cx + 1, cy),
               new Coordinates(cx - 1, cy),
               new Coordinates(cx, cy + 1),
-              new Coordinates(cx, cy - 1)
-      );
+              new Coordinates(cx, cy - 1));
 
       for (Coordinates n : neighbors) {
         int nx = (int) n.x();
