@@ -262,7 +262,7 @@ public class EntityProvider {
       if (p.getdirection() == Direction.DOWN) {
         if (!Collections.disjoint(player.getHitbox(), p.getHitbox())) {
 
-          player.setHitPoints(p.getDamage());
+          player.setHitPoints(player.getHitPoints() - p.getDamage());
           service.notifyListeners(l -> l.updateShip(player.getImmutableShip()));
           toRemoveProjectiles.add(p);
         }
