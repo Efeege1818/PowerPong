@@ -80,7 +80,6 @@ public class EntityProvider {
   }
 
   private final SimpleShip player;
-  private final HashMap<Integer, SimpleBarrier> barriers = new HashMap<>();
   private final HashMap<Integer, SimpleAlien> aliens = new HashMap<>();
   private final CopyOnWriteArrayList<SimpleProjectile> projectiles = new CopyOnWriteArrayList<>();
   private Direction currentAlienDirection = Direction.RIGHT;
@@ -162,7 +161,6 @@ public class EntityProvider {
           );
 
           SimpleBarrier barrier = new SimpleBarrier(c, id);
-          barriers.put(id, barrier);
 
           barrierGrid
                   .computeIfAbsent(cellKey(c), k -> new ArrayList<>())
@@ -312,7 +310,6 @@ public class EntityProvider {
     projectiles.removeAll(toRemoveProjectiles);
 
     for (SimpleBarrier barrier : toRemoveBarriers) {
-      barriers.values().remove(barrier);
       long key = cellKey(barrier.getCoordinate());
       List<SimpleBarrier> cell = barrierGrid.get(key);
       if (cell != null) {
@@ -339,6 +336,9 @@ public class EntityProvider {
   }
 
   public HashMap<Integer, SimpleBarrier> getBarriers() {
+    HashMap<Integer, SimpleBarrier> barriers = new HashMap<>();
+    barrierGrid.values().forEach(list -> list.forEach(barrier ->
+            barriers.put(barrier.getId(), barrier)));
     return barriers;
   }
 }

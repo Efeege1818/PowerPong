@@ -25,6 +25,10 @@ public class SimpleBarrier {
     this.id = id;
   }
 
+  public int getId() {
+    return id;
+  }
+
   public Coordinate getCoordinate() {
     return coordinate;
   }
