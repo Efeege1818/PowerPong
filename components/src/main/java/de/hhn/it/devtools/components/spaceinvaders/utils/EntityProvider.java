@@ -267,19 +267,24 @@ public class EntityProvider {
       }
     }
     for (SimpleProjectile p : projectiles) {
+
+      for (SimpleBarrier barrier : getNearbyBarriers(p.getCoordinate())) {
+        if (p.getHitbox().contains(barrier.getCoordinate())) {
+          toRemoveBarriers.add(barrier);
+          toRemoveProjectiles.add(p);
+        }
+      }
+
+      if (toRemoveProjectiles.contains(p)) {
+        break;
+      }
+
       if (p.getdirection() == Direction.DOWN) {
         if (!Collections.disjoint(player.getHitbox(), p.getHitbox())) {
 
           player.setHitPoints(player.getHitPoints() - p.getDamage());
           service.notifyListeners(l -> l.updateShip(player.getImmutableShip()));
           toRemoveProjectiles.add(p);
-        }
-
-        for (SimpleBarrier barrier : getNearbyBarriers(p.getCoordinate())) {
-          if (p.getHitbox().contains(barrier.getCoordinate())) {
-            toRemoveBarriers.add(barrier);
-            toRemoveProjectiles.add(p);
-          }
         }
       }
 
@@ -335,6 +340,11 @@ public class EntityProvider {
     return aliens;
   }
 
+  /**
+   * getter of the barriers map.
+   *
+   * @return HashMap of barriers.
+   */
   public HashMap<Integer, SimpleBarrier> getBarriers() {
     HashMap<Integer, SimpleBarrier> barriers = new HashMap<>();
     barrierGrid.values().forEach(list -> list.forEach(barrier ->
