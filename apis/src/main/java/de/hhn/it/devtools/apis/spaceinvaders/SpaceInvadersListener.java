@@ -33,7 +33,7 @@ public interface SpaceInvadersListener {
    *
    * @param projectile the updated projectile's position
    */
-  void updateProjectile(Projectile projectile);
+  void updateProjectiles(Projectile[] projectile);
 
   /**
    * Informs the listener when an alien takes damage.
@@ -47,7 +47,7 @@ public interface SpaceInvadersListener {
    *
    * @param sound the name of the updated sound
    */
-  void updateSound(String sound);
+  void updateSound(Sound sound);
 
   /**
    * Informs the listener that the game state has changed.

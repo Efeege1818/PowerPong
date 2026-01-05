@@ -10,25 +10,6 @@ import de.hhn.it.devtools.apis.spaceinvaders.Coordinate;
  * @param alienType  describes what type of Alien it is.
  * @param alienId    the ID that Identifies Aliens.
  */
-public record Alien(Coordinate coordinate, Integer hitPoints, AlienType alienType, Integer alienId) {
-
-  @Override
-  public Integer hitPoints() {
-    return hitPoints;
-  }
-
-  @Override
-  public Integer alienId() {
-    return alienId;
-  }
-
-  @Override
-  public AlienType alienType() {
-    return alienType;
-  }
-
-  @Override
-  public Coordinate coordinate() {
-    return coordinate;
-  }
+public record Alien(Coordinate coordinate, Integer hitPoints, AlienType alienType,
+                    Integer alienId) {
 }

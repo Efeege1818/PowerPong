@@ -66,7 +66,7 @@ public interface SpaceInvadersService {
    *
    * @param sound the name of the sound to play
    */
-  void playSound(String sound) throws IllegalStateException;
+  void playSound(Sound sound) throws IllegalStateException;
 
   /**
    * Adds a listener for game updates.

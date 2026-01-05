@@ -1,5 +1,6 @@
 module devtools.components {
   exports de.hhn.it.devtools.components.example.coffeemakerservice.provider;
+  exports de.hhn.it.devtools.components.spaceinvaders;
   requires org.slf4j;
   requires devtools.apis;
   requires java.desktop;
