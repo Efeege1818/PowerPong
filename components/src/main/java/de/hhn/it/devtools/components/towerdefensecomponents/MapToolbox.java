@@ -12,7 +12,7 @@ import java.util.Random;
 
 /*
  LOCKED : L.Alischer
- TODO: Check algorithm
+ TODO: Check Min size- Max size + code time for game
  TODO: Implement tests
  TODO: Check Seed implementation (maybe in Constructor)
 */
@@ -185,6 +185,48 @@ public class MapToolbox {
   }
 
   /**
+   * Returns a linearly interpolated version of the generated path.
+   *
+   * <p>
+   * The number of interpolated steps per grid tile is defined by
+   * {@code stepsPerGrid} (default: 16). The final coordinate of the original
+   * path is always included explicitly.
+   * </p>
+   *
+   * @return a list of {@link Coordinates} representing the extended path in traversal order.
+   * @throws IllegalStateException if no path has been generated or the path is empty
+   */
+  public List<Coordinates> getExtendedPath() throws IllegalStateException {
+    if (this.path == null || this.path.isEmpty()) {
+      throw new IllegalStateException("No path has been generated.");
+    }
+
+    final int stepsPerGrid = 16; // Change this for steps in between tiles
+    List<Coordinates> extendedPath = new ArrayList<>();
+
+    for (int i = 0; i < this.path.size() - 1; i++) {
+      Coordinates from = this.path.get(i);
+      Coordinates to = this.path.get(i + 1);
+
+      float vectorX = to.x() - from.x();
+      float vectorY = to.y() - from.y();
+
+      for (int stepper = 0; stepper < stepsPerGrid; stepper++) {
+        float divider = (float) stepper / stepsPerGrid;
+
+        float newX = from.x() + vectorX * divider;
+        float newY = from.y() + vectorY * divider;
+
+        extendedPath.add(new Coordinates(newX, newY));
+      }
+    }
+
+    // Last Goal-Coordinate on list
+    extendedPath.add(this.path.getLast());
+    return extendedPath;
+  }
+
+  /**
    * Generates a valid enemy path on the grid.
    *
    * <p>
@@ -303,7 +345,7 @@ public class MapToolbox {
    * @param blockedTiles a grid of blocked tiles; may be {@code null} for the
    *                     first path
    * @return a list of coordinates representing the path, or an empty list if no
-   *         path exists
+   * path exists
    */
   private List<Coordinates> dijkstra(Coordinates start,
                                      Coordinates goal,
