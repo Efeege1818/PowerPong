@@ -40,6 +40,10 @@ public class ShipListener implements ChangeListener<Ship> {
     }
     canvasProvider.drawEntity(this.shipImage, newShip.coordinate(), APIConstants.PLAYER_SIZE,
             APIConstants.PLAYER_SIZE);
+
+    if (ship != null && ship.hitPoints().equals(newShip.hitPoints())) {
+      return; // no change in hit points, skip updating lives display
+    }
     if (newShip.hitPoints() == 3) {
       leben1.setImage(Images.heart.getImage());
       leben2.setImage(Images.heart.getImage());
