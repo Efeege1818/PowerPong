@@ -38,26 +38,40 @@ public class MapToolbox {
    * Initializes a new grid of the given size and triggers
    * the generation of a valid enemy path.
    *
-   * @param size the width and height of the grid; must be greater than zero
+   * <p>
+   * This method has a {@code MAX_ATTEMPTS} of 100 to try and get a valid path.
+   * </p>
+   *
+   * @param size the width and height of the grid; must be greater than one
    * @throws IllegalArgumentException if {@code size} is less than or equal to
-   *                                  zero
+   *                                  one
    */
-
   public void generateMap(int size) {
-    if (size <= 0) {
-      throw new IllegalArgumentException("Grid size must be greater than zero.");
+    if (size <= 1) {
+      throw new IllegalArgumentException("Grid size must be greater than one.");
     }
     this.originSize = size;
-    Direction[][] map = new Direction[size][size];
+    final int MAX_ATTEMPTS = 100;
 
-    for (int row = 0; row < size; row++) {
-      for (int col = 0; col < size; col++) {
-        map[row][col] = Direction.NONE;
+    for (int attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+      try {
+        Direction[][] map = new Direction[size][size];
+        for (int y = 0; y < size; y++) { // Important! y is fist as row, then x as column
+          for (int x = 0; x < size; x++) {
+            map[y][x] = Direction.NONE;
+          }
+        }
+
+        this.grid = new Grid(map);
+        generatePath();
+        return;
+
+      } catch (RuntimeException e) {
+        continue;
       }
     }
-
-    this.grid = new Grid(map);
-    generatePath();
+    throw new IllegalStateException(
+            "Failed to generate a valid map after " + MAX_ATTEMPTS + " attempts");
   }
 
   /**
@@ -97,7 +111,7 @@ public class MapToolbox {
    *                                  bounds
    */
   public boolean isAllowed(Coordinates coordinates) throws IllegalStateException {
-    if (this.path == null || this.grid == null || originSize <= 0 || this.path.isEmpty()) {
+    if (this.path == null || this.grid == null || originSize <= 1 || this.path.isEmpty()) {
       throw new IllegalStateException("No path or grid has been generated.");
     } else if (coordinates == null
             || coordinates.x() >= originSize
@@ -107,11 +121,11 @@ public class MapToolbox {
       throw new IllegalArgumentException("Invalid coordinates provided.");
     }
 
-    return grid.grid()[(int) coordinates.x()][(int) coordinates.y()] == Direction.NONE;
+    return grid.grid()[(int) coordinates.y()][(int) coordinates.x()] == Direction.NONE;
   }
 
   /**
-   * Calculates the two-dimensional Euclidean distance between two coordinates.
+   * Calculates the two-dimensional distance between two coordinates.
    *
    * @param coordinate1 the first coordinate
    * @param coordinate2 the second coordinate
@@ -139,7 +153,7 @@ public class MapToolbox {
    * @param coordinate2 the second value
    * @return the absolute distance between the two values
    */
-  public float calcDistance(float coordinate1, float coordinate2) throws IllegalArgumentException {
+  public float calcDistance(float coordinate1, float coordinate2) {
 
     return Math.abs(coordinate1 - coordinate2);
   }
@@ -193,8 +207,10 @@ public class MapToolbox {
    * path is always included explicitly.
    * </p>
    *
-   * @return a list of {@link Coordinates} representing the extended path in traversal order.
-   * @throws IllegalStateException if no path has been generated or the path is empty
+   * @return a list of {@link Coordinates} representing the extended path in
+   * traversal order.
+   * @throws IllegalStateException if no path has been generated or the path is
+   *                               empty
    */
   public List<Coordinates> getExtendedPath() throws IllegalStateException {
     if (this.path == null || this.path.isEmpty()) {
@@ -251,14 +267,14 @@ public class MapToolbox {
     if (grid == null) {
       throw new IllegalStateException("No grid has been generated for a path to be generated.");
     }
-    if (originSize <= 0) {
-      throw new IllegalStateException("Grid size must be greater than zero.");
+    if (originSize <= 1) {
+      throw new IllegalStateException("Grid size must be greater than one.");
     }
     int size = originSize;
 
     Coordinates midPoint = random.nextBoolean()
-            ? new Coordinates(random.nextInt(size), 0)
-            : new Coordinates(random.nextInt(size), size - 1);
+            ? new Coordinates((int) (size / 2), 0)
+            : new Coordinates((int) (size / 2), size - 1);
 
     Coordinates start = new Coordinates(0, random.nextInt(size));
 
@@ -269,13 +285,15 @@ public class MapToolbox {
     }
 
     boolean[][] blockedTiles = new boolean[size][size];
-    for (Coordinates c : path1) {
+    for (int i = 0; i < path1.size() - 1; i++) {
+      Coordinates c = path1.get(i);
       blockedTiles[(int) c.y()][(int) c.x()] = true;
     }
 
     Coordinates goal = new Coordinates(size - 1, random.nextInt(size));
 
     blockedTiles[(int) midPoint.y()][(int) midPoint.x()] = false;
+    blockedTiles[(int) goal.y()][(int) goal.x()] = false;
     List<Coordinates> path2 = dijkstra(midPoint, goal, blockedTiles);
 
     if (path2.isEmpty()) {
@@ -313,17 +331,12 @@ public class MapToolbox {
       } else if (ty == fy - 1) {
         map[fy][fx] = Direction.NORTH;
       }
-
-      Coordinates beforeGoal = fullPath.get(fullPath.size() - 2);
-      Coordinates goal2 = fullPath.getLast();
-
-      int bx = (int) beforeGoal.x();
-      int by = (int) beforeGoal.y();
-      int gx = (int) goal2.x();
-      int gy = (int) goal2.y();
-
-      map[gy][gx] = Direction.EAST;
     }
+    Coordinates goal2 = fullPath.getLast();
+    int gx = (int) goal2.x();
+    int gy = (int) goal2.y();
+
+    map[gy][gx] = Direction.EAST;
   }
 
   /**
