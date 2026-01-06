@@ -26,6 +26,7 @@ public class SimpleMonster {
   protected int defense;
   protected double evasionChance;
   protected double critChance;
+  protected double damageReduction;
   protected Element element;
   protected HashMap<Integer, Move> moves;
   protected String name;
@@ -211,6 +212,29 @@ public class SimpleMonster {
     logger.debug("{} buffed: {} {} and has now {}", name, amount, stat, getStat(stat));
   }
 
+  public void changeStat(String stat, double amount) {
+    switch (stat) {
+      case "health":
+        addHealth((int) amount);
+        break;
+      case "attack":
+        attack += (int) amount;
+        break;
+      case "evasionChance":
+        evasionChance = Math.max(0.0, Math.min(1.0, evasionChance + amount));
+        break;
+      case "critChance":
+        critChance = Math.max(0.0, Math.min(1.0, critChance + amount));
+        break;
+      case "defense":
+        defense += (int) amount;
+        break;
+      default:
+        logger.warn("{} Invalid stat for changing: {}", name, stat);
+    }
+    logger.debug("{} changed: {} {} and has now {}", name, amount, stat, getStat(stat));
+  }
+
   /**
    * Applies a debuff to the Monster based on the provided Move.
    *
@@ -372,6 +396,15 @@ public class SimpleMonster {
   }
 
   /**
+   * Gets the damage reduction of the monster.
+   *
+   * @return the damage reduction.
+   */
+  public double getDamageReduction() {
+    return damageReduction;
+  }
+
+  /**
    * Gets the element type of the monster.
    *
    * @return the element.
@@ -483,6 +516,10 @@ public class SimpleMonster {
     tickBuffs();
     applyAndTickDots();
     tickCooldowns();
+
+    if (this instanceof FireMonster) {
+      ((FireMonster) this).tickFireMonsterEffects();
+    }
   }
 
   // ========== Buff/Debuff Tracking Methods ==========
@@ -655,7 +692,7 @@ public class SimpleMonster {
     if (cooldown > 0) {
       moveCooldowns.put(moveIndex, cooldown);
       logger.debug("{}: Applied {} turns cooldown to move {} ({})",
-              name, cooldown, moveIndex, move.description());
+              name, cooldown, moveIndex, move.name());
     }
   }
 

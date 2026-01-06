@@ -5,6 +5,7 @@ import de.hhn.it.devtools.apis.turnbasedbattle.Element;
 import de.hhn.it.devtools.apis.turnbasedbattle.Monster;
 import de.hhn.it.devtools.apis.turnbasedbattle.Player;
 import de.hhn.it.devtools.apis.turnbasedbattle.move.Move;
+import de.hhn.it.devtools.apis.turnbasedbattle.move.MoveType;
 
 /**
  * Class for managing and executing turns.
@@ -108,7 +109,7 @@ public class SimpleBattleManager implements BattleManager {
     Move selectedMove = currentMonster.getMove(moveNumber);
 
     logger.debug("Player {} executing move: {}",
-            currentPlayer.playerId(), selectedMove.description());
+            currentPlayer.playerId(), selectedMove.name());
 
     // Apply cooldown to the move
     currentMonster.applyCooldown(moveNumber, selectedMove);
@@ -117,22 +118,7 @@ public class SimpleBattleManager implements BattleManager {
     for(int count = 1; count <= selectedMove.executionCount(); count++) {
       logger.debug("Executing move {} of {}", count, selectedMove.executionCount());
 
-      switch (selectedMove.type()) {
-        case ATTACK -> {
-          // Do damage
-          opponentMonster.takeDamage(selectedMove, currentMonster);
-        }
-        case BUFF -> {
-          currentMonster.addBuffOrDebuff(selectedMove);
-        }
-        case DEBUFF -> {
-          opponentMonster.addBuffOrDebuff(selectedMove);
-        }
-        case DOT -> {
-          opponentMonster.addDot(selectedMove);
-        }
-        default -> throw new IllegalStateException("Unknown move type: " + selectedMove.type());
-      }
+      executeMove(selectedMove, selectedMove.type());
 
       // Check for death
       if (!opponentMonster.isAlive() || !currentMonster.isAlive()) {
@@ -146,6 +132,28 @@ public class SimpleBattleManager implements BattleManager {
       }
     }
     return 0; // no winner yet
+  }
+
+  private void executeMove(Move move, MoveType moveType) {
+    switch (moveType) {
+      case ATTACK -> {
+        // Do damage
+        opponentMonster.takeDamage(move, currentMonster);
+        if (move.followUpMove() != null) {
+          executeMove(move.followUpMove(), move.followUpMove().type());
+        }
+      }
+      case BUFF -> {
+        currentMonster.addBuffOrDebuff(move);
+      }
+      case DEBUFF -> {
+        opponentMonster.addBuffOrDebuff(move);
+      }
+      case DOT -> {
+        opponentMonster.addDot(move);
+      }
+      default -> throw new IllegalStateException("Unknown move type: " + move.type());
+    }
   }
 
   @Override

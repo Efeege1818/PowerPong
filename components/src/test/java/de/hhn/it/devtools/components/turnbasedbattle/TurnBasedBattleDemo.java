@@ -49,7 +49,7 @@ public class TurnBasedBattleDemo {
             if (y == -1) {
                 HashMap<Integer, Move> moves = service.getCurrentMonster().getMoves();
                 for (Map.Entry<Integer, Move> entry : moves.entrySet()) {
-                    System.out.println(entry.getKey() + " - " + entry.getValue().description() +
+                    System.out.println(entry.getKey() + " - " + entry.getValue().name() +
                             " (Cooldown: " + service.getCurrentMonster().getRemainingCooldown(entry.getKey()) + " turns)");
                 }
             } else if (y >= 1 && y <= service.getCurrentMonster().getMoves().size()) {

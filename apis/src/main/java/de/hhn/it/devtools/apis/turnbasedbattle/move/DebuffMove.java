@@ -15,7 +15,7 @@ import de.hhn.it.devtools.apis.turnbasedbattle.Element;
  * @param isSpecial whether the move is special.
  * @param description description of the move.
  */
-public record DebuffMove(MoveType type, String name, Element element, String stat, double amount, int duration, int cooldown, boolean isSpecial, String description, int executionCount) implements Move {
+public record DebuffMove(MoveType type, String name, Element element, String stat, double amount, int duration, int cooldown, boolean isSpecial, String description, int executionCount, Move followUpMove) implements Move {
 
   @Override
   public double amount() {
@@ -30,8 +30,12 @@ public record DebuffMove(MoveType type, String name, Element element, String sta
   /**
    * Custom constructor without type parameter - type is always DEBUFF.
    */
+  public DebuffMove(String name, Element element, String stat, double amount, int duration, int cooldown, boolean isSpecial, String description, int executionCount, Move followUpMove) {
+    this(MoveType.DEBUFF, name, element, stat, amount, duration, cooldown, isSpecial, description, executionCount, followUpMove);
+  }
+
   public DebuffMove(String name, Element element, String stat, double amount, int duration, int cooldown, boolean isSpecial, String description, int executionCount) {
-    this(MoveType.DEBUFF, name, element, stat, amount, duration, cooldown, isSpecial, description, executionCount);
+    this(MoveType.DEBUFF, name, element, stat, amount, duration, cooldown, isSpecial, description, executionCount, null);
   }
 
   /**

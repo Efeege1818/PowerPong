@@ -40,6 +40,6 @@ public class SimpleDamageCalculator {
       return 0;
     }
 
-    return (int) Math.floor(damage);
+    return (int) Math.floor(damage * (1 - target.getDamageReduction()));
   }
 }

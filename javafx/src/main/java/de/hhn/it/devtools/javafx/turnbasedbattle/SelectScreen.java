@@ -1,14 +1,19 @@
 package de.hhn.it.devtools.javafx.turnbasedbattle;
 
 import de.hhn.it.devtools.apis.turnbasedbattle.Monster;
+import de.hhn.it.devtools.components.turnbasedbattle.Data;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 import java.util.List;
 
 public class SelectScreen extends AnchorPane {
+  private static final org.slf4j.Logger logger =
+      org.slf4j.LoggerFactory.getLogger(SelectScreen.class);
+
   public static final String SCREEN_NAME = "SelectScreen";
 
   private final SimpleScreenManager screenManager;
@@ -17,6 +22,7 @@ public class SelectScreen extends AnchorPane {
   private boolean selected2 = false;
   private Monster p1Monster;
   private Monster p2Monster;
+  Data data = new Data();
 
   public SelectScreen(SimpleScreenManager screenManager) {
     this.screenManager = screenManager;
@@ -33,21 +39,56 @@ public class SelectScreen extends AnchorPane {
     }
   }
 
-  public void MonsterForP1(Monster monster) {
-    p1Monster = monster;
-    selected1 = true;
+  @FXML
+  public void initialize() {
+    this.setFocusTraversable(true);
+
+    this.setOnKeyPressed(event -> {
+      switch (event.getCode()) {
+        case A -> monsterForP1(data.getMonsters()[0]);  //FireMonster for P1
+        case S -> monsterForP1(data.getMonsters()[2]);  //WaterMonster for P1
+        case D -> monsterForP1(data.getMonsters()[1]);  //GrassMonster for P1
+        case J -> monsterForP2(data.getMonsters()[0]);  //FireMonster for P2
+        case K -> monsterForP2(data.getMonsters()[2]);  //WaterMonster for P2
+        case L -> monsterForP2(data.getMonsters()[1]);  //GrassMonster for P2
+        default -> System.out.println("Key pressed: " + event.getCode());
+      }
+    });
+
+    this.requestFocus();
   }
 
-  public void MonsterForP2(Monster monster) {
-    p2Monster = monster;
-    selected2 = true;
+  @FXML
+  public void onActionExitGame() {
+    javafx.application.Platform.exit();
   }
 
-  public List<Monster> getAvailableMonsters(List<Monster> monsters) {
-    return monsters;
+  private void monsterForP1(Monster monster) {
+    if(!selected1) {
+      p1Monster = monster;
+      selected1 = true;
+      logger.debug("Player 1 selected: " + monster.element() + "MONSTER");
+      checkSelectionFinished();
+    }
   }
 
-  public boolean isSelectionFinished() {
+  private void monsterForP2(Monster monster) {
+    if(!selected2) {
+      p2Monster = monster;
+      selected2 = true;
+      logger.debug("Player 2 selected: " + monster.element() + "MONSTER");
+      checkSelectionFinished();
+    }
+  }
+
+  private void checkSelectionFinished() {
+    if(isSelectionFinished()) {
+      logger.debug("Both players have picked a monster. Switching screen now...");
+      screenManager.switchTo(SelectScreen.SCREEN_NAME, BattleScreen.SCREEN_NAME);
+    }
+  }
+
+  private boolean isSelectionFinished() {
     return selected1 && selected2;
   }
 

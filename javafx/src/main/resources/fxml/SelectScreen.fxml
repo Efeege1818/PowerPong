@@ -81,7 +81,7 @@
             </font>
         </Label>
 
-        <Button fx:id="exitButton" layoutX="9.0" layoutY="365.0" mnemonicParsing="false" onAction="#onActionExitGame" text="Exit Game" />
+        <Button fx:id="exitButton" layoutX="22.0" layoutY="357.0" mnemonicParsing="false" onAction="#onActionExitGame" text="Exit Game" />
     </children>
 
 </fx:root>
