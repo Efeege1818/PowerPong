@@ -13,6 +13,7 @@ public interface Move {
   boolean isSpecial();
   Element element();
   int executionCount();
+  Move followUpMove();
 
   // Optional methods with default implementations
   default double amount() {

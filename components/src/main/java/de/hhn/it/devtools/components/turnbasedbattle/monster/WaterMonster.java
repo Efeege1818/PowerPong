@@ -10,6 +10,9 @@ public class WaterMonster extends SimpleMonster {
   private static final org.slf4j.Logger logger =
           org.slf4j.LoggerFactory.getLogger(WaterMonster.class);
 
+  private boolean defenseStance = false;
+  private boolean attackStance = false;
+
   /**
    * Creates a new WaterMonster.
    *
@@ -22,6 +25,7 @@ public class WaterMonster extends SimpleMonster {
     this.defense = monster.defense();
     this.evasionChance = monster.evasionChance();
     this.critChance = monster.critChance();
+    this.damageReduction = 0.0;
     this.element = monster.element();
     this.moves = monster.moves();
 
@@ -32,6 +36,33 @@ public class WaterMonster extends SimpleMonster {
     this.imagePathBack = "/Monster Sprites/WasserMon Back.png";
 
     logger.debug("{} created: {}", name, toString());
+  }
+
+  /**
+   * Switches between defense and attack stance.
+   */
+  public void switchStance() {
+    defenseStance = !defenseStance;
+    attackStance = !attackStance;
+    logger.debug("{} stance switched to Defense: {}, Attack: {}", name, defenseStance, attackStance);
+  }
+
+  /**
+   * Checks if the monster is in defense stance.
+   *
+   * @return true if in defense stance, false otherwise.
+   */
+  public boolean isDefenseStance() {
+    return defenseStance;
+  }
+
+  /**
+   * Checks if the monster is in attack stance.
+   *
+   * @return true if in attack stance, false otherwise.
+   */
+  public boolean isAttackStance() {
+    return attackStance;
   }
 
 }

@@ -15,7 +15,7 @@ import de.hhn.it.devtools.apis.turnbasedbattle.Element;
  * @param isSpecial whether the move is special.
  * @param description description of the move.
  */
-public record BuffMove(MoveType type, String name, Element element, String stat, double amount, int duration, int cooldown, boolean isSpecial, String description, int executionCount) implements Move {
+public record BuffMove(MoveType type, String name, Element element, String stat, double amount, int duration, int cooldown, boolean isSpecial, String description, int executionCount, Move followUpMove) implements Move {
 
   @Override
   public double amount() {
@@ -30,8 +30,12 @@ public record BuffMove(MoveType type, String name, Element element, String stat,
   /**
    * Custom constructor without type parameter - type is always BUFF.
    */
+  public BuffMove(String name, Element element, String stat, double amount, int duration, int cooldown, boolean isSpecial, String description, int executionCount, Move followUpMove) {
+    this(MoveType.BUFF, name, element, stat, amount, duration, cooldown, isSpecial, description, executionCount, followUpMove);
+  }
+
   public BuffMove(String name, Element element, String stat, double amount, int duration, int cooldown, boolean isSpecial, String description, int executionCount) {
-    this(MoveType.BUFF, name, element, stat, amount, duration, cooldown, isSpecial, description, executionCount);
+    this(MoveType.BUFF, name, element, stat, amount, duration, cooldown, isSpecial, description, executionCount, null);
   }
 
   /**
