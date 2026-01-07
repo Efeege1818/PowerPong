@@ -7,6 +7,7 @@ package de.hhn.it.devtools.apis.towerdefenseapi;
 public interface TowerDefenseListener {
 
   /**
+   *
    * Gets called, when the player Health changes.
    */
   void updateHealth();
