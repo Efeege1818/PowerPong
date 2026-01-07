@@ -8,7 +8,8 @@ public enum Sound {
   GRRR("secret.mp3"),
   CHICKEN("Chicken.mp3"),
   HIT("hit.mp3"),
-  TRACK("track.mp3");
+  TRACK("track.mp3"),
+  EXPLOSION("explosion.mp3");
 
   final String sound;
 

@@ -13,6 +13,8 @@ public class SoundListener implements PropertyChangeListener {
           + Sound.SHOOT.getSound()).toExternalForm());
   private final AudioClip hitSound = new AudioClip(getClass().getResource("/spaceinvaders/sounds/"
           + Sound.HIT.getSound()).toExternalForm());
+  private final AudioClip explosionSound = new AudioClip(getClass().getResource("/spaceinvaders/sounds/"
+          + Sound.EXPLOSION.getSound()).toExternalForm());
 
   /**
    * Constructor.
@@ -29,6 +31,7 @@ public class SoundListener implements PropertyChangeListener {
       switch (sound) {
         case Sound.SHOOT -> this.shootSound.play();
         case Sound.HIT -> this.hitSound.play();
+        case Sound.EXPLOSION -> this.explosionSound.play();
         default -> {}
       }
     }

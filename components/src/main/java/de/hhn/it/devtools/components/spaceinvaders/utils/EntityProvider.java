@@ -3,6 +3,7 @@ package de.hhn.it.devtools.components.spaceinvaders.utils;
 import de.hhn.it.devtools.apis.spaceinvaders.APIConstants;
 import de.hhn.it.devtools.apis.spaceinvaders.Coordinate;
 import de.hhn.it.devtools.apis.spaceinvaders.Direction;
+import de.hhn.it.devtools.apis.spaceinvaders.Sound;
 import de.hhn.it.devtools.apis.spaceinvaders.entities.Alien;
 import de.hhn.it.devtools.apis.spaceinvaders.entities.AlienType;
 import de.hhn.it.devtools.apis.spaceinvaders.entities.Projectile;
@@ -292,10 +293,12 @@ public class EntityProvider {
         for (SimpleAlien alien : aliens.values()) {
           if (alien.getHitbox().contains(p.getCoordinate())) {
             toRemoveProjectiles.add(p);
+            service.notifyListeners(l -> l.updateSound(Sound.HIT));
             if (!alien.getHit()) {
               toRemoveAliens.add(alien);
               service.notifyListeners(l ->
                       l.updateScore(service.score += Constants.ALIEN_DEATH_POINTS));
+              service.notifyListeners(l -> l.updateSound(Sound.EXPLOSION));
             }
             break;
           }
@@ -308,6 +311,7 @@ public class EntityProvider {
 
     for (SimpleProjectile p : toRemoveProjectiles) {
       p.inverse();
+      service.notifyListeners(l -> l.updateSound(Sound.HIT));
     }
     service.notifyListeners(l ->
             l.updateProjectiles(toRemoveProjectiles.stream()
