@@ -306,7 +306,7 @@ public class EntityProvider {
                         l.updateScore(service.score += Constants.ALIEN_DEATH_POINTS));
               } else if (service.getConfiguration().difficulty() == Difficulty.NORMAL) {
                 service.notifyListeners(l ->
-                        l.updateScore(service.score += (Constants.ALIEN_DEATH_POINTS * 2));
+                        l.updateScore(service.score += (Constants.ALIEN_DEATH_POINTS * 2)));
               } else {
                 service.notifyListeners(l ->
                         l.updateScore(service.score += (Constants.ALIEN_DEATH_POINTS * 3)));
