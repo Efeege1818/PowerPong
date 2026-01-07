@@ -9,4 +9,6 @@ module devtools.components {
           with de.hhn.it.devtools.components.example.coffeemakerservice.provider.WnckCoffeeMakerService;
   provides  de.hhn.it.devtools.apis.examples.coffeemakerservice.AdminCoffeeMakerService
           with de.hhn.it.devtools.components.example.coffeemakerservice.provider.WnckCoffeeMakerService;
+  provides de.hhn.it.devtools.apis.towerdefenseapi.TowerDefenseService
+          with de.hhn.it.devtools.components.towerdefensecomponents.SimpleTowerDefenseService;
         }

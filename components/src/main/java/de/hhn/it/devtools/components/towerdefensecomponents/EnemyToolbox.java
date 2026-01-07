@@ -131,7 +131,7 @@ public class EnemyToolbox {
    * @return the amount of damage dealt to the player
    */
   public int damagePlayer() {
-    int pathLength = service.getMapToolbox().getPath().size();
+    int pathLength = service.getMapToolbox().getExtendedPath().size();
 
     int damage = 0;
     for (Enemy enemy : enemies) {
@@ -162,7 +162,7 @@ public class EnemyToolbox {
    */
   public void progress() {
 
-    List<Coordinates> coordinatesList = service.getMapToolbox().getPath();
+    List<Coordinates> coordinatesList = service.getMapToolbox().getExtendedPath();
 
     for (Enemy enemy : enemies) {
       if (!(enemy.currentHealth() > 0) && !(coordinatesList.size() <= enemy.index() + 1)) {

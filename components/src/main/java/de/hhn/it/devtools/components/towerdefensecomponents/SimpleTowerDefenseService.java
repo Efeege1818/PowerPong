@@ -10,7 +10,6 @@ import de.hhn.it.devtools.apis.towerdefenseapi.Tower;
 import de.hhn.it.devtools.apis.towerdefenseapi.TowerDefenseListener;
 import de.hhn.it.devtools.apis.towerdefenseapi.TowerDefenseService;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -18,7 +17,6 @@ import java.util.Queue;
 import java.util.Random;
 import java.util.function.Consumer;
 
-// LOCKED : L.Missbach
 public class SimpleTowerDefenseService implements TowerDefenseService {
 
   private final MapToolbox mapToolbox = new MapToolbox();
@@ -29,7 +27,7 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
   private final long seed;
   private GameState currentGameState;
   private final List<TowerDefenseListener> listeners = new ArrayList<TowerDefenseListener>();
-  private final GameLoop gameLoop = new GameLoop();
+  private final GameLoop gameLoop = new GameLoop(this);
   private Player player;
   private Configuration configuration;
   private int currentRound;
