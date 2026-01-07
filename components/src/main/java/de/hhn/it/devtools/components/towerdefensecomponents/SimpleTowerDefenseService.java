@@ -55,6 +55,11 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
   }
 
   @Override
+  public Player getPlayer() {
+    return player;
+  }
+
+  @Override
   public boolean addListener(TowerDefenseListener listener) throws IllegalArgumentException {
     return listeners.add(listener);
   }
