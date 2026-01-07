@@ -56,5 +56,4 @@ public class TowerDefenseViewModel {
     public ListProperty<Tower> getTowers(){
         return towers;
     }
-
 }
