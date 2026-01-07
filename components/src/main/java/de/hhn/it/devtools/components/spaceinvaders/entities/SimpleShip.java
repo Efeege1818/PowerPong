@@ -38,7 +38,7 @@ public class SimpleShip {
     switch (direction) {
       case LEFT:
         if (!(coordinate.x() <= APIConstants.PLAYER_SIZE)) {
-          this.coordinate = new Coordinate(coordinate.x() - 2, coordinate.y());
+          this.coordinate = new Coordinate(coordinate.x() - 1, coordinate.y());
           this.hitbox = EntityProvider.fillHitBox(coordinate,
                   APIConstants.PLAYER_SIZE,
                   APIConstants.PLAYER_SIZE);
@@ -46,7 +46,7 @@ public class SimpleShip {
         break;
       case RIGHT:
         if (!(coordinate.x() >= APIConstants.FIELD_SIZE - APIConstants.PLAYER_SIZE)) {
-          this.coordinate = new Coordinate(coordinate.x() + 2, coordinate.y());
+          this.coordinate = new Coordinate(coordinate.x() + 1, coordinate.y());
           this.hitbox = EntityProvider.fillHitBox(coordinate,
                   APIConstants.PLAYER_SIZE,
                   APIConstants.PLAYER_SIZE);
