@@ -9,16 +9,16 @@ import javafx.scene.media.AudioClip;
  * SoundListener triggered by ViewModel.
  */
 public class SoundListener implements PropertyChangeListener {
-  private final AudioClip shootSound = new AudioClip(getClass().getResource("/spaceinvaders/sounds/"
-          + Sound.SHOOT.getSound()).toExternalForm());
-  private final AudioClip hitSound = new AudioClip(getClass().getResource("/spaceinvaders/sounds/"
-          + Sound.HIT.getSound()).toExternalForm());
-  private final AudioClip explosionSound = new AudioClip(getClass().getResource("/spaceinvaders/sounds/"
-          + Sound.EXPLOSION.getSound()).toExternalForm());
-  private final AudioClip gameOverSound = new AudioClip(getClass().getResource("/spaceinvaders/sounds/"
-          + Sound.GAMEOVER.getSound()).toExternalForm());
-  private final AudioClip levelUpSound = new AudioClip(getClass().getResource("/spaceinvaders/sounds/"
-          + Sound.LEVELUP.getSound()).toExternalForm());
+  private final AudioClip shootSound = new AudioClip(getClass()
+          .getResource("/spaceinvaders/sounds/" + Sound.SHOOT.getSound()).toExternalForm());
+  private final AudioClip hitSound = new AudioClip(getClass()
+          .getResource("/spaceinvaders/sounds/" + Sound.HIT.getSound()).toExternalForm());
+  private final AudioClip explosionSound = new AudioClip(getClass()
+          .getResource("/spaceinvaders/sounds/" + Sound.EXPLOSION.getSound()).toExternalForm());
+  private final AudioClip gameOverSound = new AudioClip(getClass()
+          .getResource("/spaceinvaders/sounds/" + Sound.GAMEOVER.getSound()).toExternalForm());
+  private final AudioClip levelUpSound = new AudioClip(getClass()
+          .getResource("/spaceinvaders/sounds/" + Sound.LEVELUP.getSound()).toExternalForm());
 
   /**
    * Constructor.
