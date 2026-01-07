@@ -81,7 +81,7 @@ public class TowerToolbox {
    * @throws IllegalArgumentException if towers or enemies do not exist.
    */
   public void attack() {
-    int pathLength = service.getMapToolbox().getPath().size();
+    int pathLength = service.getMapToolbox().getExtendedPath().size();
     List<Enemy> enemies = service.getEnemyToolbox().getEnemies();
     for (Tower tower : towers) {
       if (tower.type() != TowerType.MONEYMAKER) {
