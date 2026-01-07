@@ -1,4 +1,11 @@
 package de.hhn.it.devtools.javafx.towerDefense.view;
 
-public class TitleScreen {
+import javafx.application.Application;
+import javafx.stage.Stage;
+
+public class TitleScreen extends Application {
+  @Override
+  public void start(Stage primaryStage) throws Exception{
+
+  }
 }

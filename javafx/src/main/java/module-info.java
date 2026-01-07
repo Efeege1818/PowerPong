@@ -4,6 +4,7 @@ module devtools.javafx {
   requires devtools.components;
   requires javafx.controls;
   requires javafx.fxml;
+  requires javafx.graphics;
   uses de.hhn.it.devtools.apis.examples.coffeemakerservice.CoffeeMakerService;
   uses de.hhn.it.devtools.apis.examples.coffeemakerservice.AdminCoffeeMakerService;
   uses de.hhn.it.devtools.apis.towerdefenseapi.TowerDefenseService;
