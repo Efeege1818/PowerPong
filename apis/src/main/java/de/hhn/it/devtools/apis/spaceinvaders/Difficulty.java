@@ -5,7 +5,7 @@ package de.hhn.it.devtools.apis.spaceinvaders;
  * Determines how many Enemies and Barriers there are, how much hit points they have and how often Aliens shoot.
  */
 public enum Difficulty {
-  EASY("Hier könnte ihre \nWerbung stehen!"),
+  EASY("Baby hat gewonnen \nWerbung stehen!"),
   NORMAL("MEDIUM WELL"),
   HARD("AMONG US HARD");
 
