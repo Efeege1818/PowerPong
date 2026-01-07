@@ -7,53 +7,66 @@ import de.hhn.it.devtools.apis.towerdefenseapi.Tower;
 import de.hhn.it.devtools.components.towerdefensecomponents.MapToolbox;
 import de.hhn.it.devtools.components.towerdefensecomponents.SimpleTowerDefenseService;
 import de.hhn.it.devtools.components.towerdefensecomponents.TowerToolbox;
-import javafx.beans.property.*;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.SimpleObjectProperty;
 
 import java.util.List;
 
 public class TowerDefenseViewModel {
-    SimpleTowerDefenseService service;
-    private final ObjectProperty<Grid> map = new SimpleObjectProperty<>();
-    private final ObjectProperty<Player> player = new SimpleObjectProperty<>();
-    private final ListProperty<Enemy> enemies = new SimpleListProperty<>();
-    private final ListProperty<Tower> towers = new SimpleListProperty<>();
-    private final IntegerProperty round = new SimpleIntegerProperty();
+  SimpleTowerDefenseService service;
+  private final ObjectProperty<Grid> map = new SimpleObjectProperty<>();
+  private final ObjectProperty<Player> player = new SimpleObjectProperty<>();
+  private final ListProperty<Enemy> enemies = new SimpleListProperty<>();
+  private final ListProperty<Tower> towers = new SimpleListProperty<>();
+  private final IntegerProperty round = new SimpleIntegerProperty();
 
-    public TowerDefenseViewModel(SimpleTowerDefenseService service){
-        this.service = service;
-    }
+  public TowerDefenseViewModel(SimpleTowerDefenseService service) {
+    this.service = service;
+  }
 
-    public void addTower(Tower tower){
-        towers.add(tower);
-        service.placeTower(tower);
-    }
+  public void addTower(Tower tower) {
+    towers.add(tower);
+    service.placeTower(tower);
+  }
 
-    public void startRound(){
-        service.startGame();
-    }
+  public void startRound() {
+    service.startGame();
+  }
 
-    public void startNextRound(){
-        round.set(round.get() + 1);
-        service.startNextRound();
-    }
+  public void abortGame() {
+    service.abortGame();
+  }
 
-    public ObjectProperty<Grid> getMap(){
-        return map;
-    }
+  public void resetGame() {
+    service.resetGame();
+  }
 
-    public ObjectProperty<Player> getPlayerStats(){
-        return player;
-    }
+  public void startNextRound() {
+    round.set(round.get() + 1);
+    service.startNextRound();
+  }
 
-    public IntegerProperty getRound(){
-        return round;
-    }
+  public ObjectProperty<Grid> getMap() {
+    return map;
+  }
 
-    public ListProperty<Enemy> getEnemies(){
-        return enemies;
-    }
+  public ObjectProperty<Player> getPlayerStats() {
+    return player;
+  }
 
-    public ListProperty<Tower> getTowers(){
-        return towers;
-    }
+  public IntegerProperty getRound() {
+    return round;
+  }
+
+  public ListProperty<Enemy> getEnemies() {
+    return enemies;
+  }
+
+  public ListProperty<Tower> getTowers() {
+    return towers;
+  }
 }
