@@ -11,7 +11,6 @@ import java.util.PriorityQueue;
 import java.util.Random;
 
 /*
- LOCKED : L.Alischer
  TODO: Check Min size- Max size + code time for game
  TODO: Implement tests
  TODO: Check Seed implementation (maybe in Constructor)

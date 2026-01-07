@@ -1,6 +1,5 @@
 package de.hhn.it.devtools.components.towerdefensecomponents;
 
-//LOCKED : M.Albert
 /**
  * This Class runs in a loop every game tick and manages everything that has to run constantly.
  * This Class should call the tick() Method in the GameLoop once per Game-Tick.
