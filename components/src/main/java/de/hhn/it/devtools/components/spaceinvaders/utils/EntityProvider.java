@@ -1,9 +1,6 @@
 package de.hhn.it.devtools.components.spaceinvaders.utils;
 
-import de.hhn.it.devtools.apis.spaceinvaders.APIConstants;
-import de.hhn.it.devtools.apis.spaceinvaders.Coordinate;
-import de.hhn.it.devtools.apis.spaceinvaders.Direction;
-import de.hhn.it.devtools.apis.spaceinvaders.Sound;
+import de.hhn.it.devtools.apis.spaceinvaders.*;
 import de.hhn.it.devtools.apis.spaceinvaders.entities.Alien;
 import de.hhn.it.devtools.apis.spaceinvaders.entities.AlienType;
 import de.hhn.it.devtools.apis.spaceinvaders.entities.Projectile;
@@ -79,7 +76,7 @@ public class EntityProvider {
     }
     return result;
   }
-
+  private final int alienShotChance;
   private final SimpleShip player;
   private final HashMap<Integer, SimpleAlien> aliens = new HashMap<>();
   private final CopyOnWriteArrayList<SimpleProjectile> projectiles = new CopyOnWriteArrayList<>();
@@ -93,6 +90,12 @@ public class EntityProvider {
    */
   public EntityProvider(SimpleSpaceInvadersService service) {
     this.service = service;
+    switch (service.getDifficulty()) {
+      case Difficulty.EASY -> alienShotChance =  (int) (Constants.ALIEN_SHOOTING_CHANCE / 2);
+      case Difficulty.NORMAL -> alienShotChance =  Constants.ALIEN_SHOOTING_CHANCE;
+      case Difficulty.HARD -> alienShotChance =  (int) (Constants.ALIEN_SHOOTING_CHANCE * 1.5);
+      default -> {}
+    }
     this.player = new SimpleShip(
             new Coordinate(APIConstants.FIELD_SIZE / 2, APIConstants.FIELD_SIZE - 26)
     );
