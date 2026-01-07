@@ -301,6 +301,17 @@ public class EntityProvider {
             service.notifyListeners(l -> l.updateSound(Sound.HIT));
             if (!alien.getHit()) {
               toRemoveAliens.add(alien);
+              if (service.getConfiguration().difficulty() == Difficulty.EASY) {
+                service.notifyListeners(l ->
+                        l.updateScore(service.score += Constants.ALIEN_DEATH_POINTS));
+              } else if (service.getConfiguration().difficulty() == Difficulty.NORMAL) {
+                service.notifyListeners(l ->
+                        l.updateScore(service.score += (Constants.ALIEN_DEATH_POINTS * 2));
+              } else {
+                service.notifyListeners(l ->
+                        l.updateScore(service.score += (Constants.ALIEN_DEATH_POINTS * 3)));
+
+              }
               service.notifyListeners(l ->
                       l.updateScore(service.score += Constants.ALIEN_DEATH_POINTS));
               service.notifyListeners(l -> l.updateSound(Sound.EXPLOSION));
