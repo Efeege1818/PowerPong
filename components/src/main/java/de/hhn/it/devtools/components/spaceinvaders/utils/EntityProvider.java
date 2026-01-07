@@ -222,6 +222,7 @@ public class EntityProvider {
             Direction.UP,
             Constants.BASE_DAMAGE
     ));
+    service.notifyListeners(l -> l.updateSound(Sound.SHOOT));
   }
 
   /**
@@ -240,6 +241,7 @@ public class EntityProvider {
               Direction.DOWN,
               Constants.BASE_DAMAGE
       ));
+      service.notifyListeners(l -> l.updateSound(Sound.SHOOT));
     }
   }
 
