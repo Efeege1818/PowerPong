@@ -130,7 +130,7 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
     if (Objects.isNull(tower)) {
       throw new IllegalArgumentException("Tower can't be null");
     }
-    if (mapToolbox.isAllowed(tower.coordinates())) {
+    if (!mapToolbox.isAllowed(tower.coordinates())) {
       throw new IllegalArgumentException("Tower position can't be oin the path");
     }
     if (!Objects.isNull(towerToolbox.getTowers().get(tower.coordinates()))) {

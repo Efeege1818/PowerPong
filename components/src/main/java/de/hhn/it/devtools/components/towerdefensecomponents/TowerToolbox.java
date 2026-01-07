@@ -52,8 +52,8 @@ public class TowerToolbox {
    */
   public static int getDamage(TowerType type) throws NoSuchElementException {
     return switch (type) {
-      case MELEE -> 20;
-      case RANGED -> 10;
+      case MELEE -> 40;
+      case RANGED -> 30;
       case MONEYMAKER -> 0;
       default -> throw new NoSuchElementException();
     };
@@ -83,15 +83,18 @@ public class TowerToolbox {
   public void attack() {
     int pathLength = service.getMapToolbox().getExtendedPath().size();
     List<Enemy> enemies = service.getEnemyToolbox().getEnemies();
+    List<Enemy> toBeRemoved = new ArrayList<>();
+    for (Enemy enemy : enemies) {
+      if (enemy.index() >= pathLength) {
+        toBeRemoved.add(enemy);
+      }
+    }
+    enemies.removeAll(toBeRemoved);
     for (Tower tower : towers) {
       if (tower.type() != TowerType.MONEYMAKER) {
         int furthestEnemy = -1;
         Enemy enemyToBeAttacked = null;
         for (Enemy enemy : enemies) {
-          if (enemy.index() >= pathLength) {
-            enemies.remove(enemy);
-            continue;
-          }
           double testDistance = Math.abs(Math.pow((tower.coordinates().x()
                   - enemy.coordinates().x()), 2) + Math.pow((tower.coordinates().y()
                   - enemy.coordinates().y()), 2));

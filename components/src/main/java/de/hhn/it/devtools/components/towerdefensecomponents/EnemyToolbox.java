@@ -163,15 +163,25 @@ public class EnemyToolbox {
   public void progress() {
 
     List<Coordinates> coordinatesList = service.getMapToolbox().getExtendedPath();
+    List<Enemy> toBeRemoved = new ArrayList<>();
 
     for (Enemy enemy : enemies) {
-      if (!(enemy.currentHealth() > 0) && !(coordinatesList.size() <= enemy.index() + 1)) {
-        enemies.remove(enemy);
+      if (enemy.currentHealth() <= 0) {
+        toBeRemoved.add(enemy);
         continue;
       }
-      enemies.set(enemies.indexOf(enemy), new Enemy(enemy.id(), coordinatesList.get(enemy.index()
-              + getSpeed(enemy.type())), enemy.type(), enemy.currentHealth(), enemy.index()
-              + getSpeed(enemy.type())));
+      if ((enemy.index() + getSpeed(enemy.type())) > (coordinatesList.size() - 1)) {
+        enemies.set(enemies.indexOf(enemy), new Enemy(enemy.id(), coordinatesList.getLast(), enemy.type(), enemy.currentHealth(), enemy.index()
+                + getSpeed(enemy.type())));
+      } else {
+        enemies.set(enemies.indexOf(enemy), new Enemy(enemy.id(), coordinatesList.get(enemy.index()
+                + getSpeed(enemy.type())), enemy.type(), enemy.currentHealth(), enemy.index()
+                + getSpeed(enemy.type())));
+      }
+    }
+    enemies.removeAll(toBeRemoved);
+    if (!enemies.isEmpty()) {
+      System.out.println(enemies.getFirst());
     }
   }
 
