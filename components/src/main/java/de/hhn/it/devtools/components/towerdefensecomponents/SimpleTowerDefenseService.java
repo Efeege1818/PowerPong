@@ -142,7 +142,7 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
    */
   public void updateHealth(int health) throws IllegalArgumentException {
     if (health > 0) {
-      throw new IllegalArgumentException("Health can't be positive");
+      throw new IllegalArgumentException("Health modifier can't be positive");
     }
     player = new Player(player.health() + health, player.money());
     notifyListeners(TowerDefenseListener::updateHealth);
