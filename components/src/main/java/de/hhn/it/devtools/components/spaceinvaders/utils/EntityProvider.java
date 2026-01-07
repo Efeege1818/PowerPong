@@ -88,7 +88,7 @@ public class EntityProvider {
   private final CopyOnWriteArrayList<SimpleProjectile> projectiles = new CopyOnWriteArrayList<>();
   private Direction currentAlienDirection = Direction.RIGHT;
   private final SimpleSpaceInvadersService service;
-  private int alienDeathPoints ;
+  private int alienDeathPoints;
 
   /**
    * Creates a new EntityProvider and initializes all entities.
@@ -99,7 +99,7 @@ public class EntityProvider {
     this.service = service;
     switch (service.getDifficulty()) {
       case Difficulty.EASY -> {
-        alienShotChance =  (int) (Constants.ALIEN_SHOOTING_CHANCE / 2);
+        alienShotChance =  (Constants.ALIEN_SHOOTING_CHANCE / 2);
         alienDeathPoints = Constants.ALIEN_DEATH_POINTS;
       }
       case Difficulty.NORMAL -> {
@@ -109,7 +109,7 @@ public class EntityProvider {
         alienShotChance =  (int) (Constants.ALIEN_SHOOTING_CHANCE * 1.5);
         alienDeathPoints = Constants.ALIEN_DEATH_POINTS * 3;
       }
-      default -> {}
+      default -> { }
     }
     this.player = new SimpleShip(
             new Coordinate(APIConstants.FIELD_SIZE / 2, APIConstants.FIELD_SIZE - 26)

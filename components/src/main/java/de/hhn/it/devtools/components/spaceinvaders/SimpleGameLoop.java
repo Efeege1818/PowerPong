@@ -21,7 +21,7 @@ public class SimpleGameLoop extends Thread {
     switch (service.getDifficulty()) {
       case Difficulty.EASY -> speedModifier =  Constants.THREAD_WAIT + 2;
       case Difficulty.HARD -> speedModifier =  Constants.THREAD_WAIT - 2;
-      default -> {}
+      default -> { }
     }
   }
 

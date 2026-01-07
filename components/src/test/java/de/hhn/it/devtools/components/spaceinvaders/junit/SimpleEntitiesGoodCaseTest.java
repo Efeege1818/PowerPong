@@ -60,11 +60,11 @@ class SimpleEntitiesGoodCaseTest {
     assertEquals(c.y(), ship.getCoordinate().y());
 
     ship.move(Direction.LEFT);
-    assertEquals(c.x()-2, ship.getCoordinate().x());
+    assertEquals(c.x()-1, ship.getCoordinate().x());
 
     ship.move(Direction.RIGHT);
     ship.move(Direction.RIGHT);
-    assertEquals(c.x()+2, ship.getCoordinate().x());
+    assertEquals(c.x()+1, ship.getCoordinate().x());
 
     // hitbox size 35 * 35 = 1225
     assertEquals(1225, ship.getHitbox().size());

@@ -41,7 +41,7 @@ public class SoundListener implements PropertyChangeListener {
         case Sound.EXPLOSION -> this.explosionSound.play();
         case Sound.GAMEOVER -> this.gameOverSound.play();
         case Sound.LEVELUP -> this.levelUpSound.play();
-        default -> {}
+        default -> { }
       }
     }
   }
