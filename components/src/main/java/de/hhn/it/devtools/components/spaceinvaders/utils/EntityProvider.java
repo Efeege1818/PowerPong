@@ -83,6 +83,7 @@ public class EntityProvider {
   private final CopyOnWriteArrayList<SimpleProjectile> projectiles = new CopyOnWriteArrayList<>();
   private Direction currentAlienDirection = Direction.RIGHT;
   private final SimpleSpaceInvadersService service;
+  private int alienDeathPoints ;
 
   /**
    * Creates a new EntityProvider and initializes all entities.
@@ -92,8 +93,17 @@ public class EntityProvider {
   public EntityProvider(SimpleSpaceInvadersService service) {
     this.service = service;
     switch (service.getDifficulty()) {
-      case Difficulty.EASY -> alienShotChance =  (int) (Constants.ALIEN_SHOOTING_CHANCE / 2);
-      case Difficulty.HARD -> alienShotChance =  (int) (Constants.ALIEN_SHOOTING_CHANCE * 1.5);
+      case Difficulty.EASY -> {
+        alienShotChance =  (int) (Constants.ALIEN_SHOOTING_CHANCE / 2);
+        alienDeathPoints = Constants.ALIEN_DEATH_POINTS;
+      }
+      case Difficulty.NORMAL -> {
+        alienDeathPoints = Constants.ALIEN_DEATH_POINTS * 2;
+      }
+      case Difficulty.HARD -> {
+        alienShotChance =  (int) (Constants.ALIEN_SHOOTING_CHANCE * 1.5);
+        alienDeathPoints = Constants.ALIEN_DEATH_POINTS * 3;
+      }
       default -> {}
     }
     this.player = new SimpleShip(
@@ -301,19 +311,8 @@ public class EntityProvider {
             service.notifyListeners(l -> l.updateSound(Sound.HIT));
             if (!alien.getHit()) {
               toRemoveAliens.add(alien);
-              if (service.getConfiguration().difficulty() == Difficulty.EASY) {
-                service.notifyListeners(l ->
-                        l.updateScore(service.score += Constants.ALIEN_DEATH_POINTS));
-              } else if (service.getConfiguration().difficulty() == Difficulty.NORMAL) {
-                service.notifyListeners(l ->
-                        l.updateScore(service.score += (Constants.ALIEN_DEATH_POINTS * 2)));
-              } else {
-                service.notifyListeners(l ->
-                        l.updateScore(service.score += (Constants.ALIEN_DEATH_POINTS * 3)));
-
-              }
               service.notifyListeners(l ->
-                      l.updateScore(service.score += Constants.ALIEN_DEATH_POINTS));
+                      l.updateScore(service.score += alienDeathPoints));
               service.notifyListeners(l -> l.updateSound(Sound.EXPLOSION));
             }
             break;
