@@ -6,7 +6,7 @@ package de.hhn.it.devtools.components.towerdefensecomponents;
  */
 public class GameLoop extends Thread {
 
-  private boolean running = true;
+  private boolean running = false;
 
   private SimpleTowerDefenseService service;
 
@@ -18,6 +18,11 @@ public class GameLoop extends Thread {
   public void run() {
     while (running) {
       service.tick();
+    }
+    try {
+      sleep(50);
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
     }
   }
 

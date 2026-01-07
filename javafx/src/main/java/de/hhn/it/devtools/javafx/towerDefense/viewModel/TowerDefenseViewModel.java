@@ -57,7 +57,6 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
     service.startNextRound();
   }
 
-
   public ObjectProperty<Grid> getMap() {
     return map;
   }
@@ -65,7 +64,6 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
   public ObjectProperty<Player> getPlayerStats() {
     return player;
   }
-
 
   public IntegerProperty getRound() {
     return round;
