@@ -76,7 +76,8 @@ public class EntityProvider {
     }
     return result;
   }
-  private final int alienShotChance;
+
+  private int alienShotChance = Constants.ALIEN_SHOOTING_CHANCE;
   private final SimpleShip player;
   private final HashMap<Integer, SimpleAlien> aliens = new HashMap<>();
   private final CopyOnWriteArrayList<SimpleProjectile> projectiles = new CopyOnWriteArrayList<>();
@@ -92,7 +93,6 @@ public class EntityProvider {
     this.service = service;
     switch (service.getDifficulty()) {
       case Difficulty.EASY -> alienShotChance =  (int) (Constants.ALIEN_SHOOTING_CHANCE / 2);
-      case Difficulty.NORMAL -> alienShotChance =  Constants.ALIEN_SHOOTING_CHANCE;
       case Difficulty.HARD -> alienShotChance =  (int) (Constants.ALIEN_SHOOTING_CHANCE * 1.5);
       default -> {}
     }
@@ -236,7 +236,7 @@ public class EntityProvider {
       return;
     }
 
-    if (new Random().nextInt(1000) <= Constants.ALIEN_SHOOTING_CHANCE) {
+    if (new Random().nextInt(1000) <= alienShotChance) {
       List<Integer> keys = new ArrayList<>(aliens.keySet());
       SimpleAlien a = aliens.get(keys.get(new Random().nextInt(keys.size())));
       projectiles.add(new SimpleProjectile(

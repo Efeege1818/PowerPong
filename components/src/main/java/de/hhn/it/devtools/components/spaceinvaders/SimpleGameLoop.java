@@ -9,7 +9,7 @@ import de.hhn.it.devtools.components.spaceinvaders.utils.Constants;
  */
 public class SimpleGameLoop extends Thread {
   private final SimpleSpaceInvadersService service;
-  double speedModifier;
+  long speedModifier = Constants.THREAD_WAIT;
 
   /**
    * Default Constructor.
@@ -19,9 +19,8 @@ public class SimpleGameLoop extends Thread {
   public SimpleGameLoop(SimpleSpaceInvadersService service) {
     this.service = service;
     switch (service.getDifficulty()) {
-      case Difficulty.EASY -> speedModifier =  Constants.THREAD_WAIT * 1.2;
-      case Difficulty.NORMAL -> speedModifier =  Constants.THREAD_WAIT;
-      case Difficulty.HARD -> speedModifier =  Constants.THREAD_WAIT * 0.8;
+      case Difficulty.EASY -> speedModifier =  Constants.THREAD_WAIT + 2;
+      case Difficulty.HARD -> speedModifier =  Constants.THREAD_WAIT - 2;
       default -> {}
     }
   }
@@ -41,7 +40,7 @@ public class SimpleGameLoop extends Thread {
       service.triggeredByGameLoop();
       try {
         synchronized (this) {
-          wait(Constants.THREAD_WAIT);
+          wait(speedModifier);
         }
       } catch (InterruptedException e) {
         return;
