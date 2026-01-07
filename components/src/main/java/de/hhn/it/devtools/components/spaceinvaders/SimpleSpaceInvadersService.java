@@ -192,6 +192,7 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
       return;
     }
     if (entityProvider.getAliens().isEmpty()) {
+      notifyListeners(l -> l.updateSound(Sound.LEVELUP));
       pause();
     }
 
@@ -213,6 +214,7 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
     }
 
     if (entityProvider.getPlayer().getHitPoints() <= 0) {
+      notifyListeners(l -> l.updateSound(Sound.GAMEOVER));
       abort();
     }
 
