@@ -19,6 +19,11 @@ public class GameLoop extends Thread {
     while (running) {
       service.tick();
     }
+    try {
+      sleep(50);
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   /**
