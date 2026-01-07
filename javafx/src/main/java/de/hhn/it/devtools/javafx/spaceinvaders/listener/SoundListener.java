@@ -24,11 +24,11 @@ public class SoundListener implements PropertyChangeListener {
    * Constructor.
    */
   public SoundListener() {
-    this.shootSound.setVolume(0.5);
-    this.hitSound.setVolume(0.5);
-    this.explosionSound.setVolume(0.2);
-    this.gameOverSound.setVolume(0.5);
-    this.levelUpSound.setVolume(0.5);
+    this.shootSound.setVolume(0.15);
+    this.hitSound.setVolume(0.05);
+    this.explosionSound.setVolume(0.05);
+    this.gameOverSound.setVolume(0.15);
+    this.levelUpSound.setVolume(0.15);
   }
 
   @Override
