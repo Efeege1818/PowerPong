@@ -223,4 +223,8 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
   protected GameState getGameState() {
     return gameState;
   }
+
+  public Difficulty getDifficulty() {
+    return this.gameConfiguration.difficulty();
+  }
 }

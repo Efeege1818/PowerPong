@@ -1,5 +1,6 @@
 package de.hhn.it.devtools.components.spaceinvaders;
 
+import de.hhn.it.devtools.apis.spaceinvaders.Difficulty;
 import de.hhn.it.devtools.apis.spaceinvaders.GameState;
 import de.hhn.it.devtools.components.spaceinvaders.utils.Constants;
 
@@ -8,6 +9,7 @@ import de.hhn.it.devtools.components.spaceinvaders.utils.Constants;
  */
 public class SimpleGameLoop extends Thread {
   private final SimpleSpaceInvadersService service;
+  long speedModifier = Constants.THREAD_WAIT;
 
   /**
    * Default Constructor.
@@ -16,6 +18,11 @@ public class SimpleGameLoop extends Thread {
    */
   public SimpleGameLoop(SimpleSpaceInvadersService service) {
     this.service = service;
+    switch (service.getDifficulty()) {
+      case Difficulty.EASY -> speedModifier =  Constants.THREAD_WAIT + 2;
+      case Difficulty.HARD -> speedModifier =  Constants.THREAD_WAIT - 2;
+      default -> {}
+    }
   }
 
   @Override
@@ -33,7 +40,7 @@ public class SimpleGameLoop extends Thread {
       service.triggeredByGameLoop();
       try {
         synchronized (this) {
-          wait(Constants.THREAD_WAIT);
+          wait(speedModifier);
         }
       } catch (InterruptedException e) {
         return;
