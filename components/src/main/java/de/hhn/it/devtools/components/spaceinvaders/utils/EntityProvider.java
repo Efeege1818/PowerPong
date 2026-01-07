@@ -1,6 +1,11 @@
 package de.hhn.it.devtools.components.spaceinvaders.utils;
 
-import de.hhn.it.devtools.apis.spaceinvaders.*;
+
+import de.hhn.it.devtools.apis.spaceinvaders.APIConstants;
+import de.hhn.it.devtools.apis.spaceinvaders.Coordinate;
+import de.hhn.it.devtools.apis.spaceinvaders.Difficulty;
+import de.hhn.it.devtools.apis.spaceinvaders.Direction;
+import de.hhn.it.devtools.apis.spaceinvaders.Sound;
 import de.hhn.it.devtools.apis.spaceinvaders.entities.Alien;
 import de.hhn.it.devtools.apis.spaceinvaders.entities.AlienType;
 import de.hhn.it.devtools.apis.spaceinvaders.entities.Projectile;
