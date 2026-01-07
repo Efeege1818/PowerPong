@@ -1,6 +1,7 @@
 module devtools.components {
   exports de.hhn.it.devtools.components.example.coffeemakerservice.provider;
-  requires org.slf4j;
+    exports de.hhn.it.devtools.components.towerdefensecomponents;
+    requires org.slf4j;
   requires devtools.apis;
   requires java.desktop;
   requires java.rmi;

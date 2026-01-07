@@ -1,0 +1,60 @@
+package de.hhn.it.devtools.javafx.towerDefense.viewModel;
+
+import de.hhn.it.devtools.apis.towerdefenseapi.Enemy;
+import de.hhn.it.devtools.apis.towerdefenseapi.Grid;
+import de.hhn.it.devtools.apis.towerdefenseapi.Player;
+import de.hhn.it.devtools.apis.towerdefenseapi.Tower;
+import de.hhn.it.devtools.components.towerdefensecomponents.MapToolbox;
+import de.hhn.it.devtools.components.towerdefensecomponents.SimpleTowerDefenseService;
+import de.hhn.it.devtools.components.towerdefensecomponents.TowerToolbox;
+import javafx.beans.property.*;
+
+import java.util.List;
+
+public class TowerDefenseViewModel {
+    SimpleTowerDefenseService service;
+    private final ObjectProperty<Grid> map = new SimpleObjectProperty<>();
+    private final ObjectProperty<Player> player = new SimpleObjectProperty<>();
+    private final ListProperty<Enemy> enemies = new SimpleListProperty<>();
+    private final ListProperty<Tower> towers = new SimpleListProperty<>();
+    private final IntegerProperty round = new SimpleIntegerProperty();
+
+    public TowerDefenseViewModel(SimpleTowerDefenseService service){
+        this.service = service;
+    }
+
+    public void addTower(Tower tower){
+        towers.add(tower);
+        service.placeTower(tower);
+    }
+
+    public void startRound(){
+        service.startGame();
+    }
+
+    public void startNextRound(){
+        round.set(round.get() + 1);
+        service.startNextRound();
+    }
+
+    public ObjectProperty<Grid> getMap(){
+        return map;
+    }
+
+    public ObjectProperty<Player> getPlayerStats(){
+        return player;
+    }
+
+    public IntegerProperty getRound(){
+        return round;
+    }
+
+    public ListProperty<Enemy> getEnemies(){
+        return enemies;
+    }
+
+    public ListProperty<Tower> getTowers(){
+        return towers;
+    }
+
+}
