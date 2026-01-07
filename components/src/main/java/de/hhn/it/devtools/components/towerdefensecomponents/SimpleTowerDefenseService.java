@@ -29,7 +29,7 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
   private final long seed;
   private GameState currentGameState;
   private final List<TowerDefenseListener> listeners = new ArrayList<TowerDefenseListener>();
-  private final GameLoop gameLoop = new GameLoop();
+  private final GameLoop gameLoop = new GameLoop(this);
   private Player player;
   private Configuration configuration;
   private int currentRound;
