@@ -1,6 +1,11 @@
 package de.hhn.it.devtools.components.spaceinvaders.utils;
 
-import de.hhn.it.devtools.apis.spaceinvaders.*;
+
+import de.hhn.it.devtools.apis.spaceinvaders.APIConstants;
+import de.hhn.it.devtools.apis.spaceinvaders.Coordinate;
+import de.hhn.it.devtools.apis.spaceinvaders.Difficulty;
+import de.hhn.it.devtools.apis.spaceinvaders.Direction;
+import de.hhn.it.devtools.apis.spaceinvaders.Sound;
 import de.hhn.it.devtools.apis.spaceinvaders.entities.Alien;
 import de.hhn.it.devtools.apis.spaceinvaders.entities.AlienType;
 import de.hhn.it.devtools.apis.spaceinvaders.entities.Projectile;
@@ -92,7 +97,7 @@ public class EntityProvider {
   public EntityProvider(SimpleSpaceInvadersService service) {
     this.service = service;
     switch (service.getDifficulty()) {
-      case Difficulty.EASY -> alienShotChance =  (int) (Constants.ALIEN_SHOOTING_CHANCE / 2);
+      case Difficulty.EASY -> alienShotChance =  (Constants.ALIEN_SHOOTING_CHANCE / 2);
       case Difficulty.HARD -> alienShotChance =  (int) (Constants.ALIEN_SHOOTING_CHANCE * 1.5);
       default -> {}
     }
@@ -306,7 +311,7 @@ public class EntityProvider {
                         l.updateScore(service.score += Constants.ALIEN_DEATH_POINTS));
               } else if (service.getConfiguration().difficulty() == Difficulty.NORMAL) {
                 service.notifyListeners(l ->
-                        l.updateScore(service.score += (Constants.ALIEN_DEATH_POINTS * 2));
+                        l.updateScore(service.score += (Constants.ALIEN_DEATH_POINTS * 2)));
               } else {
                 service.notifyListeners(l ->
                         l.updateScore(service.score += (Constants.ALIEN_DEATH_POINTS * 3)));
