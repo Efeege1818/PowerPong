@@ -16,6 +16,13 @@ public interface TowerDefenseService {
   GameState getCurrentGameState();
 
   /**
+   * Provides the current instance of the Player record.
+   *
+   * @return the current Player
+   */
+  Player getPlayer();
+
+  /**
    * Adds a listener to the list.
    *
    * @param listener the listener to be added
