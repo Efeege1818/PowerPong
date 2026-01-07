@@ -9,7 +9,7 @@ import javafx.scene.paint.Color;
 /**
  * CanvasProvider class.
  */
-public class CanvasProvider {
+public class  CanvasProvider {
   private final Canvas canvas;
 
   /**
@@ -30,7 +30,7 @@ public class CanvasProvider {
    */
   public void clearEntity(Coordinate coordinate, int a, int b) {
     GraphicsContext gc = canvas.getGraphicsContext2D();
-    gc.clearRect(coordinate.x(), coordinate.y(), a, b);
+    gc.clearRect(coordinate.x(), coordinate.y(), a + 0.5, b + 0.5);
   }
 
   /**
