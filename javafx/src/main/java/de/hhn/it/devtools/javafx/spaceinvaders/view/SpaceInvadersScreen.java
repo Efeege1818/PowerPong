@@ -1,6 +1,5 @@
 package de.hhn.it.devtools.javafx.spaceinvaders.view;
 
-import de.hhn.it.devtools.apis.spaceinvaders.Direction;
 import de.hhn.it.devtools.apis.spaceinvaders.GameConfiguration;
 import de.hhn.it.devtools.apis.spaceinvaders.Sound;
 import de.hhn.it.devtools.apis.spaceinvaders.SpaceInvadersService;
@@ -8,6 +7,7 @@ import de.hhn.it.devtools.components.spaceinvaders.SimpleSpaceInvadersService;
 import de.hhn.it.devtools.javafx.spaceinvaders.custom.Images;
 import de.hhn.it.devtools.javafx.spaceinvaders.custom.PopupConfigurations;
 import de.hhn.it.devtools.javafx.spaceinvaders.helper.CanvasProvider;
+import de.hhn.it.devtools.javafx.spaceinvaders.helper.KeyBoardProvider;
 import de.hhn.it.devtools.javafx.spaceinvaders.listener.AliensListener;
 import de.hhn.it.devtools.javafx.spaceinvaders.listener.BarrierListener;
 import de.hhn.it.devtools.javafx.spaceinvaders.listener.GameStateListener;
@@ -18,18 +18,13 @@ import de.hhn.it.devtools.javafx.spaceinvaders.viewmodel.SpaceInvadersViewModel;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
@@ -39,7 +34,6 @@ import javafx.scene.layout.BackgroundSize;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +48,6 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
   private final Stage instance;
   private CanvasProvider canvasProvider;
   private PopupConfigurations popupConfigurations;
-  private final Timeline shooting = new Timeline(new KeyFrame(Duration.seconds(0.25)));
   private final MediaPlayer soundTrack = new MediaPlayer(new Media(getClass()
           .getResource("/spaceinvaders/sounds/" + Sound.TRACK.getSound()).toExternalForm()));
 
@@ -148,19 +141,8 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
         this.soundTrack.stop();
         spaceInvadersService.abort();
       });
-      Scene scene = getScene();
-      scene.setOnKeyPressed(event -> {
-        KeyCode code = event.getCode();
-        if (code == KeyCode.LEFT) {
-          onLeftPressed();
-        } else if (code == KeyCode.RIGHT) {
-          onRightPressed();
-        } else if (code == KeyCode.SPACE) {
-          onSpacePressed();
-        } else if (code == KeyCode.ESCAPE) {
-          spaceInvadersService.pause();
-        }
-      });
+
+      new KeyBoardProvider(getScene(), spaceInvadersService).start();
       canvas.requestFocus();
     });
   }
@@ -176,22 +158,6 @@ public class SpaceInvadersScreen extends AnchorPane implements Initializable {
             bgSize
     );
     this.setBackground(new Background(bgImage));
-  }
-
-  private void onLeftPressed() {
-    spaceInvadersService.move(Direction.LEFT);
-  }
-
-  private void onRightPressed() {
-    spaceInvadersService.move(Direction.RIGHT);
-  }
-
-  private void onSpacePressed() {
-    if (shooting.getStatus() == Animation.Status.STOPPED) {
-      spaceInvadersService.shoot();
-      shooting.setCycleCount(1);
-      shooting.play();
-    }
   }
 
 }
