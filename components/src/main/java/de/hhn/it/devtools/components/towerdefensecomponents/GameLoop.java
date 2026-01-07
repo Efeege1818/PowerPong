@@ -6,7 +6,7 @@ package de.hhn.it.devtools.components.towerdefensecomponents;
  */
 public class GameLoop extends Thread {
 
-  private boolean running = true;
+  private boolean running = false;
 
   private SimpleTowerDefenseService service;
 

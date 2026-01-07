@@ -29,6 +29,7 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
   private final List<TowerDefenseListener> listeners = new ArrayList<TowerDefenseListener>();
   private final GameLoop gameLoop = new GameLoop(this);
   private Player player;
+  private Player savedPlayerData;
   private Configuration configuration;
   private int currentRound;
 
@@ -43,6 +44,8 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
     waveGenerator = new WaveGenerator(mapToolbox.getPath().getFirst(), seed, configuration);
 
     player = new Player(configuration.startingHealth(), configuration.startingMoney());
+    savedPlayerData = player;
+    towerToolbox.saveData();
     currentRound = 0;
 
     currentGameState = GameState.READY;
@@ -85,7 +88,13 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
 
   @Override
   public void retry() throws IllegalStateException {
-
+    if (currentGameState != GameState.GAME_OVER) {
+      throw new IllegalStateException("GameState has to be GAME_OVER in order to retry");
+    }
+    currentRound--;
+    player = savedPlayerData;
+    towerToolbox.loadData();
+    currentGameState = GameState.READY;
   }
 
   @Override
@@ -132,6 +141,7 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
     }
     updateMoney(-TowerToolbox.getCost(tower.type()));
     towerToolbox.addTower(tower);
+    notifyListeners(TowerDefenseListener::updateMap);
   }
 
   /**
@@ -200,8 +210,9 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
   private void roundCompleted() {
     currentGameState = GameState.PAUSED;
     gameLoop.stopGame();
+    savedPlayerData = player;
+    towerToolbox.saveData();
   }
-
 
   public EnemyToolbox getEnemyToolbox() {
     return enemyToolbox;
