@@ -16,6 +16,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -57,12 +58,18 @@ public class SpaceInvadersController extends Controller implements Initializable
   @FXML
   ImageView logo;
 
+  @FXML
+  Label infoLabel;
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     setBackground();
     loadAnimations();
     difficultyChoiceBox.setValue(Difficulty.NORMAL);
+    infoLabel.setText(Difficulty.NORMAL.getInfoText());
     difficultyChoiceBox.setItems(FXCollections.observableArrayList(Difficulty.values()));
+    difficultyChoiceBox.setOnAction(event -> infoLabel
+            .setText(difficultyChoiceBox.getValue().getInfoText()));
     logo.setImage(new Image(getClass()
             .getResource("/spaceinvaders/images/logo.png").toExternalForm()));
 
