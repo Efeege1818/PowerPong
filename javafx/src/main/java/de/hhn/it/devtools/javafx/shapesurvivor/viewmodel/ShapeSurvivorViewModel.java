@@ -198,7 +198,7 @@ public class ShapeSurvivorViewModel implements ShapeSurvivorListener {
     public void resetGame() {
         gameService.reset();
         Platform.runLater(() -> {
-            playerProperty.set(null);
+            playerProperty.set(gameService.getPlayer());
             enemiesMap.clear();
             scoreProperty.set(0);
             levelProperty.set(1);

@@ -11,6 +11,8 @@ public class WeaponAnimationState {
     private boolean attacking;
     private static final long ATTACK_DURATION_MS = 300;
     private boolean attackingLeft;
+    private long lastDamageTime;
+    private static final long AURA_DAMAGE_INTERVAL_MS = 500;
 
     public WeaponAnimationState() {
         this.angle = 0;
@@ -51,6 +53,15 @@ public class WeaponAnimationState {
     public long getAttackProgress() {
         if (!attacking) return 0;
         return System.currentTimeMillis() - lastAttackTime;
+    }
+
+    public boolean canDealAuraDamage() {
+        long now = System.currentTimeMillis();
+        if (now - lastDamageTime >= AURA_DAMAGE_INTERVAL_MS) {
+            lastDamageTime = now;
+            return true;
+        }
+        return false;
     }
 
     public boolean isAttackingLeft() {

@@ -177,17 +177,40 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
                 drawHealthBar(p);
             }
 
-            // Draw enemies
             viewModel.getEnemiesMap().values().forEach(enemy -> {
+                double size = 20; // Triangle size
+                int cx = enemy.position().x();
+                int cy = enemy.position().y();
+
+                double angle = 0;
+                if (p != null) {
+                    double dx = p.position().x() - cx;
+                    double dy = p.position().y() - cy;
+                    angle = Math.atan2(dy, dx);
+                }
+
+                double[] xPoints = new double[3];
+                double[] yPoints = new double[3];
+                xPoints[0] = cx + Math.cos(angle) * size;
+                yPoints[0] = cy + Math.sin(angle) * size;
+
+                xPoints[1] = cx + Math.cos(angle + 2.5) * (size * 0.7);
+                yPoints[1] = cy + Math.sin(angle + 2.5) * (size * 0.7);
+
+                xPoints[2] = cx + Math.cos(angle - 2.5) * (size * 0.7);
+                yPoints[2] = cy + Math.sin(angle - 2.5) * (size * 0.7);
+
                 gc.setFill(Color.RED);
-                gc.fillOval(enemy.position().x() - 10, enemy.position().y() - 10, 20, 20);
+                gc.fillPolygon(xPoints, yPoints, 3);
+
+                gc.setStroke(Color.DARKRED);
+                gc.setLineWidth(2);
+                gc.strokePolygon(xPoints, yPoints, 3);
                 double ratio = (double) enemy.currentHealth() / enemy.maxHealth();
-
                 gc.setFill(Color.DARKRED);
-                gc.fillRect(enemy.position().x() - 12, enemy.position().y() - 18, 24, 4);
-
+                gc.fillRect(cx - 12, cy - 25, 24, 4);
                 gc.setFill(Color.RED);
-                gc.fillRect(enemy.position().x() - 12, enemy.position().y() - 18, 24 * ratio, 4);
+                gc.fillRect(cx - 12, cy - 25, 24 * ratio, 4);
             });
         });
     }
@@ -219,7 +242,6 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
         double sx = px + Math.cos(angle) * radius;
         double sy = py + Math.sin(angle) * radius;
 
-        // Sword dimensions
         double bladeLength = 90;
         double bladeWidth = 6;
         double handleLength = 10;
@@ -262,7 +284,6 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
 
 
     private void drawAura(Player player, Weapon weapon, WeaponAnimationState state) {
-        // Pulsing aura effect
         double pulse = Math.sin(state.getAngle() * 3) * 10 + weapon.range();
 
         gc.setStroke(Color.rgb(100, 200, 255, 0.3));

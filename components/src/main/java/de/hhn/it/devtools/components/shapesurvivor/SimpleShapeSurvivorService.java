@@ -28,14 +28,15 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
     private int currentWave;
     private long lastWaveSpawnTime;
 
-    // Weapon animation states
     private final Map<WeaponType, WeaponAnimationState> weaponStates;
     private long lastWeaponUpdateTime;
     private static final long WEAPON_UPDATE_INTERVAL_MS = 16; // ~60 FPS
 
     private long lastPlayerHitTime = 0;
-    private static final long PLAYER_HIT_COOLDOWN_MS = 600; // 0.6 sec
+    private static final long PLAYER_HIT_COOLDOWN_MS = 600;
 
+    private final Map<Integer, Long> lastEnemyHitTime;
+    private static final long ENEMY_HIT_COOLDOWN_MS = 500;
 
     public SimpleShapeSurvivorService() {
         this.gameState = GameState.PREPARED;
@@ -45,6 +46,7 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
         this.nextEnemyId = 0;
         this.currentWave = 0;
         this.weaponStates = new HashMap<>();
+        this.lastEnemyHitTime = new HashMap<>();
 
         this.configuration = new GameConfiguration(
                 DEFAULT_GAME_DURATION,
@@ -116,7 +118,7 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
             case AURA -> new Weapon(
                     WeaponType.AURA,
                     "Deals damage in a circle around the player",
-                    level, 8 * level, 2.0 / level, 100.0 + (level * 15), true
+                    level, 5 * level, 2.0 / level, 100.0 + (level * 15), true  // Reduced from 8 to 5
             );
             case WHIP -> new Weapon(
                     WeaponType.WHIP,
@@ -148,10 +150,14 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
         lastPlayerHitTime = 0;
         availableUpgrades.clear();
         weaponStates.clear();
+        lastEnemyHitTime.clear();
 
         initializePlayer();
         initializeStatistics();
 
+        notifyPlayerUpdated();
+        notifyEnemiesUpdated();
+        notifyExperienceUpdated();
         notifyGameStateChanged(GameState.PREPARED);
     }
 
@@ -624,16 +630,22 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
     }
 
     private void updateWeapons() {
+        long currentTime = System.currentTimeMillis();
         for (Weapon weapon : player.equippedWeapons()) {
             if (!weapon.isActive()) continue;
 
             WeaponAnimationState state = weaponStates.get(weapon.type());
             if (state == null) continue;
 
-            // Different weapons have different attack patterns
+            if (weapon.type() == WeaponType.AURA) {
+                if (!state.canDealAuraDamage()) {
+                    continue;
+                }
+            }
+
             boolean shouldAttack = switch (weapon.type()) {
-                case SWORD -> true; // Sword is always active (orbiting)
-                case AURA -> true;  // Aura is always active (constant damage)
+                case SWORD -> true;
+                case AURA -> true;
                 case WHIP -> {
                     if (state.canAttack()) {
                         state.attack();
@@ -648,6 +660,11 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
             List<Enemy> toRemove = new ArrayList<>();
 
             for (Enemy enemy : enemies) {
+                Long lastHit = lastEnemyHitTime.get(enemy.id());
+                if (lastHit != null && currentTime - lastHit < ENEMY_HIT_COOLDOWN_MS) {
+                    continue;
+                }
+
                 boolean hit = false;
 
                 switch (weapon.type()) {
@@ -657,6 +674,7 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
                 }
 
                 if (hit) {
+                    lastEnemyHitTime.put(enemy.id(), currentTime);
                     int damage = weapon.damage() + player.baseDamage();
                     Enemy damagedEnemy = new Enemy(
                             enemy.id(),
@@ -672,6 +690,7 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
 
                     if (damagedEnemy.currentHealth() <= 0) {
                         toRemove.add(enemy);
+                        lastEnemyHitTime.remove(enemy.id());
                         gainExperience(enemy.experienceValue());
                         notifyEnemyKilled(enemy, enemy.experienceValue());
 
@@ -690,7 +709,6 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
                 }
             }
             enemies.removeAll(toRemove);
-
         }
     }
 
@@ -700,7 +718,7 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
         int swordY = player.position().y() + (int) (Math.sin(angle) * weapon.range());
 
         double distance = getDistance(new Position(swordX, swordY), enemy.position());
-        return distance < 30; // Sword hitbox radius
+        return distance < 40;
     }
 
     private boolean checkAuraHit(Enemy enemy, Weapon weapon) {
