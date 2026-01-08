@@ -1,6 +1,7 @@
 package de.hhn.it.devtools.components.shapesurvivor;
 
 import de.hhn.it.devtools.apis.shapesurvivor.*;
+import de.hhn.it.devtools.components.shapesurvivor.helper.EnemyState;
 import de.hhn.it.devtools.components.shapesurvivor.helper.EventDispatcher;
 
 import java.util.*;
@@ -79,45 +80,37 @@ class WeaponSystem {
                             WeaponAnimationState state,
                             long currentTime) {
 
-        List<Enemy> toRemove = new ArrayList<>();
+        List<EnemyState> toRemove = new ArrayList<>();
 
-        for (Enemy enemy : gameContext.enemies) {
+        for (EnemyState enemy : gameContext.enemies) {
 
-            Long lastHit = gameContext.lastEnemyHitTime.get(enemy.id());
+            Long lastHit = gameContext.lastEnemyHitTime.get(enemy.id);
             if (lastHit != null && currentTime - lastHit < ENEMY_HIT_COOLDOWN_MS) {
                 continue;
             }
 
             boolean hit = switch (weapon.type()) {
-                case SWORD -> checkSwordHit(enemy, weapon, state);
-                case AURA -> checkAuraHit(enemy, weapon);
-                case WHIP -> checkWhipHit(enemy, weapon, state);
+                case SWORD -> checkSwordHit(enemy.toEnemy(), weapon, state);
+                case AURA -> checkAuraHit(enemy.toEnemy(), weapon);
+                case WHIP -> checkWhipHit(enemy.toEnemy(), weapon, state);
             };
 
             if (!hit) continue;
 
-            gameContext.lastEnemyHitTime.put(enemy.id(), currentTime);
+            gameContext.lastEnemyHitTime.put(enemy.id, currentTime);
 
             int damage = weapon.damage() + gameContext.player.baseDamage();
-            Enemy damaged = new Enemy(
-                    enemy.id(),
-                    enemy.position(),
-                    enemy.currentHealth() - damage,
-                    enemy.maxHealth(),
-                    enemy.movementSpeed(),
-                    enemy.contactDamage(),
-                    enemy.experienceValue()
-            );
 
-            events.notifyEnemyDamaged(enemy, damage);
+            // --- Update EnemyState in place ---
+            enemy.currentHealth -= damage;
 
-            if (damaged.currentHealth() <= 0) {
+            events.notifyEnemyDamaged(enemy.toEnemy(), damage);
+
+            if (enemy.currentHealth <= 0) {
                 toRemove.add(enemy);
-                gameContext.lastEnemyHitTime.remove(enemy.id());
-                service.gainExperience(enemy.experienceValue());
-                events.notifyEnemyKilled(enemy, enemy.experienceValue());
-            } else {
-                gameContext.enemies.set(gameContext.enemies.indexOf(enemy), damaged);
+                gameContext.lastEnemyHitTime.remove(enemy.id);
+                service.gainExperience(enemy.experience);
+                events.notifyEnemyKilled(enemy.toEnemy(), enemy.experience);
             }
         }
 

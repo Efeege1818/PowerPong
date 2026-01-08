@@ -24,7 +24,7 @@ public class EventDispatcher {
     }
 
     public void notifyEnemiesUpdated() {
-        Enemy[] enemyArray = gameContext.getEnemies().toArray(new Enemy[0]);
+        Enemy[] enemyArray =  gameContext.getEnemiesSnapshot().toArray(new Enemy[0]);
         for (ShapeSurvivorListener listener : listeners) {
             listener.updateEnemies(enemyArray);
         }

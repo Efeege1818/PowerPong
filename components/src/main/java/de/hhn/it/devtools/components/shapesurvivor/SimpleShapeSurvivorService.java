@@ -21,6 +21,7 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
     private final GameContext gameContext;
     private final EventDispatcher events;
     private final WeaponSystem weaponSystem;
+    private final EnemySystem enemySystem;
 
     public SimpleShapeSurvivorService() {
         GameConfiguration configuration = new GameConfiguration(
@@ -43,6 +44,8 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
         gameContext.currentWave = 0;
         this.events = new EventDispatcher(listeners, gameContext, this);
         this.weaponSystem = new WeaponSystem(gameContext, events, this);
+        this.enemySystem = new EnemySystem(gameContext, events, this);
+
         initializePlayer();
         initializeStatistics();
         initializeGameLoop();
@@ -422,7 +425,7 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
 
     @Override
     public Enemy[] getEnemies() {
-        return gameContext.enemies.toArray(new Enemy[0]);
+        return gameContext.getEnemiesSnapshot().toArray(new Enemy[0]);
     }
 
     @Override
@@ -466,10 +469,8 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
             endGame(true);
             return;
         }
-
-        spawnEnemies();
-        updateEnemies();
         weaponSystem.update(System.currentTimeMillis());
+        enemySystem.update(System.currentTimeMillis());
 
         if (gameContext.player.currentHealth() <= 0) {
             endGame(false);
@@ -477,116 +478,7 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
         events.notifyTimeUpdate();
     }
 
-    private void spawnEnemies() {
-        long currentTime = System.currentTimeMillis();
-        long timeSinceLastWave = currentTime - gameContext.lastWaveSpawnTime;
-
-        // Spawn wave every 10 seconds
-        if (timeSinceLastWave >= 10000) {
-            gameContext.currentWave++;
-            int enemyCount = (int) (5 * gameContext.currentWave * gameContext.configuration.enemySpawnRate());
-
-            for (int i = 0; i < enemyCount; i++) {
-                spawnEnemy();
-            }
-
-            gameContext.lastWaveSpawnTime = currentTime;
-            events.notifyEnemyWaveSpawned(gameContext.currentWave, enemyCount);
-
-            gameContext.statistics = new GameStatistics(
-                    gameContext.statistics.enemiesKilled(),
-                    gameContext.statistics.damageDealt(),
-                    gameContext.statistics.damageTaken(),
-                    gameContext.currentWave,
-                    gameContext.statistics.highestLevel(),
-                    gameContext.statistics.totalExperienceGained(),
-                    getElapsedTime()
-            );
-        }
-    }
-
-    private void spawnEnemy() {
-        Random random = new Random();
-
-        int side = random.nextInt(4);
-        int x, y;
-
-        y = switch (side) {
-            case 0 -> {
-                x = random.nextInt(gameContext.configuration.fieldWidth());
-                yield -20;
-            }
-            case 1 -> {
-                x = gameContext.configuration.fieldWidth() + 20;
-                yield random.nextInt(gameContext.configuration.fieldHeight());
-            }
-            case 2 -> {
-                x = random.nextInt(gameContext.configuration.fieldWidth());
-                yield gameContext.configuration.fieldHeight() + 20;
-            }
-            default -> {
-                x = -20;
-                yield random.nextInt(gameContext.configuration.fieldHeight());
-            }
-        };
-
-        int health = (int) (50 * gameContext.configuration.difficultyMultiplier());
-
-        Enemy enemy = new Enemy(
-                gameContext.nextEnemyId++,
-                new Position(x, y),
-                health,
-                health,
-                2.0,
-                10,
-                20
-        );
-
-        gameContext.enemies.add(enemy);
-    }
-
-    private void updateEnemies() {
-        List<Enemy> updatedEnemies = new ArrayList<>();
-        Position playerPos = gameContext.player.position();
-
-        for (Enemy enemy : gameContext.enemies) {
-            Position enemyPos = enemy.position();
-            int dx = playerPos.x() - enemyPos.x();
-            int dy = playerPos.y() - enemyPos.y();
-            double distance = Math.sqrt(dx * dx + dy * dy);
-
-            if (distance > 0) {
-                int newX = enemyPos.x() + (int) ((dx / distance) * enemy.movementSpeed());
-                int newY = enemyPos.y() + (int) ((dy / distance) * enemy.movementSpeed());
-
-                Enemy movedEnemy = new Enemy(
-                        enemy.id(),
-                        new Position(newX, newY),
-                        enemy.currentHealth(),
-                        enemy.maxHealth(),
-                        enemy.movementSpeed(),
-                        enemy.contactDamage(),
-                        enemy.experienceValue()
-                );
-
-                // Check collision with player (smaller radius for actual damage)
-                if (distance < 25) {
-                    long now = System.currentTimeMillis();
-                    if (now - gameContext.lastPlayerHitTime >= PLAYER_HIT_COOLDOWN_MS) {
-                        damagePlayer(enemy.contactDamage());
-                        gameContext.lastPlayerHitTime = now;
-                    }
-                }
-
-                updatedEnemies.add(movedEnemy);
-            }
-        }
-
-        gameContext.enemies = updatedEnemies;
-        events.notifyEnemiesUpdated();
-    }
-
-    private void damagePlayer(int damage) {
+    void damagePlayer(int damage) {
         int actualDamage = (int) (damage * (1 - gameContext.player.damageResistance()));
         int newHealth = Math.max(0, gameContext.player.currentHealth() - actualDamage);
 
@@ -760,11 +652,5 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
         gameContext.gameState = GameState.ABORTED;
         events.notifyGameEnded(victory);
         events.notifyGameStateChanged(GameState.ABORTED);
-    }
-
-    private double getDistance(Position p1, Position p2) {
-        int dx = p1.x() - p2.x();
-        int dy = p1.y() - p2.y();
-        return Math.sqrt(dx * dx + dy * dy);
     }
 }

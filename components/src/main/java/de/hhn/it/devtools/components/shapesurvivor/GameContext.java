@@ -1,6 +1,7 @@
 package de.hhn.it.devtools.components.shapesurvivor;
 
 import de.hhn.it.devtools.apis.shapesurvivor.*;
+import de.hhn.it.devtools.components.shapesurvivor.helper.EnemyState;
 
 import java.util.*;
 
@@ -9,7 +10,7 @@ public class GameContext {
     GameState gameState = GameState.PREPARED;
     GameConfiguration configuration;
     Player player;
-    List<Enemy> enemies = new ArrayList<>();
+    final List<EnemyState> enemies = new ArrayList<>();
     long gameStartTime;
     boolean levelUpPending;
     int currentWave;
@@ -42,7 +43,11 @@ public class GameContext {
     public Player getPlayer() {
         return player;
     }
-    public List<Enemy> getEnemies(){
-        return enemies;
+    public List<Enemy> getEnemiesSnapshot() {
+        List<Enemy> snapshot = new ArrayList<>(enemies.size());
+        for (EnemyState e : enemies) {
+            snapshot.add(e.toEnemy());
+        }
+        return snapshot;
     }
 }
