@@ -19,7 +19,7 @@ public class EventDispatcher {
 
     public void notifyPlayerUpdated() {
         for (ShapeSurvivorListener listener : listeners) {
-            listener.updatePlayer(gameContext.getPlayer());
+            listener.updatePlayer(gameContext.getPlayer().toPlayer());
         }
     }
 
@@ -91,7 +91,7 @@ public class EventDispatcher {
 
     public void notifyExperienceUpdated() {
         for (ShapeSurvivorListener listener : listeners) {
-            listener.updateExperience(gameContext.getPlayer().experience(), gameContext.getPlayer().experienceToNextLevel());
+            listener.updateExperience(gameContext.getPlayer().getExperience(), gameContext.getPlayer().getExperienceToNextLevel());
         }
     }
 

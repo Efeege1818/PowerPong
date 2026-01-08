@@ -33,13 +33,13 @@ class WeaponSystem {
     }
 
     private void updateAnimations(long currentTime) {
-        if (currentTime - gameContext.lastWeaponUpdateTime < WEAPON_UPDATE_INTERVAL_MS) {
+        if (currentTime - gameContext.getLastWeaponUpdateTime() < WEAPON_UPDATE_INTERVAL_MS) {
             return;
         }
-        gameContext.lastWeaponUpdateTime = currentTime;
+        gameContext.setLastWeaponUpdateTime(currentTime);
 
-        for (Weapon weapon : gameContext.player.equippedWeapons()) {
-            WeaponAnimationState state = gameContext.weaponStates.get(weapon.type());
+        for (Weapon weapon : gameContext.getPlayer().getWeapons()) {
+            WeaponAnimationState state = gameContext.getWeaponStates().get(weapon.type());
             if (state != null) {
                 state.update(weapon);
             }
@@ -49,10 +49,10 @@ class WeaponSystem {
     // ---- Combat ----
     private void updateAttacks(long currentTime) {
 
-        for (Weapon weapon : gameContext.player.equippedWeapons()) {
+        for (Weapon weapon : gameContext.getPlayer().getWeapons()) {
             if (!weapon.isActive()) continue;
 
-            WeaponAnimationState state = gameContext.weaponStates.get(weapon.type());
+            WeaponAnimationState state = gameContext.getWeaponStates().get(weapon.type());
             if (state == null) continue;
 
             if (weapon.type() == WeaponType.AURA && !state.canDealAuraDamage()) {
@@ -82,9 +82,9 @@ class WeaponSystem {
 
         List<EnemyState> toRemove = new ArrayList<>();
 
-        for (EnemyState enemy : gameContext.enemies) {
+        for (EnemyState enemy : gameContext.getEnemies()) {
 
-            Long lastHit = gameContext.lastEnemyHitTime.get(enemy.id);
+            Long lastHit = gameContext.getLastEnemyHitTime().get(enemy.getId());
             if (lastHit != null && currentTime - lastHit < ENEMY_HIT_COOLDOWN_MS) {
                 continue;
             }
@@ -97,24 +97,24 @@ class WeaponSystem {
 
             if (!hit) continue;
 
-            gameContext.lastEnemyHitTime.put(enemy.id, currentTime);
+            gameContext.getLastEnemyHitTime().put(enemy.getId(), currentTime);
 
-            int damage = weapon.damage() + gameContext.player.baseDamage();
+            int damage = weapon.damage() + gameContext.getPlayer().getBaseDamage();
 
             // --- Update EnemyState in place ---
-            enemy.currentHealth -= damage;
+            enemy.setCurrentHealth(enemy.getCurrentHealth() - damage);
 
             events.notifyEnemyDamaged(enemy.toEnemy(), damage);
 
-            if (enemy.currentHealth <= 0) {
+            if (enemy.getCurrentHealth() <= 0) {
                 toRemove.add(enemy);
-                gameContext.lastEnemyHitTime.remove(enemy.id);
-                service.gainExperience(enemy.experience);
-                events.notifyEnemyKilled(enemy.toEnemy(), enemy.experience);
+                gameContext.getLastEnemyHitTime().remove(enemy.getId());
+                service.gainExperience(enemy.getExperience());
+                events.notifyEnemyKilled(enemy.toEnemy(), enemy.getExperience());
             }
         }
 
-        gameContext.enemies.removeAll(toRemove);
+        gameContext.getEnemies().removeAll(toRemove);
     }
 
     private boolean checkSwordHit(Enemy enemy,
@@ -122,7 +122,7 @@ class WeaponSystem {
                                   WeaponAnimationState state) {
 
         double angle = state.getAngle();
-        Position p = gameContext.player.position();
+        Position p = gameContext.getPlayer().getPosition();
 
         double baseX = p.x() + Math.cos(angle) * (weapon.range() - SWORD_GRIP_OFFSET);
         double baseY = p.y() + Math.sin(angle) * (weapon.range() - SWORD_GRIP_OFFSET);
@@ -140,7 +140,7 @@ class WeaponSystem {
     }
 
     private boolean checkAuraHit(Enemy enemy, Weapon weapon) {
-        return getDistance(gameContext.player.position(), enemy.position()) < weapon.range();
+        return getDistance(gameContext.getPlayer().getPosition(), enemy.position()) < weapon.range();
     }
 
     private boolean checkWhipHit(Enemy enemy,
@@ -150,7 +150,7 @@ class WeaponSystem {
         if (state.isNotAttacking()) return false;
 
         Position e = enemy.position();
-        Position p = gameContext.player.position();
+        Position p = gameContext.getPlayer().getPosition();
 
         int dx = e.x() - p.x();
         int dy = e.y() - p.y();

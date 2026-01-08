@@ -29,17 +29,17 @@ class EnemySystem {
     }
 
     private void spawnIfNeeded(long now) {
-        if (now - ctx.lastWaveSpawnTime < 10_000) return;
+        if (now - ctx.getLastWaveSpawnTime() < 10_000) return;
 
-        ctx.currentWave++;
-        int count = (int) (5 * ctx.currentWave * ctx.configuration.enemySpawnRate());
+        ctx.setCurrentWave(ctx.getCurrentWave() + 1);
+        int count = (int) (5 * ctx.getCurrentWave() * ctx.getConfiguration().enemySpawnRate());
 
         for (int i = 0; i < count; i++) {
             spawnEnemy();
         }
 
-        ctx.lastWaveSpawnTime = now;
-        events.notifyEnemyWaveSpawned(ctx.currentWave, count);
+        ctx.setLastWaveSpawnTime(now);
+        events.notifyEnemyWaveSpawned(ctx.getCurrentWave(), count);
     }
 
     private void spawnEnemy() {
@@ -48,16 +48,16 @@ class EnemySystem {
 
         int x, y;
         y = switch (side) {
-            case 0 -> { x = r.nextInt(ctx.configuration.fieldWidth()); yield -20; }
-            case 1 -> { x = ctx.configuration.fieldWidth() + 20; yield r.nextInt(ctx.configuration.fieldHeight()); }
-            case 2 -> { x = r.nextInt(ctx.configuration.fieldWidth()); yield ctx.configuration.fieldHeight() + 20; }
-            default -> { x = -20; yield r.nextInt(ctx.configuration.fieldHeight()); }
+            case 0 -> { x = r.nextInt(ctx.getConfiguration().fieldWidth()); yield -20; }
+            case 1 -> { x = ctx.getConfiguration().fieldWidth() + 20; yield r.nextInt(ctx.getConfiguration().fieldHeight()); }
+            case 2 -> { x = r.nextInt(ctx.getConfiguration().fieldWidth()); yield ctx.getConfiguration().fieldHeight() + 20; }
+            default -> { x = -20; yield r.nextInt(ctx.getConfiguration().fieldHeight()); }
         };
 
-        int hp = (int) (50 * ctx.configuration.difficultyMultiplier());
+        int hp = (int) (50 * ctx.getConfiguration().difficultyMultiplier());
 
         Enemy enemy = new Enemy(
-                ctx.nextEnemyId++,
+                ctx.getNextEnemyId(),
                 new Position(x, y),
                 hp, hp,
                 2.0,
@@ -65,30 +65,31 @@ class EnemySystem {
                 20
         );
 
-        ctx.enemies.add(new EnemyState(enemy));
+        ctx.getEnemies().add(new EnemyState(enemy));
+        ctx.incrementNextEnemyId();
     }
 
     private void updateMovementAndCollisions(long now) {
-        Position player = ctx.player.position();
+        Position player = ctx.getPlayer().getPosition();
 
-        for (Iterator<EnemyState> it = ctx.enemies.iterator(); it.hasNext();) {
+        for (Iterator<EnemyState> it = ctx.getEnemies().iterator(); it.hasNext();) {
             EnemyState e = it.next();
 
-            int dx = player.x() - e.x;
-            int dy = player.y() - e.y;
+            int dx = player.x() - e.getX();
+            int dy = player.y() - e.getY();
             double dist = Math.sqrt(dx * dx + dy * dy);
 
             if (dist > 0) {
-                e.x += (int) ((dx / dist) * e.speed);
-                e.y += (int) ((dy / dist) * e.speed);
+                e.setX(e.getX() + (int) ((dx / dist) * e.getSpeed()));
+                e.setY(e.getY() + (int) ((dy / dist) * e.getSpeed()));
             }
 
-            if (dist < 25 && now - ctx.lastPlayerHitTime >= PLAYER_HIT_COOLDOWN_MS) {
-                service.damagePlayer(e.contactDamage);
-                ctx.lastPlayerHitTime = now;
+            if (dist < 25 && now - ctx.getLastPlayerHitTime() >= PLAYER_HIT_COOLDOWN_MS) {
+                service.damagePlayer(e.getContactDamage());
+                ctx.setLastPlayerHitTime(now);
             }
 
-            if (e.currentHealth <= 0) {
+            if (e.getCurrentHealth() <= 0) {
                 it.remove();
             }
         }
