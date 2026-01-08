@@ -151,7 +151,7 @@ public class SimpleGameLoopService implements GameLoopService {
         long periodNs = 1_000_000_000L / updatesPerSecond;
 
         scheduledTask = executor.scheduleAtFixedRate(() -> {
-            if (!paused) {
+            if (!paused && running) {
                 try {
                     updateCallback.run();
                 } catch (Exception e) {

@@ -32,7 +32,6 @@ public class PlayerState {
         );
     }
 
-    // Getters
     public Position getPosition() {
         return position;
     }
@@ -77,7 +76,6 @@ public class PlayerState {
         return weapons;
     }
 
-    // Setters
     public void setPosition(Position position) {
         this.position = position;
     }

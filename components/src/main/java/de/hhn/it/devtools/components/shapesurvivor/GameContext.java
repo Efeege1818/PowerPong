@@ -95,7 +95,6 @@ public class GameContext {
         return statistics;
     }
 
-    // Setters
     public void setGameState(GameState gameState) {
         this.gameState = gameState;
     }
