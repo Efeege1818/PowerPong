@@ -12,7 +12,7 @@ public class BattleScreen extends AnchorPane {
   public BattleScreen(SimpleScreenManager screenManager) {
     this.screenManager = screenManager;
 
-    FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/BattleScreen.fxml"));
+    FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/SelectScreen.fxml"));
     loader.setRoot(this);
     loader.setController(this);
 
