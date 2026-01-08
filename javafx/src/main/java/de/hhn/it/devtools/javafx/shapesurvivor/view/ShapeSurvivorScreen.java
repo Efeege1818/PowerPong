@@ -6,6 +6,7 @@ import de.hhn.it.devtools.components.shapesurvivor.SimpleShapeSurvivorService;
 import de.hhn.it.devtools.javafx.shapesurvivor.helper.PopupProvider;
 import de.hhn.it.devtools.javafx.shapesurvivor.viewmodel.ShapeSurvivorViewModel;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.event.Event;
 import javafx.fxml.*;
 import javafx.scene.Parent;
@@ -34,6 +35,9 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
     private Label scoreLabel;
     @FXML
     private Label levelLabel;
+    @FXML
+    private Label timeLabel;
+
 
     private final Parent root;
     private final Stage mainStage;
@@ -114,6 +118,16 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
                 Platform.runLater(this::showUpgradePopup);
             }
         });
+
+        timeLabel.textProperty().bind(
+                Bindings.createStringBinding(() -> {
+                    int totalSeconds = viewModel.remainingTimeProperty().get();
+                    int minutes = totalSeconds / 60;
+                    int seconds = totalSeconds % 60;
+                    return String.format("%02d:%02d", minutes, seconds);
+                }, viewModel.remainingTimeProperty())
+        );
+
     }
 
     private void handleKeyPress(KeyEvent e) {

@@ -16,7 +16,6 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
     private final List<ShapeSurvivorListener> listeners;
     private GameLoopService gameLoop;
     private final List<UpgradeOption> availableUpgrades;
-    private static final long PLAYER_HIT_COOLDOWN_MS = 600;
 
     private final GameContext gameContext;
     private final EventDispatcher events;

@@ -25,6 +25,7 @@ public class ShapeSurvivorViewModel implements ShapeSurvivorListener {
     private final BooleanProperty gameOverProperty;
     private final BooleanProperty levelUpAvailableProperty;
     private final ObjectProperty<UpgradeOption[]> availableUpgradesProperty;
+    private final IntegerProperty remainingTimeProperty = new SimpleIntegerProperty(0);
     private static final org.slf4j.Logger logger =
             org.slf4j.LoggerFactory.getLogger(ShapeSurvivorViewModel.class);
 
@@ -91,6 +92,10 @@ public class ShapeSurvivorViewModel implements ShapeSurvivorListener {
         return availableUpgradesProperty;
     }
 
+    public IntegerProperty remainingTimeProperty() {
+        return remainingTimeProperty;
+    }
+
     @Override
     public void updatePlayer(Player player) {
         Platform.runLater(() -> {
@@ -152,7 +157,7 @@ public class ShapeSurvivorViewModel implements ShapeSurvivorListener {
 
     @Override
     public void updateRemainingTime(int remainingTime) {
-        // Optional: bind to time property
+        Platform.runLater(() -> remainingTimeProperty.set(remainingTime));
     }
 
     @Override
