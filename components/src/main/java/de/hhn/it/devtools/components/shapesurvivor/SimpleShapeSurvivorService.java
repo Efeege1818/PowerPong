@@ -16,15 +16,11 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
     private final List<ShapeSurvivorListener> listeners;
     private GameLoopService gameLoop;
     private final List<UpgradeOption> availableUpgrades;
-    private static final long WEAPON_UPDATE_INTERVAL_MS = 16; // ~60 FPS
     private static final long PLAYER_HIT_COOLDOWN_MS = 600;
-    private static final long ENEMY_HIT_COOLDOWN_MS = 500;
-    private static final double SWORD_GRIP_OFFSET = 50;
-    private static final double SWORD_BLADE_LENGTH = 90;
-    private static final double SWORD_HIT_RADIUS = 20;
 
     private final GameContext gameContext;
     private final EventDispatcher events;
+    private final WeaponSystem weaponSystem;
 
     public SimpleShapeSurvivorService() {
         GameConfiguration configuration = new GameConfiguration(
@@ -46,6 +42,7 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
         gameContext.nextEnemyId = 0;
         gameContext.currentWave = 0;
         this.events = new EventDispatcher(listeners, gameContext, this);
+        this.weaponSystem = new WeaponSystem(gameContext, events, this);
         initializePlayer();
         initializeStatistics();
         initializeGameLoop();
@@ -472,8 +469,7 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
 
         spawnEnemies();
         updateEnemies();
-        updateWeaponAnimations();
-        updateWeapons();
+        weaponSystem.update(System.currentTimeMillis());
 
         if (gameContext.player.currentHealth() <= 0) {
             endGame(false);
@@ -590,170 +586,6 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
         events.notifyEnemiesUpdated();
     }
 
-    private void updateWeaponAnimations() {
-        long currentTime = System.currentTimeMillis();
-        if (currentTime - gameContext.lastWeaponUpdateTime < WEAPON_UPDATE_INTERVAL_MS) {
-            return;
-        }
-        gameContext.lastWeaponUpdateTime = currentTime;
-
-        for (Weapon weapon : gameContext.player.equippedWeapons()) {
-            WeaponAnimationState state = gameContext.weaponStates.get(weapon.type());
-            if (state != null) {
-                state.update(weapon);
-            }
-        }
-    }
-
-    private void updateWeapons() {
-        long currentTime = System.currentTimeMillis();
-        for (Weapon weapon : gameContext.player.equippedWeapons()) {
-            if (!weapon.isActive()) continue;
-
-            WeaponAnimationState state = gameContext.weaponStates.get(weapon.type());
-            if (state == null) continue;
-
-            if (weapon.type() == WeaponType.AURA) {
-                if (!state.canDealAuraDamage()) {
-                    continue;
-                }
-            }
-
-            boolean shouldAttack = switch (weapon.type()) {
-                case SWORD, AURA -> true;
-                case WHIP -> {
-                    if (state.canAttack()) {
-                        state.attack();
-                        yield true;
-                    }
-                    yield false;
-                }
-            };
-
-            if (!shouldAttack) continue;
-
-            List<Enemy> toRemove = new ArrayList<>();
-
-            for (Enemy enemy : gameContext.enemies) {
-                Long lastHit = gameContext.lastEnemyHitTime.get(enemy.id());
-                if (lastHit != null && currentTime - lastHit < ENEMY_HIT_COOLDOWN_MS) {
-                    continue;
-                }
-
-                boolean hit = false;
-
-                switch (weapon.type()) {
-                    case SWORD -> hit = checkSwordHit(enemy, weapon, state);
-                    case AURA -> hit = checkAuraHit(enemy, weapon);
-                    case WHIP -> hit = checkWhipHit(enemy, weapon, state);
-                }
-
-                if (hit) {
-                    gameContext.lastEnemyHitTime.put(enemy.id(), currentTime);
-                    int damage = weapon.damage() + gameContext.player.baseDamage();
-                    Enemy damagedEnemy = new Enemy(
-                            enemy.id(),
-                            enemy.position(),
-                            enemy.currentHealth() - damage,
-                            enemy.maxHealth(),
-                            enemy.movementSpeed(),
-                            enemy.contactDamage(),
-                            enemy.experienceValue()
-                    );
-
-                    events.notifyEnemyDamaged(enemy, damage);
-
-                    if (damagedEnemy.currentHealth() <= 0) {
-                        toRemove.add(enemy);
-                        gameContext.lastEnemyHitTime.remove(enemy.id());
-                        gainExperience(enemy.experienceValue());
-                        events.notifyEnemyKilled(enemy, enemy.experienceValue());
-
-                        gameContext.statistics = new GameStatistics(
-                                gameContext.statistics.enemiesKilled() + 1,
-                                gameContext.statistics.damageDealt() + damage,
-                                gameContext.statistics.damageTaken(),
-                                gameContext.statistics.wavesCompleted(),
-                                Math.max(gameContext.statistics.highestLevel(), gameContext.player.level()),
-                                gameContext.statistics.totalExperienceGained(),
-                                getElapsedTime()
-                        );
-                    } else {
-                        gameContext.enemies.set(gameContext.enemies.indexOf(enemy), damagedEnemy);
-                    }
-                }
-            }
-            gameContext.enemies.removeAll(toRemove);
-        }
-    }
-
-    private boolean checkSwordHit(Enemy enemy, Weapon weapon, WeaponAnimationState state) {
-        double angle = state.getAngle();
-
-        Position playerPos = gameContext.player.position();
-
-        double baseX = playerPos.x()
-                + Math.cos(angle) * (weapon.range() - SWORD_GRIP_OFFSET);
-        double baseY = playerPos.y()
-                + Math.sin(angle) * (weapon.range() - SWORD_GRIP_OFFSET);
-
-        double tipX = baseX + Math.cos(angle) * SWORD_BLADE_LENGTH;
-        double tipY = baseY + Math.sin(angle) * SWORD_BLADE_LENGTH;
-
-        double distance = distancePointToSegment(
-                enemy.position().x(), enemy.position().y(),
-                baseX, baseY,
-                tipX, tipY
-        );
-
-        return distance <= SWORD_HIT_RADIUS;
-    }
-
-    private double distancePointToSegment(
-            double px, double py,
-            double x1, double y1,
-            double x2, double y2
-    ) {
-        double dx = x2 - x1;
-        double dy = y2 - y1;
-
-        if (dx == 0 && dy == 0) {
-            return Math.hypot(px - x1, py - y1);
-        }
-
-        double t = ((px - x1) * dx + (py - y1) * dy) / (dx * dx + dy * dy);
-        t = Math.max(0, Math.min(1, t));
-
-        double cx = x1 + t * dx;
-        double cy = y1 + t * dy;
-
-        return Math.hypot(px - cx, py - cy);
-    }
-
-    private boolean checkAuraHit(Enemy enemy, Weapon weapon) {
-        double distance = getDistance(gameContext.player.position(), enemy.position());
-        return distance < weapon.range();
-    }
-
-    private boolean checkWhipHit(Enemy enemy, Weapon weapon, WeaponAnimationState state) {
-        if (state.isNotAttacking()) return false;
-
-        Position enemyPos = enemy.position();
-        Position playerPos = gameContext.player.position();
-
-        int dx = enemyPos.x() - playerPos.x();
-        int dy = enemyPos.y() - playerPos.y();
-
-        double whipWidth = 80;
-        double whipLength = weapon.range();
-
-        if (state.isAttackingLeft()) {
-            return dx < 0 && dx > -whipLength && Math.abs(dy) < whipWidth;
-        } else {
-            return dx > 0 && dx < whipLength && Math.abs(dy) < whipWidth;
-        }
-    }
-
     private void damagePlayer(int damage) {
         int actualDamage = (int) (damage * (1 - gameContext.player.damageResistance()));
         int newHealth = Math.max(0, gameContext.player.currentHealth() - actualDamage);
@@ -786,7 +618,7 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
         events.notifyPlayerUpdated();
     }
 
-    private void gainExperience(int exp) {
+    void gainExperience(int exp) {
         int newExp = gameContext.player.experience() + exp;
         int expToNext = gameContext.player.experienceToNextLevel();
 

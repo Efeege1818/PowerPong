@@ -1,0 +1,199 @@
+package de.hhn.it.devtools.components.shapesurvivor;
+
+import de.hhn.it.devtools.apis.shapesurvivor.*;
+import de.hhn.it.devtools.components.shapesurvivor.helper.EventDispatcher;
+
+import java.util.*;
+
+class WeaponSystem {
+
+    private static final long WEAPON_UPDATE_INTERVAL_MS = 16;
+    private static final long ENEMY_HIT_COOLDOWN_MS = 500;
+
+    private static final double SWORD_GRIP_OFFSET = 50;
+    private static final double SWORD_BLADE_LENGTH = 90;
+    private static final double SWORD_HIT_RADIUS = 20;
+
+    private final GameContext gameContext;
+    private final EventDispatcher events;
+    private final SimpleShapeSurvivorService service;
+
+    WeaponSystem(GameContext gameContext,
+                 EventDispatcher events,
+                 SimpleShapeSurvivorService service) {
+        this.gameContext = gameContext;
+        this.events = events;
+        this.service = service;
+    }
+
+    void update(long currentTime) {
+        updateAnimations(currentTime);
+        updateAttacks(currentTime);
+    }
+
+    private void updateAnimations(long currentTime) {
+        if (currentTime - gameContext.lastWeaponUpdateTime < WEAPON_UPDATE_INTERVAL_MS) {
+            return;
+        }
+        gameContext.lastWeaponUpdateTime = currentTime;
+
+        for (Weapon weapon : gameContext.player.equippedWeapons()) {
+            WeaponAnimationState state = gameContext.weaponStates.get(weapon.type());
+            if (state != null) {
+                state.update(weapon);
+            }
+        }
+    }
+
+    // ---- Combat ----
+    private void updateAttacks(long currentTime) {
+
+        for (Weapon weapon : gameContext.player.equippedWeapons()) {
+            if (!weapon.isActive()) continue;
+
+            WeaponAnimationState state = gameContext.weaponStates.get(weapon.type());
+            if (state == null) continue;
+
+            if (weapon.type() == WeaponType.AURA && !state.canDealAuraDamage()) {
+                continue;
+            }
+
+            boolean shouldAttack = switch (weapon.type()) {
+                case SWORD, AURA -> true;
+                case WHIP -> {
+                    if (state.canAttack()) {
+                        state.attack();
+                        yield true;
+                    }
+                    yield false;
+                }
+            };
+
+            if (!shouldAttack) continue;
+
+            handleHits(weapon, state, currentTime);
+        }
+    }
+
+    private void handleHits(Weapon weapon,
+                            WeaponAnimationState state,
+                            long currentTime) {
+
+        List<Enemy> toRemove = new ArrayList<>();
+
+        for (Enemy enemy : gameContext.enemies) {
+
+            Long lastHit = gameContext.lastEnemyHitTime.get(enemy.id());
+            if (lastHit != null && currentTime - lastHit < ENEMY_HIT_COOLDOWN_MS) {
+                continue;
+            }
+
+            boolean hit = switch (weapon.type()) {
+                case SWORD -> checkSwordHit(enemy, weapon, state);
+                case AURA -> checkAuraHit(enemy, weapon);
+                case WHIP -> checkWhipHit(enemy, weapon, state);
+            };
+
+            if (!hit) continue;
+
+            gameContext.lastEnemyHitTime.put(enemy.id(), currentTime);
+
+            int damage = weapon.damage() + gameContext.player.baseDamage();
+            Enemy damaged = new Enemy(
+                    enemy.id(),
+                    enemy.position(),
+                    enemy.currentHealth() - damage,
+                    enemy.maxHealth(),
+                    enemy.movementSpeed(),
+                    enemy.contactDamage(),
+                    enemy.experienceValue()
+            );
+
+            events.notifyEnemyDamaged(enemy, damage);
+
+            if (damaged.currentHealth() <= 0) {
+                toRemove.add(enemy);
+                gameContext.lastEnemyHitTime.remove(enemy.id());
+                service.gainExperience(enemy.experienceValue());
+                events.notifyEnemyKilled(enemy, enemy.experienceValue());
+            } else {
+                gameContext.enemies.set(gameContext.enemies.indexOf(enemy), damaged);
+            }
+        }
+
+        gameContext.enemies.removeAll(toRemove);
+    }
+
+    private boolean checkSwordHit(Enemy enemy,
+                                  Weapon weapon,
+                                  WeaponAnimationState state) {
+
+        double angle = state.getAngle();
+        Position p = gameContext.player.position();
+
+        double baseX = p.x() + Math.cos(angle) * (weapon.range() - SWORD_GRIP_OFFSET);
+        double baseY = p.y() + Math.sin(angle) * (weapon.range() - SWORD_GRIP_OFFSET);
+
+        double tipX = baseX + Math.cos(angle) * SWORD_BLADE_LENGTH;
+        double tipY = baseY + Math.sin(angle) * SWORD_BLADE_LENGTH;
+
+        double distance = distancePointToSegment(
+                enemy.position().x(), enemy.position().y(),
+                baseX, baseY,
+                tipX, tipY
+        );
+
+        return distance <= SWORD_HIT_RADIUS;
+    }
+
+    private boolean checkAuraHit(Enemy enemy, Weapon weapon) {
+        return getDistance(gameContext.player.position(), enemy.position()) < weapon.range();
+    }
+
+    private boolean checkWhipHit(Enemy enemy,
+                                 Weapon weapon,
+                                 WeaponAnimationState state) {
+
+        if (state.isNotAttacking()) return false;
+
+        Position e = enemy.position();
+        Position p = gameContext.player.position();
+
+        int dx = e.x() - p.x();
+        int dy = e.y() - p.y();
+
+        double whipWidth = 80;
+        double whipLength = weapon.range();
+
+        return state.isAttackingLeft()
+                ? dx < 0 && dx > -whipLength && Math.abs(dy) < whipWidth
+                : dx > 0 && dx < whipLength && Math.abs(dy) < whipWidth;
+    }
+
+    private double distancePointToSegment(
+            double px, double py,
+            double x1, double y1,
+            double x2, double y2) {
+
+        double dx = x2 - x1;
+        double dy = y2 - y1;
+
+        if (dx == 0 && dy == 0) {
+            return Math.hypot(px - x1, py - y1);
+        }
+
+        double t = ((px - x1) * dx + (py - y1) * dy) / (dx * dx + dy * dy);
+        t = Math.max(0, Math.min(1, t));
+
+        double cx = x1 + t * dx;
+        double cy = y1 + t * dy;
+
+        return Math.hypot(px - cx, py - cy);
+    }
+
+    private double getDistance(Position a, Position b) {
+        int dx = a.x() - b.x();
+        int dy = a.y() - b.y();
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+}
