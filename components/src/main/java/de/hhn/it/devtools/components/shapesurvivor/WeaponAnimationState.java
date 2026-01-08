@@ -46,8 +46,8 @@ public class WeaponAnimationState {
         return angle;
     }
 
-    public boolean isAttacking() {
-        return attacking;
+    public boolean isNotAttacking() {
+        return !attacking;
     }
 
     public long getAttackProgress() {

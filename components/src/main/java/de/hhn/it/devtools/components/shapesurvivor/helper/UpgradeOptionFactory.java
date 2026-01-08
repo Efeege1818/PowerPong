@@ -1,4 +1,4 @@
-package de.hhn.it.devtools.components.shapesurvivor;
+package de.hhn.it.devtools.components.shapesurvivor.helper;
 
 import de.hhn.it.devtools.apis.shapesurvivor.PlayerAttribute;
 import de.hhn.it.devtools.apis.shapesurvivor.UpgradeOption;

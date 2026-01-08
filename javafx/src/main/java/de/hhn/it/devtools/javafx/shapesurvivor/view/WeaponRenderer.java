@@ -119,7 +119,7 @@ public class WeaponRenderer {
     }
 
     private void renderWhip(GraphicsContext gc, Player player, Weapon weapon, WeaponAnimationState state) {
-        if (!state.isAttacking()) return;
+        if (state.isNotAttacking()) return;
 
         double progress = Math.min(1.0, state.getAttackProgress() / 300.0);
         boolean isLeft = state.isAttackingLeft();

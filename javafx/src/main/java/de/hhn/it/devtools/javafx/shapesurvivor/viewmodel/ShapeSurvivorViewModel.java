@@ -2,7 +2,7 @@ package de.hhn.it.devtools.javafx.shapesurvivor.viewmodel;
 
 import de.hhn.it.devtools.apis.shapesurvivor.*;
 import de.hhn.it.devtools.apis.exceptions.IllegalParameterException;
-import de.hhn.it.devtools.components.shapesurvivor.GameConfigurationBuilder;
+import de.hhn.it.devtools.components.shapesurvivor.helper.GameConfigurationBuilder;
 import de.hhn.it.devtools.components.shapesurvivor.SimpleShapeSurvivorService;
 import de.hhn.it.devtools.components.shapesurvivor.WeaponAnimationState;
 import javafx.application.Platform;

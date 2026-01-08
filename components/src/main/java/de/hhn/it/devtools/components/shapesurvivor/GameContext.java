@@ -1,0 +1,38 @@
+package de.hhn.it.devtools.components.shapesurvivor;
+
+import de.hhn.it.devtools.apis.shapesurvivor.*;
+
+import java.util.*;
+
+class GameContext {
+
+    GameState gameState = GameState.PREPARED;
+    GameConfiguration configuration;
+    Player player;
+    List<Enemy> enemies = new ArrayList<>();
+    long gameStartTime;
+    boolean levelUpPending;
+    int currentWave;
+    int nextEnemyId;
+    long lastWaveSpawnTime;
+    final Map<WeaponType, WeaponAnimationState> weaponStates = new HashMap<>();
+    final Map<Integer, Long> lastEnemyHitTime = new HashMap<>();
+    long lastWeaponUpdateTime;
+    long lastPlayerHitTime = 0;
+    GameStatistics statistics;
+
+    GameContext(GameConfiguration initialConfig) {
+        this.configuration = initialConfig;
+    }
+
+    void reset() {
+        this.gameState = GameState.PREPARED;
+        enemies.clear();
+        weaponStates.clear();
+        lastEnemyHitTime.clear();
+        currentWave = 0;
+        nextEnemyId = 0;
+        levelUpPending = false;
+        lastPlayerHitTime = 0;
+    }
+}
