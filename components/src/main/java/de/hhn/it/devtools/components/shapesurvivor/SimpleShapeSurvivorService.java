@@ -38,6 +38,10 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
     private final Map<Integer, Long> lastEnemyHitTime;
     private static final long ENEMY_HIT_COOLDOWN_MS = 500;
 
+    private static final double SWORD_GRIP_OFFSET = 50;
+    private static final double SWORD_BLADE_LENGTH = 90;
+    private static final double SWORD_HIT_RADIUS = 20;
+
     public SimpleShapeSurvivorService() {
         this.gameState = GameState.PREPARED;
         this.enemies = new ArrayList<>();
@@ -714,11 +718,45 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
 
     private boolean checkSwordHit(Enemy enemy, Weapon weapon, WeaponAnimationState state) {
         double angle = state.getAngle();
-        int swordX = player.position().x() + (int) (Math.cos(angle) * weapon.range());
-        int swordY = player.position().y() + (int) (Math.sin(angle) * weapon.range());
 
-        double distance = getDistance(new Position(swordX, swordY), enemy.position());
-        return distance < 40;
+        Position playerPos = player.position();
+
+        double baseX = playerPos.x()
+                + Math.cos(angle) * (weapon.range() - SWORD_GRIP_OFFSET);
+        double baseY = playerPos.y()
+                + Math.sin(angle) * (weapon.range() - SWORD_GRIP_OFFSET);
+
+        double tipX = baseX + Math.cos(angle) * SWORD_BLADE_LENGTH;
+        double tipY = baseY + Math.sin(angle) * SWORD_BLADE_LENGTH;
+
+        double distance = distancePointToSegment(
+                enemy.position().x(), enemy.position().y(),
+                baseX, baseY,
+                tipX, tipY
+        );
+
+        return distance <= SWORD_HIT_RADIUS;
+    }
+
+    private double distancePointToSegment(
+            double px, double py,
+            double x1, double y1,
+            double x2, double y2
+    ) {
+        double dx = x2 - x1;
+        double dy = y2 - y1;
+
+        if (dx == 0 && dy == 0) {
+            return Math.hypot(px - x1, py - y1);
+        }
+
+        double t = ((px - x1) * dx + (py - y1) * dy) / (dx * dx + dy * dy);
+        t = Math.max(0, Math.min(1, t));
+
+        double cx = x1 + t * dx;
+        double cy = y1 + t * dy;
+
+        return Math.hypot(px - cx, py - cy);
     }
 
     private boolean checkAuraHit(Enemy enemy, Weapon weapon) {

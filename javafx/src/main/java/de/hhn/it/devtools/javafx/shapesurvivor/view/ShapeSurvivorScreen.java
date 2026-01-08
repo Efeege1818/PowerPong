@@ -3,7 +3,6 @@ package de.hhn.it.devtools.javafx.shapesurvivor.view;
 import de.hhn.it.devtools.apis.shapesurvivor.*;
 import de.hhn.it.devtools.components.shapesurvivor.SimpleGameLoopService;
 import de.hhn.it.devtools.components.shapesurvivor.SimpleShapeSurvivorService;
-import de.hhn.it.devtools.components.shapesurvivor.WeaponAnimationState;
 import de.hhn.it.devtools.javafx.shapesurvivor.helper.PopupProvider;
 import de.hhn.it.devtools.javafx.shapesurvivor.viewmodel.ShapeSurvivorViewModel;
 import javafx.application.Platform;
@@ -18,7 +17,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import de.hhn.it.devtools.apis.shapesurvivor.UpgradeOption;
 import javafx.scene.layout.VBox;
 import javafx.geometry.Pos;
 import javafx.geometry.Insets;
@@ -26,7 +24,6 @@ import javafx.scene.Scene;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
@@ -41,6 +38,7 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
     private final Parent root;
     private final Stage mainStage;
     private final ShapeSurvivorViewModel viewModel;
+    private final WeaponRenderer weaponRenderer;
     private SimpleGameLoopService renderLoop;
     private GraphicsContext gc;
     private Runnable onExitCallback;
@@ -49,6 +47,7 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
         this.mainStage = mainStage;
         ShapeSurvivorService gameService = new SimpleShapeSurvivorService();
         this.viewModel = new ShapeSurvivorViewModel(gameService);
+        this.weaponRenderer = new WeaponRenderer();
         gameService.addListener(viewModel);
 
         try {
@@ -74,7 +73,6 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         gc = canvas.getGraphicsContext2D();
 
-        // Bind UI to ViewModel
         scoreLabel.textProperty().bind(viewModel.getScoreProperty().asString());
         levelLabel.textProperty().bind(viewModel.getLevelProperty().asString());
         renderLoop = new SimpleGameLoopService(this::render);
@@ -152,6 +150,9 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
             WeaponType weapon = weaponBox.getSelectionModel().getSelectedItem();
 
             viewModel.startGame(difficulty, weapon, (int) canvas.getWidth(), (int) canvas.getHeight());
+
+            weaponRenderer.initializeWeapon(weapon);
+
             Platform.runLater(root::requestFocus);
         }, "Start Game");
 
@@ -162,187 +163,78 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
 
     private void render() {
         Platform.runLater(() -> {
-            // Clear canvas
             gc.setFill(Color.rgb(20, 20, 30));
             gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
-            // Draw player
-            Player p = viewModel.getPlayerProperty().get();
-            if (p != null) {
-                gc.setFill(Color.BLUE);
-                gc.fillOval(p.position().x() - 15, p.position().y() - 15, 30, 30);
 
-                // Draw weapons
-                drawWeapons(p);
-                drawHealthBar(p);
+            Player player = viewModel.getPlayerProperty().get();
+            if (player != null) {
+
+                weaponRenderer.setAnimationStates(
+                        viewModel.getWeaponStates()
+                );
+
+                renderPlayer(player);
+
+                weaponRenderer.renderWeapons(gc, player);
+
+                drawHealthBar(player);
             }
 
-            viewModel.getEnemiesMap().values().forEach(enemy -> {
-                double size = 20; // Triangle size
-                int cx = enemy.position().x();
-                int cy = enemy.position().y();
-
-                double angle = 0;
-                if (p != null) {
-                    double dx = p.position().x() - cx;
-                    double dy = p.position().y() - cy;
-                    angle = Math.atan2(dy, dx);
-                }
-
-                double[] xPoints = new double[3];
-                double[] yPoints = new double[3];
-                xPoints[0] = cx + Math.cos(angle) * size;
-                yPoints[0] = cy + Math.sin(angle) * size;
-
-                xPoints[1] = cx + Math.cos(angle + 2.5) * (size * 0.7);
-                yPoints[1] = cy + Math.sin(angle + 2.5) * (size * 0.7);
-
-                xPoints[2] = cx + Math.cos(angle - 2.5) * (size * 0.7);
-                yPoints[2] = cy + Math.sin(angle - 2.5) * (size * 0.7);
-
-                gc.setFill(Color.RED);
-                gc.fillPolygon(xPoints, yPoints, 3);
-
-                gc.setStroke(Color.DARKRED);
-                gc.setLineWidth(2);
-                gc.strokePolygon(xPoints, yPoints, 3);
-                double ratio = (double) enemy.currentHealth() / enemy.maxHealth();
-                gc.setFill(Color.DARKRED);
-                gc.fillRect(cx - 12, cy - 25, 24, 4);
-                gc.setFill(Color.RED);
-                gc.fillRect(cx - 12, cy - 25, 24 * ratio, 4);
-            });
+            viewModel.getEnemiesMap().values().forEach(this::renderEnemy);
         });
     }
 
-    private void drawWeapons(Player player) {
-        Map<WeaponType, WeaponAnimationState> weaponStates = viewModel.getWeaponStates();
-
-        for (Weapon weapon : player.equippedWeapons()) {
-            WeaponAnimationState state = weaponStates.get(weapon.type());
-            if (state == null) continue;
-
-            switch (weapon.type()) {
-                case SWORD -> drawSword(player, weapon, state);
-                case AURA -> drawAura(player, weapon, state);
-                case WHIP -> drawWhip(player, weapon, state);
-            }
-        }
+    private void renderPlayer(Player player) {
+        gc.setFill(Color.BLUE);
+        gc.fillOval(player.position().x() - 15, player.position().y() - 15, 30, 30);
     }
 
-    private void drawSword(Player player, Weapon weapon, WeaponAnimationState state) {
-        double angle = state.getAngle();
+    private void renderEnemy(Enemy enemy) {
+        Player player = viewModel.getPlayerProperty().get();
 
-        int px = player.position().x();
-        int py = player.position().y();
+        double size = 20; // Triangle size
+        int cx = enemy.position().x();
+        int cy = enemy.position().y();
 
-        double gripOffset = 50;
-        double radius = weapon.range() - gripOffset;
-
-        double sx = px + Math.cos(angle) * radius;
-        double sy = py + Math.sin(angle) * radius;
-
-        double bladeLength = 90;
-        double bladeWidth = 6;
-        double handleLength = 10;
-        double handleWidth = 8;
-        double guardWidth = 16;
-        double guardHeight = 4;
-
-        gc.save();
-        gc.translate(sx, sy);
-        gc.rotate(Math.toDegrees(angle) + 90);
-
-        // Blade
-        gc.setFill(Color.SILVER);
-        gc.fillRect(-bladeWidth / 2, -bladeLength, bladeWidth, bladeLength);
-
-        // Blade highlight
-        gc.setStroke(Color.LIGHTGRAY);
-        gc.setLineWidth(1);
-        gc.strokeLine(0, -bladeLength, 0, 0);
-
-        // Crossguard
-        gc.setFill(Color.DARKGRAY);
-        gc.fillRect(-guardWidth / 2, 0, guardWidth, guardHeight);
-
-        // Handle
-        gc.setFill(Color.SADDLEBROWN);
-        gc.fillRect(-handleWidth / 2, guardHeight, handleWidth, handleLength);
-
-        // Pommel
-        gc.setFill(Color.GOLD);
-        gc.fillOval(
-                -handleWidth / 2,
-                guardHeight + handleLength,
-                handleWidth,
-                handleWidth
-        );
-
-        gc.restore();
-    }
-
-
-    private void drawAura(Player player, Weapon weapon, WeaponAnimationState state) {
-        double pulse = Math.sin(state.getAngle() * 3) * 10 + weapon.range();
-
-        gc.setStroke(Color.rgb(100, 200, 255, 0.3));
-        gc.setLineWidth(3);
-        gc.strokeOval(
-                player.position().x() - pulse,
-                player.position().y() - pulse,
-                pulse * 2,
-                pulse * 2
-        );
-    }
-
-    private void drawWhip(Player player, Weapon weapon, WeaponAnimationState state) {
-        if (!state.isAttacking()) return;
-
-        double progress = Math.min(1.0, state.getAttackProgress() / 300.0);
-        boolean isLeft = state.isAttackingLeft();
-
-        int whipLength = (int) (weapon.range() * progress);
-        int whipWidth = 80;
-
-        int startX = player.position().x();
-        int startY = player.position().y();
-        int endX = startX + (isLeft ? -whipLength : whipLength);
-
-        gc.setStroke(Color.ORANGE);
-        gc.setLineWidth(6);
-
-        for (int i = 0; i < 5; i++) {
-            double t = i / 4.0;
-            double curve = Math.sin(t * Math.PI) * 20 * progress;
-
-            int x1 = (int) (startX + (endX - startX) * t);
-            int y1 = (int) (startY + curve);
-
-            int x2 = (int) (startX + (endX - startX) * (t + 0.25));
-            int y2 = (int) (startY + Math.sin((t + 0.25) * Math.PI) * 20 * progress);
-
-            gc.strokeLine(x1, y1, x2, y2);
+        double angle = 0;
+        if (player != null) {
+            double dx = player.position().x() - cx;
+            double dy = player.position().y() - cy;
+            angle = Math.atan2(dy, dx);
         }
 
-        if (progress > 0.3) {
-            gc.setStroke(Color.rgb(255, 165, 0, 0.2));
-            gc.setLineWidth(2);
-            gc.strokeRect(
-                    isLeft ? startX - whipLength : startX,
-                    startY - (double) whipWidth / 2,
-                    whipLength,
-                    whipWidth
-            );
-        }
+        double[] xPoints = new double[3];
+        double[] yPoints = new double[3];
+        xPoints[0] = cx + Math.cos(angle) * size;
+        yPoints[0] = cy + Math.sin(angle) * size;
+
+        xPoints[1] = cx + Math.cos(angle + 2.5) * (size * 0.7);
+        yPoints[1] = cy + Math.sin(angle + 2.5) * (size * 0.7);
+
+        xPoints[2] = cx + Math.cos(angle - 2.5) * (size * 0.7);
+        yPoints[2] = cy + Math.sin(angle - 2.5) * (size * 0.7);
+
+        gc.setFill(Color.RED);
+        gc.fillPolygon(xPoints, yPoints, 3);
+
+        gc.setStroke(Color.DARKRED);
+        gc.setLineWidth(2);
+        gc.strokePolygon(xPoints, yPoints, 3);
+
+        // Health bar
+        double ratio = (double) enemy.currentHealth() / enemy.maxHealth();
+        gc.setFill(Color.DARKRED);
+        gc.fillRect(cx - 12, cy - 25, 24, 4);
+        gc.setFill(Color.RED);
+        gc.fillRect(cx - 12, cy - 25, 24 * ratio, 4);
     }
 
     private void drawHealthBar(Player player) {
         double barWidth = 40;
         double barHeight = 6;
 
-        double healthRatio =
-                (double) player.currentHealth() / player.maxHealth();
+        double healthRatio = (double) player.currentHealth() / player.maxHealth();
 
         int x = player.position().x() - 20;
         int y = player.position().y() - 30;
@@ -373,11 +265,13 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
         }, "Continue");
 
         provider.addButton(e -> {
+            weaponRenderer.reset();
             viewModel.resetAndStartDefault();
             closePopup(e);
         }, "Restart");
 
         provider.addButton(e -> {
+            weaponRenderer.reset();
             viewModel.exitGame();
             closePopup(e);
             if (onExitCallback != null) {
@@ -403,6 +297,7 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
             viewModel.resetGameOver();
             viewModel.exitGame();
             viewModel.resetGame();
+            weaponRenderer.reset(); // Reset weapon animations
             closePopup(e);
 
             Platform.runLater(() -> {
@@ -410,7 +305,9 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
                 root.requestFocus();
             });
         }, "New Game");
+
         provider.addButton(e -> {
+            weaponRenderer.reset();
             viewModel.exitGame();
             closePopup(e);
 
@@ -529,6 +426,10 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
         ));
 
         upgradeBox.setOnMouseClicked(e -> {
+            if (option.type() == UpgradeType.NEW_WEAPON) {
+                weaponRenderer.initializeWeapon(option.weaponType());
+            }
+
             viewModel.selectUpgrade(option);
             viewModel.resumeGame();
             popup.close();

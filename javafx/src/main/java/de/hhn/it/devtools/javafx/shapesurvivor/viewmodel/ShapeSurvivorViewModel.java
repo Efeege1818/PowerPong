@@ -2,8 +2,9 @@ package de.hhn.it.devtools.javafx.shapesurvivor.viewmodel;
 
 import de.hhn.it.devtools.apis.shapesurvivor.*;
 import de.hhn.it.devtools.apis.exceptions.IllegalParameterException;
+import de.hhn.it.devtools.components.shapesurvivor.GameConfigurationBuilder;
+import de.hhn.it.devtools.components.shapesurvivor.SimpleShapeSurvivorService;
 import de.hhn.it.devtools.components.shapesurvivor.WeaponAnimationState;
-import de.hhn.it.devtools.apis.shapesurvivor.UpgradeOption;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 
@@ -24,6 +25,8 @@ public class ShapeSurvivorViewModel implements ShapeSurvivorListener {
     private final BooleanProperty gameOverProperty;
     private final BooleanProperty levelUpAvailableProperty;
     private final ObjectProperty<UpgradeOption[]> availableUpgradesProperty;
+    private static final org.slf4j.Logger logger =
+            org.slf4j.LoggerFactory.getLogger(ShapeSurvivorViewModel.class);
 
     public ShapeSurvivorViewModel(ShapeSurvivorService gameService) {
         this.gameService = gameService;
@@ -31,50 +34,33 @@ public class ShapeSurvivorViewModel implements ShapeSurvivorListener {
         this.enemiesMap = Collections.synchronizedMap(new HashMap<>());
         this.scoreProperty = new SimpleIntegerProperty(0);
         this.levelProperty = new SimpleIntegerProperty(1);
-        gameOverProperty = new SimpleBooleanProperty(false);
+        this.gameOverProperty = new SimpleBooleanProperty(false);
         this.levelUpAvailableProperty = new SimpleBooleanProperty(false);
         this.availableUpgradesProperty = new SimpleObjectProperty<>(new UpgradeOption[0]);
     }
 
+    /**
+     * Starts game with given configuration.
+     */
     public void startGame(String difficulty, WeaponType weapon, int fieldWidth, int fieldHeight) {
-        double difficultyMultiplier = switch (difficulty) {
-            case "Easy" -> 0.75;
-            case "Hard" -> 1.5;
-            case "Nightmare" -> 2.0;
-            default -> 1.0;
-        };
-
-        GameConfiguration config = new GameConfiguration(
-                900, // 15 minutes
-                fieldWidth,
-                fieldHeight,
-                100, // starting health
-                5.0, // starting speed
-                10,  // starting damage
-                1,   // initial weapon count
-                1.0, // enemy spawn rate
-                difficultyMultiplier,
-                new WeaponType[]{weapon}
-        );
-
         try {
+            GameConfiguration config = GameConfigurationBuilder.fromDifficulty(
+                    difficulty,
+                    weapon,
+                    fieldWidth,
+                    fieldHeight
+            );
+
             gameService.configure(config);
             updatePlayer(gameService.getPlayer());
             gameService.start();
         } catch (IllegalParameterException | IllegalStateException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
     }
 
     public void movePlayer(Direction direction) {
         gameService.movePlayer(direction);
-    }
-
-    public Map<WeaponType, WeaponAnimationState> getWeaponStates() {
-        if (gameService instanceof de.hhn.it.devtools.components.shapesurvivor.SimpleShapeSurvivorService) {
-            return ((de.hhn.it.devtools.components.shapesurvivor.SimpleShapeSurvivorService) gameService).getWeaponStates();
-        }
-        return new HashMap<>();
     }
 
     public ObjectProperty<Player> getPlayerProperty() {
@@ -91,6 +77,18 @@ public class ShapeSurvivorViewModel implements ShapeSurvivorListener {
 
     public IntegerProperty getLevelProperty() {
         return levelProperty;
+    }
+
+    public BooleanProperty gameOverProperty() {
+        return gameOverProperty;
+    }
+
+    public BooleanProperty levelUpAvailableProperty() {
+        return levelUpAvailableProperty;
+    }
+
+    public ObjectProperty<UpgradeOption[]> availableUpgradesProperty() {
+        return availableUpgradesProperty;
     }
 
     @Override
@@ -113,12 +111,12 @@ public class ShapeSurvivorViewModel implements ShapeSurvivorListener {
 
     @Override
     public void updateWeapon(Weapon weapon) {
-        // Optional: implement if needed
+        // Optional: implement if needed for weapon UI updates
     }
 
     @Override
     public void playerDamaged(int damage) {
-        // Optional: could animate player damage
+        // Optional: could trigger damage animation via property
     }
 
     @Override
@@ -137,14 +135,12 @@ public class ShapeSurvivorViewModel implements ShapeSurvivorListener {
     @Override
     public void playerLeveledUp() {
         Platform.runLater(() -> {
-            if (gameService instanceof de.hhn.it.devtools.components.shapesurvivor.SimpleShapeSurvivorService) {
-                try {
-                    UpgradeOption[] upgrades = gameService.getAvailableUpgrades();
-                    availableUpgradesProperty.set(upgrades);
-                    levelUpAvailableProperty.set(true);
-                } catch (IllegalStateException e) {
-                    e.printStackTrace();
-                }
+            try {
+                UpgradeOption[] upgrades = gameService.getAvailableUpgrades();
+                availableUpgradesProperty.set(upgrades);
+                levelUpAvailableProperty.set(true);
+            } catch (IllegalStateException e) {
+                logger.error(e.getMessage());
             }
         });
     }
@@ -214,10 +210,6 @@ public class ShapeSurvivorViewModel implements ShapeSurvivorListener {
         gameOverProperty.set(false);
     }
 
-    public BooleanProperty gameOverProperty() {
-        return gameOverProperty;
-    }
-
     public void exitGame() {
         try {
             if (gameService.getGameState() != GameState.ABORTED &&
@@ -228,20 +220,19 @@ public class ShapeSurvivorViewModel implements ShapeSurvivorListener {
         }
     }
 
-    public BooleanProperty levelUpAvailableProperty() {
-        return levelUpAvailableProperty;
-    }
-
-    public ObjectProperty<UpgradeOption[]> availableUpgradesProperty() {
-        return availableUpgradesProperty;
-    }
-
     public void selectUpgrade(UpgradeOption option) {
-            try {
-                gameService.applyUpgrade(option);
-                Platform.runLater(() -> levelUpAvailableProperty.set(false));
-            } catch (IllegalStateException | IllegalArgumentException e) {
-                e.printStackTrace();
-            }
+        try {
+            gameService.applyUpgrade(option);
+            Platform.runLater(() -> levelUpAvailableProperty.set(false));
+        } catch (IllegalStateException | IllegalArgumentException e) {
+            logger.error(e.getMessage());
+        }
+    }
+
+    public Map<WeaponType, WeaponAnimationState> getWeaponStates() {
+        if (gameService instanceof SimpleShapeSurvivorService service) {
+            return service.getWeaponStates();
+        }
+        return Map.of();
     }
 }
