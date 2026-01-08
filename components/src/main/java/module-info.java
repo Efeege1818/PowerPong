@@ -4,7 +4,6 @@ module devtools.components {
     exports de.hhn.it.devtools.components.shapesurvivor.helper;
     requires org.slf4j;
   exports de.hhn.it.devtools.components.spaceinvaders;
-  requires org.slf4j;
   requires devtools.apis;
   requires java.desktop;
   provides  de.hhn.it.devtools.apis.examples.coffeemakerservice.CoffeeMakerService
