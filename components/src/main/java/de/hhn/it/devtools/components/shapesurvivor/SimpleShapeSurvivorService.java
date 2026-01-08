@@ -2,6 +2,7 @@ package de.hhn.it.devtools.components.shapesurvivor;
 
 import de.hhn.it.devtools.apis.shapesurvivor.*;
 import de.hhn.it.devtools.apis.exceptions.IllegalParameterException;
+import de.hhn.it.devtools.components.shapesurvivor.helper.EventDispatcher;
 import de.hhn.it.devtools.components.shapesurvivor.helper.UpgradeOptionFactory;
 
 import java.util.*;
@@ -12,23 +13,18 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
     private static final int DEFAULT_GAME_DURATION = 900; // 15 minutes
     private static final int DEFAULT_FIELD_WIDTH = 800;
     private static final int DEFAULT_FIELD_HEIGHT = 600;
-
     private final List<ShapeSurvivorListener> listeners;
     private GameLoopService gameLoop;
-
     private final List<UpgradeOption> availableUpgrades;
-
     private static final long WEAPON_UPDATE_INTERVAL_MS = 16; // ~60 FPS
-
     private static final long PLAYER_HIT_COOLDOWN_MS = 600;
-
     private static final long ENEMY_HIT_COOLDOWN_MS = 500;
-
     private static final double SWORD_GRIP_OFFSET = 50;
     private static final double SWORD_BLADE_LENGTH = 90;
     private static final double SWORD_HIT_RADIUS = 20;
 
     private final GameContext gameContext;
+    private final EventDispatcher events;
 
     public SimpleShapeSurvivorService() {
         GameConfiguration configuration = new GameConfiguration(
@@ -43,12 +39,13 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
                 1.0, // difficulty multiplier
                 new WeaponType[]{WeaponType.SWORD}
         );
+
         this.gameContext = new GameContext(configuration);
         this.listeners = new CopyOnWriteArrayList<>();
         this.availableUpgrades = new ArrayList<>();
         gameContext.nextEnemyId = 0;
         gameContext.currentWave = 0;
-
+        this.events = new EventDispatcher(listeners, gameContext, this);
         initializePlayer();
         initializeStatistics();
         initializeGameLoop();
@@ -134,10 +131,10 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
         initializePlayer();
         initializeStatistics();
 
-        notifyPlayerUpdated();
-        notifyEnemiesUpdated();
-        notifyExperienceUpdated();
-        notifyGameStateChanged(GameState.PREPARED);
+        events.notifyPlayerUpdated();
+        events.notifyEnemiesUpdated();
+        events.notifyExperienceUpdated();
+        events.notifyGameStateChanged(GameState.PREPARED);
     }
 
     @Override
@@ -152,7 +149,7 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
         gameContext.lastWeaponUpdateTime = gameContext.gameStartTime;
 
         gameLoop.startLoop();
-        notifyGameStateChanged(GameState.RUNNING);
+        events.notifyGameStateChanged(GameState.RUNNING);
     }
 
     @Override
@@ -166,7 +163,7 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
         }
 
         gameContext.gameState = GameState.ABORTED;
-        notifyGameStateChanged(GameState.ABORTED);
+        events.notifyGameStateChanged(GameState.ABORTED);
     }
 
     @Override
@@ -177,7 +174,7 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
 
         gameLoop.pauseLoop();
         gameContext.gameState = GameState.PAUSED;
-        notifyGameStateChanged(GameState.PAUSED);
+        events.notifyGameStateChanged(GameState.PAUSED);
     }
 
     @Override
@@ -188,7 +185,7 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
 
         gameLoop.resumeLoop();
         gameContext.gameState = GameState.RUNNING;
-        notifyGameStateChanged(GameState.RUNNING);
+        events.notifyGameStateChanged(GameState.RUNNING);
     }
 
     public void movePlayer(Direction direction) {
@@ -225,7 +222,7 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
                 gameContext.player.equippedWeapons()
         );
 
-        notifyPlayerUpdated();
+        events.notifyPlayerUpdated();
     }
 
     @Override
@@ -262,7 +259,7 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
                 Weapon oldWeapon = weapons.get(i);
                 Weapon upgradedWeapon = createWeapon(weaponType, oldWeapon.level() + 1);
                 weapons.set(i, upgradedWeapon);
-                notifyWeaponUpdated(upgradedWeapon);
+                events.notifyWeaponUpdated(upgradedWeapon);
                 break;
             }
         }
@@ -287,7 +284,7 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
         Weapon newWeapon = createWeapon(weaponType, 1);
         weapons.add(newWeapon);
         gameContext.weaponStates.put(weaponType, new WeaponAnimationState());
-        notifyWeaponUpdated(newWeapon);
+        events.notifyWeaponUpdated(newWeapon);
 
         gameContext.player = new Player(
                 gameContext.player.position(),
@@ -347,7 +344,7 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
                 gameContext.player.equippedWeapons()
         );
 
-        notifyPlayerUpdated();
+        events.notifyPlayerUpdated();
     }
 
     @Override
@@ -389,7 +386,7 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
         gameContext.configuration = configuration;
         initializePlayer();
 
-        notifyConfigurationUpdated(configuration);
+        events.notifyConfigurationUpdated(configuration);
     }
 
     private void validateConfiguration(GameConfiguration config)
@@ -481,7 +478,7 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
         if (gameContext.player.currentHealth() <= 0) {
             endGame(false);
         }
-        notifyTimeUpdate();
+        events.notifyTimeUpdate();
     }
 
     private void spawnEnemies() {
@@ -498,7 +495,7 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
             }
 
             gameContext.lastWaveSpawnTime = currentTime;
-            notifyEnemyWaveSpawned(gameContext.currentWave, enemyCount);
+            events.notifyEnemyWaveSpawned(gameContext.currentWave, enemyCount);
 
             gameContext.statistics = new GameStatistics(
                     gameContext.statistics.enemiesKilled(),
@@ -590,7 +587,7 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
         }
 
         gameContext.enemies = updatedEnemies;
-        notifyEnemiesUpdated();
+        events.notifyEnemiesUpdated();
     }
 
     private void updateWeaponAnimations() {
@@ -664,13 +661,13 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
                             enemy.experienceValue()
                     );
 
-                    notifyEnemyDamaged(enemy, damage);
+                    events.notifyEnemyDamaged(enemy, damage);
 
                     if (damagedEnemy.currentHealth() <= 0) {
                         toRemove.add(enemy);
                         gameContext.lastEnemyHitTime.remove(enemy.id());
                         gainExperience(enemy.experienceValue());
-                        notifyEnemyKilled(enemy, enemy.experienceValue());
+                        events.notifyEnemyKilled(enemy, enemy.experienceValue());
 
                         gameContext.statistics = new GameStatistics(
                                 gameContext.statistics.enemiesKilled() + 1,
@@ -785,8 +782,8 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
                 getElapsedTime()
         );
 
-        notifyPlayerDamaged(actualDamage);
-        notifyPlayerUpdated();
+        events.notifyPlayerDamaged(actualDamage);
+        events.notifyPlayerUpdated();
     }
 
     private void gainExperience(int exp) {
@@ -825,7 +822,7 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
 
             gameContext.levelUpPending = true;
             generateUpgradeOptions();
-            notifyPlayerLeveledUp();
+            events.notifyPlayerLeveledUp();
         } else {
             gameContext.player = new Player(
                     gameContext.player.position(),
@@ -842,7 +839,7 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
             );
         }
 
-        notifyExperienceUpdated();
+        events.notifyExperienceUpdated();
     }
 
     private void generateUpgradeOptions() {
@@ -929,98 +926,13 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
             gameLoop.stopLoop();
         }
         gameContext.gameState = GameState.ABORTED;
-        notifyGameEnded(victory);
-        notifyGameStateChanged(GameState.ABORTED);
+        events.notifyGameEnded(victory);
+        events.notifyGameStateChanged(GameState.ABORTED);
     }
 
     private double getDistance(Position p1, Position p2) {
         int dx = p1.x() - p2.x();
         int dy = p1.y() - p2.y();
         return Math.sqrt(dx * dx + dy * dy);
-    }
-
-    // Notification methods
-    private void notifyPlayerUpdated() {
-        for (ShapeSurvivorListener listener : listeners) {
-            listener.updatePlayer(gameContext.player);
-        }
-    }
-
-    private void notifyEnemiesUpdated() {
-        Enemy[] enemyArray = gameContext.enemies.toArray(new Enemy[0]);
-        for (ShapeSurvivorListener listener : listeners) {
-            listener.updateEnemies(enemyArray);
-        }
-    }
-
-    private void notifyWeaponUpdated(Weapon weapon) {
-        for (ShapeSurvivorListener listener : listeners) {
-            listener.updateWeapon(weapon);
-        }
-    }
-
-    private void notifyPlayerDamaged(int damage) {
-        for (ShapeSurvivorListener listener : listeners) {
-            listener.playerDamaged(damage);
-        }
-    }
-
-    private void notifyEnemyDamaged(Enemy enemy, int damage) {
-        for (ShapeSurvivorListener listener : listeners) {
-            listener.enemyDamaged(enemy, damage);
-        }
-    }
-
-    private void notifyEnemyKilled(Enemy enemy, int exp) {
-        for (ShapeSurvivorListener listener : listeners) {
-            listener.enemyKilled(enemy, exp);
-        }
-    }
-
-    private void notifyPlayerLeveledUp() {
-        for (ShapeSurvivorListener listener : listeners) {
-            listener.playerLeveledUp();
-        }
-    }
-
-    private void notifyGameStateChanged(GameState state) {
-        for (ShapeSurvivorListener listener : listeners) {
-            listener.changedGameState(state);
-        }
-    }
-
-    private void notifyTimeUpdate() {
-        if (gameContext.gameState != GameState.RUNNING) {
-            return;
-        }
-
-        int remaining = getRemainingTime();
-        for (ShapeSurvivorListener listener : listeners) {
-            listener.updateRemainingTime(remaining);
-        }
-    }
-
-    private void notifyEnemyWaveSpawned(int wave, int count) {
-        for (ShapeSurvivorListener listener : listeners) {
-            listener.enemyWaveSpawned(wave, count);
-        }
-    }
-
-    private void notifyGameEnded(boolean victory) {
-        for (ShapeSurvivorListener listener : listeners) {
-            listener.gameEnded(victory);
-        }
-    }
-
-    private void notifyExperienceUpdated() {
-        for (ShapeSurvivorListener listener : listeners) {
-            listener.updateExperience(gameContext.player.experience(), gameContext.player.experienceToNextLevel());
-        }
-    }
-
-    private void notifyConfigurationUpdated(GameConfiguration config) {
-        for (ShapeSurvivorListener listener : listeners) {
-            listener.updateGameConfiguration(config);
-        }
     }
 }

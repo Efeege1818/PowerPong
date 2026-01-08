@@ -4,7 +4,7 @@ import de.hhn.it.devtools.apis.shapesurvivor.*;
 
 import java.util.*;
 
-class GameContext {
+public class GameContext {
 
     GameState gameState = GameState.PREPARED;
     GameConfiguration configuration;
@@ -34,5 +34,15 @@ class GameContext {
         nextEnemyId = 0;
         levelUpPending = false;
         lastPlayerHitTime = 0;
+    }
+
+    public  GameState getGameState() {
+        return gameState;
+    }
+    public Player getPlayer() {
+        return player;
+    }
+    public List<Enemy> getEnemies(){
+        return enemies;
     }
 }
