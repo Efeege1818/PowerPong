@@ -15,6 +15,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
@@ -87,12 +89,30 @@ public class InfoScreenFx extends VBox {
         attacksTitle.setStyle("-fx-font-size: 12px; -fx-font-weight: bold;");
         TextFlow attacksList = new TextFlow();
         attacksList.setMaxWidth(420);
+        int size = moves.size();
+        int index = 0;
+
         for (Map.Entry<Integer, Move> entry : moves.entrySet()) {
+            index++;
             Move move = entry.getValue();
-            attacksList.getChildren().addAll(
-                    new Text("  \u2022 " + move.name() + "\n"),
-                    new Text("      \u25E6 " + move.description() + "\n")
-            );
+
+            boolean isLast = (index == size);
+
+            if (isLast) {
+                Text header = new Text("Special Move\n");
+                header.setFont(Font.font(header.getFont().getFamily(), FontWeight.BOLD, 14));
+                attacksList.getChildren().add(header);
+            }
+
+            Text nameText = new Text("  • " + move.name() + "\n");
+            Text descText = new Text("      ◦ " + move.description() + "\n");
+
+            if (isLast) {
+                nameText.setFont(Font.font(nameText.getFont().getFamily(), FontWeight.BOLD, 12));
+                descText.setFont(Font.font(descText.getFont().getFamily(), FontWeight.BOLD, 12));
+            }
+
+            attacksList.getChildren().addAll(nameText, descText);
         }
         attacksList.setStyle("-fx-font-size: 12px; -fx-line-spacing: 6px;");
 /**

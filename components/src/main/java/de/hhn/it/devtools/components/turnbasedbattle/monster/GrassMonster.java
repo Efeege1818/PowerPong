@@ -22,6 +22,7 @@ public class GrassMonster extends SimpleMonster {
     this.defense = monster.defense();
     this.evasionChance = monster.evasionChance();
     this.critChance = monster.critChance();
+    this.damageReduction = 0.0;
     this.element = monster.element();
     this.moves = monster.moves();
 

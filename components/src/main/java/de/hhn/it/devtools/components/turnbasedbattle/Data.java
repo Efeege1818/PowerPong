@@ -18,6 +18,14 @@ public class Data {
   private final Monster[] monsters;
   private final Map<Element, Move[]> moves;
 
+  // FireMonster moves
+  private final Move fireNormAtkFollowUp = new BuffMove("Increases attack", Element.NORMAL, "attack", 5, 3, 0, false, "Increases attack", 1);
+  private final Move fireNormAtk = new AttackMove("Heating Flame", Element.NORMAL, 10, 2, false, "PLACEHOLDER DESCRIPTION!", 1, fireNormAtkFollowUp);
+  private final Move fireFireAtk1 = new AttackMove("Fire spear", Element.FIRE, 25, 3, false, "PLACEHOLDER DESCRIPTION!", 1);
+  private final Move fireFireAtk2 = new AttackMove("Fire bomb", Element.FIRE, 15, 5, false, "PLACEHOLDER DESCRIPTION!", 1);
+  private final Move fireBuff = new BuffMove("Pump up", Element.NORMAL, "attack", 15, 3, 4, false, "PLACEHOLDER DESCRIPTION!", 1);
+  private final Move fireSpecial = new AttackMove("All out attack", Element.FIRE, 30, 1, true, "PLACEHOLDER DESCRIPTION!", 1);
+
   public Data() {
     this.moves = createMovesMap();
     this.monsters = createMonsters();
@@ -143,11 +151,11 @@ public class Data {
    */
   public HashMap<Integer, Move> getFireMonsterMoves() {
     HashMap<Integer, Move> movesMap = new HashMap<>();
-    movesMap.put(1, createMovesMap().get(Element.FIRE)[0]);
-    movesMap.put(2, createMovesMap().get(Element.FIRE)[1]);
-    movesMap.put(3, createMovesMap().get(Element.FIRE)[2]);
-    movesMap.put(4, createMovesMap().get(Element.FIRE)[3]);
-    movesMap.put(5, createMovesMap().get(Element.FIRE)[4]);
+    movesMap.put(1, fireNormAtk);
+    movesMap.put(2, fireFireAtk1);
+    movesMap.put(3, fireFireAtk2);
+    movesMap.put(4, fireBuff);
+    movesMap.put(5, fireSpecial);
     return movesMap;
   }
 
