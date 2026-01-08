@@ -17,7 +17,6 @@ public class SelectScreen extends AnchorPane {
   public static final String SCREEN_NAME = "SelectScreen";
 
   private final SimpleScreenManager screenManager;
-  private final SelectScreenViewModel viewModel;
   private boolean selected1 = false;
   private boolean selected2 = false;
   private Monster p1Monster;
@@ -26,7 +25,6 @@ public class SelectScreen extends AnchorPane {
 
   public SelectScreen(SimpleScreenManager screenManager) {
     this.screenManager = screenManager;
-    viewModel = new SelectScreenViewModel();
 
     FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/SelectScreen.fxml"));
     loader.setRoot(this);
