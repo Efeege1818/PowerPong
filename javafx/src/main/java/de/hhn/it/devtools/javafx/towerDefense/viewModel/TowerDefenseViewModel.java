@@ -93,6 +93,11 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
   }
 
   @Override
+  public void gameCompleted() {
+
+  }
+
+  @Override
   public void updateMap() {
 
   }
