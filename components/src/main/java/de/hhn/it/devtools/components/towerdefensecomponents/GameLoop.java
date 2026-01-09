@@ -8,6 +8,7 @@ public class GameLoop extends Thread {
 
   private boolean running = false;
   private boolean started = false;
+  private int tickspeed = 1000;
 
   private SimpleTowerDefenseService service;
 
@@ -21,7 +22,7 @@ public class GameLoop extends Thread {
       service.tick();
     }
     try {
-      sleep(50);
+      sleep(tickspeed);
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }
