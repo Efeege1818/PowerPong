@@ -55,6 +55,11 @@ public class TowerDefenseUsageDemo {
       @Override
       public void updateMap() {
       }
+
+      @Override
+      public void tick() {
+        System.out.println(service.getCurrentEnemies().stream().map(enemy -> enemy.currentHealth() + "HP ").toList());
+      }
     };
     service.addListener(listener);
     service.startNextRound();
