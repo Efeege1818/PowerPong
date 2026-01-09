@@ -23,6 +23,13 @@ public interface TowerDefenseService {
   Player getPlayer();
 
   /**
+   * Overwrites the existing configuration of the Game with a new one.
+   *
+   * @param configuration the new Configuration
+   */
+  void editConfiguration(Configuration configuration);
+
+  /**
    * Adds a listener to the list.
    *
    * @param listener the listener to be added

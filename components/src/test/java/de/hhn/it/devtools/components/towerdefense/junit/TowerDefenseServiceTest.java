@@ -53,5 +53,12 @@ public class TowerDefenseServiceTest {
     Assertions.assertEquals(130, service.getPlayer().money());
   }
 
+  @Test
+  public void testStartNextRound() {
+    service.startGame();
+    service.startNextRound();
+
+  }
+
 }
 

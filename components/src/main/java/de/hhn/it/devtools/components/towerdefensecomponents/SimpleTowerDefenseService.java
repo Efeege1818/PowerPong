@@ -67,6 +67,11 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
   }
 
   @Override
+  public void editConfiguration(Configuration configuration) {
+    this.configuration = configuration;
+  }
+
+  @Override
   public boolean addListener(TowerDefenseListener listener) throws IllegalArgumentException {
     return listeners.add(listener);
   }
