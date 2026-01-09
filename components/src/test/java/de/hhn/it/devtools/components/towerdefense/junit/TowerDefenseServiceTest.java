@@ -4,14 +4,15 @@ import de.hhn.it.devtools.apis.towerdefenseapi.GameState;
 import de.hhn.it.devtools.components.towerdefensecomponents.SimpleTowerDefenseService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class TowerDefenseServiceTest {
 
-  public static SimpleTowerDefenseService service;
+  public SimpleTowerDefenseService service;
 
-  @BeforeAll
-  public static void setup() {
+  @BeforeEach
+  public void setup() {
     service = new SimpleTowerDefenseService();
   }
 

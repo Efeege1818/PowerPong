@@ -14,4 +14,5 @@ module devtools.javafx {
   exports de.hhn.it.devtools.javafx;
   exports de.hhn.it.devtools.javafx.controllers;
   exports de.hhn.it.devtools.javafx.coffeemaker.view;
+  exports de.hhn.it.devtools.javafx.towerdefense;
         }

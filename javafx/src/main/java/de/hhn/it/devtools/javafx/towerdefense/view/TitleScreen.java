@@ -1,34 +1,26 @@
-package de.hhn.it.devtools.javafx.towerDefense.view;
+package de.hhn.it.devtools.javafx.towerdefense.view;
 
 import de.hhn.it.devtools.apis.towerdefenseapi.Configuration;
-import de.hhn.it.devtools.apis.towerdefenseapi.TowerDefenseService;
 import de.hhn.it.devtools.components.towerdefensecomponents.SimpleTowerDefenseService;
-import de.hhn.it.devtools.javafx.towerDefense.viewModel.TowerDefenseViewModel;
+import de.hhn.it.devtools.javafx.towerdefense.viewmodel.TowerDefenseViewModel;
 import javafx.application.Application;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
-public class TitleScreen extends Application {
-  SimpleTowerDefenseService service;
+public class TitleScreen extends StackPane {
   TowerDefenseViewModel viewModel;
-  Configuration configuration;
 
   Label towerDefenseLbl = new Label("Tower defense");
   Button startGame = new Button("Start Game");
   Button config = new Button("config");
   Button exitGame = new Button("Exit Game");
 
-  public TitleScreen(SimpleTowerDefenseService service, TowerDefenseViewModel viewModel, Configuration configuration) {
-    this.service = service;
+  public TitleScreen(TowerDefenseViewModel viewModel) {
     this.viewModel = viewModel;
-    this.configuration = configuration;
-  }
-
-  @Override
-  public void start(Stage primaryStage) throws Exception {
-
 
     startGame.setOnAction(event -> {
       startGame();

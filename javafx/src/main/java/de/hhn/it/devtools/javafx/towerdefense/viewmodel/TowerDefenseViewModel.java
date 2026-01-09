@@ -1,10 +1,11 @@
-package de.hhn.it.devtools.javafx.towerDefense.viewModel;
+package de.hhn.it.devtools.javafx.towerdefense.viewmodel;
 
 import de.hhn.it.devtools.apis.towerdefenseapi.Enemy;
 import de.hhn.it.devtools.apis.towerdefenseapi.Grid;
 import de.hhn.it.devtools.apis.towerdefenseapi.Player;
 import de.hhn.it.devtools.apis.towerdefenseapi.Tower;
 import de.hhn.it.devtools.apis.towerdefenseapi.TowerDefenseListener;
+import de.hhn.it.devtools.apis.towerdefenseapi.TowerDefenseService;
 import de.hhn.it.devtools.components.towerdefensecomponents.SimpleTowerDefenseService;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ListProperty;
@@ -16,7 +17,7 @@ import javafx.collections.FXCollections;
 
 
 public class TowerDefenseViewModel implements TowerDefenseListener {
-  SimpleTowerDefenseService service;
+  TowerDefenseService service;
   private final ObjectProperty<Grid> map = new SimpleObjectProperty<>();
   private final ObjectProperty<Player> player = new SimpleObjectProperty<>();
   private final ListProperty<Enemy> enemies = new SimpleListProperty<>(FXCollections.observableArrayList());
@@ -25,7 +26,7 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
   private final IntegerProperty health = new SimpleIntegerProperty();
   private final IntegerProperty money = new SimpleIntegerProperty();
 
-  public TowerDefenseViewModel(SimpleTowerDefenseService service) {
+  public TowerDefenseViewModel(TowerDefenseService service) {
     this.service = service;
     this.service.addListener(this);
     map.set(service.getMap());
