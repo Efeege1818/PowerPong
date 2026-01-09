@@ -8,6 +8,9 @@ public class TowerDefenseUsageDemo {
     SimpleTowerDefenseService service = new SimpleTowerDefenseService();
     service.startGame();
     TowerDefenseListener listener = new TowerDefenseListener() {
+      boolean tower2Placed = false;
+      boolean triedAgain = false;
+
       @Override
       public void updateHealth() {
 
@@ -20,10 +23,24 @@ public class TowerDefenseUsageDemo {
 
       @Override
       public void gameEnded() {
-        service.retry();
-        service.placeTower(new Tower(1,new Coordinates(6,7), TowerType.RANGED));
-        service.startGame();
-        service.startNextRound();
+        if (!triedAgain) {
+          service.retry();
+          if (tower2Placed) {
+            service.placeTower(new Tower(1, new Coordinates(2, 5), TowerType.RANGED));
+            service.placeTower(new Tower(1, new Coordinates(1, 2), TowerType.RANGED));
+            service.placeTower(new Tower(1, new Coordinates(4, 8), TowerType.RANGED));
+            service.placeTower(new Tower(1, new Coordinates(7, 7), TowerType.RANGED));
+            service.placeTower(new Tower(1, new Coordinates(4, 9), TowerType.RANGED));
+            triedAgain = true;
+          }
+          if (!tower2Placed) {
+            service.placeTower(new Tower(1, new Coordinates(6, 7), TowerType.RANGED));
+            tower2Placed = true;
+          }
+
+          service.startGame();
+          service.startNextRound();
+        }
       }
 
       @Override
