@@ -1,6 +1,7 @@
 package de.hhn.it.devtools.components.towerdefense.junit;
 
 import de.hhn.it.devtools.apis.towerdefenseapi.Coordinates;
+import de.hhn.it.devtools.apis.towerdefenseapi.GameState;
 import de.hhn.it.devtools.apis.towerdefenseapi.Tower;
 import de.hhn.it.devtools.apis.towerdefenseapi.TowerType;
 import de.hhn.it.devtools.components.towerdefensecomponents.SimpleTowerDefenseService;

@@ -181,7 +181,7 @@ public class EnemyToolbox {
     }
     enemies.removeAll(toBeRemoved);
     if (!enemies.isEmpty()) {
-      System.out.println(enemies.getFirst());
+      System.out.println(enemies);
     }
   }
 
