@@ -19,10 +19,10 @@ import java.util.function.Consumer;
 
 public class SimpleTowerDefenseService implements TowerDefenseService {
 
-  private final MapToolbox mapToolbox = new MapToolbox();
-  private final EnemyToolbox enemyToolbox = new EnemyToolbox(this);
-  private final TowerToolbox towerToolbox = new TowerToolbox(this);
-  private final WaveGenerator waveGenerator;
+  private MapToolbox mapToolbox;
+  private EnemyToolbox enemyToolbox;
+  private TowerToolbox towerToolbox;
+  private WaveGenerator waveGenerator;
 
   private final long seed;
   private GameState currentGameState;
@@ -36,6 +36,10 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
   private Queue<Enemy> enemyQueue;
 
   public SimpleTowerDefenseService() {
+
+    mapToolbox = new MapToolbox();
+    enemyToolbox = new EnemyToolbox(this);
+    towerToolbox = new TowerToolbox(this);
 
     seed = new Random().nextLong();
     configuration = new Configuration();
@@ -79,7 +83,21 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
 
   @Override
   public void abortGame() throws IllegalStateException {
+    configuration = new Configuration();
 
+    mapToolbox = new MapToolbox();
+    enemyToolbox = new EnemyToolbox(this);
+    towerToolbox = new TowerToolbox(this);
+
+    mapToolbox.generateMap(configuration.mapSize());
+    waveGenerator = new WaveGenerator(mapToolbox.getPath().getFirst(), seed, configuration);
+
+    player = new Player(configuration.startingHealth(), configuration.startingMoney());
+    savedPlayerData = player;
+    towerToolbox.saveData();
+    currentRound = 0;
+
+    currentGameState = GameState.READY;
   }
 
   @Override
