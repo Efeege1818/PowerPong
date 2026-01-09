@@ -54,7 +54,6 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
   }
 
   public void startNextRound() {
-    round.set(round.get() + 1);
     service.startNextRound();
   }
 

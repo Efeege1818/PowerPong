@@ -21,6 +21,7 @@ public class TowerDefenseUsageDemo {
       @Override
       public void gameEnded() {
         service.retry();
+        service.placeTower(new Tower(1,new Coordinates(6,7), TowerType.RANGED));
         service.startGame();
         service.startNextRound();
       }

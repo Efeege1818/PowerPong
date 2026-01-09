@@ -154,13 +154,15 @@ public class TowerToolbox {
    * Saves the current tower list to load it back if the player loses.
    */
   public void saveData() {
-    savedTowers = List.copyOf(towers);
+    savedTowers.clear();
+    savedTowers.addAll(towers);
   }
 
   /**
    * Loads the latest saved tower list.
    */
   public void loadData() {
-    towers = List.copyOf(savedTowers);
+    towers.clear();
+    towers.addAll(savedTowers);
   }
 }
