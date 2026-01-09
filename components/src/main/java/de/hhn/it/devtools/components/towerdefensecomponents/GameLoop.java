@@ -8,9 +8,12 @@ public class GameLoop extends Thread {
 
   private boolean running = false;
   private boolean started = false;
-  private int tickspeed = 3000;
+  private int tickspeed = 1000;
 
   private SimpleTowerDefenseService service;
+
+  private static final org.slf4j.Logger logger =
+      org.slf4j.LoggerFactory.getLogger(GameLoop.class);
 
   public GameLoop(SimpleTowerDefenseService service) {
     this.service = service;
@@ -19,12 +22,14 @@ public class GameLoop extends Thread {
   @Override
   public void run() {
     while (running) {
+      logger.debug("tick");
       service.tick();
-    }
-    try {
-      sleep(tickspeed);
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      try {
+        sleep(tickspeed);
+      } catch (InterruptedException e) {
+        logger.error("Game Loop was Interrupted");
+        throw new RuntimeException(e);
+      }
     }
   }
 
