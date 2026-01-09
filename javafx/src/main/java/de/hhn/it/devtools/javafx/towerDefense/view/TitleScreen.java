@@ -44,12 +44,16 @@ public class TitleScreen extends Application {
 
   }
 
+  public void createGrid(){
+
+  }
+
   public void startGame() {
     viewModel.startRound();
   }
 
   public void exitGame() {
-
+    viewModel.abortGame();
   }
 
   public void setConfig() {

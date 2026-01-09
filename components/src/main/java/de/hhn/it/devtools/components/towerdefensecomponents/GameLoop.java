@@ -8,7 +8,7 @@ public class GameLoop extends Thread {
 
   private boolean running = false;
   private boolean started = false;
-  private int tickspeed = 1000;
+  private int tickspeed = 3000;
 
   private SimpleTowerDefenseService service;
 
