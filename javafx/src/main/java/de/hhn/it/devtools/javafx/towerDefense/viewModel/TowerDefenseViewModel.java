@@ -104,6 +104,11 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
     sync();
   }
 
+  @Override
+  public void tick() {
+
+  }
+
   public void sync() {
     this.map.set(service.getMap());
   }
