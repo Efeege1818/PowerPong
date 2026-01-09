@@ -7,6 +7,7 @@ package de.hhn.it.devtools.components.towerdefensecomponents;
 public class GameLoop extends Thread {
 
   private boolean running = false;
+  private boolean started = false;
 
   private SimpleTowerDefenseService service;
 
@@ -36,7 +37,10 @@ public class GameLoop extends Thread {
       throw new IllegalStateException("GameLoop is already running");
     }
     running = true;
-    this.start();
+    if (!started) {
+      this.start();
+      started = true;
+    }
   }
 
   /**

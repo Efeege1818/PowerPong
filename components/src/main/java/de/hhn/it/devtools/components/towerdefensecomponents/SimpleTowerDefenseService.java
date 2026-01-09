@@ -202,12 +202,14 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
   }
 
   private void roundFailed() {
+    System.out.println("GAME OVER");
     currentGameState = GameState.GAME_OVER;
     gameLoop.stopGame();
     notifyListeners(TowerDefenseListener::gameEnded);
   }
 
   private void roundCompleted() {
+    System.out.println("COMPLETED");
     currentGameState = GameState.PAUSED;
     gameLoop.stopGame();
     savedPlayerData = player;
