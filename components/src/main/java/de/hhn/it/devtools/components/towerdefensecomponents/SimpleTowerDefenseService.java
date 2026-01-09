@@ -207,9 +207,15 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
       enemyToolbox.addEnemy(enemyQueue.poll());
     }
     towerToolbox.attack();
-    updateMoney(towerToolbox.moneyMade() + enemyToolbox.moneyPerEnemy());
+
+    int moneyMade = towerToolbox.moneyMade() + enemyToolbox.moneyPerEnemy();
+    if (moneyMade != 0) {
+      updateMoney(moneyMade);
+    }
     enemyToolbox.progress();
-    updateHealth(-enemyToolbox.damagePlayer());
+    if (enemyToolbox.damagePlayer() != 0) {
+      updateHealth(-enemyToolbox.damagePlayer());
+    }
     if (player.health() <= 0) {
       roundFailed();
     }
