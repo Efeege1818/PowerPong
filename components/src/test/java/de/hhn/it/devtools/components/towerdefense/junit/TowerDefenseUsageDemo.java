@@ -13,12 +13,10 @@ public class TowerDefenseUsageDemo {
 
       @Override
       public void updateHealth() {
-
       }
 
       @Override
       public void updateMoney() {
-
       }
 
       @Override
