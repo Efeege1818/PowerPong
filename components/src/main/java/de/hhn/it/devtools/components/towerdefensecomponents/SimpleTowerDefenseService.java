@@ -222,6 +222,7 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
     if (enemyQueue.isEmpty() && enemyToolbox.getEnemies().isEmpty()) {
       roundCompleted();
     }
+    notifyListeners(TowerDefenseListener::tick);
   }
 
   private void notifyListeners(Consumer<TowerDefenseListener> consumer) {
