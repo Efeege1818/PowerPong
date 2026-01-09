@@ -7,7 +7,6 @@ public class TowerDefenseUsageDemo {
   public static void main(String[] args){
     SimpleTowerDefenseService service = new SimpleTowerDefenseService();
     service.startGame();
-    service.placeTower(new Tower(1,new Coordinates(4,5), TowerType.RANGED));
     TowerDefenseListener listener = new TowerDefenseListener() {
       @Override
       public void updateHealth() {
@@ -21,7 +20,9 @@ public class TowerDefenseUsageDemo {
 
       @Override
       public void gameEnded() {
-
+        service.retry();
+        service.startGame();
+        service.startNextRound();
       }
 
       @Override
@@ -36,5 +37,6 @@ public class TowerDefenseUsageDemo {
     };
     service.addListener(listener);
     service.startNextRound();
+    service.placeTower(new Tower(1,new Coordinates(4,5), TowerType.RANGED));
   }
 }
