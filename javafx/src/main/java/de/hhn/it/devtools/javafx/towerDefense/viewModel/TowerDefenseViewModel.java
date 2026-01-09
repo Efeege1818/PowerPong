@@ -22,6 +22,8 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
   private final ListProperty<Enemy> enemies = new SimpleListProperty<>(FXCollections.observableArrayList());
   private final ListProperty<Tower> towers = new SimpleListProperty<>(FXCollections.observableArrayList());
   private final IntegerProperty round = new SimpleIntegerProperty();
+  private final IntegerProperty health = new SimpleIntegerProperty();
+  private final IntegerProperty money = new SimpleIntegerProperty();
 
   public TowerDefenseViewModel(SimpleTowerDefenseService service) {
     this.service = service;
@@ -60,8 +62,14 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
     return map;
   }
 
-  public ObjectProperty<Player> getPlayerStats() {
-    return player;
+  public IntegerProperty getHealth(){
+    sync();
+    return health;
+  }
+
+  public IntegerProperty getMoney(){
+    sync();
+    return money;
   }
 
   public IntegerProperty getRound() {
@@ -73,9 +81,7 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
   }
 
   public ListProperty<Tower> getTowers() {
-    // TODO: set this to param {@Code towers}
-//    return new SimpleListProperty<>(FXCollections.observableArrayList(
-//            service.getTowerBoard().values()));
+    sync();
     return towers;
   }
 
@@ -105,6 +111,10 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
   }
 
   public void sync() {
+    towers.setAll(service.getTowerBoard().values());
+    enemies.setAll(service.getCurrentEnemies());
     this.map.set(service.getMap());
+    health.set(service.getPlayer().health());
+    money.set(service.getPlayer().money());
   }
 }
