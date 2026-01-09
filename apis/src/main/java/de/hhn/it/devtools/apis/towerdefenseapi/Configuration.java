@@ -19,6 +19,21 @@ public record Configuration(int mapSize,
                             float escalation) {
 
   /**
+   * Constructor.
+   */
+  public Configuration {
+    if (mapSize < 5
+        || startingHealth <= 0
+        || startingMoney < 0
+        || enemyPowerMultiplier < 1
+        || enemyHealthMultiplier < 1
+        || escalation < 1
+    ) {
+      throw new IllegalArgumentException("Illegal Arguments for Configuration");
+    }
+  }
+
+  /**
    * Constructor for default values.
    */
   public Configuration() {
