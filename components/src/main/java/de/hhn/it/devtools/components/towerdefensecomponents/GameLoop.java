@@ -8,6 +8,7 @@ public class GameLoop extends Thread {
 
   private boolean running = false;
 
+
   private SimpleTowerDefenseService service;
 
   public GameLoop(SimpleTowerDefenseService service) {
