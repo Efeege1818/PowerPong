@@ -6,12 +6,7 @@ import de.hhn.it.devtools.apis.towerdefenseapi.Player;
 import de.hhn.it.devtools.apis.towerdefenseapi.Tower;
 import de.hhn.it.devtools.apis.towerdefenseapi.TowerDefenseListener;
 import de.hhn.it.devtools.apis.towerdefenseapi.TowerDefenseService;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleListProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 
 /**
@@ -27,6 +22,7 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
   private final IntegerProperty round = new SimpleIntegerProperty();
   private final IntegerProperty health = new SimpleIntegerProperty();
   private final IntegerProperty money = new SimpleIntegerProperty();
+  private final BooleanProperty gameOver = new SimpleBooleanProperty();
 
   public TowerDefenseViewModel(TowerDefenseService service) {
     this.service = service;
@@ -42,7 +38,6 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
 
   public void startRound() {
     service.startGame();
-    startNextRound();
     sync();
   }
 
@@ -88,6 +83,10 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
     return towers;
   }
 
+  public BooleanProperty getGameOver() {
+    return gameOver;
+  }
+
   @Override
   public void updateHealth() {
     health.set(service.getPlayer().health());
@@ -100,7 +99,7 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
 
   @Override
   public void gameEnded() {
-    sync();
+    gameOver.setValue(true);
   }
 
   @Override
