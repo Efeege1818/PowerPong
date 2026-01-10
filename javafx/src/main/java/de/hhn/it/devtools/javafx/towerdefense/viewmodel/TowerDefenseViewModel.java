@@ -38,7 +38,6 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
 
   public void startRound() {
     service.startGame();
-    sync();
   }
 
   public void abortGame() {

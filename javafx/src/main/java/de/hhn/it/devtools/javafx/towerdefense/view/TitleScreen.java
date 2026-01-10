@@ -51,7 +51,7 @@ public class TitleScreen extends StackPane {
   }
 
   public void exitGame() {
-    viewModel.abortGame();
+    System.exit(0);
   }
 
   public void setConfig() {
