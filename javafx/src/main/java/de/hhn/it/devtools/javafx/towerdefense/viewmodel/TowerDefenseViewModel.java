@@ -6,7 +6,6 @@ import de.hhn.it.devtools.apis.towerdefenseapi.Player;
 import de.hhn.it.devtools.apis.towerdefenseapi.Tower;
 import de.hhn.it.devtools.apis.towerdefenseapi.TowerDefenseListener;
 import de.hhn.it.devtools.apis.towerdefenseapi.TowerDefenseService;
-import de.hhn.it.devtools.components.towerdefensecomponents.SimpleTowerDefenseService;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.ObjectProperty;
@@ -15,7 +14,9 @@ import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 
-
+/**
+ * Collective View Model for all TowerDefense Screens.
+ */
 public class TowerDefenseViewModel implements TowerDefenseListener {
   TowerDefenseService service;
   private final ObjectProperty<Grid> map = new SimpleObjectProperty<>();
@@ -63,12 +64,12 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
     return map;
   }
 
-  public IntegerProperty getHealth(){
+  public IntegerProperty getHealth() {
     sync();
     return health;
   }
 
-  public IntegerProperty getMoney(){
+  public IntegerProperty getMoney() {
     sync();
     return money;
   }

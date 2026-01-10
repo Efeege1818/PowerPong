@@ -21,7 +21,6 @@ public class WaveGenerator {
   private final long randomSeed;
   private final Coordinates startCoordinates;
 
-
   /**
    * Creates a new WaveGenerator.
    *
@@ -43,7 +42,7 @@ public class WaveGenerator {
    */
   public LinkedList<Enemy> generateWave(int wave) {
 
-    LinkedList<Enemy> enemyList = new LinkedList<Enemy>();
+    LinkedList<Enemy> enemyList = new LinkedList<>();
 
     Random random = createRandomGenerator(wave);
     int remainingPower = calculatePower(wave);
