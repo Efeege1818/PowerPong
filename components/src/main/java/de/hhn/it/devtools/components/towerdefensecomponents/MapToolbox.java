@@ -36,7 +36,7 @@ public class MapToolbox {
    * Initializes a new grid of the given size and triggers
    * the generation of a valid enemy path.
    *
-   * <p>This method has a {@code MAX_ATTEMPTS} of 100 to try and get a valid path.</p>
+   * <p>This method has a {@code maxAttempts} of 100 to try and get a valid path.</p>
    *
    * @param size the width and height of the grid; must be greater than one
    * @throws IllegalArgumentException if {@code size} is less than or equal to one
@@ -46,9 +46,9 @@ public class MapToolbox {
       throw new IllegalArgumentException("Grid size must be greater than one.");
     }
     this.originSize = size;
-    final int MAX_ATTEMPTS = 100;
+    final int maxAttempts = 100;
 
-    for (int attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    for (int attempt = 1; attempt <= maxAttempts; attempt++) {
       try {
         Direction[][] map = new Direction[size][size];
         for (int y = 0; y < size; y++) { // Important! y is fist as row, then x as column
@@ -66,7 +66,7 @@ public class MapToolbox {
       }
     }
     throw new IllegalStateException(
-            "Failed to generate a valid map after " + MAX_ATTEMPTS + " attempts");
+            "Failed to generate a valid map after " + maxAttempts + " attempts");
   }
 
   /**
@@ -203,7 +203,7 @@ public class MapToolbox {
    * </p>
    *
    * @return a list of {@link Coordinates} representing the extended path in
-   * traversal order.
+   *         traversal order.
    * @throws IllegalStateException if no path has been generated or the path is
    *                               empty
    */
@@ -353,7 +353,7 @@ public class MapToolbox {
    * @param blockedTiles a grid of blocked tiles; may be {@code null} for the
    *                     first path
    * @return a list of coordinates representing the path, or an empty list if no
-   * path exists
+   *         path exists
    */
   private List<Coordinates> dijkstra(Coordinates start,
                                      Coordinates goal,
