@@ -19,7 +19,7 @@ public class ScreenManager extends Parent {
     screensNodeMap = new HashMap<>();
   }
 
-  TowerDefenseViewModel getViewModel() {
+  public TowerDefenseViewModel getViewModel() {
     return viewModel;
   }
 

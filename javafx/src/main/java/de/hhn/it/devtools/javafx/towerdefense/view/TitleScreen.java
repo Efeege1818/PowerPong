@@ -17,6 +17,7 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 public class TitleScreen extends StackPane {
+  ScreenManager screenManager;
   TowerDefenseViewModel viewModel;
 
   Label towerDefenseLbl = new Label("Tower defense");
@@ -27,7 +28,8 @@ public class TitleScreen extends StackPane {
   Label title = new Label();
 
   public TitleScreen(ScreenManager screenManager) {
-    this.viewModel = viewModel;
+    this.screenManager = screenManager;
+    this.viewModel = screenManager.getViewModel();
 
     startGame.setOnAction(event -> {
       startGame();
