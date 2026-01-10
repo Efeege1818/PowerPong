@@ -1,20 +1,13 @@
 package de.hhn.it.devtools.javafx.towerdefense.view;
 
-import de.hhn.it.devtools.apis.towerdefenseapi.Configuration;
-import de.hhn.it.devtools.components.towerdefensecomponents.SimpleTowerDefenseService;
 import de.hhn.it.devtools.javafx.towerdefense.controllers.ScreenManager;
 import de.hhn.it.devtools.javafx.towerdefense.viewmodel.TowerDefenseViewModel;
-import javafx.application.Application;
-import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import javafx.stage.Stage;
 
 public class TitleScreen extends StackPane {
   ScreenManager screenManager;

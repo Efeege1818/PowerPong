@@ -14,7 +14,7 @@ public class ScreenManager extends Parent {
   private final TowerDefenseViewModel viewModel;
   private static Map<ScreenType, Node> screensNodeMap;
 
-  ScreenManager(TowerDefenseViewModel viewModel) {
+  public ScreenManager(TowerDefenseViewModel viewModel) {
     this.viewModel = viewModel;
     screensNodeMap = new HashMap<>();
   }

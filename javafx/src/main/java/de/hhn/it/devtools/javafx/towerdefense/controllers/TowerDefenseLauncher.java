@@ -2,7 +2,6 @@ package de.hhn.it.devtools.javafx.towerdefense.controllers;
 
 import de.hhn.it.devtools.apis.towerdefenseapi.TowerDefenseService;
 import de.hhn.it.devtools.components.towerdefensecomponents.SimpleTowerDefenseService;
-import de.hhn.it.devtools.javafx.towerdefense.view.TitleScreen;
 import de.hhn.it.devtools.javafx.towerdefense.viewmodel.TowerDefenseViewModel;
 import javafx.application.Application;
 import javafx.scene.Scene;
