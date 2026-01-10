@@ -17,6 +17,9 @@ import java.util.Queue;
 import java.util.Random;
 import java.util.function.Consumer;
 
+/**
+ * Service that manages all internal logic of the game.
+ */
 public class SimpleTowerDefenseService implements TowerDefenseService {
 
   private MapToolbox mapToolbox;
@@ -26,7 +29,7 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
 
   private final long seed;
   private GameState currentGameState;
-  private final List<TowerDefenseListener> listeners = new ArrayList<TowerDefenseListener>();
+  private final List<TowerDefenseListener> listeners = new ArrayList<>();
   private final GameLoop gameLoop = new GameLoop(this);
   private Player player;
   private Player savedPlayerData;
@@ -35,6 +38,9 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
 
   private Queue<Enemy> enemyQueue;
 
+  /**
+   * Constructor.
+   */
   public SimpleTowerDefenseService() {
 
     mapToolbox = new MapToolbox();

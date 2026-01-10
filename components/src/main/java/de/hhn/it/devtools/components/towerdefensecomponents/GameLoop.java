@@ -4,19 +4,24 @@ import de.hhn.it.devtools.apis.towerdefenseapi.TowerDefenseListener;
 
 /**
  * This Class runs in a loop every game tick and manages everything that has to run constantly.
- * This Class should call the tick() Method in the GameLoop once per Game-Tick.
+ * This Class calls the tick() Method in the GameLoop once per Game-Tick.
  */
 public class GameLoop extends Thread {
 
   private boolean running = false;
   private boolean started = false;
-  private int tickspeed = 1000;
+  private final int tickspeed = 1000;
 
-  private SimpleTowerDefenseService service;
+  private final SimpleTowerDefenseService service;
 
   private static final org.slf4j.Logger logger =
       org.slf4j.LoggerFactory.getLogger(GameLoop.class);
 
+  /**
+   * Constructor.
+   *
+   * @param service the Service that this GameLoop should affect
+   */
   public GameLoop(SimpleTowerDefenseService service) {
     this.service = service;
   }

@@ -20,8 +20,7 @@ import java.util.Random;
  * Utility class responsible for generating and managing the game map
  * for the tower defense component.
  *
- * <p>
- * This class encapsulates all logic related to grid creation,
+ * <p>This class encapsulates all logic related to grid creation,
  * path generation and validation of grid coordinates. It does not
  * handle enemies, towers or game logic.
  * </p>
@@ -37,13 +36,10 @@ public class MapToolbox {
    * Initializes a new grid of the given size and triggers
    * the generation of a valid enemy path.
    *
-   * <p>
-   * This method has a {@code MAX_ATTEMPTS} of 100 to try and get a valid path.
-   * </p>
+   * <p>This method has a {@code MAX_ATTEMPTS} of 100 to try and get a valid path.</p>
    *
    * @param size the width and height of the grid; must be greater than one
-   * @throws IllegalArgumentException if {@code size} is less than or equal to
-   *                                  one
+   * @throws IllegalArgumentException if {@code size} is less than or equal to one
    */
   public void generateMap(int size) {
     if (size <= 1) {
