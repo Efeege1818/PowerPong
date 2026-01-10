@@ -1,5 +1,7 @@
 package de.hhn.it.devtools.components.towerdefensecomponents;
 
+import de.hhn.it.devtools.apis.towerdefenseapi.TowerDefenseListener;
+
 /**
  * This Class runs in a loop every game tick and manages everything that has to run constantly.
  * This Class should call the tick() Method in the GameLoop once per Game-Tick.
@@ -31,6 +33,7 @@ public class GameLoop extends Thread {
         throw new RuntimeException(e);
       }
     }
+
   }
 
   /**

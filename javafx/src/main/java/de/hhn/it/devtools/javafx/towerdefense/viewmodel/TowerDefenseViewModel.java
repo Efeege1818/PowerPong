@@ -63,12 +63,12 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
     return map;
   }
 
-  public IntegerProperty getHealth(){
+  public IntegerProperty getHealth() {
     sync();
     return health;
   }
 
-  public IntegerProperty getMoney(){
+  public IntegerProperty getMoney() {
     sync();
     return money;
   }
