@@ -168,7 +168,8 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
       throw new IllegalArgumentException("Tower position can't be oin the path");
     }
     if (!Objects.isNull(towerToolbox.getTowers().get(tower.coordinates()))) {
-      throw new IllegalArgumentException("Tower position can't be at the coordinates of another Tower");
+      throw new IllegalArgumentException(
+              "Tower position can't be at the coordinates of another Tower");
     }
     if (player.money() < TowerToolbox.getCost(tower.type())) {
       throw new IllegalArgumentException("Not enough money");

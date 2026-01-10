@@ -171,7 +171,11 @@ public class EnemyToolbox {
         continue;
       }
       if ((enemy.index() + getSpeed(enemy.type())) > (coordinatesList.size() - 1)) {
-        enemies.set(enemies.indexOf(enemy), new Enemy(enemy.id(), coordinatesList.getLast(), enemy.type(), enemy.currentHealth(), enemy.index()
+        enemies.set(enemies.indexOf(enemy), new Enemy(enemy.id(),
+                coordinatesList.getLast(),
+                enemy.type(),
+                enemy.currentHealth(),
+                enemy.index()
                 + getSpeed(enemy.type())));
       } else {
         enemies.set(enemies.indexOf(enemy), new Enemy(enemy.id(), coordinatesList.get(enemy.index()
