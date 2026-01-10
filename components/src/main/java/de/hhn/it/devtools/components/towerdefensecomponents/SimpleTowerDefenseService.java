@@ -97,22 +97,27 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
     configuration = new Configuration();
 
     mapToolbox = new MapToolbox();
-    enemyToolbox = new EnemyToolbox(this);
-    towerToolbox = new TowerToolbox(this);
-
     mapToolbox.generateMap(configuration.mapSize());
-    waveGenerator = new WaveGenerator(mapToolbox.getPath().getFirst(), seed, configuration);
 
-    player = new Player(configuration.startingHealth(), configuration.startingMoney());
-    savedPlayerData = player;
-    towerToolbox.saveData();
-    currentRound = 0;
+    resetGame();
 
     currentGameState = GameState.READY;
   }
 
   @Override
   public void resetGame() {
+    enemyToolbox = new EnemyToolbox(this);
+    towerToolbox = new TowerToolbox(this);
+
+    waveGenerator = new WaveGenerator(mapToolbox.getPath().getFirst(), seed, configuration);
+    player = new Player(configuration.startingHealth(), configuration.startingMoney());
+
+    savedPlayerData = player;
+    towerToolbox.saveData();
+    currentRound = 0;
+
+    currentGameState = GameState.PAUSED;
+
   }
 
   @Override
