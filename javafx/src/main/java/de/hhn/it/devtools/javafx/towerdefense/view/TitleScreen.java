@@ -2,6 +2,7 @@ package de.hhn.it.devtools.javafx.towerdefense.view;
 
 import de.hhn.it.devtools.apis.towerdefenseapi.Configuration;
 import de.hhn.it.devtools.components.towerdefensecomponents.SimpleTowerDefenseService;
+import de.hhn.it.devtools.javafx.towerdefense.controllers.ScreenManager;
 import de.hhn.it.devtools.javafx.towerdefense.viewmodel.TowerDefenseViewModel;
 import javafx.application.Application;
 import javafx.scene.Node;
@@ -19,7 +20,7 @@ public class TitleScreen extends StackPane {
   Button config = new Button("config");
   Button exitGame = new Button("Exit Game");
 
-  public TitleScreen(TowerDefenseViewModel viewModel) {
+  public TitleScreen(ScreenManager screenManager) {
     this.viewModel = viewModel;
 
     startGame.setOnAction(event -> {
@@ -33,6 +34,8 @@ public class TitleScreen extends StackPane {
     config.setOnAction(event -> {
 
     });
+
+    getChildren().add(towerDefenseLbl);
 
   }
 

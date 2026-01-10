@@ -1,32 +1,41 @@
 package de.hhn.it.devtools.javafx.towerdefense.controllers;
 
+import de.hhn.it.devtools.javafx.towerdefense.view.GameScreen;
+import de.hhn.it.devtools.javafx.towerdefense.view.TitleScreen;
 import de.hhn.it.devtools.javafx.towerdefense.viewmodel.TowerDefenseViewModel;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 
 public class ScreenManager extends Parent {
 
   private final TowerDefenseViewModel viewModel;
+  private static Map<ScreenType, Node> screensNodeMap;
 
-  public ScreenManager (TowerDefenseViewModel viewModel) {
+  ScreenManager(TowerDefenseViewModel viewModel) {
     this.viewModel = viewModel;
+    screensNodeMap = new HashMap<>();
   }
 
-  public TowerDefenseViewModel getViewModel() {
+  TowerDefenseViewModel getViewModel() {
     return viewModel;
-  }
-
-  public void addScreen(ScreenType screenType, Node node) {
-    screensNodeMap.put(screenType, node);
   }
 
   public void switchTo(ScreenType screenType) {
     this.getChildren().clear();
-
-    this.getChildren().add(screensNodeMap.get(screenType));
+    Node newChild = screensNodeMap.get(screenType);
+    if (Objects.isNull(newChild)) {
+      switch (screenType) {
+        case GAME_SCREEN -> newChild = new GameScreen(this);
+        case TITLE_SCREEN -> newChild = new TitleScreen(this);
+        default -> {
+          throw new IllegalArgumentException("Screen Type does not exist");
+        }
+      }
+      screensNodeMap.put(screenType, newChild);
+    }
+    this.getChildren().add(newChild);
   }
-
-  private static Map<ScreenType, Node> screensNodeMap;
-
 }

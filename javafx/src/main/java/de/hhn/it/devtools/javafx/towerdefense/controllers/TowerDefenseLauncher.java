@@ -25,9 +25,10 @@ public class TowerDefenseLauncher extends Application {
   public void start(Stage primaryStage) throws Exception {
     TowerDefenseService service = new SimpleTowerDefenseService();
     TowerDefenseViewModel viewModel = new TowerDefenseViewModel(service);
-    TitleScreen titleScreen = new TitleScreen(viewModel);
+    ScreenManager screenManager = new ScreenManager(viewModel);
+    screenManager.switchTo(ScreenType.TITLE_SCREEN);
 
-    primaryStage.setScene(new Scene(titleScreen));
+    primaryStage.setScene(new Scene(screenManager));
     primaryStage.setTitle("Tower Defense");
     primaryStage.show();
   }
