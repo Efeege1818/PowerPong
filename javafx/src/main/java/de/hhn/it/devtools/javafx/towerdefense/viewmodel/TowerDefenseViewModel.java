@@ -20,9 +20,10 @@ import javafx.collections.FXCollections;
 public class TowerDefenseViewModel implements TowerDefenseListener {
   TowerDefenseService service;
   private final ObjectProperty<Grid> map = new SimpleObjectProperty<>();
-  private final ObjectProperty<Player> player = new SimpleObjectProperty<>();
-  private final ListProperty<Enemy> enemies = new SimpleListProperty<>(FXCollections.observableArrayList());
-  private final ListProperty<Tower> towers = new SimpleListProperty<>(FXCollections.observableArrayList());
+  private final ListProperty<Enemy> enemies = new SimpleListProperty<>(
+      FXCollections.observableArrayList());
+  private final ListProperty<Tower> towers = new SimpleListProperty<>(
+      FXCollections.observableArrayList());
   private final IntegerProperty round = new SimpleIntegerProperty();
   private final IntegerProperty health = new SimpleIntegerProperty();
   private final IntegerProperty money = new SimpleIntegerProperty();
@@ -89,12 +90,12 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
 
   @Override
   public void updateHealth() {
-    sync();
+    health.set(service.getPlayer().health());
   }
 
   @Override
   public void updateMoney() {
-    sync();
+    money.set(service.getPlayer().money());
   }
 
   @Override
@@ -114,7 +115,7 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
 
   @Override
   public void tick() {
-
+    enemies.setAll(service.getCurrentEnemies());
   }
 
   public void sync() {

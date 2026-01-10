@@ -1,4 +1,4 @@
-package de.hhn.it.devtools.javafx.towerdefense;
+package de.hhn.it.devtools.javafx.towerdefense.controllers;
 
 import de.hhn.it.devtools.apis.towerdefenseapi.TowerDefenseService;
 import de.hhn.it.devtools.components.towerdefensecomponents.SimpleTowerDefenseService;
