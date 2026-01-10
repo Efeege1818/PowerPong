@@ -8,7 +8,11 @@ import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 public class TitleScreen extends StackPane {
@@ -18,26 +22,27 @@ public class TitleScreen extends StackPane {
   Button startGame = new Button("Start Game");
   Button config = new Button("config");
   Button exitGame = new Button("Exit Game");
+  HBox box = new HBox();
+  Label title = new Label();
 
   public TitleScreen(TowerDefenseViewModel viewModel) {
     this.viewModel = viewModel;
-
     startGame.setOnAction(event -> {
       startGame();
     });
-
     exitGame.setOnAction(event -> {
       exitGame();
     });
-
     config.setOnAction(event -> {
-
     });
-
+    createGrid();
   }
 
-  public void createGrid(){
-
+  public void createGrid() {
+    title.textProperty().set("TOWER DEV");
+    title.fontProperty().set(new Font("Impact", 20));
+    box.getChildren().addAll(title, startGame, exitGame, config);
+    getChildren().addAll(box);
   }
 
   public void startGame() {
