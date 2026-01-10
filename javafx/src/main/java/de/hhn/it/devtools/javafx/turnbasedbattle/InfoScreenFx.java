@@ -98,8 +98,9 @@ public class InfoScreenFx extends VBox {
 
             boolean isLast = (index == size);
 
+            //highlights the special move
             if (isLast) {
-                Text header = new Text("Special Move\n");
+                Text header = new Text("Special Move:\n");
                 header.setFont(Font.font(header.getFont().getFamily(), FontWeight.BOLD, 14));
                 attacksList.getChildren().add(header);
             }
@@ -115,20 +116,11 @@ public class InfoScreenFx extends VBox {
             attacksList.getChildren().addAll(nameText, descText);
         }
         attacksList.setStyle("-fx-font-size: 12px; -fx-line-spacing: 6px;");
-/**
-        // Special move
-        Label specialTitle = new Label(specialMove.name());
-        specialTitle.setStyle("-fx-font-size: 12px; -fx-font-weight: bold;");
-        Text specialText = new Text(specialMove.description());
-        specialText.setStyle("-fx-font-size: 12px;");
-        TextFlow specialFlow = new TextFlow(specialText);
-        specialFlow.setMaxWidth(420);
-*/
+
         leftCol.getChildren().addAll(
                 title, focus, new Region(), stats,
                 passiveTitle, passiveText,
                 attacksTitle, attacksList
-                //specialTitle, specialFlow
         );
 
         // RIGHT COLUMN (Monster image)
@@ -144,7 +136,7 @@ public class InfoScreenFx extends VBox {
             MonsterView.setPreserveRatio(true);
             rightCol.getChildren().add(MonsterView);
         } else {
-            // Fallback: draw a stroked circle
+            // Fallback: draw a circle
             Element fallbackElement = viewModel.getElement();
             String fallbackColore;
                     switch (fallbackElement){
