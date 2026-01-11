@@ -9,6 +9,7 @@ import de.hhn.it.devtools.apis.towerdefenseapi.TowerDefenseService;
 import de.hhn.it.devtools.apis.towerdefenseapi.TowerType;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
+import javafx.scene.paint.Color;
 import java.util.Map;
 
 /**
@@ -129,6 +130,15 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
   @Override
   public void tick() {
     enemies.setAll(service.getCurrentEnemies());
+  }
+
+  public Color getTowerColors(TowerType type) {
+    return switch (type) {
+      case MELEE -> Color.BLUE;
+      case RANGED -> Color.CYAN;
+      case MONEYMAKER -> Color.DARKBLUE;
+      default -> Color.HOTPINK;
+    };
   }
 
   public void sync() {

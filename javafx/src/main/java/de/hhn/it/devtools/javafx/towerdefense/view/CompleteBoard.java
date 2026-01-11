@@ -3,6 +3,8 @@ package de.hhn.it.devtools.javafx.towerdefense.view;
 import de.hhn.it.devtools.apis.towerdefenseapi.Direction;
 import de.hhn.it.devtools.apis.towerdefenseapi.Enemy;
 import de.hhn.it.devtools.apis.towerdefenseapi.Grid;
+import de.hhn.it.devtools.apis.towerdefenseapi.TowerType;
+import de.hhn.it.devtools.components.towerdefensecomponents.GameLoop;
 import de.hhn.it.devtools.javafx.towerdefense.viewmodel.TowerDefenseViewModel;
 import javafx.application.Platform;
 import javafx.beans.property.*;
@@ -18,16 +20,22 @@ import javafx.scene.shape.Rectangle;
 import java.util.ArrayList;
 
 public class CompleteBoard extends StackPane {
+
+  private static final org.slf4j.Logger logger =
+      org.slf4j.LoggerFactory.getLogger(CompleteBoard.class);
+
   TowerDefenseViewModel viewModel;
   ObjectProperty<Grid> gridProperty = new SimpleObjectProperty<>();
   GridPane mapGrid = new GridPane();
   ListProperty<Enemy> enemies = new SimpleListProperty<>();
   GridPane enemyGrid = new GridPane();
+  public final int size;
 
   public CompleteBoard(TowerDefenseViewModel viewModel) {
     alignmentProperty().set(Pos.TOP_LEFT);
     this.viewModel = viewModel;
     createGridDisplay();
+    size = gridProperty.get().grid().length;
   }
 
 
@@ -50,12 +58,11 @@ public class CompleteBoard extends StackPane {
 
   public void boardDisplay() {
     this.gridProperty.bind(viewModel.getMap());
-    int length = gridProperty.get().grid().length;
     mapGrid.widthProperty().divide(2);
     mapGrid.scaleXProperty().setValue(mapGrid.scaleXProperty().get());
     mapGrid.scaleYProperty().setValue(mapGrid.scaleYProperty().get());
-    for (int row = 0; row < length; row++) {
-      for (int col = 0; col < length; col++) {
+    for (int row = 0; row < size; row++) {
+      for (int col = 0; col < size; col++) {
         Rectangle rectangle = new Rectangle(16, 16);
         if (gridProperty.get().grid()[row][col] == Direction.NONE) {
           rectangle.setStroke(Color.BLACK);
@@ -105,6 +112,11 @@ public class CompleteBoard extends StackPane {
 
   public void towerDisplay() {
 
+  }
+
+  public void placeTower(TowerType type, int x, int y) {
+    Rectangle tile = (Rectangle) mapGrid.getChildren().get(x * size + y);
+    tile.setFill(viewModel.getTowerColors(type));
   }
 }
 
