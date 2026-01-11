@@ -51,6 +51,17 @@ public class GameScreen extends StackPane {
         getChildren().add(createOverlayDisplay());
       }
     });
+
+    double scale = 3;
+
+    setScaleX(scale);
+    setScaleY(scale);
+
+    layoutBoundsProperty().addListener((obs, oldBounds, newBounds) -> {
+      setTranslateX(-(newBounds.getWidth() * (1 - scale)) / 2);
+      setTranslateY(-(newBounds.getHeight() * (1 - scale)) / 2);
+    });
+
   }
 
   public GridPane createTowerDisplay() {

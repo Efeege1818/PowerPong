@@ -79,10 +79,26 @@ public class CompleteBoard extends StackPane {
           public void run() {
             getChildren().clear();
             getChildren().add(mapGrid);
+            Rectangle rectangle;
             for (Enemy enemy : enemies) {
-              Rectangle rectangle = new Rectangle(5, 5);
-              rectangle.setStroke(Color.BLACK);
-              rectangle.setFill(Color.RED);
+              switch (enemy.type()) {
+                case LARGE -> {
+                  rectangle = new Rectangle(10, 10);
+                  rectangle.setStroke(Color.BLACK);
+                  rectangle.setFill(Color.DARKRED);
+                }
+                case MEDIUM -> {
+                  rectangle = new Rectangle(8, 8);
+                  rectangle.setStroke(Color.BLACK);
+                  rectangle.setFill(Color.CRIMSON);
+                }
+                case SMALL -> {
+                  rectangle = new Rectangle(5, 5);
+                  rectangle.setStroke(Color.BLACK);
+                  rectangle.setFill(Color.RED);
+                }
+                default -> rectangle = new Rectangle(5, 5);
+              }
               rectangle.setTranslateX(enemy.coordinates().x() * 18);
               rectangle.setTranslateY(enemy.coordinates().y() * 18);
               getChildren().add(rectangle);
