@@ -145,7 +145,7 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
 
   @Override
   public void tick() {
-    enemies.setAll(service.getCurrentEnemies());
+    Platform.runLater(() -> enemies.setAll(service.getCurrentEnemies()));
   }
 
   /**
@@ -164,11 +164,13 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
   }
 
   public void sync() {
-    towers.setAll(service.getTowerBoard().values());
-    enemies.setAll(service.getCurrentEnemies());
-    this.map.set(service.getMap());
-    health.set(service.getPlayer().health());
-    money.set(service.getPlayer().money());
-    round.set(service.getCurrentRound());
+    Platform.runLater(() -> {
+      towers.setAll(service.getTowerBoard().values());
+      enemies.setAll(service.getCurrentEnemies());
+      this.map.set(service.getMap());
+      health.set(service.getPlayer().health());
+      money.set(service.getPlayer().money());
+      round.set(service.getCurrentRound());
+    });
   }
 }
