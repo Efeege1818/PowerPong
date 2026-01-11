@@ -25,6 +25,13 @@ public class ConsoleConnectFourUI {
     for (int c = 1; c <= cols; c++) {
       System.out.print(" " + c);
     }
+    System.out.println();
+    System.out.println("Legend:");
+    System.out.println(" " + EMPTY + " = empty field");
+    System.out.println(" " + RED + "/" + YELLOW + " = normal chip");
+    System.out.println(" " + TOXIC + " = toxic field");
+    System.out.println(" " + RED_TOXIC + "/" + YELLOW_TOXIC + " = chip on toxic field");
+    System.out.println();
 
   }
 
