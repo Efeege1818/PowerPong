@@ -29,8 +29,6 @@ public class GameScreen extends StackPane {
   StackPane overlayPane = new StackPane();
 
 
-
-
   public GameScreen(ScreenManager screenManager) {
     this.screenManager = screenManager;
     this.viewModel = screenManager.getViewModel();
@@ -42,20 +40,14 @@ public class GameScreen extends StackPane {
 
 
   public void createDisplay() {
-//    createTowerDisplay();
-//    createStatsDisplay();
-//    createButtonDisplay();
-//    mainLayout.getChildren().addAll(completeBoard);
-//    getChildren().addAll(mainLayout);
-
     mainLayout.setSpacing(10);
     mainLayout.setAlignment(Pos.CENTER);
 
     mainLayout.getChildren().addAll(
-        createTowerDisplay(),
-        completeBoard,
-        createStatsDisplay(),
-        createStartWaveButton()
+            createTowerDisplay(),
+            completeBoard,
+            createStatsDisplay(),
+            createButtonDisplay()
     );
     getChildren().add(mainLayout);
   }
@@ -75,6 +67,8 @@ public class GameScreen extends StackPane {
 
         Rectangle towerIconRect = new Rectangle(20, 20);
         // TODO: individual Tower colors
+
+//        switch
         towerIconRect.setFill(Color.BLUE);
 
         // TODO: Money attribute
@@ -115,24 +109,70 @@ public class GameScreen extends StackPane {
     return statsDisplay;
   }
 
-  public void createButtonDisplay() {
-
-  }
-
-  public Button createStartWaveButton() {
+  public GridPane createButtonDisplay() {
+    // TODO: Grey out when impossible to do
     Button startWaveButton = new Button("Start next Round");
     startWaveButton.setOnAction((event) -> {
-      try {
-        viewModel.startNextRound();
-      } catch (IllegalStateException e) {
-        // Temporary Solution for Illegal Button press
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setContentText("Wave can't be started");
-        alert.showAndWait();
-      }
+      startWaveOnAction();
+    });
+    Button abortGameButton = new Button("Exit Game");
+    startWaveButton.setOnAction((event) -> {
+      abortGameOnAction();
     });
 
-    return startWaveButton;
+    GridPane buttonDisplay = new GridPane();
+    buttonDisplay.setAlignment(Pos.CENTER);
+    buttonDisplay.setHgap(10);
+
+    buttonDisplay.add(startWaveButton, 0, 0);
+    buttonDisplay.add(abortGameButton, 1, 0);
+
+    return buttonDisplay;
   }
 
+  public GridPane createOverlayDisplay() {
+    // TODO: in "Game-Over" Overlay
+    Button retryWaveButton = new Button("Retry this Round");
+    retryWaveButton.setOnAction((event) -> {
+      retryWaveOnAction();
+    });
+    GridPane overlayDisplay = new GridPane();
+    overlayDisplay.setAlignment(Pos.CENTER);
+    overlayDisplay.setHgap(10);
+    overlayDisplay.add(retryWaveButton, 0, 0);
+
+    return overlayDisplay;
+  }
+
+  public void startWaveOnAction() {
+    try {
+      viewModel.startNextRound();
+    } catch (IllegalStateException e) {
+      // Temporary Solution for Illegal Button press
+      Alert alert = new Alert(Alert.AlertType.ERROR);
+      alert.setContentText("Wave can't be started");
+      alert.showAndWait();
+    }
+  }
+  public void retryWaveOnAction() {
+    try {
+      // TODO: retryRound();
+      viewModel.retryRound();
+    } catch (IllegalStateException e) {
+      // Temporary Solution for Illegal Button press
+      Alert alert = new Alert(Alert.AlertType.ERROR);
+      alert.setContentText("Wave can't be started");
+      alert.showAndWait();
+    }
+  }
+  public void abortGameOnAction() {
+    try {
+      viewModel.abortGame();
+    } catch (IllegalStateException e) {
+      // Temporary Solution for Illegal Button press
+      Alert alert = new Alert(Alert.AlertType.ERROR);
+      alert.setContentText("Wave can't be started");
+      alert.showAndWait();
+    }
+  }
 }
