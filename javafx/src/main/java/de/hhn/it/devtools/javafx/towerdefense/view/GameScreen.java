@@ -174,7 +174,7 @@ public class GameScreen extends StackPane {
           if (selectedTower != null) {
             try {
               // TODO: uuid fix not int id 2
-              viewModel.addTower(new Tower(2, new Coordinates(perfectColumn, perfectRow), selectedTower));
+              viewModel.addTower(new Tower(new Coordinates(perfectColumn, perfectRow), selectedTower));
               selectedTower = null; //resetr if didnt work
             } catch (IllegalArgumentException e) {
               Alert alert = new Alert(Alert.AlertType.ERROR, "Invalid action");
