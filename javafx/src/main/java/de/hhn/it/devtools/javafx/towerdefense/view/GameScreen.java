@@ -3,11 +3,6 @@ package de.hhn.it.devtools.javafx.towerdefense.view;
 import de.hhn.it.devtools.apis.towerdefenseapi.*;
 import de.hhn.it.devtools.javafx.towerdefense.controllers.ScreenManager;
 import de.hhn.it.devtools.javafx.towerdefense.viewmodel.TowerDefenseViewModel;
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleListProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -69,13 +64,7 @@ public class GameScreen extends StackPane {
             default -> throw new NoSuchElementException();
           }
       );
-
-      int towerCostNumber = switch (type) {
-        case MELEE -> 10;
-        case RANGED -> 15;
-        case MONEYMAKER -> 20;
-        default -> throw new NoSuchElementException();
-      };
+      int towerCostNumber = viewModel.getTowerTypes().get(type);
       Label towerCost = new Label(String.valueOf(towerCostNumber));
       towerCost.setTextFill(Color.GOLD);
 
