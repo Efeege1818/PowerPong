@@ -1,16 +1,14 @@
 plugins {
-    id("java-library")
-    id("application")
+    id 'java-library'
 }
 
-group = "de.hhn.it.devtools.apis"
-version = "1.0"
+group = 'de.hhn.it.devtools.apis'
+version = '1.0'
+
+repositories {
+    mavenCentral()
+}
 
 dependencies {
-    // see also the dependencies in build.gradle (root)
-}
-
-application {
-    mainModule = "devtools.apis"
-    mainClass = "de.hhn.it.devtools.apis.fourconnect.console.ConsoleMain"
+    // empty (root manages)
 }

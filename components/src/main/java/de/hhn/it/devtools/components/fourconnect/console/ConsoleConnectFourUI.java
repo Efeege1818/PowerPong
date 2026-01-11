@@ -1,5 +1,9 @@
-package de.hhn.it.devtools.apis.fourconnect.console;
+package de.hhn.it.devtools.components.fourconnect.console;
 
+import java.util.Scanner;
+
+import de.hhn.it.devtools.apis.exceptions.OperationNotSupportedException;
+import de.hhn.it.devtools.apis.fourconnect.ConnectFourService;
 import de.hhn.it.devtools.apis.fourconnect.Field;
 import de.hhn.it.devtools.apis.fourconnect.GameBoard;
 import de.hhn.it.devtools.apis.fourconnect.Player;
@@ -15,8 +19,6 @@ public class ConsoleConnectFourUI {
   private static final char RED_TOXIC = 'r';
   private static final char YELLOW_TOXIC = 'y';
 
-  // Optional: DecayTime sichtbar machen (1..9)
-  // Wenn du das nicht willst, setze auf false.
   private static final boolean SHOW_DECAY_TIME = false;
 
   // === Board Rendering ===
@@ -26,13 +28,11 @@ public class ConsoleConnectFourUI {
     int rows = board.getRows();
     int cols = board.getColumns();
 
-    // Spaltennummern
     for (int c = 1; c <= cols; c++) {
       System.out.print(" " + c);
     }
     System.out.println();
 
-    // Grid
     for (int r = 0; r < rows; r++) {
       for (int c = 0; c < cols; c++) {
         Field f = board.getField(r, c);
@@ -41,7 +41,6 @@ public class ConsoleConnectFourUI {
       System.out.println();
     }
 
-    // Legend
     System.out.println();
     System.out.println("Legend:");
     System.out.println(" " + EMPTY + " = empty field");
@@ -56,15 +55,6 @@ public class ConsoleConnectFourUI {
 
   private char renderField(Field f) {
     boolean toxic = f.isToxicZone();
-
-    // Optional: DecayTime anzeigen (nur wenn Feld toxic ist und > 0)
-    if (SHOW_DECAY_TIME && toxic) {
-      int decay = f.getDecayTime();
-      if (decay > 0 && decay < 10) {
-        return Character.forDigit(decay, 10);
-
-      } // falls decay >= 10 oder 0: einfach normales Toxic-Symbol benutzen
-    }
 
     if (f.isOccupied()) {
       Player p = f.getOccupyingPlayer();
@@ -100,6 +90,62 @@ public class ConsoleConnectFourUI {
       return col >= 1 && col <= cols;
     } catch (NumberFormatException e) {
       return false;
+    }
+  }
+
+  // ✅ HIER muss die Methode rein (innerhalb der Klasse!)
+  public void start(ConnectFourService service) {
+    Scanner sc = new Scanner(System.in);
+
+    while (true) {
+      render(service.getBoard());
+
+      try {
+        System.out.println("Turn: " + service.getCurrentPlayer().name()
+            + " (" + service.getCurrentPlayer().color() + ")");
+      } catch (OperationNotSupportedException e) {
+        System.out.println("Game not started: " + e.getMessage());
+      }
+
+      System.out.print("Choose column (1-" + service.getBoard().getColumns() + ") or q to quit: ");
+      String input = sc.nextLine();
+
+      if (input != null && input.trim().equalsIgnoreCase("q")) {
+        System.out.println("Bye!");
+        return;
+      }
+
+      if (!isValidColumnInput(input, service.getBoard().getColumns())) {
+        System.out.println("Invalid input. Try again.");
+        continue;
+      }
+
+      int col = Integer.parseInt(input.trim()) - 1;
+
+      try {
+        service.dropChip(col);
+
+        try {
+          service.applyToxicDecay();
+        } catch (OperationNotSupportedException ignored) {
+          // ignore
+        }
+
+        if (service.checkForWin()) {
+          render(service.getBoard());
+          System.out.println("🏆 WINNER: " + service.getCurrentPlayer().name());
+          return;
+        }
+
+        if (service.checkForDraw()) {
+          render(service.getBoard());
+          System.out.println("🤝 DRAW!");
+          return;
+        }
+
+      } catch (Exception e) {
+        System.out.println("Move not possible: " + e.getMessage());
+      }
     }
   }
 }

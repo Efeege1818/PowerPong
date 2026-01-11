@@ -1,15 +1,20 @@
 package de.hhn.it.devtools.components.fourconnect.provider;
 
+import java.util.Random;
 import de.hhn.it.devtools.apis.fourconnect.Field;
 import de.hhn.it.devtools.apis.fourconnect.GameBoard;
 import de.hhn.it.devtools.apis.fourconnect.Player;
 
 /**
- * Concrete implementation of the {@link GameBoard} interface for the Four-Connect game.
+ * Concrete implementation of the {@link GameBoard} interface for the
+ * Four-Connect game.
  * <p>
- * This class manages the 2D array of {@link FieldImpl} objects that represent the
- * game grid. It defines the standard dimensions for a Four-Connect board (6 rows
- * and 7 columns) and provides methods for accessing the fields, clearing the board,
+ * This class manages the 2D array of {@link FieldImpl} objects that represent
+ * the
+ * game grid. It defines the standard dimensions for a Four-Connect board (6
+ * rows
+ * and 7 columns) and provides methods for accessing the fields, clearing the
+ * board,
  * and placing chips.
  * </p>
  */
@@ -46,7 +51,7 @@ public class GameBoardImpl implements GameBoard {
   /**
    * Returns the field at the specified row and column coordinates.
    *
-   * @param row The row index (0-based) of the field.
+   * @param row    The row index (0-based) of the field.
    * @param column The column index (0-based) of the field.
    * @return The {@link Field} object at the given coordinates.
    */
@@ -79,7 +84,8 @@ public class GameBoardImpl implements GameBoard {
    * Clears the board by initializing every field in the 2D array
    * with a new, empty {@link FieldImpl} object.
    * <p>
-   * This method is package-private and intended for use within the provider package.
+   * This method is package-private and intended for use within the provider
+   * package.
    * </p>
    */
   void clearBoard() {
@@ -91,7 +97,8 @@ public class GameBoardImpl implements GameBoard {
   }
 
   /**
-   * Places a chip for the given player at the lowest available spot in the specified column.
+   * Places a chip for the given player at the lowest available spot in the
+   * specified column.
    * <p>
    * The placement starts checking from the bottom row ({@code ROWS - 1}) upwards.
    * If the field is a toxic zone, its decay time is set to 3.
@@ -99,7 +106,8 @@ public class GameBoardImpl implements GameBoard {
    *
    * @param column The column index (0-based) where the chip should be placed.
    * @param player The {@link Player} whose chip is being placed.
-   * @return The row index (0-based) where the chip landed, or -1 if the column is full.
+   * @return The row index (0-based) where the chip landed, or -1 if the column is
+   *         full.
    */
   int placeChip(int column, Player player) {
     if (column < 0 || column >= COLUMNS) {
@@ -121,7 +129,28 @@ public class GameBoardImpl implements GameBoard {
     throw new IllegalStateException("Column " + column + " is full");
   }
 
+  void placeRandomToxicZones(int toxicCount) {
+    if (toxicCount <= 0)
+      return;
 
+    int max = ROWS * COLUMNS;
+    toxicCount = Math.min(toxicCount, max);
 
+    Random rnd = new Random(); // random each run
+    int placed = 0;
+
+    while (placed < toxicCount) {
+      int r = rnd.nextInt(ROWS);
+      int c = rnd.nextInt(COLUMNS);
+
+      FieldImpl f = fields[r][c];
+      if (!f.isToxicZone()) {
+        f.setToxicZone(true);
+        f.setDecayTime(0); // optional reset
+        f.setOccupyingPlayer(null); // ensure empty at start
+        placed++;
+      }
+    }
+  }
 
 }
