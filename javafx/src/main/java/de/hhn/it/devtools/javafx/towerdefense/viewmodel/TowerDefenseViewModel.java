@@ -18,9 +18,9 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
   TowerDefenseService service;
   private final ObjectProperty<Grid> map = new SimpleObjectProperty<>();
   private final ListProperty<Enemy> enemies = new SimpleListProperty<>(
-      FXCollections.observableArrayList());
+          FXCollections.observableArrayList());
   private final ListProperty<Tower> towers = new SimpleListProperty<>(
-      FXCollections.observableArrayList());
+          FXCollections.observableArrayList());
   private final IntegerProperty round = new SimpleIntegerProperty();
   private final IntegerProperty health = new SimpleIntegerProperty();
   private final IntegerProperty money = new SimpleIntegerProperty();
@@ -49,6 +49,11 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
 
   public void resetGame() {
     service.resetGame();
+    sync();
+  }
+
+  public void retryRound() {
+    service.retry();
     sync();
   }
 
