@@ -11,6 +11,8 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -18,14 +20,25 @@ import javafx.scene.shape.Rectangle;
 
 public class CompleteBoard extends StackPane {
   TowerDefenseViewModel viewModel;
+  int size;
   ObjectProperty<Grid> gridProperty = new SimpleObjectProperty<>();
   GridPane mapGrid = new GridPane();
   ListProperty<Enemy> enemies = new SimpleListProperty<>();
   ListProperty<Tower> towers = new SimpleListProperty<>();
 
+  Group enemyContainer = new Group();
+  Group towerContainer = new Group();
+
   public CompleteBoard(TowerDefenseViewModel viewModel) {
+
     alignmentProperty().set(Pos.TOP_LEFT);
     this.viewModel = viewModel;
+    this.gridProperty.bind(viewModel.getMap());
+    size = gridProperty.get().grid().length;
+    enemyContainer.minHeight(size * 16);
+    enemyContainer.minWidth(size * 16);
+    towerContainer.minHeight(size * 16);
+    towerContainer.minWidth(size * 16);
     createGridDisplay();
   }
 
@@ -35,7 +48,7 @@ public class CompleteBoard extends StackPane {
     enemyDisplay();
     towerDisplay();
 
-    getChildren().addAll(mapGrid);
+    getChildren().addAll(mapGrid, towerContainer, enemyContainer);
   }
 
   public void boardDisplay() {
@@ -62,17 +75,36 @@ public class CompleteBoard extends StackPane {
 
   public void enemyDisplay() {
     enemies.bind(viewModel.getEnemies());
-    enemies.addListener((obs, oldEx, newEx) -> Platform.runLater(this::update));
+    enemies.addListener((obs, oldEx, newEx) -> Platform.runLater(this::updateEnemies));
   }
 
   public void towerDisplay() {
     towers.bind(viewModel.getTowers());
-    towers.addListener((obs, oldEx, newEx) -> Platform.runLater(this::update));
+    towers.addListener((obs, oldEx, newEx) -> Platform.runLater(this::updateTowers));
   }
 
-  public void update() {
-    getChildren().clear();
-    getChildren().add(mapGrid);
+  public void updateTowers() {
+    towerContainer.getChildren().clear();
+
+    // Workaround for keeping Towers at their positions at all times
+    towerContainer.getChildren().add(new Rectangle(0, 0));
+
+    for (Tower tower : towers) {
+      Rectangle towerRectangle = new Rectangle(10, 10);
+      towerRectangle.setStroke(Color.BLACK);
+      towerRectangle.setFill(viewModel.getTowerColors(tower.type()));
+      // TODO: Remove Voodoo Constants
+      towerRectangle.setTranslateX(tower.coordinates().x() * 17 + 3.5);
+      towerRectangle.setTranslateY(tower.coordinates().y() * 17 + 3.5);
+      towerContainer.getChildren().add(towerRectangle);
+    }
+  }
+
+  public void updateEnemies() {
+    enemyContainer.getChildren().clear();
+
+    enemyContainer.getChildren().add(new Rectangle(0, 0));
+
     Rectangle rectangle;
     for (Enemy enemy : enemies) {
       switch (enemy.type()) {
@@ -93,18 +125,10 @@ public class CompleteBoard extends StackPane {
         }
         default -> rectangle = new Rectangle(5, 5);
       }
-      rectangle.setTranslateX(enemy.coordinates().x() * 17 + 2.7);
-      rectangle.setTranslateY(enemy.coordinates().y() * 17 + 2.7);
-      getChildren().add(rectangle);
-    }
-
-    for (Tower tower : towers) {
-      Rectangle towerRectangle = new Rectangle(10, 10);
-      towerRectangle.setStroke(Color.BLACK);
-      towerRectangle.setFill(viewModel.getTowerColors(tower.type()));
-      towerRectangle.setTranslateX(tower.coordinates().x() * 17 + 2.7);
-      towerRectangle.setTranslateY(tower.coordinates().y() * 17 + 2.7);
-      getChildren().add(towerRectangle);
+      // TODO: Replace the 3.5 (Voodoo Constants) Values with the real calculations for different Enemy Types
+      rectangle.setTranslateX(enemy.coordinates().x() * 17 + 3.5);
+      rectangle.setTranslateY(enemy.coordinates().y() * 17 + 3.5);
+      enemyContainer.getChildren().add(rectangle);
     }
   }
 }
