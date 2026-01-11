@@ -149,10 +149,10 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
   }
 
   /**
-   * Returns the
+   * Returns the color of the tower of the given TowerType.
    *
-   * @param type
-   * @return
+   * @param type the requested TowerType
+   * @return the Color of that Type
    */
   public Color getTowerColors(TowerType type) {
     return switch (type) {
