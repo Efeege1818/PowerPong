@@ -9,6 +9,7 @@ public class SimpleScreenManager implements ScreenManager {
   Pane pane;
   private SelectScreen selectScreen;
   private BattleScreen battleScreen;
+  private EndScreen endScreen;
 
   public SimpleScreenManager(final Pane pane) {
     this.pane = pane;
@@ -28,6 +29,13 @@ public class SimpleScreenManager implements ScreenManager {
     return battleScreen;
   }
 
+  private EndScreen getEndScreen() {
+    if(endScreen == null) {
+      endScreen = new EndScreen(this);
+    }
+    return endScreen;
+  }
+
   @Override
   public void switchTo(String fromScreen, String toScreen) throws UnknownTransitionException {
     switch (toScreen) {
@@ -39,7 +47,10 @@ public class SimpleScreenManager implements ScreenManager {
         pane.getChildren().clear();
         pane.getChildren().add(getBattleScreen());
         break;
-
+      case EndScreen.SCREEN_NAME:
+        pane.getChildren().clear();
+        pane.getChildren().add(getEndScreen());
+        break;
 
       default: throw new UnknownTransitionException("Unknown screen: ", fromScreen, toScreen);
     }
