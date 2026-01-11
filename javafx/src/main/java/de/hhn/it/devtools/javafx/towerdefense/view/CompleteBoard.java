@@ -36,6 +36,7 @@ public class CompleteBoard extends StackPane {
   public void createGridDisplay() {
     boardDisplay();
     enemyDisplay();
+    towerDisplay();
 
     getChildren().addAll(mapGrid);
 
@@ -67,7 +68,8 @@ public class CompleteBoard extends StackPane {
     enemies.bind(viewModel.getEnemies());
     enemies.addListener(new ChangeListener<ObservableList<Enemy>>() {
       @Override
-      public void changed(ObservableValue<? extends ObservableList<Enemy>> observableValue, ObservableList<Enemy> enemies, ObservableList<Enemy> t1) {
+      public void changed(ObservableValue<? extends ObservableList<Enemy>> observableValue,
+                          ObservableList<Enemy> enemies, ObservableList<Enemy> t1) {
         Platform.runLater(new Runnable() {
           @Override
           public void run() {
@@ -82,7 +84,8 @@ public class CompleteBoard extends StackPane {
     towers.bind(viewModel.getTowers());
     towers.addListener(new ChangeListener<ObservableList<Tower>>() {
       @Override
-      public void changed(ObservableValue<? extends ObservableList<Tower>> observableValue, ObservableList<Tower> towers, ObservableList<Tower> t1) {
+      public void changed(ObservableValue<? extends ObservableList<Tower>> observableValue,
+                          ObservableList<Tower> towers, ObservableList<Tower> t1) {
         Platform.runLater(new Runnable() {
           @Override
           public void run() {
