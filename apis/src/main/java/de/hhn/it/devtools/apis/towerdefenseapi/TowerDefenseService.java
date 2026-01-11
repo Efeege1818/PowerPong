@@ -90,6 +90,13 @@ public interface TowerDefenseService {
   Grid getMap() throws IllegalStateException;
 
   /**
+   * Returns a Map with all Towers and their corresponding costs.
+   *
+   * @return the Map of all towers
+   */
+  Map<TowerType, Integer> getTowerTypes();
+
+  /**
    * Returns the current tower configuration.
    *
    * @return the towerBoard.
