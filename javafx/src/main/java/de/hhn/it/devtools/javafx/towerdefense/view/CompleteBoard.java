@@ -66,6 +66,7 @@ public class CompleteBoard extends StackPane {
         mapGrid.add(rectangle, col, row);
       }
     }
+    logger.debug(mapGrid.getChildren().toString());
   }
 
   public void enemyDisplay() {
@@ -97,6 +98,7 @@ public class CompleteBoard extends StackPane {
   }
 
   public void placeTower(TowerType type, int x, int y) {
+    logger.debug(mapGrid.getChildren().toString());
     Rectangle tile = (Rectangle) mapGrid.getChildren().get(x * size + y);
     tile.setFill(viewModel.getTowerColors(type));
   }
