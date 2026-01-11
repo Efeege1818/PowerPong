@@ -17,6 +17,7 @@ public class ConsoleConnectFourUI {
 
   // === Board Rendering ===
   public void render(GameBoard board) {
+    clearScreen();
     int rows = board.getRows();
     int cols = board.getColumns();
 
@@ -25,6 +26,12 @@ public class ConsoleConnectFourUI {
       System.out.print(" " + c);
     }
 
+  }
+
+  private void clearScreen() {
+    for (int i = 0; i < 40; i++) {
+      System.out.println();
+    }
   }
 
 }
