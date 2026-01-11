@@ -22,7 +22,7 @@ dependencies {
 
 application {
     mainModule = "devtools.javafx"
-    mainClass = "de.hhn.it.devtools.javafx.towerdefense.controllers.TowerDefenseLauncher"
+    mainClass = "de.hhn.it.devtools.javafx.Main"
     applicationDefaultJvmArgs = ['-ea']
 }
 
