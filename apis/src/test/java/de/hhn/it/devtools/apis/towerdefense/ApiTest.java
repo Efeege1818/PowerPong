@@ -38,7 +38,7 @@ public class ApiTest {
   @Test
   void checkTowerValues() {
     Coordinates pos = new Coordinates(3, 4);
-    Tower tower = new Tower(10, pos, TowerType.RANGED);
+    Tower tower = new Tower(pos, TowerType.RANGED);
 
     assertEquals(10, tower.id());
     assertEquals(pos, tower.coordinates());
