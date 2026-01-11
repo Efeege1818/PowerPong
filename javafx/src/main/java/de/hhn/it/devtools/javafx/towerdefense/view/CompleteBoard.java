@@ -15,6 +15,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
+import java.util.ArrayList;
+
 public class CompleteBoard extends StackPane {
   TowerDefenseViewModel viewModel;
   ObjectProperty<Grid> gridProperty = new SimpleObjectProperty<>();
@@ -32,7 +34,15 @@ public class CompleteBoard extends StackPane {
   public void createGridDisplay() {
     boardDisplay();
     enemyDisplay();
+    double scale = 0.0625;
 
+    enemyGrid.setScaleX(scale);
+    enemyGrid.setScaleY(scale);
+
+    enemyGrid.layoutBoundsProperty().addListener((obs, oldBounds, newBounds) -> {
+      enemyGrid.setTranslateX(-(newBounds.getWidth() * (1 - scale)) / 2);
+      enemyGrid.setTranslateY(-(newBounds.getHeight() * (1 - scale)) / 2);
+    });
 
     getChildren().addAll(mapGrid, enemyGrid);
 
