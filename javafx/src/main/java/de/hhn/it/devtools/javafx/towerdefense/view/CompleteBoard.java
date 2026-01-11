@@ -127,10 +127,8 @@ public class CompleteBoard extends StackPane {
       Rectangle towerRectangle = new Rectangle(10, 10);
       towerRectangle.setStroke(Color.BLACK);
       towerRectangle.setFill(viewModel.getTowerColors(tower.type()));
-      double x = (tower.coordinates().x() * 17 + 3.3);
-      double y = (tower.coordinates().y() * 17 + 3.3);
-      towerRectangle.setTranslateX(x);
-      towerRectangle.setTranslateY(y);
+      towerRectangle.setTranslateX(tower.coordinates().x() * 16);
+      towerRectangle.setTranslateY(tower.coordinates().y() * 16);
       getChildren().add(towerRectangle);
     }
   }
