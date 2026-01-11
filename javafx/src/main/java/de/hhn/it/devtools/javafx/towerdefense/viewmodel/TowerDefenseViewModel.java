@@ -111,12 +111,13 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
   @Override
   public void updateHealth() {
     Platform.runLater(() -> health.set(service.getPlayer().health()));
-    logger.debug("Helth: " + health.get());
+    logger.debug("Health: " + health.get());
   }
 
   @Override
   public void updateMoney() {
-    money.set(service.getPlayer().money());
+    Platform.runLater(() -> money.set(service.getPlayer().money()));
+    logger.debug("Money: " + health.get());
   }
 
   @Override
@@ -139,6 +140,12 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
     enemies.setAll(service.getCurrentEnemies());
   }
 
+  /**
+   * Returns the
+   *
+   * @param type
+   * @return
+   */
   public Color getTowerColors(TowerType type) {
     return switch (type) {
       case MELEE -> Color.BLUE;
