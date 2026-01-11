@@ -43,6 +43,8 @@ public class GameScreen extends StackPane {
     );
     getChildren().add(mainLayout);
 
+    prepareTowerPlacement();
+
     viewModel.getGameOver().addListener((obs, oldEx, newEx) -> {
       if (newEx == true) {
         getChildren().add(createOverlayDisplay());
@@ -148,6 +150,36 @@ public class GameScreen extends StackPane {
     overlayDisplay.add(retryWaveButton, 0, 0);
 
     return overlayDisplay;
+  }
+
+  public void prepareTowerPlacement() {
+    int gridSize = viewModel.getMap().get().grid().length;
+
+    for (int row = 0; row < gridSize; row++) {
+      for (int column = 0; column < gridSize; column++) {
+        // give easdcv rect an index, and cast to rectanle from node
+        Rectangle allRect = (Rectangle) completeBoard
+                .mapGrid
+                .getChildren()
+                .get(row * gridSize + column);
+
+        int perfectRow = row;
+        int perfectColumn = column;
+
+        allRect.setOnMouseClicked(event -> {
+          if (selectedTower != null) {
+            try {
+              // TODO: uuid fix not int id 2
+              viewModel.addTower(new Tower(2, new Coordinates(perfectColumn, perfectRow), selectedTower));
+              selectedTower = null; //resetr if didnt work
+            } catch (IllegalArgumentException e) {
+              Alert alert = new Alert(Alert.AlertType.ERROR, "Invalid action");
+              alert.showAndWait();
+            }
+          }
+        });
+      }
+    }
   }
 
   public void startWaveOnAction() {
