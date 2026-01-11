@@ -28,16 +28,28 @@ public class GameLoop extends Thread {
 
   @Override
   public void run() {
-    while (running) {
-      logger.debug("tick");
-      service.tick();
-      try {
-        sleep(tickspeed);
-      } catch (InterruptedException e) {
-        logger.error("Game Loop was Interrupted");
-        throw new RuntimeException(e);
+    while (true) {
+      while (running) {
+        logger.debug("tick");
+        service.tick();
+        try {
+          sleep(tickspeed);
+        } catch (InterruptedException e) {
+          logger.error("Game Loop sleep was Interrupted");
+          throw new RuntimeException(e);
+        }
       }
+      synchronized (this) {
+        try {
+          this.wait();
+        } catch (InterruptedException e) {
+          logger.error("Game Loop wait was Interrupted");
+          throw new RuntimeException(e);
+        }
+      }
+
     }
+
 
   }
 
@@ -51,10 +63,14 @@ public class GameLoop extends Thread {
       throw new IllegalStateException("GameLoop is already running");
     }
     running = true;
-    if (!started) {
-      this.start();
-      started = true;
+    if(!isAlive()) {
+      start();
+    } else {
+      synchronized (this) {
+        notify();
+      }
     }
+    logger.debug(this.getState().toString());
   }
 
   /**

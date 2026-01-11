@@ -66,8 +66,8 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
   }
 
   public void startNextRound() {
-    sync();
     service.startNextRound();
+    sync();
 
   }
 
@@ -169,5 +169,6 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
     this.map.set(service.getMap());
     health.set(service.getPlayer().health());
     money.set(service.getPlayer().money());
+    round.set(service.getCurrentRound());
   }
 }
