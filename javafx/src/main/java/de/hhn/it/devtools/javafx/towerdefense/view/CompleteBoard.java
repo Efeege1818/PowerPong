@@ -6,17 +6,15 @@ import de.hhn.it.devtools.apis.towerdefenseapi.Grid;
 import de.hhn.it.devtools.apis.towerdefenseapi.Tower;
 import de.hhn.it.devtools.javafx.towerdefense.viewmodel.TowerDefenseViewModel;
 import javafx.application.Platform;
-import javafx.beans.property.*;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Pos;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-
-import java.util.ArrayList;
 
 public class CompleteBoard extends StackPane {
   TowerDefenseViewModel viewModel;
@@ -24,7 +22,6 @@ public class CompleteBoard extends StackPane {
   GridPane mapGrid = new GridPane();
   ListProperty<Enemy> enemies = new SimpleListProperty<>();
   ListProperty<Tower> towers = new SimpleListProperty<>();
-  GridPane enemyGrid = new GridPane();
 
   public CompleteBoard(TowerDefenseViewModel viewModel) {
     alignmentProperty().set(Pos.TOP_LEFT);
@@ -39,7 +36,6 @@ public class CompleteBoard extends StackPane {
     towerDisplay();
 
     getChildren().addAll(mapGrid);
-
   }
 
   public void boardDisplay() {
@@ -71,18 +67,7 @@ public class CompleteBoard extends StackPane {
 
   public void towerDisplay() {
     towers.bind(viewModel.getTowers());
-    towers.addListener(new ChangeListener<ObservableList<Tower>>() {
-      @Override
-      public void changed(ObservableValue<? extends ObservableList<Tower>> observableValue,
-                          ObservableList<Tower> towers, ObservableList<Tower> t1) {
-        Platform.runLater(new Runnable() {
-          @Override
-          public void run() {
-            update();
-          }
-        });
-      }
-    });
+    towers.addListener((obs, oldEx, newEx) -> Platform.runLater(this::update));
   }
 
   public void update() {
@@ -112,6 +97,7 @@ public class CompleteBoard extends StackPane {
       rectangle.setTranslateY(enemy.coordinates().y() * 17 + 2.7);
       getChildren().add(rectangle);
     }
+
     for (Tower tower : towers) {
       Rectangle towerRectangle = new Rectangle(10, 10);
       towerRectangle.setStroke(Color.BLACK);
@@ -122,17 +108,3 @@ public class CompleteBoard extends StackPane {
     }
   }
 }
-
-
-
-
-//            enemyGrid.getChildren().clear();
-//            for (Enemy enemy : enemies) {
-//              Rectangle rectangle = new Rectangle(10, 10);
-//              rectangle.setStroke(Color.BLACK);
-//              rectangle.setFill(Color.RED);
-//              enemyGrid.add(rectangle, (int) (enemy.coordinates().x() * 16),
-//                      (int) (enemy.coordinates().y() * 16));
-//            }
-
-
