@@ -62,7 +62,7 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
     towerToolbox.saveData();
     currentRound = 0;
 
-    currentGameState = GameState.READY;
+    updateGameState(GameState.READY);
 
   }
 
@@ -93,7 +93,7 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
 
   @Override
   public void startGame() throws IllegalStateException {
-    currentGameState = GameState.PAUSED;
+    updateGameState(GameState.PAUSED);
   }
 
   @Override
@@ -105,7 +105,7 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
 
     resetGame();
 
-    currentGameState = GameState.READY;
+    updateGameState(GameState.READY);
   }
 
   @Override
@@ -123,7 +123,7 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
     towerToolbox.saveData();
     currentRound = 0;
 
-    currentGameState = GameState.PAUSED;
+    updateGameState(GameState.PAUSED);
 
   }
 
@@ -135,7 +135,7 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
     currentRound--;
     player = savedPlayerData;
     towerToolbox.loadData();
-    currentGameState = GameState.READY;
+    updateGameState(GameState.READY);
   }
 
   @Override
@@ -147,7 +147,7 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
     currentRound += 1;
     enemyQueue = waveGenerator.generateWave(currentRound);
 
-    currentGameState = GameState.RUNNING;
+    updateGameState(GameState.RUNNING);
     gameLoop.startGame();
   }
 
@@ -253,6 +253,11 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
     notifyListeners(TowerDefenseListener::tick);
   }
 
+  private void updateGameState(GameState newGameState) {
+    currentGameState = newGameState;
+    notifyListeners(TowerDefenseListener::updateGameState);
+  }
+
   private void notifyListeners(Consumer<TowerDefenseListener> consumer) {
     for (TowerDefenseListener listener : listeners) {
       consumer.accept(listener);
@@ -260,13 +265,13 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
   }
 
   private void roundFailed() {
-    currentGameState = GameState.GAME_OVER;
+    updateGameState(GameState.GAME_OVER);
     gameLoop.stopGame();
     notifyListeners(TowerDefenseListener::gameEnded);
   }
 
   private void roundCompleted() {
-    currentGameState = GameState.PAUSED;
+    updateGameState(GameState.PAUSED);
     gameLoop.stopGame();
     savedPlayerData = player;
     towerToolbox.saveData();
