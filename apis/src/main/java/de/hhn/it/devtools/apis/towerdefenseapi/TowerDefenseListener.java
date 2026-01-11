@@ -7,7 +7,11 @@ package de.hhn.it.devtools.apis.towerdefenseapi;
 public interface TowerDefenseListener {
 
   /**
-   *
+   * Gets calles when the current gameState changes.
+   */
+  void updateGameState();
+
+  /**
    * Gets called, when the player Health changes.
    */
   void updateHealth();

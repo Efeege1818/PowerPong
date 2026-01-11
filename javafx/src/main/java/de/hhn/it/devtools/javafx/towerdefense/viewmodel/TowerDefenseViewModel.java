@@ -32,6 +32,7 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
   private final IntegerProperty health = new SimpleIntegerProperty();
   private final IntegerProperty money = new SimpleIntegerProperty();
   private final BooleanProperty gameOver = new SimpleBooleanProperty();
+  private final ObjectProperty<GameState> gameState = new SimpleObjectProperty<>();
 
   public TowerDefenseViewModel(TowerDefenseService service) {
     this.service = service;
@@ -104,8 +105,13 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
     return service.getTowerTypes();
   }
 
-  public GameState getCurrentGameState() {
-    return service.getCurrentGameState();
+  public ObjectProperty<GameState> getCurrentGameState() {
+    return gameState;
+  }
+
+  @Override
+  public void updateGameState() {
+    Platform.runLater(() -> gameState.set(service.getCurrentGameState()));
   }
 
   @Override
