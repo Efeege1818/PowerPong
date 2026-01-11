@@ -4,13 +4,14 @@ import de.hhn.it.devtools.apis.towerdefenseapi.Direction;
 import de.hhn.it.devtools.apis.towerdefenseapi.Enemy;
 import de.hhn.it.devtools.apis.towerdefenseapi.Grid;
 import de.hhn.it.devtools.javafx.towerdefense.viewmodel.TowerDefenseViewModel;
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleListProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.application.Platform;
+import javafx.beans.property.*;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -22,6 +23,7 @@ public class CompleteBoard extends StackPane {
   GridPane enemyGrid = new GridPane();
 
   public CompleteBoard(TowerDefenseViewModel viewModel) {
+    alignmentProperty().set(Pos.CENTER_RIGHT);
     this.viewModel = viewModel;
     createGridDisplay();
   }
@@ -29,14 +31,17 @@ public class CompleteBoard extends StackPane {
 
   public void createGridDisplay() {
     boardDisplay();
+    getChildren().addAll(mapGrid);
     enemyDisplay();
-    getChildren().addAll(mapGrid, enemyGrid);
+
   }
 
   public void boardDisplay() {
     this.gridProperty.bind(viewModel.getMap());
     int length = gridProperty.get().grid().length;
     mapGrid.widthProperty().divide(2);
+    mapGrid.scaleXProperty().setValue(mapGrid.scaleXProperty().get());
+    mapGrid.scaleYProperty().setValue(mapGrid.scaleYProperty().get());
 
 
     for (int row = 0; row < length; row++) {
@@ -57,17 +62,42 @@ public class CompleteBoard extends StackPane {
 
   public void enemyDisplay() {
     enemies.bind(viewModel.getEnemies());
+    enemies.addListener(new ChangeListener<ObservableList<Enemy>>() {
+      @Override
+      public void changed(ObservableValue<? extends ObservableList<Enemy>> observableValue, ObservableList<Enemy> enemies, ObservableList<Enemy> t1) {
+        Platform.runLater(new Runnable() {
+          @Override
+          public void run() {
+            getChildren().clear();
+            getChildren().add(mapGrid);
+            for (Enemy enemy : enemies) {
+              Rectangle rectangle = new Rectangle(10, 10);
+              rectangle.setStroke(Color.BLACK);
+              rectangle.setFill(Color.RED);
+              getChildren().addAll(rectangle);
+              rectangle.setX(enemy.coordinates().x());
+              rectangle.setY(enemy.coordinates().y());
+            }
 
-    for (Enemy enemy : enemies) {
-      Rectangle rectangle = new Rectangle(10, 10);
-      rectangle.setStroke(Color.BLACK);
-      rectangle.setFill(Color.RED);
-      enemyGrid.add(rectangle, (int) (enemy.coordinates().y() * 16),
-              (int) (enemy.coordinates().x() * 16));
-    }
+          }
+        });
+      }
+    });
   }
 
   public void towerDisplay() {
 
   }
 }
+
+
+
+
+//            enemyGrid.getChildren().clear();
+//            for (Enemy enemy : enemies) {
+//              Rectangle rectangle = new Rectangle(10, 10);
+//              rectangle.setStroke(Color.BLACK);
+//              rectangle.setFill(Color.RED);
+//              enemyGrid.add(rectangle, (int) (enemy.coordinates().x() * 16),
+//                      (int) (enemy.coordinates().y() * 16));
+//            }

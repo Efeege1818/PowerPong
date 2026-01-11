@@ -9,6 +9,7 @@ import javafx.beans.property.ListProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.geometry.Pos;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -25,6 +26,7 @@ public class GameScreen extends StackPane {
 
 
   public GameScreen(ScreenManager screenManager) {
+    alignmentProperty().set(Pos.CENTER_RIGHT);
     this.screenManager = screenManager;
     this.viewModel = screenManager.getViewModel();
     this.completeBoard = new CompleteBoard(viewModel);

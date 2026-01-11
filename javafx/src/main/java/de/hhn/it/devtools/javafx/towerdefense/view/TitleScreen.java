@@ -3,6 +3,7 @@ package de.hhn.it.devtools.javafx.towerdefense.view;
 import de.hhn.it.devtools.javafx.towerdefense.controllers.ScreenManager;
 import de.hhn.it.devtools.javafx.towerdefense.controllers.ScreenType;
 import de.hhn.it.devtools.javafx.towerdefense.viewmodel.TowerDefenseViewModel;
+import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -21,6 +22,7 @@ public class TitleScreen extends StackPane {
   Label title = new Label();
 
   public TitleScreen(ScreenManager screenManager) {
+    alignmentProperty().set(Pos.CENTER_RIGHT);
     this.screenManager = screenManager;
     this.viewModel = screenManager.getViewModel();
     createScreen();
