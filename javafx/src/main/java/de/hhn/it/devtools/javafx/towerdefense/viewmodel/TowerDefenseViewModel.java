@@ -113,19 +113,19 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
   @Override
   public void updateGameState() {
     Platform.runLater(() -> gameState.set(service.getCurrentGameState()));
-    logger.debug("GameState: " + gameState.get());
+    logger.debug("GameState: " + service.getCurrentGameState());
   }
 
   @Override
   public void updateHealth() {
     Platform.runLater(() -> health.set(service.getPlayer().health()));
-    logger.debug("Health: " + health.get());
+    logger.debug("Health: " + service.getPlayer().health());
   }
 
   @Override
   public void updateMoney() {
     Platform.runLater(() -> money.set(service.getPlayer().money()));
-    logger.debug("Money: " + health.get());
+    logger.debug("Money: " + service.getPlayer().money());
   }
 
   @Override
