@@ -62,12 +62,12 @@ public class GameScreen extends StackPane {
       Rectangle towerIconRect = new Rectangle(20, 20);
 
       towerIconRect.setFill(
-              switch (type) {
-                case MELEE -> Color.BLUE;
-                case RANGED -> Color.CYAN;
-                case MONEYMAKER -> Color.DARKBLUE;
-                default -> throw new NoSuchElementException();
-              }
+          switch (type) {
+            case MELEE -> Color.BLUE;
+            case RANGED -> Color.CYAN;
+            case MONEYMAKER -> Color.DARKBLUE;
+            default -> throw new NoSuchElementException();
+          }
       );
 
       int towerCostNumber = switch (type) {
