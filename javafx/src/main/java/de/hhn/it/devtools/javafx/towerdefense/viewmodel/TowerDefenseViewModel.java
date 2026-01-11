@@ -7,6 +7,8 @@ import de.hhn.it.devtools.apis.towerdefenseapi.Tower;
 import de.hhn.it.devtools.apis.towerdefenseapi.TowerDefenseListener;
 import de.hhn.it.devtools.apis.towerdefenseapi.TowerDefenseService;
 import de.hhn.it.devtools.apis.towerdefenseapi.TowerType;
+import de.hhn.it.devtools.components.towerdefensecomponents.GameLoop;
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.scene.paint.Color;
@@ -16,6 +18,10 @@ import java.util.Map;
  * Collective View Model for all TowerDefense Screens.
  */
 public class TowerDefenseViewModel implements TowerDefenseListener {
+
+  private static final org.slf4j.Logger logger =
+      org.slf4j.LoggerFactory.getLogger(TowerDefenseViewModel.class);
+
   TowerDefenseService service;
   private final ObjectProperty<Grid> map = new SimpleObjectProperty<>();
   private final ListProperty<Enemy> enemies = new SimpleListProperty<>(
@@ -104,7 +110,8 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
 
   @Override
   public void updateHealth() {
-    health.set(service.getPlayer().health());
+    Platform.runLater(() -> health.set(service.getPlayer().health()));
+    logger.debug("Helth: " + health.get());
   }
 
   @Override
