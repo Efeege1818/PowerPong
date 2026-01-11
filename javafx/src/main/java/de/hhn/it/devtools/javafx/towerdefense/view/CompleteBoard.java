@@ -42,17 +42,8 @@ public class CompleteBoard extends StackPane {
   public void createGridDisplay() {
     boardDisplay();
     enemyDisplay();
-    double scale = 0.0625;
 
-    enemyGrid.setScaleX(scale);
-    enemyGrid.setScaleY(scale);
-
-    enemyGrid.layoutBoundsProperty().addListener((obs, oldBounds, newBounds) -> {
-      enemyGrid.setTranslateX(-(newBounds.getWidth() * (1 - scale)) / 2);
-      enemyGrid.setTranslateY(-(newBounds.getHeight() * (1 - scale)) / 2);
-    });
-
-    getChildren().addAll(mapGrid, enemyGrid);
+    getChildren().addAll(mapGrid);
 
   }
 
@@ -85,25 +76,16 @@ public class CompleteBoard extends StackPane {
         Platform.runLater(new Runnable() {
           @Override
           public void run() {
-            enemyGrid.getChildren().clear();
-            int length = gridProperty.get().grid().length;
-            for (int row = 0; row < length * 16; row++) {
-              for (int col = 0; col < length * 16; col++) {
-                Rectangle rectangle = new Rectangle(16, 16);
-                rectangle.setStroke(Color.BLACK);
-                rectangle.setFill(Color.RED);
-                rectangle.opacityProperty().setValue(1);
-                enemyGrid.add(rectangle, col, row);
-              }
+            getChildren().clear();
+            getChildren().add(mapGrid);
+            for (Enemy enemy : enemies) {
+              Rectangle rectangle = new Rectangle(5, 5);
+              rectangle.setStroke(Color.BLACK);
+              rectangle.setFill(Color.RED);
+              rectangle.setTranslateX(enemy.coordinates().x() * 18);
+              rectangle.setTranslateY(enemy.coordinates().y() * 18);
+              getChildren().add(rectangle);
             }
-//            for (Enemy enemy : enemies) {
-//              Rectangle rectangle = new Rectangle(16, 16);
-//              rectangle.setStroke(Color.BLACK);
-//              rectangle.setFill(Color.RED);
-//              enemyGrid.getChildren().remove((int) (enemy.coordinates().x() * 16),
-//                      (int) enemy.coordinates().y() * 16);
-//              enemyGrid.getChildren().re
-//            }
           }
         });
       }
@@ -133,15 +115,3 @@ public class CompleteBoard extends StackPane {
 //            }
 
 
-
-//getChildren().clear();
-//getChildren().add(mapGrid);
-//            for (Enemy enemy : enemies) {
-//Rectangle rectangle = new Rectangle(10, 10);
-//              rectangle.setStroke(Color.BLACK);
-//              rectangle.setFill(Color.RED);
-//              rectangle.setX(enemy.coordinates().x());
-//getChildren().addAll(rectangle);
-//              rectangle.setX(enemy.coordinates().x());
-//        System.out.println(rectangle.getX());
-//        }
