@@ -3,13 +3,18 @@ package de.hhn.it.devtools.javafx.towerdefense.view;
 import de.hhn.it.devtools.apis.towerdefenseapi.Direction;
 import de.hhn.it.devtools.apis.towerdefenseapi.Enemy;
 import de.hhn.it.devtools.apis.towerdefenseapi.Grid;
+import de.hhn.it.devtools.apis.towerdefenseapi.Tower;
 import de.hhn.it.devtools.javafx.towerdefense.controllers.ScreenManager;
 import de.hhn.it.devtools.javafx.towerdefense.viewmodel.TowerDefenseViewModel;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -20,38 +25,154 @@ public class GameScreen extends StackPane {
   ScreenManager screenManager;
   TowerDefenseViewModel viewModel;
   CompleteBoard completeBoard;
-  VBox box = new VBox();
-
-
+  VBox mainLayout = new VBox();
+  StackPane overlayPane = new StackPane();
 
 
   public GameScreen(ScreenManager screenManager) {
-    alignmentProperty().set(Pos.CENTER_RIGHT);
     this.screenManager = screenManager;
     this.viewModel = screenManager.getViewModel();
     this.completeBoard = new CompleteBoard(viewModel);
+
+    setAlignment(Pos.CENTER);
     createDisplay();
   }
 
 
   public void createDisplay() {
-    createTowerDisplay();
-    createStatsDisplay();
-    createButtonDisplay();
-    box.getChildren().addAll(completeBoard);
-    getChildren().addAll(box);
+    mainLayout.setSpacing(10);
+    mainLayout.setAlignment(Pos.CENTER);
+
+    mainLayout.getChildren().addAll(
+            createTowerDisplay(),
+            completeBoard,
+            createStatsDisplay(),
+            createButtonDisplay()
+    );
+    getChildren().add(mainLayout);
   }
 
-  public void createTowerDisplay() {
+  public GridPane createTowerDisplay() {
+    GridPane towerDisplay = new GridPane();
+    towerDisplay.setAlignment(Pos.CENTER);
+    towerDisplay.setHgap(10);
+
+    viewModel.getTowers().addListener((obs, oldTower, newTower) -> {
+      towerDisplay.getChildren().clear();
+
+      int columnIndex = 0;
+      int rowIndex = 0;
+      for (Tower tower : newTower) {
+        StackPane towerIcon = new StackPane();
+
+        Rectangle towerIconRect = new Rectangle(20, 20);
+        // TODO: individual Tower colors
+
+//        switch
+        towerIconRect.setFill(Color.BLUE);
+
+        // TODO: Money attribute
+        Label towerCost = new Label("TODO");
+        towerCost.setTextFill(Color.GOLD);
+
+        towerIcon.getChildren().addAll(towerIconRect, towerCost);
+        towerDisplay.add(towerIcon, columnIndex++, rowIndex);
+      }
+    });
+
+    return towerDisplay;
   }
 
 
-  public void createStatsDisplay() {
+  public GridPane createStatsDisplay() {
+    GridPane statsDisplay = new GridPane();
+    statsDisplay.setAlignment(Pos.CENTER);
+    statsDisplay.setHgap(10);
 
+    Label moneyLabel = new Label();
+    moneyLabel.setTextFill(Color.GOLD);
+
+    Label healthLabel = new Label();
+    healthLabel.setTextFill(Color.LIME);
+
+    Label roundsLabel = new Label();
+    roundsLabel.setTextFill(Color.DARKGRAY);
+
+    moneyLabel.textProperty().bind(viewModel.getMoney().asString("💵: %d"));
+    healthLabel.textProperty().bind(viewModel.getHealth().asString("❤️: %d"));
+    roundsLabel.textProperty().bind(viewModel.getRound().asString("Round: %d"));
+
+    statsDisplay.add(moneyLabel, 0, 0);
+    statsDisplay.add(roundsLabel, 1, 0);
+    statsDisplay.add(healthLabel, 2, 0);
+
+    return statsDisplay;
   }
 
-  public void createButtonDisplay() {
+  public GridPane createButtonDisplay() {
+    // TODO: Grey out when impossible to do
+    Button startWaveButton = new Button("Start next Round");
+    startWaveButton.setOnAction((event) -> {
+      startWaveOnAction();
+    });
+    Button abortGameButton = new Button("Exit Game");
+    startWaveButton.setOnAction((event) -> {
+      abortGameOnAction();
+    });
 
+    GridPane buttonDisplay = new GridPane();
+    buttonDisplay.setAlignment(Pos.CENTER);
+    buttonDisplay.setHgap(10);
+
+    buttonDisplay.add(startWaveButton, 0, 0);
+    buttonDisplay.add(abortGameButton, 1, 0);
+
+    return buttonDisplay;
   }
 
+  public GridPane createOverlayDisplay() {
+    // TODO: in "Game-Over" Overlay
+    Button retryWaveButton = new Button("Retry this Round");
+    retryWaveButton.setOnAction((event) -> {
+      retryWaveOnAction();
+    });
+    GridPane overlayDisplay = new GridPane();
+    overlayDisplay.setAlignment(Pos.CENTER);
+    overlayDisplay.setHgap(10);
+    overlayDisplay.add(retryWaveButton, 0, 0);
+
+    return overlayDisplay;
+  }
+
+  public void startWaveOnAction() {
+    try {
+      viewModel.startNextRound();
+    } catch (IllegalStateException e) {
+      // Temporary Solution for Illegal Button press
+      Alert alert = new Alert(Alert.AlertType.ERROR);
+      alert.setContentText("Wave can't be started");
+      alert.showAndWait();
+    }
+  }
+  public void retryWaveOnAction() {
+    try {
+      // TODO: retryRound();
+      viewModel.retryRound();
+    } catch (IllegalStateException e) {
+      // Temporary Solution for Illegal Button press
+      Alert alert = new Alert(Alert.AlertType.ERROR);
+      alert.setContentText("Wave can't be started");
+      alert.showAndWait();
+    }
+  }
+  public void abortGameOnAction() {
+    try {
+      viewModel.abortGame();
+    } catch (IllegalStateException e) {
+      // Temporary Solution for Illegal Button press
+      Alert alert = new Alert(Alert.AlertType.ERROR);
+      alert.setContentText("Wave can't be started");
+      alert.showAndWait();
+    }
+  }
 }

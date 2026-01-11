@@ -4,14 +4,12 @@ import de.hhn.it.devtools.apis.towerdefenseapi.TowerDefenseService;
 import de.hhn.it.devtools.components.towerdefensecomponents.SimpleTowerDefenseService;
 import de.hhn.it.devtools.javafx.towerdefense.viewmodel.TowerDefenseViewModel;
 import javafx.application.Application;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 
-import java.awt.*;
-
 public class TowerDefenseLauncher extends Application {
+
+  TowerDefenseService service;
 
   /**
    * the main method.
@@ -26,7 +24,7 @@ public class TowerDefenseLauncher extends Application {
 
   @Override
   public void start(Stage primaryStage) throws Exception {
-    TowerDefenseService service = new SimpleTowerDefenseService();
+    service = new SimpleTowerDefenseService();
     TowerDefenseViewModel viewModel = new TowerDefenseViewModel(service);
     ScreenManager screenManager = new ScreenManager(viewModel);
     screenManager.switchTo(ScreenType.TITLE_SCREEN);
@@ -34,5 +32,10 @@ public class TowerDefenseLauncher extends Application {
     primaryStage.setScene(new Scene(screenManager));
     primaryStage.setTitle("Tower Defense");
     primaryStage.show();
+  }
+
+  @Override
+  public void stop() {
+    service.abortGame();
   }
 }

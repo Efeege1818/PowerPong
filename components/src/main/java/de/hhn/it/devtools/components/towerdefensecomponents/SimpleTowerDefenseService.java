@@ -9,7 +9,9 @@ import de.hhn.it.devtools.apis.towerdefenseapi.Player;
 import de.hhn.it.devtools.apis.towerdefenseapi.Tower;
 import de.hhn.it.devtools.apis.towerdefenseapi.TowerDefenseListener;
 import de.hhn.it.devtools.apis.towerdefenseapi.TowerDefenseService;
+import de.hhn.it.devtools.apis.towerdefenseapi.TowerType;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -30,7 +32,7 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
   private final long seed;
   private GameState currentGameState;
   private final List<TowerDefenseListener> listeners = new ArrayList<>();
-  private final GameLoop gameLoop = new GameLoop(this);
+  private GameLoop gameLoop;
   private Player player;
   private Player savedPlayerData;
   private Configuration configuration;
@@ -42,6 +44,8 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
    * Constructor.
    */
   public SimpleTowerDefenseService() {
+
+    gameLoop = new GameLoop(this);
 
     mapToolbox = new MapToolbox();
     enemyToolbox = new EnemyToolbox(this);
@@ -106,6 +110,9 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
 
   @Override
   public void resetGame() {
+    if (gameLoop.isRunning()) {
+      gameLoop.stopGame();
+    }
     enemyToolbox = new EnemyToolbox(this);
     towerToolbox = new TowerToolbox(this);
 
@@ -147,6 +154,15 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
   @Override
   public Grid getMap() throws IllegalStateException {
     return mapToolbox.getGrid();
+  }
+
+  @Override
+  public Map<TowerType, Integer> getTowerTypes() {
+    Map<TowerType, Integer> towerMap = new HashMap<>();
+    for (TowerType type : TowerType.values()) {
+      towerMap.put(type, TowerToolbox.getCost(type));
+    }
+    return towerMap;
   }
 
   @Override
