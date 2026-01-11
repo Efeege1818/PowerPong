@@ -17,6 +17,10 @@ import javafx.scene.shape.Rectangle;
 import java.util.NoSuchElementException;
 
 public class GameScreen extends StackPane {
+
+  private static final org.slf4j.Logger logger =
+      org.slf4j.LoggerFactory.getLogger(GameScreen.class);
+
   ScreenManager screenManager;
   TowerDefenseViewModel viewModel;
   CompleteBoard completeBoard;
