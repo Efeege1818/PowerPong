@@ -103,7 +103,7 @@ public class GameScreen extends StackPane {
     roundsLabel.setTextFill(Color.DARKGRAY);
 
     moneyLabel.textProperty().bind(viewModel.getMoney().asString("💵: %d"));
-    healthLabel.textProperty().bind(viewModel.getHealth().asString("❤️: %d"));
+    healthLabel.textProperty().bind(viewModel.getHealth().asString("❤: %d"));
     roundsLabel.textProperty().bind(viewModel.getRound().asString("Round: %d"));
 
     statsDisplay.add(moneyLabel, 0, 0);
@@ -123,6 +123,9 @@ public class GameScreen extends StackPane {
     abortGameButton.setOnAction((event) -> {
       abortGameOnAction();
     });
+
+    startWaveButton.disableProperty().bind(viewModel.getCurrentGameState().isEqualTo(GameState.RUNNING));
+
 
     GridPane buttonDisplay = new GridPane();
     buttonDisplay.setAlignment(Pos.CENTER);
