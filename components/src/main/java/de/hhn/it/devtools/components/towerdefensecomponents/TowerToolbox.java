@@ -124,7 +124,7 @@ public class TowerToolbox {
     int money = 0;
     for (Tower tower : towers) {
       if (tower.type().equals(TowerType.MONEYMAKER)) {
-        money += 50;
+        money += 1;
       }
     }
     return money;
