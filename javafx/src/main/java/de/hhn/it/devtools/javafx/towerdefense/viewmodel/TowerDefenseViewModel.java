@@ -66,8 +66,9 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
   }
 
   public void startNextRound() {
-    service.startNextRound();
     sync();
+    service.startNextRound();
+
   }
 
   public ObjectProperty<Grid> getMap() {
