@@ -32,7 +32,7 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
   private final long seed;
   private GameState currentGameState;
   private final List<TowerDefenseListener> listeners = new ArrayList<>();
-  private final GameLoop gameLoop = new GameLoop(this);
+  private GameLoop gameLoop;
   private Player player;
   private Player savedPlayerData;
   private Configuration configuration;
@@ -44,6 +44,8 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
    * Constructor.
    */
   public SimpleTowerDefenseService() {
+
+    gameLoop = new GameLoop(this);
 
     mapToolbox = new MapToolbox();
     enemyToolbox = new EnemyToolbox(this);
@@ -108,6 +110,9 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
 
   @Override
   public void resetGame() {
+    if (gameLoop.isRunning()) {
+      gameLoop.stopGame();
+    }
     enemyToolbox = new EnemyToolbox(this);
     towerToolbox = new TowerToolbox(this);
 

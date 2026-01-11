@@ -69,4 +69,7 @@ public class GameLoop extends Thread {
     running = false;
   }
 
+  public boolean isRunning() {
+    return running;
+  }
 }
