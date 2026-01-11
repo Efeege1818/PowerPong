@@ -151,7 +151,7 @@ public class EnemyToolbox {
     int money = 0;
     for (Enemy enemy : enemies) {
       if (enemy.currentHealth() <= 0) {
-        money += getMaxHealth(enemy.type());
+        money += getMoney(enemy.type());
       }
     }
     return money;
