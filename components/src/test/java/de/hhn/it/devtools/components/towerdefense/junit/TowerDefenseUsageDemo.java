@@ -58,7 +58,8 @@ public class TowerDefenseUsageDemo {
 
       @Override
       public void tick() {
-        System.out.println(service.getCurrentEnemies().stream().map(enemy -> enemy.currentHealth() + "HP ").toList());
+//        System.out.println(service.getCurrentEnemies().stream().map(enemy -> enemy.currentHealth() + "HP ").toList());
+        System.out.println(service.getCurrentEnemies());
       }
     };
     service.addListener(listener);

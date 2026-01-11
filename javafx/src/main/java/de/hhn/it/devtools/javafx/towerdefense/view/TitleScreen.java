@@ -1,6 +1,7 @@
 package de.hhn.it.devtools.javafx.towerdefense.view;
 
 import de.hhn.it.devtools.javafx.towerdefense.controllers.ScreenManager;
+import de.hhn.it.devtools.javafx.towerdefense.controllers.ScreenType;
 import de.hhn.it.devtools.javafx.towerdefense.viewmodel.TowerDefenseViewModel;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -13,7 +14,6 @@ public class TitleScreen extends StackPane {
   ScreenManager screenManager;
   TowerDefenseViewModel viewModel;
 
-  Label towerDefenseLbl = new Label("Tower defense");
   Button startGame = new Button("Start Game");
   Button config = new Button("config");
   Button exitGame = new Button("Exit Game");
@@ -23,9 +23,13 @@ public class TitleScreen extends StackPane {
   public TitleScreen(ScreenManager screenManager) {
     this.screenManager = screenManager;
     this.viewModel = screenManager.getViewModel();
+    createScreen();
+  }
 
+  public void createScreen() {
     startGame.setOnAction(event -> {
       startGame();
+      screenManager.switchTo(ScreenType.GAME_SCREEN);
     });
 
     exitGame.setOnAction(event -> {
@@ -36,10 +40,6 @@ public class TitleScreen extends StackPane {
 
     });
 
-    createGrid();
-  }
-
-  public void createGrid() {
     title.textProperty().set("TOWER DEV");
     title.fontProperty().set(new Font("Impact", 20));
     box.getChildren().addAll(title, startGame, exitGame, config);
@@ -48,6 +48,7 @@ public class TitleScreen extends StackPane {
 
   public void startGame() {
     viewModel.startRound();
+    viewModel.startNextRound();
   }
 
   public void exitGame() {
