@@ -112,6 +112,7 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
   @Override
   public void updateGameState() {
     Platform.runLater(() -> gameState.set(service.getCurrentGameState()));
+    logger.debug("GameState: " + gameState.get());
   }
 
   @Override
