@@ -2,6 +2,7 @@ package de.hhn.it.devtools.javafx.towerdefense.view;
 
 import de.hhn.it.devtools.apis.towerdefenseapi.*;
 import de.hhn.it.devtools.javafx.towerdefense.controllers.ScreenManager;
+import de.hhn.it.devtools.javafx.towerdefense.controllers.ScreenType;
 import de.hhn.it.devtools.javafx.towerdefense.viewmodel.TowerDefenseViewModel;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
@@ -74,14 +75,7 @@ public class GameScreen extends StackPane {
       StackPane towerIcon = new StackPane();
       Rectangle towerIconRect = new Rectangle(20, 20);
 
-      towerIconRect.setFill(
-          switch (type) {
-            case MELEE -> Color.BLUE;
-            case RANGED -> Color.CYAN;
-            case MONEYMAKER -> Color.DARKBLUE;
-            default -> throw new NoSuchElementException();
-          }
-      );
+      towerIconRect.setFill(viewModel.getTowerColors(type));
       int towerCostNumber = viewModel.getTowerTypes().get(type);
       Label towerCost = new Label(String.valueOf(towerCostNumber));
       towerCost.setTextFill(Color.GOLD);
@@ -180,6 +174,7 @@ public class GameScreen extends StackPane {
   public void abortGameOnAction() {
     try {
       viewModel.abortGame();
+      screenManager.switchTo(ScreenType.TITLE_SCREEN);
     } catch (IllegalStateException e) {
       // Temporary Solution for Illegal Button press
       Alert alert = new Alert(Alert.AlertType.ERROR);
