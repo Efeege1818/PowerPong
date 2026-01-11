@@ -10,7 +10,10 @@ import javafx.beans.property.ListProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
@@ -49,10 +52,12 @@ public class GameScreen extends StackPane {
     mainLayout.setAlignment(Pos.CENTER);
 
     mainLayout.getChildren().addAll(
-            createTowerDisplay(),
-            completeBoard,
-            createStatsDisplay()
+        createTowerDisplay(),
+        completeBoard,
+        createStatsDisplay(),
+        createStartWaveButton()
     );
+    getChildren().add(mainLayout);
   }
 
   public GridPane createTowerDisplay() {
@@ -112,6 +117,22 @@ public class GameScreen extends StackPane {
 
   public void createButtonDisplay() {
 
+  }
+
+  public Button createStartWaveButton() {
+    Button startWaveButton = new Button("Start next Round");
+    startWaveButton.setOnAction((event) -> {
+      try {
+        viewModel.startNextRound();
+      } catch (IllegalStateException e) {
+        // Temporary Solution for Illegal Button press
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setContentText("Wave can't be started");
+        alert.showAndWait();
+      }
+    });
+
+    return startWaveButton;
   }
 
 }

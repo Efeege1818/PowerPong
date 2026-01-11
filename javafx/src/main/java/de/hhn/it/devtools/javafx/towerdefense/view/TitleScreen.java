@@ -49,8 +49,7 @@ public class TitleScreen extends StackPane {
   }
 
   public void startGame() {
-    viewModel.startRound();
-    viewModel.startNextRound();
+    viewModel.startGame();
   }
 
   public void exitGame() {

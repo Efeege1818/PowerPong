@@ -2,7 +2,6 @@ package de.hhn.it.devtools.javafx.towerdefense.viewmodel;
 
 import de.hhn.it.devtools.apis.towerdefenseapi.Enemy;
 import de.hhn.it.devtools.apis.towerdefenseapi.Grid;
-import de.hhn.it.devtools.apis.towerdefenseapi.Player;
 import de.hhn.it.devtools.apis.towerdefenseapi.Tower;
 import de.hhn.it.devtools.apis.towerdefenseapi.TowerDefenseListener;
 import de.hhn.it.devtools.apis.towerdefenseapi.TowerDefenseService;
@@ -36,7 +35,7 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
     sync();
   }
 
-  public void startRound() {
+  public void startGame() {
     service.startGame();
   }
 

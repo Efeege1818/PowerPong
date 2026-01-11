@@ -30,8 +30,8 @@ public class TowerDefenseLauncher extends Application {
     TowerDefenseViewModel viewModel = new TowerDefenseViewModel(service);
     ScreenManager screenManager = new ScreenManager(viewModel);
     screenManager.switchTo(ScreenType.TITLE_SCREEN);
-    primaryStage.setResizable(false);
-    primaryStage.setMaximized(true);
+    primaryStage.setResizable(true);
+    primaryStage.setMaximized(false);
     primaryStage.setScene(new Scene(screenManager));
     primaryStage.setTitle("Tower Defense");
     primaryStage.show();
