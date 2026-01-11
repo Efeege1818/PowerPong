@@ -24,3 +24,4 @@ bin/
 
 # MicroProject specific files
 coffeemaker.ser
+.DS_Store
