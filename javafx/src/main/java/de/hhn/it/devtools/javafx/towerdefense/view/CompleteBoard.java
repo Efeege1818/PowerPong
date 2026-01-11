@@ -15,6 +15,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
+import java.util.ArrayList;
+
 public class CompleteBoard extends StackPane {
   TowerDefenseViewModel viewModel;
   ObjectProperty<Grid> gridProperty = new SimpleObjectProperty<>();
@@ -23,7 +25,7 @@ public class CompleteBoard extends StackPane {
   GridPane enemyGrid = new GridPane();
 
   public CompleteBoard(TowerDefenseViewModel viewModel) {
-    alignmentProperty().set(Pos.CENTER_RIGHT);
+    alignmentProperty().set(Pos.TOP_LEFT);
     this.viewModel = viewModel;
     createGridDisplay();
   }
@@ -31,8 +33,11 @@ public class CompleteBoard extends StackPane {
 
   public void createGridDisplay() {
     boardDisplay();
-    getChildren().addAll(mapGrid);
     enemyDisplay();
+    enemyGrid.scaleXProperty().set(0.5);
+    enemyGrid.scaleYProperty().set(0.5);
+    enemyGrid.setAlignment(Pos.CENTER);
+    getChildren().addAll(mapGrid, enemyGrid);
 
   }
 
@@ -42,8 +47,6 @@ public class CompleteBoard extends StackPane {
     mapGrid.widthProperty().divide(2);
     mapGrid.scaleXProperty().setValue(mapGrid.scaleXProperty().get());
     mapGrid.scaleYProperty().setValue(mapGrid.scaleYProperty().get());
-
-
     for (int row = 0; row < length; row++) {
       for (int col = 0; col < length; col++) {
         Rectangle rectangle = new Rectangle(16, 16);
@@ -68,17 +71,25 @@ public class CompleteBoard extends StackPane {
         Platform.runLater(new Runnable() {
           @Override
           public void run() {
-            getChildren().clear();
-            getChildren().add(mapGrid);
-            for (Enemy enemy : enemies) {
-              Rectangle rectangle = new Rectangle(10, 10);
-              rectangle.setStroke(Color.BLACK);
-              rectangle.setFill(Color.RED);
-              getChildren().addAll(rectangle);
-              rectangle.setX(enemy.coordinates().x());
-              rectangle.setY(enemy.coordinates().y());
+            enemyGrid.getChildren().clear();
+            int length = gridProperty.get().grid().length;
+            for (int row = 0; row < length * 16; row++) {
+              for (int col = 0; col < length * 16; col++) {
+                Rectangle rectangle = new Rectangle(16, 16);
+                rectangle.setStroke(Color.BLACK);
+                rectangle.setFill(Color.RED);
+                rectangle.opacityProperty().setValue(1);
+                enemyGrid.add(rectangle, col, row);
+              }
             }
-
+//            for (Enemy enemy : enemies) {
+//              Rectangle rectangle = new Rectangle(16, 16);
+//              rectangle.setStroke(Color.BLACK);
+//              rectangle.setFill(Color.RED);
+//              enemyGrid.getChildren().remove((int) (enemy.coordinates().x() * 16),
+//                      (int) enemy.coordinates().y() * 16);
+//              enemyGrid.getChildren().re
+//            }
           }
         });
       }
@@ -101,3 +112,17 @@ public class CompleteBoard extends StackPane {
 //              enemyGrid.add(rectangle, (int) (enemy.coordinates().x() * 16),
 //                      (int) (enemy.coordinates().y() * 16));
 //            }
+
+
+
+//getChildren().clear();
+//getChildren().add(mapGrid);
+//            for (Enemy enemy : enemies) {
+//Rectangle rectangle = new Rectangle(10, 10);
+//              rectangle.setStroke(Color.BLACK);
+//              rectangle.setFill(Color.RED);
+//              rectangle.setX(enemy.coordinates().x());
+//getChildren().addAll(rectangle);
+//              rectangle.setX(enemy.coordinates().x());
+//        System.out.println(rectangle.getX());
+//        }
