@@ -41,4 +41,21 @@ public class ConsoleConnectFourUI {
     }
   }
 
+  public boolean isValidColumnInput(String input, int cols) {
+    if (input == null)
+      return false;
+    input = input.trim();
+    if (input.isEmpty())
+      return false;
+    if (input.equalsIgnoreCase("q"))
+      return true;
+
+    try {
+      int col = Integer.parseInt(input);
+      return col >= 1 && col <= cols;
+    } catch (NumberFormatException e) {
+      return false;
+    }
+  }
+
 }
