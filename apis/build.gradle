@@ -1,5 +1,6 @@
 plugins {
-    id ("java-library")
+    id("java-library")
+    id("application")
 }
 
 group = "de.hhn.it.devtools.apis"
@@ -7,4 +8,9 @@ version = "1.0"
 
 dependencies {
     // see also the dependencies in build.gradle (root)
+}
+
+application {
+    mainModule = "devtools.apis"
+    mainClass = "de.hhn.it.devtools.apis.fourconnect.console.ConsoleMain"
 }
