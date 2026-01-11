@@ -29,6 +29,15 @@ public class TitleScreen extends StackPane {
   }
 
   public void createScreen() {
+    double scale = 6;
+
+    setScaleX(scale);
+    setScaleY(scale);
+
+    layoutBoundsProperty().addListener((obs, oldBounds, newBounds) -> {
+      setTranslateX(-(newBounds.getWidth() * (1 - scale)) / 2);
+      setTranslateY(-(newBounds.getHeight() * (1 - scale)) / 2);
+    });
     startGame.setOnAction(event -> {
       startGame();
       screenManager.switchTo(ScreenType.GAME_SCREEN);
