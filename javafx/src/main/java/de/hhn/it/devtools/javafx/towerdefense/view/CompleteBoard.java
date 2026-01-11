@@ -24,7 +24,7 @@ public class CompleteBoard extends StackPane {
   GridPane mapGrid = new GridPane();
   ListProperty<Enemy> enemies = new SimpleListProperty<>();
   ListProperty<Tower> towers = new SimpleListProperty<>();
-  GridPane enemyGrid = new GridPane();
+
 
   public CompleteBoard(TowerDefenseViewModel viewModel) {
     alignmentProperty().set(Pos.TOP_LEFT);
@@ -119,16 +119,16 @@ public class CompleteBoard extends StackPane {
         }
         default -> rectangle = new Rectangle(5, 5);
       }
-      rectangle.setTranslateX(enemy.coordinates().x() * 18);
-      rectangle.setTranslateY(enemy.coordinates().y() * 18);
+      rectangle.setTranslateX(enemy.coordinates().x() * 16);
+      rectangle.setTranslateY(enemy.coordinates().y() * 16);
       getChildren().add(rectangle);
     }
     for (Tower tower : towers) {
       Rectangle towerRectangle = new Rectangle(10, 10);
       towerRectangle.setStroke(Color.BLACK);
       towerRectangle.setFill(viewModel.getTowerColors(tower.type()));
-      towerRectangle.setTranslateX(tower.coordinates().x() * 17.5);
-      towerRectangle.setTranslateY(tower.coordinates().y() * 17.5);
+      towerRectangle.setTranslateX(tower.coordinates().x() * 16);
+      towerRectangle.setTranslateY(tower.coordinates().y() * 16);
       getChildren().add(towerRectangle);
     }
   }
