@@ -15,7 +15,7 @@ public record Tower(UUID id,
                     Coordinates coordinates,
                     TowerType type) {
 
-  Tower(Coordinates coordinates, TowerType type) {
+  public Tower(Coordinates coordinates, TowerType type) {
     this(UUID.randomUUID(), coordinates, type);
   }
 }
