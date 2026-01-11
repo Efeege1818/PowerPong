@@ -119,7 +119,7 @@ public class GameScreen extends StackPane {
       startWaveOnAction();
     });
     Button abortGameButton = new Button("Exit Game");
-    startWaveButton.setOnAction((event) -> {
+    abortGameButton.setOnAction((event) -> {
       abortGameOnAction();
     });
 
