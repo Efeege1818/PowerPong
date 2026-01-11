@@ -1,9 +1,6 @@
 package de.hhn.it.devtools.javafx.towerdefense.view;
 
-import de.hhn.it.devtools.apis.towerdefenseapi.Direction;
-import de.hhn.it.devtools.apis.towerdefenseapi.Enemy;
-import de.hhn.it.devtools.apis.towerdefenseapi.Grid;
-import de.hhn.it.devtools.apis.towerdefenseapi.Tower;
+import de.hhn.it.devtools.apis.towerdefenseapi.*;
 import de.hhn.it.devtools.javafx.towerdefense.controllers.ScreenManager;
 import de.hhn.it.devtools.javafx.towerdefense.viewmodel.TowerDefenseViewModel;
 import javafx.beans.property.ListProperty;
@@ -20,6 +17,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import java.util.NoSuchElementException;
 
 public class GameScreen extends StackPane {
   ScreenManager screenManager;
@@ -57,28 +55,33 @@ public class GameScreen extends StackPane {
     towerDisplay.setAlignment(Pos.CENTER);
     towerDisplay.setHgap(10);
 
-    viewModel.getTowers().addListener((obs, oldTower, newTower) -> {
-      towerDisplay.getChildren().clear();
+    int columnIndex = 0;
+    int rowIndex = 0;
+    for (TowerType type : viewModel.getTowerTypes().keySet()) {
+      StackPane towerIcon = new StackPane();
+      Rectangle towerIconRect = new Rectangle(20, 20);
 
-      int columnIndex = 0;
-      int rowIndex = 0;
-      for (Tower tower : newTower) {
-        StackPane towerIcon = new StackPane();
+      towerIconRect.setFill(
+              switch (type) {
+                case MELEE -> Color.BLUE;
+                case RANGED -> Color.CYAN;
+                case MONEYMAKER -> Color.DARKBLUE;
+                default -> throw new NoSuchElementException();
+              }
+      );
 
-        Rectangle towerIconRect = new Rectangle(20, 20);
-        // TODO: individual Tower colors
+      int towerCostNumber = switch (type) {
+        case MELEE -> 10;
+        case RANGED -> 15;
+        case MONEYMAKER -> 20;
+        default -> throw new NoSuchElementException();
+      };
+      Label towerCost = new Label(String.valueOf(towerCostNumber));
+      towerCost.setTextFill(Color.GOLD);
 
-//        switch
-        towerIconRect.setFill(Color.BLUE);
-
-        // TODO: Money attribute
-        Label towerCost = new Label("TODO");
-        towerCost.setTextFill(Color.GOLD);
-
-        towerIcon.getChildren().addAll(towerIconRect, towerCost);
-        towerDisplay.add(towerIcon, columnIndex++, rowIndex);
-      }
-    });
+      towerIcon.getChildren().addAll(towerIconRect, towerCost);
+      towerDisplay.add(towerIcon, columnIndex++, rowIndex);
+    }
 
     return towerDisplay;
   }
@@ -154,6 +157,7 @@ public class GameScreen extends StackPane {
       alert.showAndWait();
     }
   }
+
   public void retryWaveOnAction() {
     try {
       // TODO: retryRound();
@@ -165,6 +169,7 @@ public class GameScreen extends StackPane {
       alert.showAndWait();
     }
   }
+
   public void abortGameOnAction() {
     try {
       viewModel.abortGame();
