@@ -66,18 +66,7 @@ public class CompleteBoard extends StackPane {
 
   public void enemyDisplay() {
     enemies.bind(viewModel.getEnemies());
-    enemies.addListener(new ChangeListener<ObservableList<Enemy>>() {
-      @Override
-      public void changed(ObservableValue<? extends ObservableList<Enemy>> observableValue,
-                          ObservableList<Enemy> enemies, ObservableList<Enemy> t1) {
-        Platform.runLater(new Runnable() {
-          @Override
-          public void run() {
-            update();
-          }
-        });
-      }
-    });
+    enemies.addListener((obs, oldEx, newEx) -> Platform.runLater(this::update));
   }
 
   public void towerDisplay() {
