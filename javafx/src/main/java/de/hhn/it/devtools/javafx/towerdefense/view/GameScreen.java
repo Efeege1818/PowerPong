@@ -51,8 +51,6 @@ public class GameScreen extends StackPane {
         getChildren().add(createOverlayDisplay());
       }
     });
-
-    completeBoard.placeTower(TowerType.MELEE, 0, 0);
   }
 
   public GridPane createTowerDisplay() {
