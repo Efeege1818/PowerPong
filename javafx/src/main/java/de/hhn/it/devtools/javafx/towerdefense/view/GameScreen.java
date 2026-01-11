@@ -8,13 +8,11 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.effect.GaussianBlur;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import java.util.NoSuchElementException;
 
 public class GameScreen extends StackPane {
 
@@ -26,7 +24,7 @@ public class GameScreen extends StackPane {
   CompleteBoard completeBoard;
   VBox mainLayout = new VBox();
   StackPane overlayPane = new StackPane();
-
+  TowerType selectedTower = null;
 
   public GameScreen(ScreenManager screenManager) {
     this.screenManager = screenManager;
@@ -36,7 +34,6 @@ public class GameScreen extends StackPane {
     setAlignment(Pos.CENTER);
     createDisplay();
   }
-
 
   public void createDisplay() {
     mainLayout.setSpacing(10);
@@ -65,7 +62,6 @@ public class GameScreen extends StackPane {
       setTranslateX(-(newBounds.getWidth() * (1 - scale)) / 2);
       setTranslateY(-(newBounds.getHeight() * (1 - scale)) / 2);
     });
-
   }
 
   public GridPane createTowerDisplay() {
@@ -85,12 +81,17 @@ public class GameScreen extends StackPane {
       towerCost.setTextFill(Color.GOLD);
 
       towerIcon.getChildren().addAll(towerIconRect, towerCost);
+
+      // Input clickable event here
+      towerIcon.setOnMouseClicked(e -> {
+        selectedTower = type;
+      });
+
       towerDisplay.add(towerIcon, columnIndex++, rowIndex);
     }
 
     return towerDisplay;
   }
-
 
   public GridPane createStatsDisplay() {
     GridPane statsDisplay = new GridPane();
@@ -118,7 +119,6 @@ public class GameScreen extends StackPane {
   }
 
   public GridPane createButtonDisplay() {
-    // TODO: Grey out when impossible to do
     Button startWaveButton = new Button("Start next Round");
     startWaveButton.setOnAction((event) -> {
       startWaveOnAction();
@@ -129,7 +129,6 @@ public class GameScreen extends StackPane {
     });
 
     startWaveButton.disableProperty().bind(viewModel.getCurrentGameState().isEqualTo(GameState.RUNNING));
-
 
     GridPane buttonDisplay = new GridPane();
     buttonDisplay.setAlignment(Pos.CENTER);
