@@ -52,9 +52,9 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
     sync();
   }
 
-  public void resetRound() {
+  public void retryRound() {
     service.retry();
-
+    sync();
   }
 
   public void startNextRound() {
