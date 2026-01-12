@@ -304,6 +304,7 @@ public class EntityProvider {
         if (!Collections.disjoint(player.getHitbox(), p.getHitbox())) {
 
           player.setHitPoints(player.getHitPoints() - p.getDamage());
+          service.notifyListeners(l -> l.updateSound(Sound.PLAYER_HIT));
           service.notifyListeners(l -> l.updateShip(player.getImmutableShip()));
           toRemoveProjectiles.add(p);
         }
@@ -313,7 +314,7 @@ public class EntityProvider {
         for (SimpleAlien alien : aliens.values()) {
           if (alien.getHitbox().contains(p.getCoordinate())) {
             toRemoveProjectiles.add(p);
-            service.notifyListeners(l -> l.updateSound(Sound.PLAYER_HIT));
+            service.notifyListeners(l -> l.updateSound(Sound.HIT));
             if (!alien.getHit()) {
               toRemoveAliens.add(alien);
               service.notifyListeners(l ->
