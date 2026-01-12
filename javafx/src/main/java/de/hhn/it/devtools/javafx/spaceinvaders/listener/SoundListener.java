@@ -19,6 +19,8 @@ public class SoundListener implements PropertyChangeListener {
           .getResource("/spaceinvaders/sounds/" + Sound.GAMEOVER.getSound()).toExternalForm());
   private final AudioClip levelUpSound = new AudioClip(getClass()
           .getResource("/spaceinvaders/sounds/" + Sound.LEVELUP.getSound()).toExternalForm());
+  private final AudioClip playerHitSound = new AudioClip(getClass()
+          .getResource("/spaceinvaders/sounds/" + Sound.PLAYER_HIT.getSound()).toExternalForm());
 
   /**
    * Constructor.
@@ -26,9 +28,10 @@ public class SoundListener implements PropertyChangeListener {
   public SoundListener() {
     this.shootSound.setVolume(0.15);
     this.hitSound.setVolume(0.05);
-    this.explosionSound.setVolume(0.05);
+    this.explosionSound.setVolume(0.07);
     this.gameOverSound.setVolume(0.15);
     this.levelUpSound.setVolume(0.15);
+    this.playerHitSound.setVolume(1);
   }
 
   @Override
@@ -41,6 +44,7 @@ public class SoundListener implements PropertyChangeListener {
         case Sound.EXPLOSION -> this.explosionSound.play();
         case Sound.GAMEOVER -> this.gameOverSound.play();
         case Sound.LEVELUP -> this.levelUpSound.play();
+        case Sound.PLAYER_HIT -> this.playerHitSound.play();
         default -> { }
       }
     }
