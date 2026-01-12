@@ -29,7 +29,7 @@ public class TitleScreen extends StackPane {
   }
 
   public void createScreen() {
-    double scale = 6;
+    double scale = 5;
 
     setScaleX(scale);
     setScaleY(scale);

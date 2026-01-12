@@ -1,7 +1,5 @@
 package de.hhn.it.devtools.components.towerdefensecomponents;
 
-import de.hhn.it.devtools.apis.towerdefenseapi.TowerDefenseListener;
-
 /**
  * This Class runs in a loop every game tick and manages everything that has to run constantly.
  * This Class calls the tick() Method in the GameLoop once per Game-Tick.
@@ -9,7 +7,6 @@ import de.hhn.it.devtools.apis.towerdefenseapi.TowerDefenseListener;
 public class GameLoop extends Thread {
 
   private boolean running = false;
-  private boolean started = false;
   private final int tickspeed = 100;
 
   private final SimpleTowerDefenseService service;
@@ -24,11 +21,23 @@ public class GameLoop extends Thread {
    */
   public GameLoop(SimpleTowerDefenseService service) {
     this.service = service;
+    start();
+    logger.info("Started Game Loop on thread: {}", this.threadId());
   }
 
   @Override
   public void run() {
     while (true) {
+
+      synchronized (this) {
+        try {
+          this.wait();
+        } catch (InterruptedException e) {
+          logger.error("Game Loop wait was Interrupted");
+          throw new RuntimeException(e);
+        }
+      }
+
       while (running) {
         logger.debug("tick");
         service.tick();
@@ -39,18 +48,7 @@ public class GameLoop extends Thread {
           throw new RuntimeException(e);
         }
       }
-      synchronized (this) {
-        try {
-          this.wait();
-        } catch (InterruptedException e) {
-          logger.error("Game Loop wait was Interrupted");
-          throw new RuntimeException(e);
-        }
-      }
-
     }
-
-
   }
 
   /**
@@ -63,14 +61,9 @@ public class GameLoop extends Thread {
       throw new IllegalStateException("GameLoop is already running");
     }
     running = true;
-    if(!isAlive()) {
-      start();
-    } else {
-      synchronized (this) {
-        notify();
-      }
+    synchronized (this) {
+      notify();
     }
-    logger.debug(this.getState().toString());
   }
 
   /**

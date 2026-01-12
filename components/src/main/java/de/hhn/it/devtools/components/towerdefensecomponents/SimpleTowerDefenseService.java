@@ -45,13 +45,13 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
    */
   public SimpleTowerDefenseService() {
 
-    gameLoop = new GameLoop(this);
+    seed = new Random().nextLong();
 
-    mapToolbox = new MapToolbox();
+    gameLoop = new GameLoop(this);
+    mapToolbox = new MapToolbox(seed);
     enemyToolbox = new EnemyToolbox(this);
     towerToolbox = new TowerToolbox(this);
 
-    seed = new Random().nextLong();
     configuration = new Configuration();
 
     mapToolbox.generateMap(configuration.mapSize());
@@ -100,7 +100,7 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
   public void abortGame() throws IllegalStateException {
     configuration = new Configuration();
 
-    mapToolbox = new MapToolbox();
+    mapToolbox = new MapToolbox(seed);
     mapToolbox.generateMap(configuration.mapSize());
 
     resetGame();

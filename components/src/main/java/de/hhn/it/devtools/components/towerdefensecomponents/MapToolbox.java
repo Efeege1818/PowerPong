@@ -30,7 +30,16 @@ public class MapToolbox {
   private Grid grid;
   private List<Coordinates> path;
   private int originSize;
-  private final Random random = new Random(40);
+  private final Random random;
+
+  /**
+   * Constructor.
+   *
+   * @param seed the seed that should be used for the map generation
+   */
+  public MapToolbox(long seed) {
+    random = new Random(seed);
+  }
 
   /**
    * Initializes a new grid of the given size and triggers
