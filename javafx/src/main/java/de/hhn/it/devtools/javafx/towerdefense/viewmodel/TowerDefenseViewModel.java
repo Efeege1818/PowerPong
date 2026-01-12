@@ -1,5 +1,6 @@
 package de.hhn.it.devtools.javafx.towerdefense.viewmodel;
 
+import de.hhn.it.devtools.apis.towerdefenseapi.Configuration;
 import de.hhn.it.devtools.apis.towerdefenseapi.Enemy;
 import de.hhn.it.devtools.apis.towerdefenseapi.GameState;
 import de.hhn.it.devtools.apis.towerdefenseapi.Grid;
@@ -7,12 +8,18 @@ import de.hhn.it.devtools.apis.towerdefenseapi.Tower;
 import de.hhn.it.devtools.apis.towerdefenseapi.TowerDefenseListener;
 import de.hhn.it.devtools.apis.towerdefenseapi.TowerDefenseService;
 import de.hhn.it.devtools.apis.towerdefenseapi.TowerType;
-import de.hhn.it.devtools.components.towerdefensecomponents.GameLoop;
+import java.util.Map;
 import javafx.application.Platform;
-import javafx.beans.property.*;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.scene.paint.Color;
-import java.util.Map;
 
 /**
  * Collective View Model for all TowerDefense Screens.
@@ -110,6 +117,10 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
     return gameState;
   }
 
+  public void editConfiguration(Configuration configuration) {
+    service.editConfiguration(configuration);
+  }
+
   @Override
   public void updateGameState() {
     Platform.runLater(() -> gameState.set(service.getCurrentGameState()));
@@ -159,10 +170,13 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
       case MELEE -> Color.BLUE;
       case RANGED -> Color.CYAN;
       case MONEYMAKER -> Color.DARKBLUE;
-      default -> Color.HOTPINK;
+      default -> Color.HOTPINK; // Use Hotpink as default value to spot errors
     };
   }
 
+  /**
+   * Synchronizes all Properties in this ViewModel with the corresponding values in the Service.
+   */
   public void sync() {
     Platform.runLater(() -> {
       towers.setAll(service.getTowerBoard().values());

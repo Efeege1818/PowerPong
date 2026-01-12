@@ -15,10 +15,10 @@ public class TitleScreen extends StackPane {
   ScreenManager screenManager;
   TowerDefenseViewModel viewModel;
 
+  HBox box = new HBox();
   Button startGame = new Button("Start Game");
   Button config = new Button("config");
   Button exitGame = new Button("Exit Game");
-  HBox box = new HBox();
   Label title = new Label();
 
   public TitleScreen(ScreenManager screenManager) {
