@@ -7,12 +7,15 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+/**
+ * Class that starts the TowerDefense Game.
+ */
 public class TowerDefenseLauncher extends Application {
 
   TowerDefenseService service;
 
   /**
-   * the main method.
+   * The main method.
    *
    * @param args command line arguments
    */
@@ -23,7 +26,7 @@ public class TowerDefenseLauncher extends Application {
   }
 
   @Override
-  public void start(Stage primaryStage) throws Exception {
+  public void start(Stage primaryStage) {
     service = new SimpleTowerDefenseService();
     TowerDefenseViewModel viewModel = new TowerDefenseViewModel(service);
     ScreenManager screenManager = new ScreenManager(viewModel);
