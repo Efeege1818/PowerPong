@@ -18,7 +18,6 @@ import de.hhn.it.devtools.apis.shapesurvivor.WeaponType;
 import de.hhn.it.devtools.components.shapesurvivor.helper.EventDispatcher;
 import de.hhn.it.devtools.components.shapesurvivor.helper.PlayerState;
 import de.hhn.it.devtools.components.shapesurvivor.helper.UpgradeOptionFactory;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -26,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Supplier;
 
 /**
  * Main implementation of the ShapeSurvivor game service.
@@ -38,6 +38,7 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
   private final List<ShapeSurvivorListener> listeners;
   private GameLoopService gameLoop;
   private final List<UpgradeOption> availableUpgrades;
+  private Supplier<Direction[]> inputProvider = () -> new Direction[0];
 
   private final GameContext gameContext;
   private final EventDispatcher events;
@@ -158,6 +159,10 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
     this.gameLoop = new SimpleGameLoopService(this::updateGame);
   }
 
+  public void setInputProvider(Supplier<Direction[]> inputProvider) {
+    this.inputProvider = inputProvider;
+  }
+
   @Override
   public void reset() {
     if (gameLoop.isRunning()) {
@@ -227,8 +232,22 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
     events.notifyGameStateChanged(GameState.RUNNING);
   }
 
+  /**
+   * Moves the player in a single direction.
+   *
+   * @param direction the direction to move
+   */
   public void movePlayer(Direction direction) {
     playerSystem.move(direction);
+  }
+
+  /**
+   * Moves the player in multiple directions simultaneously (for diagonal movement).
+   *
+   * @param directions array of directions to move in
+   */
+  public void movePlayerMultiple(Direction[] directions) {
+    playerSystem.moveMultiple(directions);
   }
 
   @Override
@@ -463,6 +482,10 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
       return;
     }
 
+    Direction[] activeDirections = inputProvider.get();
+    if (activeDirections.length > 0) {
+      playerSystem.moveMultiple(activeDirections);
+    }
     // Check win condition
     if (getRemainingTime() <= 0) {
       endGame(true);

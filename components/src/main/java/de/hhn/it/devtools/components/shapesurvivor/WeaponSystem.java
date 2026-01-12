@@ -6,7 +6,6 @@ import de.hhn.it.devtools.apis.shapesurvivor.Weapon;
 import de.hhn.it.devtools.apis.shapesurvivor.WeaponType;
 import de.hhn.it.devtools.components.shapesurvivor.helper.EnemyState;
 import de.hhn.it.devtools.components.shapesurvivor.helper.EventDispatcher;
-
 import java.util.ArrayList;
 import java.util.List;
 

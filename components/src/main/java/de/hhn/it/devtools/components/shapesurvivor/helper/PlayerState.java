@@ -23,7 +23,6 @@ public class PlayerState {
 
   /**
    * Converts this mutable state to an immutable Player object.
-   *  @return the immutable Player representation
    */
   public Player toPlayer() {
     return new Player(

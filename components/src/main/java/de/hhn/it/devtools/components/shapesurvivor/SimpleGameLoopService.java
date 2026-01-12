@@ -1,7 +1,6 @@
 package de.hhn.it.devtools.components.shapesurvivor;
 
 import de.hhn.it.devtools.apis.shapesurvivor.GameLoopService;
-
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -28,7 +27,6 @@ public class SimpleGameLoopService implements GameLoopService {
 
   /**
    * Creates a new game loop service.
-   *  @param updateCallback the callback to execute each update
    */
   public SimpleGameLoopService(Runnable updateCallback) {
     if (updateCallback == null) {

@@ -19,7 +19,6 @@ public class EnemyState {
 
   /**
    * Creates a new EnemyState from an Enemy object.
-   *  @param enemy the enemy to create state from
    */
   public EnemyState(Enemy enemy) {
     this.id = enemy.id();
@@ -34,7 +33,6 @@ public class EnemyState {
 
   /**
    * Returns the Immutable version of an Enemy.
-   *  @return new Enemy
    */
   public Enemy toEnemy() {
     return new Enemy(

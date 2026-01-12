@@ -4,7 +4,6 @@ import de.hhn.it.devtools.apis.shapesurvivor.Enemy;
 import de.hhn.it.devtools.apis.shapesurvivor.Position;
 import de.hhn.it.devtools.components.shapesurvivor.helper.EnemyState;
 import de.hhn.it.devtools.components.shapesurvivor.helper.EventDispatcher;
-
 import java.util.Iterator;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;

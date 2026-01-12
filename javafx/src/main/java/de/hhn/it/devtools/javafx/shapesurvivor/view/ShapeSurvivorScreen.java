@@ -14,7 +14,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.input.KeyEvent;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -25,7 +25,9 @@ import javafx.scene.Scene;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashSet;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
 
@@ -38,21 +40,23 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
     @FXML
     private Label timeLabel;
 
-
     private final Parent root;
     private final Stage mainStage;
     private final ShapeSurvivorViewModel viewModel;
     private final WeaponRenderer weaponRenderer;
+    private final Set<KeyCode> pressedKeys = new HashSet<>();
     private SimpleGameLoopService renderLoop;
     private GraphicsContext gc;
     private Runnable onExitCallback;
 
     public ShapeSurvivorScreen(Stage mainStage) {
         this.mainStage = mainStage;
-        ShapeSurvivorService gameService = new SimpleShapeSurvivorService();
+        SimpleShapeSurvivorService gameService = new SimpleShapeSurvivorService();
         this.viewModel = new ShapeSurvivorViewModel(gameService);
         this.weaponRenderer = new WeaponRenderer();
         gameService.addListener(viewModel);
+
+        gameService.setInputProvider(this::getActiveDirections);
 
         try {
             FXMLLoader loader = new FXMLLoader(
@@ -89,8 +93,24 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
     }
 
     private void setupInput() {
+        // Handle key presses - just track the keys
         root.setOnKeyPressed(e -> {
-            handleKeyPress(e);
+            if (e.getCode() == KeyCode.ESCAPE) {
+                showPausePopup();
+                e.consume();
+                return;
+            }
+            synchronized (pressedKeys) {
+                pressedKeys.add(e.getCode());
+            }
+            e.consume();
+        });
+
+        // Handle key releases
+        root.setOnKeyReleased(e -> {
+            synchronized (pressedKeys) {
+                pressedKeys.remove(e.getCode());
+            }
             e.consume();
         });
 
@@ -99,16 +119,32 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
         root.sceneProperty().addListener((obs, oldScene, newScene) -> {
             if (newScene != null) {
                 newScene.setOnKeyPressed(e -> {
-                    handleKeyPress(e);
+                    if (e.getCode() == KeyCode.ESCAPE) {
+                        showPausePopup();
+                        e.consume();
+                        return;
+                    }
+                    synchronized (pressedKeys) {
+                        pressedKeys.add(e.getCode());
+                    }
+                    e.consume();
+                });
+
+                newScene.setOnKeyReleased(e -> {
+                    synchronized (pressedKeys) {
+                        pressedKeys.remove(e.getCode());
+                    }
                     e.consume();
                 });
             }
         });
-
         root.requestFocus();
 
         viewModel.gameOverProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal) {
+                synchronized (pressedKeys) {
+                    pressedKeys.clear();
+                }
                 Platform.runLater(this::showDeathPopup);
             }
         });
@@ -130,23 +166,28 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
 
     }
 
-    private void handleKeyPress(KeyEvent e) {
-        if (e.getCode() == javafx.scene.input.KeyCode.ESCAPE) {
-            showPausePopup();
-            return;
+    private Direction[] getActiveDirections() {
+        Set<Direction> directions = new HashSet<>();
+
+        synchronized (pressedKeys) {
+            // Check vertical movement
+            if (pressedKeys.contains(KeyCode.UP) || pressedKeys.contains(KeyCode.W)) {
+                directions.add(Direction.UP);
+            }
+            if (pressedKeys.contains(KeyCode.DOWN) || pressedKeys.contains(KeyCode.S)) {
+                directions.add(Direction.DOWN);
+            }
+
+            // Check horizontal movement
+            if (pressedKeys.contains(KeyCode.LEFT) || pressedKeys.contains(KeyCode.A)) {
+                directions.add(Direction.LEFT);
+            }
+            if (pressedKeys.contains(KeyCode.RIGHT) || pressedKeys.contains(KeyCode.D)) {
+                directions.add(Direction.RIGHT);
+            }
         }
 
-        Direction direction = switch (e.getCode()) {
-            case UP, W -> Direction.UP;
-            case DOWN, S -> Direction.DOWN;
-            case LEFT, A -> Direction.LEFT;
-            case RIGHT, D -> Direction.RIGHT;
-            default -> null;
-        };
-
-        if (direction != null) {
-            viewModel.movePlayer(direction);
-        }
+        return directions.toArray(new Direction[0]);
     }
 
     private void showStartupPopup() {
@@ -179,7 +220,6 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
         Platform.runLater(() -> {
             gc.setFill(Color.rgb(20, 20, 30));
             gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
-
 
             Player player = viewModel.getPlayerProperty().get();
             if (player != null) {
@@ -268,6 +308,9 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
 
     private void showPausePopup() {
         viewModel.pauseGame();
+        synchronized (pressedKeys) {
+            pressedKeys.clear();
+        }
 
         PopupProvider provider = new PopupProvider(mainStage)
                 .setTitle("Game Paused")
@@ -280,12 +323,18 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
 
         provider.addButton(e -> {
             weaponRenderer.reset();
+            synchronized (pressedKeys) {
+                pressedKeys.clear();
+            }
             viewModel.resetAndStartDefault();
             closePopup(e);
         }, "Restart");
 
         provider.addButton(e -> {
             weaponRenderer.reset();
+            synchronized (pressedKeys) {
+                pressedKeys.clear();
+            }
             viewModel.exitGame();
             closePopup(e);
             if (onExitCallback != null) {
@@ -311,7 +360,7 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
             viewModel.resetGameOver();
             viewModel.exitGame();
             viewModel.resetGame();
-            weaponRenderer.reset(); // Reset weapon animations
+            weaponRenderer.reset();
             closePopup(e);
 
             Platform.runLater(() -> {
@@ -337,8 +386,10 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
         UpgradeOption[] upgrades = viewModel.availableUpgradesProperty().get();
         if (upgrades == null || upgrades.length == 0) return;
 
-        // Pause the game
         viewModel.pauseGame();
+        synchronized (pressedKeys) {
+            pressedKeys.clear();
+        }
 
         Stage popup = new Stage();
         popup.initOwner(mainStage);
@@ -381,7 +432,7 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
 
         Scene scene = new Scene(container, 500, 550);
         popup.setScene(scene);
-        popup.setOnCloseRequest(Event::consume); // Prevent closing without selection
+        popup.setOnCloseRequest(Event::consume);
         popup.show();
     }
 
@@ -445,6 +496,11 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
             }
 
             viewModel.selectUpgrade(option);
+
+            synchronized (pressedKeys) {
+                pressedKeys.clear();
+            }
+
             viewModel.resumeGame();
             popup.close();
             Platform.runLater(root::requestFocus);

@@ -16,6 +16,11 @@ class PlayerSystem {
     this.events = events;
   }
 
+  /**
+   * Moves the player in a single direction.
+   *
+   * @param direction the direction to move
+   */
   void move(Direction direction) {
     PlayerState p = context.getPlayer();
 
@@ -29,6 +34,52 @@ class PlayerSystem {
       case LEFT -> x -= speed;
       case RIGHT -> x += speed;
       default -> { }
+    }
+
+    x = Math.max(0, Math.min(x, context.getConfiguration().fieldWidth()));
+    y = Math.max(0, Math.min(y, context.getConfiguration().fieldHeight()));
+
+    p.setPosition(new Position(x, y));
+    events.notifyPlayerUpdated();
+  }
+
+  /**
+   * Moves the player in multiple directions simultaneously (for diagonal movement).
+   * This method normalizes the movement vector to prevent faster diagonal movement.
+   *
+   * @param directions array of directions to move in
+   */
+  void moveMultiple(Direction[] directions) {
+    if (directions == null || directions.length == 0) {
+      return;
+    }
+
+    PlayerState p = context.getPlayer();
+
+    int x = p.getPosition().x();
+    int y = p.getPosition().y();
+    double speed = (p.getMovementSpeed() * 0.6);
+
+    int dx = 0;
+    int dy = 0;
+
+    for (Direction direction : directions) {
+      switch (direction) {
+        case UP -> dy -= 1;
+        case DOWN -> dy += 1;
+        case LEFT -> dx -= 1;
+        case RIGHT -> dx += 1;
+        default -> { }
+      }
+    }
+
+    if (dx != 0 && dy != 0) {
+      double normalizedSpeed = speed / 1.414;
+      x += (int) (dx * normalizedSpeed);
+      y += (int) (dy * normalizedSpeed);
+    } else {
+      x += (int) (dx * speed);
+      y += (int) (dy * speed);
     }
 
     x = Math.max(0, Math.min(x, context.getConfiguration().fieldWidth()));

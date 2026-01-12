@@ -25,7 +25,6 @@ public class WeaponAnimationState {
 
   /**
    * Updates the weapon animation state.
-   *  @param weapon the weapon to update
    */
   public void update(Weapon weapon) {
     double rotationSpeed = weapon.attackSpeed() * 0.05;
@@ -40,7 +39,6 @@ public class WeaponAnimationState {
 
   /**
    * Checks if the weapon can attack.
-   *  @return true if attack is ready
    */
   public boolean canAttack() {
     long currentTime = System.currentTimeMillis();
@@ -65,8 +63,7 @@ public class WeaponAnimationState {
   }
 
   /**
-   *  gets the Attack Progress Time
-   *  @return difference between lastAttackTime and the current Time
+   *  gets the Attack Progress Time.
    */
   public long getAttackProgress() {
     if (!attacking) {
@@ -77,7 +74,6 @@ public class WeaponAnimationState {
 
   /**
    * Checks if aura damage can be dealt.
-   *  @return true if enough time has passed
    */
   public boolean canDealAuraDamage() {
     long now = System.currentTimeMillis();

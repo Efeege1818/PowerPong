@@ -7,7 +7,6 @@ import de.hhn.it.devtools.apis.shapesurvivor.ShapeSurvivorListener;
 import de.hhn.it.devtools.apis.shapesurvivor.ShapeSurvivorService;
 import de.hhn.it.devtools.apis.shapesurvivor.Weapon;
 import de.hhn.it.devtools.components.shapesurvivor.GameContext;
-
 import java.util.List;
 
 /**
@@ -21,9 +20,6 @@ public class EventDispatcher {
 
   /**
    * Creates a new EventDispatcher.
-   * @param listeners list of listeners to notify
-   * @param context game context
-   * @param service the game service
    */
   public EventDispatcher(List<ShapeSurvivorListener> listeners,
                          GameContext context,
@@ -54,7 +50,6 @@ public class EventDispatcher {
 
   /**
    * Notifies all listeners of weapon updates.
-   *  @param weapon the updated weapon
    */
   public void notifyWeaponUpdated(Weapon weapon) {
     for (ShapeSurvivorListener listener : listeners) {
@@ -64,7 +59,6 @@ public class EventDispatcher {
 
   /**
    * Notifies all listeners that the player was damaged.
-   *  @param damage amount of damage taken
    */
   public void notifyPlayerDamaged(int damage) {
     for (ShapeSurvivorListener listener : listeners) {
@@ -74,8 +68,6 @@ public class EventDispatcher {
 
   /**
    * Notifies all listeners that an enemy was damaged.
-   * @param enemy the damaged enemy
-   * @param damage amount of damage dealt
    */
   public void notifyEnemyDamaged(Enemy enemy, int damage) {
     for (ShapeSurvivorListener listener : listeners) {
@@ -85,8 +77,6 @@ public class EventDispatcher {
 
   /**
    * Notifies all listeners that an enemy was killed.
-   *  @param enemy the killed enemy
-   *  @param exp experience gained
    */
   public void notifyEnemyKilled(Enemy enemy, int exp) {
     for (ShapeSurvivorListener listener : listeners) {
@@ -105,7 +95,6 @@ public class EventDispatcher {
 
   /**
    * Notifies all listeners of game state changes.
-   *  @param state the new game state
    */
   public void notifyGameStateChanged(GameState state) {
     for (ShapeSurvivorListener listener : listeners) {
@@ -129,8 +118,6 @@ public class EventDispatcher {
 
   /**
    * Notifies all listeners that a new enemy wave spawned.
-   *  @param wave wave number
-   *  @param count number of enemies
    */
   public void notifyEnemyWaveSpawned(int wave, int count) {
     for (ShapeSurvivorListener listener : listeners) {
@@ -140,7 +127,6 @@ public class EventDispatcher {
 
   /**
    * Notifies all listeners that the game ended.
-   *  @param victory whether the game was won
    */
   public void notifyGameEnded(boolean victory) {
     for (ShapeSurvivorListener listener : listeners) {
@@ -160,7 +146,6 @@ public class EventDispatcher {
 
   /**
    * Notifies all listeners of configuration updates.
-   *  @param config the new configuration
    */
   public void notifyConfigurationUpdated(GameConfiguration config) {
     for (ShapeSurvivorListener listener : listeners) {

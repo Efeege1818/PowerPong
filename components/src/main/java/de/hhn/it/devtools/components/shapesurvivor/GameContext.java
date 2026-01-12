@@ -7,7 +7,6 @@ import de.hhn.it.devtools.apis.shapesurvivor.GameStatistics;
 import de.hhn.it.devtools.apis.shapesurvivor.WeaponType;
 import de.hhn.it.devtools.components.shapesurvivor.helper.EnemyState;
 import de.hhn.it.devtools.components.shapesurvivor.helper.PlayerState;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -154,7 +153,6 @@ public class GameContext {
 
   /**
    * Returns a snapshot of all enemies as immutable Enemy objects.
-   *  @return list of Enemy snapshots
    */
   public List<Enemy> getEnemiesSnapshot() {
     List<Enemy> snapshot = new ArrayList<>(enemies.size());
