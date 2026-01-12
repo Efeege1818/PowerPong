@@ -106,6 +106,7 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
     this.gameState = GameState.RUNNING;
     notifyListeners((l) -> l.changedGameState(gameState));
     notifyListeners((l) -> l.updateRound(++round));
+    entityProvider.clearProjectiles();
     synchronized (simpleGameLoop) {
       this.simpleGameLoop.notify();
     }

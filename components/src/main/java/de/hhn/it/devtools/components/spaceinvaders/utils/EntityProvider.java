@@ -376,4 +376,14 @@ public class EntityProvider {
             barriers.put(barrier.getId(), barrier)));
     return barriers;
   }
+
+  public void clearProjectiles() {
+    for (SimpleProjectile p : projectiles) {
+      p.inverse();
+    }
+    service.notifyListeners(l ->
+        l.updateProjectiles(projectiles.stream()
+            .map(SimpleProjectile::getImmtProjectile).toArray(Projectile[]::new)));
+    projectiles.clear();
+  }
 }
