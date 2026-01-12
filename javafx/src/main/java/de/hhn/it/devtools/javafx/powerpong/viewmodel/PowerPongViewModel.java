@@ -78,6 +78,10 @@ public class PowerPongViewModel implements PowerPongListener {
     return gameState;
   }
 
+  public GameState getGameState() {
+    return gameState.get();
+  }
+
   public StringProperty scoreTextProperty() {
     return scoreText;
   }
@@ -96,8 +100,7 @@ public class PowerPongViewModel implements PowerPongListener {
 
   @Override
   public void onPlayerScored(final int scoringPlayerIndex, final Score updatedScore) {
-    Platform.runLater(() ->
-        scoreText.set(formatScore(updatedScore.player1(), updatedScore.player2())));
+    Platform.runLater(() -> scoreText.set(formatScore(updatedScore.player1(), updatedScore.player2())));
   }
 
   @Override

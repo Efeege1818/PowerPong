@@ -24,7 +24,7 @@ public class PhysicsEngine {
     public static final double PADDLE_WIDTH = 14.0;
     public static final double PADDLE_HEIGHT = 110.0;
     public static final double BALL_RADIUS = 8.0;
-    public static final double LEFT_PADDLE_X = 35.0;
+    public static final double LEFT_PADDLE_X = 5.0;
     public static final double RIGHT_PADDLE_X = FIELD_WIDTH - LEFT_PADDLE_X - PADDLE_WIDTH;
 
     // Base speeds (modifiable for difficulty)
@@ -251,11 +251,13 @@ public class PhysicsEngine {
         }
     }
 
-    // Calculate scoring
+    // Calculate scoring - ball must completely leave visible field
+    private static final double SCORING_MARGIN = 50.0; // Extra distance ball must travel off-screen
+
     private int checkScoring(Ball current) {
-        if (current.x + BALL_RADIUS < 0) {
+        if (current.x + BALL_RADIUS < -SCORING_MARGIN) {
             return 2; // Player 2 scores (ball went out left)
-        } else if (current.x - BALL_RADIUS > FIELD_WIDTH) {
+        } else if (current.x - BALL_RADIUS > FIELD_WIDTH + SCORING_MARGIN) {
             return 1; // Player 1 scores (ball went out right)
         }
         return 0;

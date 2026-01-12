@@ -5,6 +5,8 @@ import de.hhn.it.devtools.apis.powerPong.GameState;
 import de.hhn.it.devtools.apis.powerPong.PaddleState;
 import de.hhn.it.devtools.apis.powerPong.PowerUpState;
 import de.hhn.it.devtools.apis.powerPong.PowerUpType;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlendMode;
@@ -21,8 +23,9 @@ import javafx.scene.paint.Stop;
  */
 public class GameRenderer {
 
-    private static final double GAME_WIDTH = 800.0;
-    private static final double GAME_HEIGHT = 600.0;
+    // Logical game dimensions (used for physics/game logic)
+    private static final double LOGICAL_WIDTH = 800.0;
+    private static final double LOGICAL_HEIGHT = 600.0;
 
     // Neon Colors
     private static final Color NEON_BLUE = Color.web("#00f3ff");
@@ -32,21 +35,60 @@ public class GameRenderer {
     private static final Color NEON_YELLOW = Color.web("#ffff00");
     private static final Color BACKGROUND_COLOR = Color.web("#050510"); // Very dark blue/black
 
+    // Ball trail history
+    private static final int TRAIL_LENGTH = 8;
+    private final List<double[]> ballTrailHistory = new ArrayList<>();
+
+    // Particle system
+    private final List<Particle> particles = new ArrayList<>();
+    private double lastBallX = -1;
+    private double lastBallY = -1;
+
+    private static class Particle {
+        double x, y, vx, vy;
+        double life, maxLife;
+        Color color;
+
+        Particle(double x, double y, double vx, double vy, double life, Color color) {
+            this.x = x;
+            this.y = y;
+            this.vx = vx;
+            this.vy = vy;
+            this.life = life;
+            this.maxLife = life;
+            this.color = color;
+        }
+    }
+
+    /**
+     * Clears all visual effects (trail, particles) for a fresh game start.
+     */
+    public void reset() {
+        ballTrailHistory.clear();
+        particles.clear();
+        lastBallX = -1;
+        lastBallY = -1;
+    }
+
     public void render(GraphicsContext gc, GameState state) {
-        // Clear background
+        double canvasWidth = gc.getCanvas().getWidth();
+        double canvasHeight = gc.getCanvas().getHeight();
+
+        // Stretch to fill entire screen (no aspect ratio preservation)
+        double scaleX = canvasWidth / LOGICAL_WIDTH;
+        double scaleY = canvasHeight / LOGICAL_HEIGHT;
+
+        // Clear entire canvas with background
         gc.setEffect(null);
         gc.setFill(BACKGROUND_COLOR);
-        gc.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+        gc.fillRect(0, 0, canvasWidth, canvasHeight);
+
+        // Apply transformation for scaling (stretch to fill)
+        gc.save();
+        gc.scale(scaleX, scaleY);
 
         // Draw Field Decorations (Line, Scores)
         drawFieldDecorations(gc, state);
-
-        // Enable global glow effect for game elements if performance allows
-        // Note: Applying effect to every single draw call is expensive.
-        // Better to draw everything that glows, then apply effect?
-        // Or simpler: simulate glow with transparent layers.
-
-        // Let's us simple strokes + shadow/glow for Neon look
 
         if (state.player1Paddle() != null) {
             drawNeonPaddle(gc, state.player1Paddle(), NEON_BLUE);
@@ -55,10 +97,16 @@ public class GameRenderer {
             drawNeonPaddle(gc, state.player2Paddle(), NEON_PINK);
         }
 
+        // Update and draw particles
+        updateAndDrawParticles(gc);
+
         List<BallState> balls = state.balls();
         if (balls != null) {
             for (BallState ball : balls) {
-                drawNeonBall(gc, ball);
+                // Draw ball trail
+                drawBallTrail(gc, ball);
+                // Draw actual ball
+                drawNeonBall(gc, ball, state);
             }
         }
 
@@ -68,6 +116,57 @@ public class GameRenderer {
                 drawNeonPowerUp(gc, powerUp);
             }
         }
+
+        // Restore original transformation
+        gc.restore();
+    }
+
+    private void updateAndDrawParticles(GraphicsContext gc) {
+        Iterator<Particle> iterator = particles.iterator();
+        while (iterator.hasNext()) {
+            Particle p = iterator.next();
+            p.x += p.vx;
+            p.y += p.vy;
+            p.life -= 0.05; // Faster fade for fewer frames
+
+            if (p.life <= 0) {
+                iterator.remove();
+            } else {
+                double alpha = p.life / p.maxLife;
+                // No DropShadow effect - just simple colored circle for performance
+                gc.setFill(p.color.deriveColor(0, 1, 1, alpha));
+                double size = 6 * alpha;
+                gc.fillOval(p.x - size / 2, p.y - size / 2, size, size);
+            }
+        }
+    }
+
+    private void drawBallTrail(GraphicsContext gc, BallState ball) {
+        // Add current position to trail
+        ballTrailHistory.add(new double[] { ball.xPosition(), ball.yPosition() });
+        while (ballTrailHistory.size() > TRAIL_LENGTH) {
+            ballTrailHistory.remove(0);
+        }
+
+        // Draw trail
+        for (int i = 0; i < ballTrailHistory.size() - 1; i++) {
+            double[] pos = ballTrailHistory.get(i);
+            double alpha = (double) (i + 1) / ballTrailHistory.size() * 0.5;
+            double size = ball.radius() * 2 * alpha;
+
+            gc.setFill(Color.WHITE.deriveColor(0, 1, 1, alpha));
+            gc.fillOval(pos[0] - size / 2, pos[1] - size / 2, size, size);
+        }
+    }
+
+    private void spawnCollisionParticles(double x, double y, Color color) {
+        for (int i = 0; i < 5; i++) { // Reduced from 8 for performance
+            double angle = Math.random() * Math.PI * 2;
+            double speed = 3 + Math.random() * 3;
+            double vx = Math.cos(angle) * speed;
+            double vy = Math.sin(angle) * speed;
+            particles.add(new Particle(x, y, vx, vy, 0.6, color)); // Shorter life
+        }
     }
 
     private void drawFieldDecorations(GraphicsContext gc, GameState state) {
@@ -75,7 +174,7 @@ public class GameRenderer {
         gc.setStroke(Color.WHITE);
         gc.setLineWidth(4);
         gc.setLineDashes(15, 15); // Dashed pattern
-        gc.strokeLine(GAME_WIDTH / 2, 0, GAME_WIDTH / 2, GAME_HEIGHT);
+        gc.strokeLine(LOGICAL_WIDTH / 2, 0, LOGICAL_WIDTH / 2, LOGICAL_HEIGHT);
         gc.setLineDashes(null);
 
         // 2. Draw Background Scores
@@ -85,10 +184,10 @@ public class GameRenderer {
         gc.setTextBaseline(javafx.geometry.VPos.CENTER);
 
         // Player 1 Score (Left Center)
-        gc.fillText(String.valueOf(state.score().player1()), GAME_WIDTH / 4, GAME_HEIGHT / 2);
+        gc.fillText(String.valueOf(state.score().player1()), LOGICAL_WIDTH / 4, LOGICAL_HEIGHT / 2);
 
         // Player 2 Score (Right Center)
-        gc.fillText(String.valueOf(state.score().player2()), GAME_WIDTH * 3 / 4, GAME_HEIGHT / 2);
+        gc.fillText(String.valueOf(state.score().player2()), LOGICAL_WIDTH * 3 / 4, LOGICAL_HEIGHT / 2);
     }
 
     private void drawNeonPaddle(GraphicsContext gc, PaddleState paddle, Color color) {
@@ -109,11 +208,30 @@ public class GameRenderer {
         gc.fillRoundRect(x + 2, y + 2, w - 4, h - 4, 8, 8);
     }
 
-    private void drawNeonBall(GraphicsContext gc, BallState ball) {
+    private void drawNeonBall(GraphicsContext gc, BallState ball, GameState state) {
         double r = ball.radius();
         double d = r * 2;
         double x = ball.xPosition() - r;
         double y = ball.yPosition() - r;
+
+        // Detect paddle collision and spawn particles
+        if (lastBallX >= 0) {
+            // Check if ball direction changed (collision with paddle)
+            double ballX = ball.xPosition();
+            PaddleState leftPaddle = state.player1Paddle();
+            PaddleState rightPaddle = state.player2Paddle();
+
+            // Left paddle collision (ball moving right after being on left side)
+            if (leftPaddle != null && lastBallX < 100 && ballX > lastBallX && ballX < 100) {
+                spawnCollisionParticles(ballX, ball.yPosition(), NEON_BLUE);
+            }
+            // Right paddle collision (ball moving left after being on right side)
+            if (rightPaddle != null && lastBallX > 700 && ballX < lastBallX && ballX > 700) {
+                spawnCollisionParticles(ballX, ball.yPosition(), NEON_PINK);
+            }
+        }
+        lastBallX = ball.xPosition();
+        lastBallY = ball.yPosition();
 
         // Glow trail or intense glow
         gc.setEffect(new javafx.scene.effect.DropShadow(15, Color.WHITE));
