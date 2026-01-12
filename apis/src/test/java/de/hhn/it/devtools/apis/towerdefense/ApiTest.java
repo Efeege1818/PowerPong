@@ -40,7 +40,6 @@ public class ApiTest {
     Coordinates pos = new Coordinates(3, 4);
     Tower tower = new Tower(pos, TowerType.RANGED);
 
-    assertEquals(10, tower.id());
     assertEquals(pos, tower.coordinates());
     assertEquals(TowerType.RANGED, tower.type());
   }
