@@ -17,6 +17,9 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
+/**
+ * Node that displays the Board, Towers and Enemies.
+ */
 public class CompleteBoard extends StackPane {
   TowerDefenseViewModel viewModel;
   private final int size;
@@ -28,6 +31,11 @@ public class CompleteBoard extends StackPane {
   Group enemyContainer = new Group();
   Group towerContainer = new Group();
 
+  /**
+   * Constructor.
+   *
+   * @param viewModel the current ViewModel
+   */
   public CompleteBoard(TowerDefenseViewModel viewModel) {
 
     this.viewModel = viewModel;
@@ -56,7 +64,8 @@ public class CompleteBoard extends StackPane {
 
         Rectangle rectangle = new Rectangle(16, 16);
         rectangle.setStroke(Color.BLACK);
-        rectangle.setFill(gridProperty.get().grid()[row][col] == Direction.NONE ? Color.DARKGREEN : Color.DARKGRAY);
+        rectangle.setFill(gridProperty.get().grid()[row][col]
+            == Direction.NONE ? Color.DARKGREEN : Color.DARKGRAY);
 
         mapGrid.add(rectangle, col, row);
       }
