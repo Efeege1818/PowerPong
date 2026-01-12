@@ -313,7 +313,7 @@ public class EntityProvider {
         for (SimpleAlien alien : aliens.values()) {
           if (alien.getHitbox().contains(p.getCoordinate())) {
             toRemoveProjectiles.add(p);
-            service.notifyListeners(l -> l.updateSound(Sound.HIT));
+            service.notifyListeners(l -> l.updateSound(Sound.PLAYER_HIT));
             if (!alien.getHit()) {
               toRemoveAliens.add(alien);
               service.notifyListeners(l ->
