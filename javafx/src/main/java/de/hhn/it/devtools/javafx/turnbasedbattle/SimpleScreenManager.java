@@ -10,6 +10,8 @@ public class SimpleScreenManager implements ScreenManager {
   private SelectScreen selectScreen;
   private BattleScreen battleScreen;
   private EndScreen endScreen;
+  private PauseScreenFx pauseScreen;
+  private InfoScreenFx infoScreen;
 
   public SimpleScreenManager(final Pane pane) {
     this.pane = pane;
@@ -36,6 +38,20 @@ public class SimpleScreenManager implements ScreenManager {
     return endScreen;
   }
 
+  private InfoScreenFx getInfoScreen() {
+    if(infoScreen == null) {
+      infoScreen = new InfoScreenFx(null); //TODO: update InfoScreen to use ScreenManager
+    }
+    return infoScreen;
+  }
+
+  private PauseScreenFx getPauseScreen() {
+    if(pauseScreen == null) {
+      pauseScreen = new PauseScreenFx(null); //TODO: update PauseScreen to use ScreenManager
+    }
+    return pauseScreen;
+  }
+
   @Override
   public void switchTo(String fromScreen, String toScreen) throws UnknownTransitionException {
     switch (toScreen) {
@@ -50,6 +66,14 @@ public class SimpleScreenManager implements ScreenManager {
       case EndScreen.SCREEN_NAME:
         pane.getChildren().clear();
         pane.getChildren().add(getEndScreen());
+        break;
+      case InfoScreenFx.SCREEN_NAME:
+        pane.getChildren().clear();
+        pane.getChildren().add(getInfoScreen());
+        break;
+      case PauseScreenFx.SCREEN_NAME:
+        pane.getChildren().clear();
+        pane.getChildren().add(getPauseScreen());
         break;
 
       default: throw new UnknownTransitionException("Unknown screen: ", fromScreen, toScreen);
