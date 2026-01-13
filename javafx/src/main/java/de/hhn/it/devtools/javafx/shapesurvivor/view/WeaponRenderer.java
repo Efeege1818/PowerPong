@@ -1,7 +1,6 @@
 package de.hhn.it.devtools.javafx.shapesurvivor.view;
 
 import de.hhn.it.devtools.apis.shapesurvivor.Player;
-import de.hhn.it.devtools.apis.shapesurvivor.Position;
 import de.hhn.it.devtools.apis.shapesurvivor.Weapon;
 import de.hhn.it.devtools.apis.shapesurvivor.WeaponType;
 import de.hhn.it.devtools.components.shapesurvivor.WeaponAnimationState;
@@ -29,7 +28,6 @@ public class WeaponRenderer {
     public void renderWeapons(
             GraphicsContext gc,
             Player player,
-            Position cameraPos,
             double canvasWidth,
             double canvasHeight
     ) {
@@ -131,8 +129,8 @@ public class WeaponRenderer {
 
     private void renderWhip(
             GraphicsContext gc,
-            int px,
-            int py,
+            int startX,
+            int startY,
             Weapon weapon,
             WeaponAnimationState state
     ) {
@@ -146,9 +144,7 @@ public class WeaponRenderer {
         int whipLength = (int) (weapon.range() * progress);
         int whipWidth = 80;
 
-        int startX = px;
-        int startY = py;
-        int endX = px + (isLeft ? -whipLength : whipLength);
+      int endX = startX + (isLeft ? -whipLength : whipLength);
 
         gc.setStroke(Color.ORANGE);
         gc.setLineWidth(6);

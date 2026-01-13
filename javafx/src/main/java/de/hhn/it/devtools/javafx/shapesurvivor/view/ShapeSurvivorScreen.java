@@ -59,7 +59,6 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
         this.viewModel = new ShapeSurvivorViewModel(gameService);
         this.weaponRenderer = new WeaponRenderer();
         gameService.addListener(viewModel);
-
         gameService.setInputProvider(this::getActiveDirections);
 
         try {
@@ -121,6 +120,15 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
         xpBar.widthProperty().bind(
             viewModel.experienceProgressProperty().multiply(400)
         );
+
+        viewModel.victoryProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal) {
+                synchronized (pressedKeys) {
+                    pressedKeys.clear();
+                }
+                Platform.runLater(this::showVictoryPopup);
+            }
+        });
 
         root.setFocusTraversable(true);
 
@@ -250,8 +258,7 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
             weaponRenderer.renderWeapons(
                     gc,
                     player,
-                    cameraPos,
-                    canvas.getWidth(),
+                canvas.getWidth(),
                     canvas.getHeight()
             );
 
@@ -546,5 +553,36 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
         synchronized (pressedKeys) {
             pressedKeys.clear();
         }
+    }
+
+    private void showVictoryPopup() {
+        PopupProvider provider = new PopupProvider(mainStage)
+            .setTitle("Victory!")
+            .addLabel("Congratulations! You survived!");
+
+        provider.addButton(e -> {
+            viewModel.resetVictory();
+            viewModel.exitGame();
+            viewModel.resetGame();
+            weaponRenderer.reset();
+            closePopup(e);
+
+            Platform.runLater(() -> {
+                showStartupPopup();
+                root.requestFocus();
+            });
+        }, "New Game");
+
+        provider.addButton(e -> {
+            weaponRenderer.reset();
+            viewModel.exitGame();
+            closePopup(e);
+
+            if (onExitCallback != null) {
+                onExitCallback.run();
+            }
+        }, "Exit");
+
+        provider.build().show();
     }
 }

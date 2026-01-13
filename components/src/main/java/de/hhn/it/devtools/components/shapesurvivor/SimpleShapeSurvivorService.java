@@ -297,6 +297,7 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
     }
 
     gameContext.getPlayer().setWeapons(weapons.toArray(new Weapon[0]));
+    events.notifyPlayerUpdated();
   }
 
   private void addNewWeapon(WeaponType weaponType) {
@@ -308,6 +309,7 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
     events.notifyWeaponUpdated(newWeapon);
 
     gameContext.getPlayer().setWeapons(weapons.toArray(new Weapon[0]));
+    events.notifyPlayerUpdated();
   }
 
   private void upgradePlayerAttribute(PlayerAttribute attribute,

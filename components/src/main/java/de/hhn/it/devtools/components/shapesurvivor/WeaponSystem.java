@@ -93,7 +93,10 @@ class WeaponSystem {
 
     for (EnemyState enemy : gameContext.getEnemies()) {
 
-      Long lastHit = gameContext.getLastEnemyHitTime().get(enemy.getId());
+      // CHANGED: Create unique key for weapon-enemy combination
+      String hitKey = weapon.type() + "_" + enemy.getId();
+      Long lastHit = gameContext.getLastWeaponHitTime().get(hitKey);
+
       if (lastHit != null && currentTime - lastHit < ENEMY_HIT_COOLDOWN_MS) {
         continue;
       }
@@ -108,7 +111,8 @@ class WeaponSystem {
         continue;
       }
 
-      gameContext.getLastEnemyHitTime().put(enemy.getId(), currentTime);
+      // CHANGED: Store hit time with weapon-specific key
+      gameContext.getLastWeaponHitTime().put(hitKey, currentTime);
 
       int damage = weapon.damage() + gameContext.getPlayer().getBaseDamage();
 
@@ -119,13 +123,20 @@ class WeaponSystem {
 
       if (enemy.getCurrentHealth() <= 0) {
         toRemove.add(enemy);
-        gameContext.getLastEnemyHitTime().remove(enemy.getId());
+        // CHANGED: Remove all weapon-specific hit records for this enemy
+        cleanupEnemyHitRecords(enemy.getId());
         service.gainExperience(enemy.getExperience());
         events.notifyEnemyKilled(enemy.toEnemy(), enemy.getExperience());
       }
     }
 
     gameContext.getEnemies().removeAll(toRemove);
+  }
+
+  // ADDED: Helper method to clean up hit records when enemy dies
+  private void cleanupEnemyHitRecords(int enemyId) {
+    gameContext.getLastWeaponHitTime().entrySet()
+        .removeIf(entry -> entry.getKey().endsWith("_" + enemyId));
   }
 
   private boolean checkSwordHit(Enemy enemy,
@@ -142,9 +153,9 @@ class WeaponSystem {
     double tipY = baseY + Math.sin(angle) * SWORD_BLADE_LENGTH;
 
     double distance = distancePointToSegment(
-            enemy.position().x(), enemy.position().y(),
-            baseX, baseY,
-            tipX, tipY
+        enemy.position().x(), enemy.position().y(),
+        baseX, baseY,
+        tipX, tipY
     );
 
     return distance <= SWORD_HIT_RADIUS;
@@ -172,14 +183,14 @@ class WeaponSystem {
     double whipLength = weapon.range();
 
     return state.isAttackingLeft()
-            ? dx < 0 && dx > -whipLength && Math.abs(dy) < whipWidth
-            : dx > 0 && dx < whipLength && Math.abs(dy) < whipWidth;
+        ? dx < 0 && dx > -whipLength && Math.abs(dy) < whipWidth
+        : dx > 0 && dx < whipLength && Math.abs(dy) < whipWidth;
   }
 
   private double distancePointToSegment(
-          double px, double py,
-          double x1, double y1,
-          double x2, double y2) {
+      double px, double py,
+      double x1, double y1,
+      double x2, double y2) {
 
     double dx = x2 - x1;
     double dy = y2 - y1;

@@ -30,6 +30,7 @@ public class ShapeSurvivorViewModel implements ShapeSurvivorListener {
     private final IntegerProperty experienceProperty = new SimpleIntegerProperty(0);
     private final IntegerProperty experienceToNextLevelProperty = new SimpleIntegerProperty(100);
     private final DoubleProperty experienceProgressProperty = new SimpleDoubleProperty(0);
+    private final BooleanProperty victoryProperty = new SimpleBooleanProperty(false);
     private static final org.slf4j.Logger logger =
             org.slf4j.LoggerFactory.getLogger(ShapeSurvivorViewModel.class);
 
@@ -171,9 +172,17 @@ public class ShapeSurvivorViewModel implements ShapeSurvivorListener {
 
     @Override
     public void gameEnded(boolean victory) {
-        if (!victory) {
-            Platform.runLater(() -> gameOverProperty.set(true));
-        }
+        Platform.runLater(() -> {
+            if (victory) {
+                victoryProperty.set(true);
+            } else {
+                gameOverProperty.set(true);
+            }
+        });
+    }
+
+    public void resetVictory() {
+        victoryProperty.set(false);
     }
 
     @Override
@@ -208,6 +217,10 @@ public class ShapeSurvivorViewModel implements ShapeSurvivorListener {
             gameService.resume();
         } catch (IllegalStateException ignored) {
         }
+    }
+
+    public BooleanProperty victoryProperty() {
+        return victoryProperty;
     }
 
     public void resetGame() {

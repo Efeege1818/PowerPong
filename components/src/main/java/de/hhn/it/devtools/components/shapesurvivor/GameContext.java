@@ -26,7 +26,8 @@ public class GameContext {
   private int nextEnemyId;
   private long lastWaveSpawnTime;
   private final Map<WeaponType, WeaponAnimationState> weaponStates = new HashMap<>();
-  private final Map<Integer, Long> lastEnemyHitTime = new HashMap<>();
+  // CHANGED: Now tracks hits per weapon type per enemy
+  private final Map<String, Long> lastWeaponHitTime = new HashMap<>();
   private long lastWeaponUpdateTime;
   private long lastPlayerHitTime = 0;
   private GameStatistics statistics;
@@ -41,7 +42,7 @@ public class GameContext {
     this.gameState = GameState.PREPARED;
     enemies.clear();
     weaponStates.clear();
-    lastEnemyHitTime.clear();
+    lastWeaponHitTime.clear();
     currentWave = 0;
     nextEnemyId = 0;
     levelUpPending = false;
@@ -90,8 +91,9 @@ public class GameContext {
     return weaponStates;
   }
 
-  public Map<Integer, Long> getLastEnemyHitTime() {
-    return lastEnemyHitTime;
+  // CHANGED: New method for per-weapon hit tracking
+  public Map<String, Long> getLastWeaponHitTime() {
+    return lastWeaponHitTime;
   }
 
   public long getLastWeaponUpdateTime() {
