@@ -17,6 +17,7 @@ import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.scene.layout.VBox;
 import javafx.geometry.Pos;
@@ -39,6 +40,8 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
     private Label levelLabel;
     @FXML
     private Label timeLabel;
+    @FXML
+    private Rectangle xpBar;
 
     private final Parent root;
     private final Stage mainStage;
@@ -114,6 +117,10 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
             }
             e.consume();
         });
+
+        xpBar.widthProperty().bind(
+            viewModel.experienceProgressProperty().multiply(400)
+        );
 
         root.setFocusTraversable(true);
 

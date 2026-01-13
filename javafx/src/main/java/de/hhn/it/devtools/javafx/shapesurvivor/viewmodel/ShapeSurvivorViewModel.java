@@ -27,6 +27,9 @@ public class ShapeSurvivorViewModel implements ShapeSurvivorListener {
     private final BooleanProperty levelUpAvailableProperty;
     private final ObjectProperty<UpgradeOption[]> availableUpgradesProperty;
     private final IntegerProperty remainingTimeProperty = new SimpleIntegerProperty(0);
+    private final IntegerProperty experienceProperty = new SimpleIntegerProperty(0);
+    private final IntegerProperty experienceToNextLevelProperty = new SimpleIntegerProperty(100);
+    private final DoubleProperty experienceProgressProperty = new SimpleDoubleProperty(0);
     private static final org.slf4j.Logger logger =
             org.slf4j.LoggerFactory.getLogger(ShapeSurvivorViewModel.class);
 
@@ -175,7 +178,17 @@ public class ShapeSurvivorViewModel implements ShapeSurvivorListener {
 
     @Override
     public void updateExperience(int experience, int experienceToNextLevel) {
-        Platform.runLater(() -> scoreProperty.set(experience));
+        Platform.runLater(() -> {
+            experienceProperty.set(experience);
+            experienceToNextLevelProperty.set(experienceToNextLevel);
+
+            double progress = experienceToNextLevel == 0
+                ? 0
+                : (double) experience / experienceToNextLevel;
+
+            experienceProgressProperty.set(progress);
+            scoreProperty.set(experience);
+        });
     }
 
     @Override
@@ -205,6 +218,18 @@ public class ShapeSurvivorViewModel implements ShapeSurvivorListener {
             scoreProperty.set(0);
             levelProperty.set(1);
         });
+    }
+
+    public IntegerProperty experienceProperty() {
+        return experienceProperty;
+    }
+
+    public IntegerProperty experienceToNextLevelProperty() {
+        return experienceToNextLevelProperty;
+    }
+
+    public DoubleProperty experienceProgressProperty() {
+        return experienceProgressProperty;
     }
 
     public void resetAndStartDefault() {

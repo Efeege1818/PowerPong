@@ -12,6 +12,27 @@
         <!-- HUD Background -->
         <Rectangle fx:id="hudBackground" layoutX="0" layoutY="4" width="800" height="50" arcWidth="15" arcHeight="15" fill="rgba(0,0,0,0.75)" />
 
+        <!-- XP Bar Background -->
+        <Rectangle
+                layoutX="200"
+                layoutY="40"
+                width="400"
+                height="8"
+                arcWidth="8"
+                arcHeight="8"
+                fill="#333333" />
+
+        <!-- XP Bar Foreground -->
+        <Rectangle
+                fx:id="xpBar"
+                layoutX="200"
+                layoutY="40"
+                width="0"
+                height="8"
+                arcWidth="8"
+                arcHeight="8"
+                fill="linear-gradient(to right, #4facfe, #00f2fe)" />
+
         <!-- Timer -->
         <Label layoutX="360" layoutY="15" style="-fx-text-fill: gold; -fx-font-size: 18px;" text="Time:" />
         <Label fx:id="timeLabel" layoutX="420" layoutY="15" style="-fx-text-fill: gold; -fx-font-size: 18px;" text="00:00" />
