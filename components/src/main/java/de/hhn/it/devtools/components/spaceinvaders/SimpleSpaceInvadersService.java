@@ -221,6 +221,10 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
 
   }
 
+  public int getRound() {
+    return round;
+  }
+
   protected GameState getGameState() {
     return gameState;
   }
