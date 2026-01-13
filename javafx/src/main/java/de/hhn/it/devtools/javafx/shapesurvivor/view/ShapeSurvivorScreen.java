@@ -244,7 +244,7 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
                     renderEnemyWithCamera(enemy, cameraPos)
             );
 
-            renderPlayerCentered(player);
+            renderPlayerCentered();
 
             // Render weapons
             weaponRenderer.renderWeapons(
@@ -260,7 +260,7 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
         });
     }
 
-    private void renderPlayerCentered(Player player) {
+    private void renderPlayerCentered() {
         int screenCenterX = (int) (canvas.getWidth() / 2);
         int screenCenterY = (int) (canvas.getHeight() / 2);
 
@@ -319,73 +319,6 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
 
         int x = screenCenterX - 20;
         int y = screenCenterY - 30;
-
-        // Background
-        gc.setFill(Color.DARKRED);
-        gc.fillRect(x, y, barWidth, barHeight);
-
-        // Foreground
-        gc.setFill(Color.LIMEGREEN);
-        gc.fillRect(x, y, barWidth * healthRatio, barHeight);
-
-        // Border
-        gc.setStroke(Color.BLACK);
-        gc.strokeRect(x, y, barWidth, barHeight);
-    }
-
-    private void renderPlayer(Player player) {
-        gc.setFill(Color.BLUE);
-        gc.fillOval(player.position().x() - 15, player.position().y() - 15, 30, 30);
-    }
-
-    private void renderEnemy(Enemy enemy) {
-        Player player = viewModel.getPlayerProperty().get();
-
-        double size = 20; // Triangle size
-        int cx = enemy.position().x();
-        int cy = enemy.position().y();
-
-        double angle = 0;
-        if (player != null) {
-            double dx = player.position().x() - cx;
-            double dy = player.position().y() - cy;
-            angle = Math.atan2(dy, dx);
-        }
-
-        double[] xPoints = new double[3];
-        double[] yPoints = new double[3];
-        xPoints[0] = cx + Math.cos(angle) * size;
-        yPoints[0] = cy + Math.sin(angle) * size;
-
-        xPoints[1] = cx + Math.cos(angle + 2.5) * (size * 0.7);
-        yPoints[1] = cy + Math.sin(angle + 2.5) * (size * 0.7);
-
-        xPoints[2] = cx + Math.cos(angle - 2.5) * (size * 0.7);
-        yPoints[2] = cy + Math.sin(angle - 2.5) * (size * 0.7);
-
-        gc.setFill(Color.RED);
-        gc.fillPolygon(xPoints, yPoints, 3);
-
-        gc.setStroke(Color.DARKRED);
-        gc.setLineWidth(2);
-        gc.strokePolygon(xPoints, yPoints, 3);
-
-        // Health bar
-        double ratio = (double) enemy.currentHealth() / enemy.maxHealth();
-        gc.setFill(Color.DARKRED);
-        gc.fillRect(cx - 12, cy - 25, 24, 4);
-        gc.setFill(Color.RED);
-        gc.fillRect(cx - 12, cy - 25, 24 * ratio, 4);
-    }
-
-    private void drawHealthBar(Player player) {
-        double barWidth = 40;
-        double barHeight = 6;
-
-        double healthRatio = (double) player.currentHealth() / player.maxHealth();
-
-        int x = player.position().x() - 20;
-        int y = player.position().y() - 30;
 
         // Background
         gc.setFill(Color.DARKRED);
