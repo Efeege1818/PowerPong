@@ -615,4 +615,8 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
     events.notifyGameEnded(victory);
     events.notifyGameStateChanged(GameState.ABORTED);
   }
+
+  public GameMap getGameMap() {
+    return gameContext.getGameMap();
+  }
 }

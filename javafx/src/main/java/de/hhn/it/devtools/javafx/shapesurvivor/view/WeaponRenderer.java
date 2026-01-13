@@ -1,6 +1,7 @@
 package de.hhn.it.devtools.javafx.shapesurvivor.view;
 
 import de.hhn.it.devtools.apis.shapesurvivor.Player;
+import de.hhn.it.devtools.apis.shapesurvivor.Position;
 import de.hhn.it.devtools.apis.shapesurvivor.Weapon;
 import de.hhn.it.devtools.apis.shapesurvivor.WeaponType;
 import de.hhn.it.devtools.components.shapesurvivor.WeaponAnimationState;
@@ -25,17 +26,34 @@ public class WeaponRenderer {
     /**
      * Renders all equipped weapons for the player.
      */
-    public void renderWeapons(GraphicsContext gc, Player player) {
+    public void renderWeapons(
+            GraphicsContext gc,
+            Player player,
+            Position cameraPos,
+            double canvasWidth,
+            double canvasHeight
+    ) {
+        int px = getScreenPlayerX(canvasWidth);
+        int py = getScreenPlayerY(canvasHeight);
+
         for (Weapon weapon : player.equippedWeapons()) {
             WeaponAnimationState state = animationStates.get(weapon.type());
             if (state == null) continue;
 
             switch (weapon.type()) {
-                case SWORD -> renderSword(gc, player, weapon, state);
-                case AURA -> renderAura(gc, player, weapon, state);
-                case WHIP -> renderWhip(gc, player, weapon, state);
+                case SWORD -> renderSword(gc, px, py, weapon, state);
+                case AURA  -> renderAura(gc, px, py, weapon, state);
+                case WHIP  -> renderWhip(gc, px, py, weapon, state);
             }
         }
+    }
+
+    private int getScreenPlayerX(double canvasWidth) {
+        return (int) (canvasWidth / 2);
+    }
+
+    private int getScreenPlayerY(double canvasHeight) {
+        return (int) (canvasHeight / 2);
     }
 
     /**
@@ -53,11 +71,15 @@ public class WeaponRenderer {
     }
 
 
-    private void renderSword(GraphicsContext gc, Player player, Weapon weapon, WeaponAnimationState state) {
+    private void renderSword(
+            GraphicsContext gc,
+            int px,
+            int py,
+            Weapon weapon,
+            WeaponAnimationState state
+    ) {
+        gc.save();
         double angle = state.getAngle();
-
-        int px = player.position().x();
-        int py = player.position().y();
 
         double gripOffset = 50;
         double radius = weapon.range() - gripOffset;
@@ -65,61 +87,58 @@ public class WeaponRenderer {
         double sx = px + Math.cos(angle) * radius;
         double sy = py + Math.sin(angle) * radius;
 
-        double bladeLength = 90;
-        double bladeWidth = 6;
-        double handleLength = 10;
-        double handleWidth = 8;
-        double guardWidth = 16;
-        double guardHeight = 4;
-
         gc.save();
         gc.translate(sx, sy);
         gc.rotate(Math.toDegrees(angle) + 90);
 
-        // Blade
         gc.setFill(Color.SILVER);
-        gc.fillRect(-bladeWidth / 2, -bladeLength, bladeWidth, bladeLength);
+        gc.fillRect(-3, -90, 6, 90);
 
-        // Blade highlight
-        gc.setStroke(Color.LIGHTGRAY);
-        gc.setLineWidth(1);
-        gc.strokeLine(0, -bladeLength, 0, 0);
-
-        // Crossguard
         gc.setFill(Color.DARKGRAY);
-        gc.fillRect(-guardWidth / 2, 0, guardWidth, guardHeight);
+        gc.fillRect(-8, 0, 16, 4);
 
-        // Handle
         gc.setFill(Color.SADDLEBROWN);
-        gc.fillRect(-handleWidth / 2, guardHeight, handleWidth, handleLength);
+        gc.fillRect(-4, 4, 8, 10);
 
-        // Pommel
         gc.setFill(Color.GOLD);
-        gc.fillOval(
-                -handleWidth / 2,
-                guardHeight + handleLength,
-                handleWidth,
-                handleWidth
-        );
+        gc.fillOval(-4, 14, 8, 8);
 
         gc.restore();
     }
 
-    private void renderAura(GraphicsContext gc, Player player, Weapon weapon, WeaponAnimationState state) {
+
+    private void renderAura(
+            GraphicsContext gc,
+            int px,
+            int py,
+            Weapon weapon,
+            WeaponAnimationState state
+    ) {
+        gc.save();
         double pulse = Math.sin(state.getAngle() * 3) * 10 + weapon.range();
 
         gc.setStroke(Color.rgb(100, 200, 255, 0.3));
         gc.setLineWidth(3);
         gc.strokeOval(
-                player.position().x() - pulse,
-                player.position().y() - pulse,
+                px - pulse,
+                py - pulse,
                 pulse * 2,
                 pulse * 2
         );
+        gc.restore();
     }
 
-    private void renderWhip(GraphicsContext gc, Player player, Weapon weapon, WeaponAnimationState state) {
+
+    private void renderWhip(
+            GraphicsContext gc,
+            int px,
+            int py,
+            Weapon weapon,
+            WeaponAnimationState state
+    ) {
         if (state.isNotAttacking()) return;
+
+        gc.save();
 
         double progress = Math.min(1.0, state.getAttackProgress() / 300.0);
         boolean isLeft = state.isAttackingLeft();
@@ -127,12 +146,13 @@ public class WeaponRenderer {
         int whipLength = (int) (weapon.range() * progress);
         int whipWidth = 80;
 
-        int startX = player.position().x();
-        int startY = player.position().y();
-        int endX = startX + (isLeft ? -whipLength : whipLength);
+        int startX = px;
+        int startY = py;
+        int endX = px + (isLeft ? -whipLength : whipLength);
 
         gc.setStroke(Color.ORANGE);
         gc.setLineWidth(6);
+        gc.setGlobalAlpha(1.0);
 
         for (int i = 0; i < 5; i++) {
             double t = i / 4.0;
@@ -147,15 +167,20 @@ public class WeaponRenderer {
             gc.strokeLine(x1, y1, x2, y2);
         }
 
+        // Hitbox visualization (outline was missing before)
         if (progress > 0.3) {
-            gc.setStroke(Color.rgb(255, 165, 0, 0.2));
+            gc.setStroke(Color.rgb(255, 165, 0, 0.6));
             gc.setLineWidth(2);
             gc.strokeRect(
                     isLeft ? startX - whipLength : startX,
-                    startY - (double) whipWidth / 2,
+                    startY - whipWidth / 2.0,
                     whipLength,
                     whipWidth
             );
         }
+
+        gc.restore();
     }
+
+
 }

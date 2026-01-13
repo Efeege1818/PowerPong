@@ -2,6 +2,7 @@ package de.hhn.it.devtools.javafx.shapesurvivor.viewmodel;
 
 import de.hhn.it.devtools.apis.shapesurvivor.*;
 import de.hhn.it.devtools.apis.exceptions.IllegalParameterException;
+import de.hhn.it.devtools.components.shapesurvivor.GameMap;
 import de.hhn.it.devtools.components.shapesurvivor.helper.GameConfigurationBuilder;
 import de.hhn.it.devtools.components.shapesurvivor.SimpleShapeSurvivorService;
 import de.hhn.it.devtools.components.shapesurvivor.WeaponAnimationState;
@@ -213,6 +214,13 @@ public class ShapeSurvivorViewModel implements ShapeSurvivorListener {
 
     public void resetGameOver() {
         gameOverProperty.set(false);
+    }
+
+    public GameMap getGameMap() {
+        if (gameService instanceof SimpleShapeSurvivorService service) {
+            return service.getGameMap();
+        }
+        return null;
     }
 
     public void exitGame() {

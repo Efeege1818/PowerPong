@@ -11,6 +11,8 @@ import java.util.concurrent.ThreadLocalRandom;
 class EnemySystem {
 
   private static final long PLAYER_HIT_COOLDOWN_MS = 600;
+  private static final int SPAWN_DISTANCE_MIN = 300;
+  private static final int SPAWN_DISTANCE_MAX = 400;
 
   private final GameContext ctx;
   private final EventDispatcher events;
@@ -47,28 +49,14 @@ class EnemySystem {
 
   private void spawnEnemy() {
     Random r = ThreadLocalRandom.current();
-    int side = r.nextInt(4);
 
-    int x;
-    int y;
-    y = switch (side) {
-      case 0 -> {
-        x = r.nextInt(ctx.getConfiguration().fieldWidth());
-        yield -20;
-      }
-      case 1 -> {
-        x = ctx.getConfiguration().fieldWidth() + 20;
-        yield r.nextInt(ctx.getConfiguration().fieldHeight());
-      }
-      case 2 -> {
-        x = r.nextInt(ctx.getConfiguration().fieldWidth());
-        yield ctx.getConfiguration().fieldHeight() + 20;
-      }
-      default -> {
-        x = -20;
-        yield r.nextInt(ctx.getConfiguration().fieldHeight());
-      }
-    };
+    Position playerPos = ctx.getPlayer().getPosition();
+
+    double angle = r.nextDouble() * 2 * Math.PI;
+    int distance = SPAWN_DISTANCE_MIN + r.nextInt(SPAWN_DISTANCE_MAX - SPAWN_DISTANCE_MIN);
+
+    int x = playerPos.x() + (int) (Math.cos(angle) * distance);
+    int y = playerPos.y() + (int) (Math.sin(angle) * distance);
 
     int hp = (int) (50 * ctx.getConfiguration().difficultyMultiplier());
 

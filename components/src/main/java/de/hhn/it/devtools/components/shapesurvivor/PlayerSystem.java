@@ -8,6 +8,8 @@ import de.hhn.it.devtools.components.shapesurvivor.helper.PlayerState;
 
 class PlayerSystem {
 
+  private static final int PLAYER_RADIUS = 15;
+
   private final GameContext context;
   private final EventDispatcher events;
 
@@ -23,23 +25,29 @@ class PlayerSystem {
    */
   void move(Direction direction) {
     PlayerState p = context.getPlayer();
+    GameMap map = context.getGameMap();
 
     int x = p.getPosition().x();
     int y = p.getPosition().y();
     int speed = (int) p.getMovementSpeed();
 
-    switch (direction) {
-      case UP -> y -= speed;
-      case DOWN -> y += speed;
-      case LEFT -> x -= speed;
-      case RIGHT -> x += speed;
-      default -> { }
+    Position newPos = switch (direction) {
+      case UP -> new Position(x, y - speed);
+      case DOWN -> new Position(x, y + speed);
+      case LEFT -> new Position(x - speed, y);
+      case RIGHT -> new Position(x + speed, y);
+    };
+
+    // Check if new position is valid
+    if (map.isValidPosition(newPos, PLAYER_RADIUS)) {
+      p.setPosition(newPos);
+      map.ensureChunksLoaded(newPos);
+    } else {
+      // Try to adjust to nearest valid position
+      Position adjusted = map.adjustToValidPosition(newPos, PLAYER_RADIUS);
+      p.setPosition(adjusted);
     }
 
-    x = Math.max(0, Math.min(x, context.getConfiguration().fieldWidth()));
-    y = Math.max(0, Math.min(y, context.getConfiguration().fieldHeight()));
-
-    p.setPosition(new Position(x, y));
     events.notifyPlayerUpdated();
   }
 
@@ -55,6 +63,7 @@ class PlayerSystem {
     }
 
     PlayerState p = context.getPlayer();
+    GameMap map = context.getGameMap();
 
     int x = p.getPosition().x();
     int y = p.getPosition().y();
@@ -73,19 +82,45 @@ class PlayerSystem {
       }
     }
 
+    // Calculate new position
+    int newX = x;
+    int newY = y;
+
     if (dx != 0 && dy != 0) {
       double normalizedSpeed = speed / 1.414;
-      x += (int) (dx * normalizedSpeed);
-      y += (int) (dy * normalizedSpeed);
+      newX += (int) (dx * normalizedSpeed);
+      newY += (int) (dy * normalizedSpeed);
     } else {
-      x += (int) (dx * speed);
-      y += (int) (dy * speed);
+      newX += (int) (dx * speed);
+      newY += (int) (dy * speed);
     }
 
-    x = Math.max(0, Math.min(x, context.getConfiguration().fieldWidth()));
-    y = Math.max(0, Math.min(y, context.getConfiguration().fieldHeight()));
+    Position newPos = new Position(newX, newY);
 
-    p.setPosition(new Position(x, y));
+    // Check if new position is valid
+    if (map.isValidPosition(newPos, PLAYER_RADIUS)) {
+      p.setPosition(newPos);
+      map.ensureChunksLoaded(newPos);
+    } else {
+      // Try to slide along walls
+      Position xonly = new Position(newX, y);
+      Position yonly = new Position(x, newY);
+
+      if (map.isValidPosition(xonly, PLAYER_RADIUS)) {
+        p.setPosition(xonly);
+        map.ensureChunksLoaded(xonly);
+      } else if (map.isValidPosition(yonly, PLAYER_RADIUS)) {
+        p.setPosition(yonly);
+        map.ensureChunksLoaded(yonly);
+      } else {
+        // Stay at current position or adjust
+        Position adjusted = map.adjustToValidPosition(newPos, PLAYER_RADIUS);
+        if (!adjusted.equals(p.getPosition())) {
+          p.setPosition(adjusted);
+        }
+      }
+    }
+
     events.notifyPlayerUpdated();
   }
 

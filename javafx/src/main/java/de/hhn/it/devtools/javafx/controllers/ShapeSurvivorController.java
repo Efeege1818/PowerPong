@@ -20,6 +20,8 @@ public class ShapeSurvivorController extends Controller implements Initializable
     @FXML
     private AnchorPane shapeSurvivorPane;
 
+    private ShapeSurvivorScreen shapeSurvivorScreen;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
     }
@@ -29,8 +31,14 @@ public class ShapeSurvivorController extends Controller implements Initializable
 
         Stage mainStage = (Stage) shapeSurvivorPane.getScene().getWindow();
 
-        ShapeSurvivorScreen screen = new ShapeSurvivorScreen(mainStage);
-        screen.setOnExit(() -> {
+        shapeSurvivorScreen = new ShapeSurvivorScreen(mainStage);
+        shapeSurvivorScreen.setOnExit(() -> {
+
+            if (shapeSurvivorScreen != null) {
+                shapeSurvivorScreen.cleanup();
+                shapeSurvivorScreen = null;
+            }
+
             shapeSurvivorPane.getChildren().clear();
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ShapeSurvivor.fxml"));
@@ -44,7 +52,7 @@ public class ShapeSurvivorController extends Controller implements Initializable
                 ex.printStackTrace();
             }
         });
-        Parent gameView = screen.getView();
+        Parent gameView = shapeSurvivorScreen.getView();
 
         shapeSurvivorPane.getChildren().clear();
         shapeSurvivorPane.getChildren().add(gameView);
@@ -65,5 +73,9 @@ public class ShapeSurvivorController extends Controller implements Initializable
 
     @Override
     public void shutdown() {
+        if (shapeSurvivorScreen != null) {
+            shapeSurvivorScreen.cleanup();
+            shapeSurvivorScreen = null;
+        }
     }
 }

@@ -48,6 +48,7 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
     private SimpleGameLoopService renderLoop;
     private GraphicsContext gc;
     private Runnable onExitCallback;
+    private final MapRenderer mapRenderer = new MapRenderer();
 
     public ShapeSurvivorScreen(Stage mainStage) {
         this.mainStage = mainStage;
@@ -170,7 +171,6 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
         Set<Direction> directions = new HashSet<>();
 
         synchronized (pressedKeys) {
-            // Check vertical movement
             if (pressedKeys.contains(KeyCode.UP) || pressedKeys.contains(KeyCode.W)) {
                 directions.add(Direction.UP);
             }
@@ -178,7 +178,6 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
                 directions.add(Direction.DOWN);
             }
 
-            // Check horizontal movement
             if (pressedKeys.contains(KeyCode.LEFT) || pressedKeys.contains(KeyCode.A)) {
                 directions.add(Direction.LEFT);
             }
@@ -218,25 +217,113 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
 
     private void render() {
         Platform.runLater(() -> {
-            gc.setFill(Color.rgb(20, 20, 30));
-            gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
-
             Player player = viewModel.getPlayerProperty().get();
-            if (player != null) {
-
-                weaponRenderer.setAnimationStates(
-                        viewModel.getWeaponStates()
-                );
-
-                renderPlayer(player);
-
-                weaponRenderer.renderWeapons(gc, player);
-
-                drawHealthBar(player);
+            if (player == null) {
+                gc.setFill(Color.rgb(20, 20, 30));
+                gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+                return;
             }
 
-            viewModel.getEnemiesMap().values().forEach(this::renderEnemy);
+            Position cameraPos = player.position();
+
+            if (viewModel.getGameMap() != null) {
+                mapRenderer.renderMap(gc, viewModel.getGameMap(), cameraPos);
+            }
+
+            // Update weapon animation states
+            weaponRenderer.setAnimationStates(viewModel.getWeaponStates());
+
+            viewModel.getEnemiesMap().values().forEach(enemy ->
+                    renderEnemyWithCamera(enemy, cameraPos)
+            );
+
+            renderPlayerCentered(player);
+
+            // Render weapons
+            weaponRenderer.renderWeapons(
+                    gc,
+                    player,
+                    cameraPos,
+                    canvas.getWidth(),
+                    canvas.getHeight()
+            );
+
+            // Draw health bar
+            drawHealthBarCentered(player);
         });
+    }
+
+    private void renderPlayerCentered(Player player) {
+        int screenCenterX = (int) (canvas.getWidth() / 2);
+        int screenCenterY = (int) (canvas.getHeight() / 2);
+
+        gc.setFill(Color.BLUE);
+        gc.fillOval(screenCenterX - 15, screenCenterY - 15, 30, 30);
+    }
+
+    private void renderEnemyWithCamera(Enemy enemy, Position cameraPos) {
+        int canvasWidth = (int) canvas.getWidth();
+        int canvasHeight = (int) canvas.getHeight();
+
+        // Convert world position to screen position
+        int screenX = enemy.position().x() - cameraPos.x() + canvasWidth / 2;
+        int screenY = enemy.position().y() - cameraPos.y() + canvasHeight / 2;
+
+        double size = 20;
+
+        // Calculate angle to player (at screen center)
+        double dx = (double) canvasWidth / 2 - screenX;
+        double dy = (double) canvasHeight / 2 - screenY;
+        double angle = Math.atan2(dy, dx);
+
+        double[] xPoints = new double[3];
+        double[] yPoints = new double[3];
+        xPoints[0] = screenX + Math.cos(angle) * size;
+        yPoints[0] = screenY + Math.sin(angle) * size;
+
+        xPoints[1] = screenX + Math.cos(angle + 2.5) * (size * 0.7);
+        yPoints[1] = screenY + Math.sin(angle + 2.5) * (size * 0.7);
+
+        xPoints[2] = screenX + Math.cos(angle - 2.5) * (size * 0.7);
+        yPoints[2] = screenY + Math.sin(angle - 2.5) * (size * 0.7);
+
+        gc.setFill(Color.RED);
+        gc.fillPolygon(xPoints, yPoints, 3);
+
+        gc.setStroke(Color.DARKRED);
+        gc.setLineWidth(2);
+        gc.strokePolygon(xPoints, yPoints, 3);
+
+        // Health bar
+        double ratio = (double) enemy.currentHealth() / enemy.maxHealth();
+        gc.setFill(Color.DARKRED);
+        gc.fillRect(screenX - 12, screenY - 25, 24, 4);
+        gc.setFill(Color.RED);
+        gc.fillRect(screenX - 12, screenY - 25, 24 * ratio, 4);
+    }
+
+    private void drawHealthBarCentered(Player player) {
+        int screenCenterX = (int) (canvas.getWidth() / 2);
+        int screenCenterY = (int) (canvas.getHeight() / 2);
+
+        double barWidth = 40;
+        double barHeight = 6;
+        double healthRatio = (double) player.currentHealth() / player.maxHealth();
+
+        int x = screenCenterX - 20;
+        int y = screenCenterY - 30;
+
+        // Background
+        gc.setFill(Color.DARKRED);
+        gc.fillRect(x, y, barWidth, barHeight);
+
+        // Foreground
+        gc.setFill(Color.LIMEGREEN);
+        gc.fillRect(x, y, barWidth * healthRatio, barHeight);
+
+        // Border
+        gc.setStroke(Color.BLACK);
+        gc.strokeRect(x, y, barWidth, barHeight);
     }
 
     private void renderPlayer(Player player) {
@@ -507,5 +594,17 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
         });
 
         return upgradeBox;
+    }
+
+    public void cleanup() {
+        if (renderLoop != null && renderLoop.isRunning()) {
+            renderLoop.stopLoop();
+        }
+        if (viewModel != null) {
+            viewModel.exitGame();
+        }
+        synchronized (pressedKeys) {
+            pressedKeys.clear();
+        }
     }
 }

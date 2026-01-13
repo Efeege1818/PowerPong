@@ -30,9 +30,11 @@ public class GameContext {
   private long lastWeaponUpdateTime;
   private long lastPlayerHitTime = 0;
   private GameStatistics statistics;
+  private GameMap gameMap;
 
   GameContext(GameConfiguration initialConfig) {
     this.configuration = initialConfig;
+    this.gameMap = new GameMap();
   }
 
   void reset() {
@@ -44,6 +46,7 @@ public class GameContext {
     nextEnemyId = 0;
     levelUpPending = false;
     lastPlayerHitTime = 0;
+    this.gameMap = new GameMap();
   }
 
   // Getters
@@ -103,12 +106,17 @@ public class GameContext {
     return statistics;
   }
 
+  public GameMap getGameMap() {
+    return gameMap;
+  }
+
   public void setGameState(GameState gameState) {
     this.gameState = gameState;
   }
 
   public void setConfiguration(GameConfiguration configuration) {
     this.configuration = configuration;
+    this.gameMap = new GameMap();
   }
 
   public void setPlayer(PlayerState player) {
