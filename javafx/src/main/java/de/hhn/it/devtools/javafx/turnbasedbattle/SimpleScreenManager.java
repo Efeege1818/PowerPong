@@ -1,7 +1,9 @@
 package de.hhn.it.devtools.javafx.turnbasedbattle;
 
+import de.hhn.it.devtools.apis.turnbasedbattle.Element;
 import de.hhn.it.devtools.apis.turnbasedbattle.ScreenManager;
 import de.hhn.it.devtools.apis.turnbasedbattle.UnknownTransitionException;
+import de.hhn.it.devtools.components.turnbasedbattle.SimpleTurnBasedBattleService;
 import javafx.scene.layout.Pane;
 
 public class SimpleScreenManager implements ScreenManager {
@@ -13,29 +15,35 @@ public class SimpleScreenManager implements ScreenManager {
   private PauseScreenFx pauseScreen;
   private InfoScreenFx infoScreen;
 
+  private SimpleTurnBasedBattleService pendingBattleService;
+  private Integer pendingWinnerPlayerId;
+  private Element pendingWinnerElement;
+
+
   public SimpleScreenManager(final Pane pane) {
     this.pane = pane;
   }
 
   private SelectScreen getSelectScreen() {
-    if(selectScreen == null) {
-      selectScreen = new SelectScreen(this);
-    }
-    return selectScreen;
+    return new SelectScreen(this);
   }
 
   private BattleScreen getBattleScreen() {
-    if(battleScreen == null) {
-      battleScreen = new BattleScreen(this);
+    if (pendingBattleService == null) {
+      throw new IllegalStateException("No pending battle service. Call setPendingBattleService(service) before switching to BattleScreen.");
     }
-    return battleScreen;
+    SimpleTurnBasedBattleService service = pendingBattleService;
+    pendingBattleService = null; // consume
+    return new BattleScreen(this, service);
   }
 
+
   private EndScreen getEndScreen() {
-    if(endScreen == null) {
-      endScreen = new EndScreen(this);
+    EndScreen end = new EndScreen(this);
+    if (pendingWinnerPlayerId != null) {
+      end.setWinner(pendingWinnerPlayerId, pendingWinnerElement);
     }
-    return endScreen;
+    return end;
   }
 
   private InfoScreenFx getInfoScreen() {
@@ -79,4 +87,14 @@ public class SimpleScreenManager implements ScreenManager {
       default: throw new UnknownTransitionException("Unknown screen: ", fromScreen, toScreen);
     }
   }
+
+  public void setPendingBattleService(SimpleTurnBasedBattleService service) {
+    this.pendingBattleService = service;
+  }
+  // NEU: wird vom BattleScreenController aufgerufen
+  public void setPendingWinner(int playerId, Element element) {
+    this.pendingWinnerPlayerId = playerId;
+    this.pendingWinnerElement = element;
+  }
+
 }
