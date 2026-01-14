@@ -206,10 +206,15 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
 
     private void showStartupPopup() {
         PopupProvider provider = new PopupProvider(mainStage)
-                .setTitle("ShapeSurvivor - Game Setup")
-                .addLabel("Configure Your Game")
-                .addSelector("Difficulty:", new String[]{"Easy", "Normal", "Hard", "Nightmare"}, 1)
-                .addSelector("Starting Weapon:", WeaponType.values(), 0);
+            .setTitle("ShapeSurvivor - Game Setup")
+            .addLabel("Configure Your Game")
+            .addSelector("Difficulty:", new String[]{"Easy", "Normal", "Hard", "Nightmare"}, 1)
+            .addSelector("Starting Weapon:", WeaponType.values(), 0);
+
+        provider.addButton(e -> {
+            InfoScreen infoScreen = new InfoScreen(mainStage);
+            infoScreen.show();
+        }, "How to Play", false);
 
         provider.addButton(e -> {
             ComboBox<String> difficultyBox = provider.getSelector(0);
@@ -223,7 +228,7 @@ public class ShapeSurvivorScreen extends AnchorPane implements Initializable {
             weaponRenderer.initializeWeapon(weapon);
 
             Platform.runLater(root::requestFocus);
-        }, "Start Game");
+        }, "Start Game", true);
 
         Stage startPopup = provider.build();
         startPopup.setOnHidden(e -> Platform.runLater(root::requestFocus));
