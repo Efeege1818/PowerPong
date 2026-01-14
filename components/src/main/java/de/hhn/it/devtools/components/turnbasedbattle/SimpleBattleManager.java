@@ -218,4 +218,11 @@ public class SimpleBattleManager implements BattleManager {
 
     return false;
   }
+  public SimpleMonster getPlayer1Monster() {
+    return p1Monster;
+  }
+
+  public SimpleMonster getPlayer2Monster() {
+    return p2Monster;
+  }
 }
