@@ -1,14 +1,14 @@
 package de.hhn.it.devtools.javafx.turnbasedbattle;
 
 import de.hhn.it.devtools.apis.turnbasedbattle.Monster;
+import de.hhn.it.devtools.apis.turnbasedbattle.Player;
 import de.hhn.it.devtools.components.turnbasedbattle.Data;
+import de.hhn.it.devtools.components.turnbasedbattle.SimpleTurnBasedBattleService;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 
 import java.io.IOException;
-import java.util.List;
 
 public class SelectScreen extends AnchorPane {
   private static final org.slf4j.Logger logger =
@@ -53,6 +53,12 @@ public class SelectScreen extends AnchorPane {
       }
     });
 
+    this.sceneProperty().addListener((obs, oldScene, newScene) -> {
+      if (newScene != null) {
+        javafx.application.Platform.runLater(this::requestFocus);
+      }
+    });
+
     this.requestFocus();
   }
 
@@ -82,6 +88,17 @@ public class SelectScreen extends AnchorPane {
   private void checkSelectionFinished() {
     if(isSelectionFinished()) {
       logger.debug("Both players have picked a monster. Switching screen now...");
+
+      SimpleTurnBasedBattleService service = new SimpleTurnBasedBattleService();
+      Player player1 = new Player(1, p1Monster, 0);
+      Player player2 = new Player(2, p2Monster, 0);
+
+      service.setupPlayers(player1, player2, p1Monster, p2Monster);
+      service.start();
+
+      // an ScreenManager übergeben (damit BattleScreen ihn bekommt)
+      screenManager.setPendingBattleService(service);
+
       screenManager.switchTo(SelectScreen.SCREEN_NAME, BattleScreen.SCREEN_NAME);
     }
   }
