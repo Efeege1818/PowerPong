@@ -221,6 +221,7 @@ public class PauseScreenFx extends VBox {
 				// Add status box below whatever was added above (image or fallback)
 				rightCol.getChildren().add(statusBox);
 
+				//TODO: button st switch the monsters
 
 				// Put columns into content and add to this VBox
 				content.getChildren().addAll(leftCol, rightCol);
