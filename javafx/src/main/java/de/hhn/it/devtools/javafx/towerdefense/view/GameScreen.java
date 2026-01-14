@@ -35,14 +35,14 @@ public class GameScreen extends StackPane {
   }
 
   public void createDisplay() {
-    mainLayout.setSpacing(10);
+    mainLayout.setSpacing(1);
     mainLayout.setAlignment(Pos.CENTER);
 
     mainLayout.getChildren().addAll(
-            createTowerDisplay(),
-            completeBoard,
-            createStatsDisplay(),
-            createButtonDisplay()
+        createStatsDisplay(),
+        completeBoard,
+        createTowerDisplay()
+//        createButtonDisplay()
     );
     getChildren().add(mainLayout);
 
@@ -67,7 +67,7 @@ public class GameScreen extends StackPane {
 
   public GridPane createTowerDisplay() {
     GridPane towerDisplay = new GridPane();
-    towerDisplay.setAlignment(Pos.CENTER);
+    towerDisplay.setAlignment(Pos.CENTER_LEFT);
     towerDisplay.setHgap(10);
 
     int columnIndex = 0;
@@ -116,33 +116,38 @@ public class GameScreen extends StackPane {
     statsDisplay.add(roundsLabel, 1, 0);
     statsDisplay.add(healthLabel, 2, 0);
 
+    statsDisplay.setMaxHeight(5);
+
     return statsDisplay;
   }
 
-  public GridPane createButtonDisplay() {
-    Button startWaveButton = new Button("Start next Round");
-    startWaveButton.setOnAction((event) -> {
-      startWaveOnAction();
-    });
-    Button abortGameButton = new Button("Exit Game");
-    abortGameButton.setOnAction((event) -> {
-      abortGameOnAction();
-    });
 
-    startWaveButton.disableProperty().bind(viewModel.getCurrentGameState().isEqualTo(GameState.RUNNING));
 
-    GridPane buttonDisplay = new GridPane();
-    buttonDisplay.setAlignment(Pos.CENTER);
-    buttonDisplay.setHgap(10);
 
-    buttonDisplay.add(startWaveButton, 0, 0);
-    buttonDisplay.add(abortGameButton, 1, 0);
+//  public GridPane createButtonDisplay() {
+//    Button startWaveButton = new Button("Start next Round");
+//    startWaveButton.setOnAction((event) -> {
+//      startWaveOnAction();
+//    });
+//    Button abortGameButton = new Button("Exit Game");
+//    abortGameButton.setOnAction((event) -> {
+//      abortGameOnAction();
+//    });
+//
+//    startWaveButton.disableProperty().bind(viewModel.getCurrentGameState().isEqualTo(GameState.RUNNING));
+//
+//    GridPane buttonDisplay = new GridPane();
+//    buttonDisplay.setAlignment(Pos.CENTER);
+//    buttonDisplay.setHgap(10);
+//
+//    buttonDisplay.add(startWaveButton, 0, 0);
+//    buttonDisplay.add(abortGameButton, 1, 0);
+//
+//    return buttonDisplay;
+//  }
 
-    return buttonDisplay;
-  }
+    public GridPane createOverlayDisplay() {
 
-  public GridPane createOverlayDisplay() {
-    // TODO: in "Game-Over" Overlay
     Button retryWaveButton = new Button("Retry this Round");
     retryWaveButton.setOnAction((event) -> {
       retryWaveOnAction();
@@ -154,6 +159,20 @@ public class GameScreen extends StackPane {
 
     return overlayDisplay;
   }
+
+//  public GridPane createOverlayDisplay() {
+//    // TODO: in "Game-Over" Overlay
+//    Button retryWaveButton = new Button("Retry this Round");
+//    retryWaveButton.setOnAction((event) -> {
+//      retryWaveOnAction();
+//    });
+//    GridPane overlayDisplay = new GridPane();
+//    overlayDisplay.setAlignment(Pos.CENTER);
+//    overlayDisplay.setHgap(10);
+//    overlayDisplay.add(retryWaveButton, 0, 0);
+//
+//    return overlayDisplay;
+//  }
 
   public void prepareTowerPlacement() {
     int gridSize = viewModel.getMap().get().grid().length;
