@@ -32,6 +32,10 @@ public class GameScreen extends StackPane {
 
     setAlignment(Pos.CENTER);
     createDisplay();
+
+    viewModel.getGameOver().addListener((obs, oldEx, newEx) -> {
+      getChildren().add(createOverlayDisplay());
+    });
   }
 
   public void createDisplay() {
