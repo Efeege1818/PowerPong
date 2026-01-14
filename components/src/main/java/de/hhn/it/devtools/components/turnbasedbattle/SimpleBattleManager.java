@@ -152,6 +152,9 @@ public class SimpleBattleManager implements BattleManager {
       case DOT -> {
         opponentMonster.addDot(move);
       }
+      case STANCE -> {
+        currentMonster.changeStance(move);
+      }
       default -> throw new IllegalStateException("Unknown move type: " + move.type());
     }
   }
@@ -217,5 +220,12 @@ public class SimpleBattleManager implements BattleManager {
     }
 
     return false;
+  }
+  public SimpleMonster getPlayer1Monster() {
+    return p1Monster;
+  }
+
+  public SimpleMonster getPlayer2Monster() {
+    return p2Monster;
   }
 }

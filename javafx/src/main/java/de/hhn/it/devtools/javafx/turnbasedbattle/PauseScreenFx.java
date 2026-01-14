@@ -30,7 +30,9 @@ import static javafx.application.Application.launch;
 public class PauseScreenFx extends VBox {
 		private static final org.slf4j.Logger logger =
 						org.slf4j.LoggerFactory.getLogger(PauseScreenFx.class);
-		private final PauseScreenViewModel viewModel;
+    public static final String SCREEN_NAME = "PauseScreen";
+
+    private final PauseScreenViewModel viewModel;
 
 		public PauseScreenFx(PauseScreenViewModel viewModel) {
 				this.viewModel = viewModel;

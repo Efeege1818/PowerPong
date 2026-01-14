@@ -316,6 +316,10 @@ public class SimpleMonster {
     logger.debug("{} debuff removed: {} and has now {}", name, stat, getStat(stat));
   }
 
+  public void changeStance(Move move) {
+    //TODO: Implement Stance switch
+  }
+
   /**
    * Checks if the monster is still alive.
    *

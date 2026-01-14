@@ -34,6 +34,8 @@ import static javafx.application.Application.launch;
 public class InfoScreenFx extends VBox {
     private static final org.slf4j.Logger logger =
             org.slf4j.LoggerFactory.getLogger(InfoScreenFx.class);
+    public static final String SCREEN_NAME = "InfoScreen";
+
     private final InfoScreenViewModel viewModel;
 
     public InfoScreenFx(InfoScreenViewModel viewModel) {
