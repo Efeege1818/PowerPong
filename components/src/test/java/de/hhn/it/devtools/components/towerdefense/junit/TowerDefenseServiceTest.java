@@ -1,9 +1,8 @@
 package de.hhn.it.devtools.components.towerdefense.junit;
 
-import de.hhn.it.devtools.apis.towerdefenseapi.GameState;
-import de.hhn.it.devtools.components.towerdefensecomponents.SimpleTowerDefenseService;
+import de.hhn.it.devtools.apis.towerdefense.GameState;
+import de.hhn.it.devtools.components.towerdefense.SimpleTowerDefenseService;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

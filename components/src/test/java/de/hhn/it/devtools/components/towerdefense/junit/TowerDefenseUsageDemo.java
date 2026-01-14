@@ -1,9 +1,7 @@
 package de.hhn.it.devtools.components.towerdefense.junit;
 
-import de.hhn.it.devtools.apis.towerdefenseapi.*;
-import de.hhn.it.devtools.components.towerdefensecomponents.SimpleTowerDefenseService;
-
-import java.security.Provider;
+import de.hhn.it.devtools.apis.towerdefense.*;
+import de.hhn.it.devtools.components.towerdefense.SimpleTowerDefenseService;
 
 public class TowerDefenseUsageDemo {
   public static void main(String[] args){

@@ -1,4 +1,4 @@
-package de.hhn.it.devtools.components.towerdefensecomponents;
+package de.hhn.it.devtools.components.towerdefense;
 
 /**
  * This Class runs in a loop every game tick and manages everything that has to run constantly.

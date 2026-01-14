@@ -1,8 +1,8 @@
-package de.hhn.it.devtools.components.towerdefensecomponents;
+package de.hhn.it.devtools.components.towerdefense;
 
-import de.hhn.it.devtools.apis.towerdefenseapi.Coordinates;
-import de.hhn.it.devtools.apis.towerdefenseapi.Direction;
-import de.hhn.it.devtools.apis.towerdefenseapi.Grid;
+import de.hhn.it.devtools.apis.towerdefense.Coordinates;
+import de.hhn.it.devtools.apis.towerdefense.Direction;
+import de.hhn.it.devtools.apis.towerdefense.Grid;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;

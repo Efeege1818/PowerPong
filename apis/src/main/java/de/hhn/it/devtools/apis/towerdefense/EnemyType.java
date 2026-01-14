@@ -1,4 +1,4 @@
-package de.hhn.it.devtools.apis.towerdefenseapi;
+package de.hhn.it.devtools.apis.towerdefense;
 
 /**
  * Enum for Types of Enemies, so the Wave-generator can manage them.

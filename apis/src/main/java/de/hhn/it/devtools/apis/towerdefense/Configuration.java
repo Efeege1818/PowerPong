@@ -1,4 +1,4 @@
-package de.hhn.it.devtools.apis.towerdefenseapi;
+package de.hhn.it.devtools.apis.towerdefense;
 
 /**
  * Record to save general Setting about the game.

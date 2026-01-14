@@ -1,11 +1,11 @@
 package de.hhn.it.devtools.components.towerdefense.junit;
 
-import de.hhn.it.devtools.apis.towerdefenseapi.Configuration;
-import de.hhn.it.devtools.apis.towerdefenseapi.Coordinates;
-import de.hhn.it.devtools.apis.towerdefenseapi.Enemy;
-import de.hhn.it.devtools.apis.towerdefenseapi.EnemyType;
-import de.hhn.it.devtools.components.towerdefensecomponents.EnemyToolbox;
-import de.hhn.it.devtools.components.towerdefensecomponents.WaveGenerator;
+import de.hhn.it.devtools.apis.towerdefense.Configuration;
+import de.hhn.it.devtools.apis.towerdefense.Coordinates;
+import de.hhn.it.devtools.apis.towerdefense.Enemy;
+import de.hhn.it.devtools.apis.towerdefense.EnemyType;
+import de.hhn.it.devtools.components.towerdefense.EnemyToolbox;
+import de.hhn.it.devtools.components.towerdefense.WaveGenerator;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;

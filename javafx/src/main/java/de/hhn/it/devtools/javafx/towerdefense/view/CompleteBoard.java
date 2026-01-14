@@ -1,9 +1,9 @@
 package de.hhn.it.devtools.javafx.towerdefense.view;
 
-import de.hhn.it.devtools.apis.towerdefenseapi.Direction;
-import de.hhn.it.devtools.apis.towerdefenseapi.Enemy;
-import de.hhn.it.devtools.apis.towerdefenseapi.Grid;
-import de.hhn.it.devtools.apis.towerdefenseapi.Tower;
+import de.hhn.it.devtools.apis.towerdefense.Direction;
+import de.hhn.it.devtools.apis.towerdefense.Enemy;
+import de.hhn.it.devtools.apis.towerdefense.Grid;
+import de.hhn.it.devtools.apis.towerdefense.Tower;
 import de.hhn.it.devtools.javafx.towerdefense.viewmodel.TowerDefenseViewModel;
 import javafx.application.Platform;
 import javafx.beans.property.ListProperty;

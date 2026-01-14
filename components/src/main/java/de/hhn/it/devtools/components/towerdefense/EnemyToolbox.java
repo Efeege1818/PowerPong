@@ -1,8 +1,8 @@
-package de.hhn.it.devtools.components.towerdefensecomponents;
+package de.hhn.it.devtools.components.towerdefense;
 
-import de.hhn.it.devtools.apis.towerdefenseapi.Coordinates;
-import de.hhn.it.devtools.apis.towerdefenseapi.Enemy;
-import de.hhn.it.devtools.apis.towerdefenseapi.EnemyType;
+import de.hhn.it.devtools.apis.towerdefense.Coordinates;
+import de.hhn.it.devtools.apis.towerdefense.Enemy;
+import de.hhn.it.devtools.apis.towerdefense.EnemyType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;

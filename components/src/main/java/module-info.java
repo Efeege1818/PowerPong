@@ -3,7 +3,7 @@ module devtools.components {
   exports de.hhn.it.devtools.components.shapesurvivor;
   exports de.hhn.it.devtools.components.shapesurvivor.helper;
   exports de.hhn.it.devtools.components.spaceinvaders;
-  exports de.hhn.it.devtools.components.towerdefensecomponents;
+  exports de.hhn.it.devtools.components.towerdefense;
   requires org.slf4j;
   requires devtools.apis;
   requires java.desktop;
@@ -11,6 +11,6 @@ module devtools.components {
           with de.hhn.it.devtools.components.example.coffeemakerservice.provider.WnckCoffeeMakerService;
   provides  de.hhn.it.devtools.apis.examples.coffeemakerservice.AdminCoffeeMakerService
           with de.hhn.it.devtools.components.example.coffeemakerservice.provider.WnckCoffeeMakerService;
-  provides de.hhn.it.devtools.apis.towerdefenseapi.TowerDefenseService
-          with de.hhn.it.devtools.components.towerdefensecomponents.SimpleTowerDefenseService;
+  provides de.hhn.it.devtools.apis.towerdefense.TowerDefenseService
+          with de.hhn.it.devtools.components.towerdefense.SimpleTowerDefenseService;
         }

@@ -1,15 +1,14 @@
 package de.hhn.it.devtools.javafx.towerdefense.viewmodel;
 
-import de.hhn.it.devtools.apis.towerdefenseapi.Configuration;
-import de.hhn.it.devtools.apis.towerdefenseapi.Enemy;
-import de.hhn.it.devtools.apis.towerdefenseapi.GameState;
-import de.hhn.it.devtools.apis.towerdefenseapi.Grid;
-import de.hhn.it.devtools.apis.towerdefenseapi.Tower;
-import de.hhn.it.devtools.apis.towerdefenseapi.TowerDefenseListener;
-import de.hhn.it.devtools.apis.towerdefenseapi.TowerDefenseService;
-import de.hhn.it.devtools.apis.towerdefenseapi.TowerType;
+import de.hhn.it.devtools.apis.towerdefense.Configuration;
+import de.hhn.it.devtools.apis.towerdefense.Enemy;
+import de.hhn.it.devtools.apis.towerdefense.GameState;
+import de.hhn.it.devtools.apis.towerdefense.Grid;
+import de.hhn.it.devtools.apis.towerdefense.Tower;
+import de.hhn.it.devtools.apis.towerdefense.TowerDefenseListener;
+import de.hhn.it.devtools.apis.towerdefense.TowerDefenseService;
+import de.hhn.it.devtools.apis.towerdefense.TowerType;
 import java.util.Map;
-import de.hhn.it.devtools.javafx.towerdefense.controllers.TowerDefenseLauncher;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;

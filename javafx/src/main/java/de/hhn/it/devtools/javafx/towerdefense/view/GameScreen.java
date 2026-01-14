@@ -1,6 +1,6 @@
 package de.hhn.it.devtools.javafx.towerdefense.view;
 
-import de.hhn.it.devtools.apis.towerdefenseapi.*;
+import de.hhn.it.devtools.apis.towerdefense.*;
 import de.hhn.it.devtools.javafx.towerdefense.controllers.ScreenManager;
 import de.hhn.it.devtools.javafx.towerdefense.controllers.ScreenType;
 import de.hhn.it.devtools.javafx.towerdefense.viewmodel.TowerDefenseViewModel;

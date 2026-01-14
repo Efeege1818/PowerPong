@@ -2,12 +2,6 @@ package de.hhn.it.devtools.apis.towerdefense;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import de.hhn.it.devtools.apis.towerdefenseapi.Coordinates;
-import de.hhn.it.devtools.apis.towerdefenseapi.Enemy;
-import de.hhn.it.devtools.apis.towerdefenseapi.EnemyType;
-import de.hhn.it.devtools.apis.towerdefenseapi.Player;
-import de.hhn.it.devtools.apis.towerdefenseapi.Tower;
-import de.hhn.it.devtools.apis.towerdefenseapi.TowerType;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 

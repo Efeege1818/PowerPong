@@ -10,7 +10,7 @@ module devtools.javafx {
   requires java.naming;
   uses de.hhn.it.devtools.apis.examples.coffeemakerservice.CoffeeMakerService;
   uses de.hhn.it.devtools.apis.examples.coffeemakerservice.AdminCoffeeMakerService;
-  uses de.hhn.it.devtools.apis.towerdefenseapi.TowerDefenseService;
+  uses de.hhn.it.devtools.apis.towerdefense.TowerDefenseService;
   uses de.hhn.it.devtools.components.spaceinvaders.SimpleSpaceInvadersService;
   uses de.hhn.it.devtools.apis.spaceinvaders.SpaceInvadersService;
   uses de.hhn.it.devtools.apis.spaceinvaders.SpaceInvadersListener;
