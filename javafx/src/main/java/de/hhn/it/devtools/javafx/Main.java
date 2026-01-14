@@ -60,6 +60,7 @@ Main extends Application {
     addModule("Template");
     addModule("SpaceInvaders");
     addModule("ShapeSurvivor");
+    addModule("TowerDefense");
   }
 
   @Override
