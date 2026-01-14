@@ -10,6 +10,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
+import javafx.stage.Stage;
 
 public class TitleScreen extends StackPane {
   ScreenManager screenManager;
@@ -62,7 +63,7 @@ public class TitleScreen extends StackPane {
   }
 
   public void exitGame() {
-    System.exit(0);
+    ((Stage) (getScene().getWindow())).close();
   }
 
   public void setConfig() {

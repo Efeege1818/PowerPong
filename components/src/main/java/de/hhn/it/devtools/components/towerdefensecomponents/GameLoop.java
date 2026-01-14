@@ -27,14 +27,14 @@ public class GameLoop extends Thread {
 
   @Override
   public void run() {
-    while (true) {
+    outer: while (true) {
 
       synchronized (this) {
         try {
           this.wait();
         } catch (InterruptedException e) {
           logger.error("Game Loop wait was Interrupted");
-          throw new RuntimeException(e);
+          break outer;
         }
       }
 
@@ -45,7 +45,7 @@ public class GameLoop extends Thread {
           sleep(tickspeed);
         } catch (InterruptedException e) {
           logger.error("Game Loop sleep was Interrupted");
-          throw new RuntimeException(e);
+          break outer;
         }
       }
     }

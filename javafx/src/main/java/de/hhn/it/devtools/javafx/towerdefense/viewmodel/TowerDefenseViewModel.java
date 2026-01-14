@@ -9,6 +9,7 @@ import de.hhn.it.devtools.apis.towerdefenseapi.TowerDefenseListener;
 import de.hhn.it.devtools.apis.towerdefenseapi.TowerDefenseService;
 import de.hhn.it.devtools.apis.towerdefenseapi.TowerType;
 import java.util.Map;
+import de.hhn.it.devtools.javafx.towerdefense.controllers.TowerDefenseLauncher;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
@@ -29,7 +30,7 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
   private static final org.slf4j.Logger logger =
       org.slf4j.LoggerFactory.getLogger(TowerDefenseViewModel.class);
 
-  TowerDefenseService service;
+  private final TowerDefenseService service;
   private final ObjectProperty<Grid> map = new SimpleObjectProperty<>();
   private final ListProperty<Enemy> enemies = new SimpleListProperty<>(
           FXCollections.observableArrayList());

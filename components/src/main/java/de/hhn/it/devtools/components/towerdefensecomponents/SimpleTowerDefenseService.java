@@ -32,7 +32,7 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
   private final long seed;
   private GameState currentGameState;
   private final List<TowerDefenseListener> listeners = new ArrayList<>();
-  private GameLoop gameLoop;
+  private final GameLoop gameLoop;
   private Player player;
   private Player savedPlayerData;
   private Configuration configuration;
@@ -225,6 +225,12 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
   @Override
   public int getCurrentRound() {
     return currentRound;
+  }
+
+  @Override
+  public void terminate() {
+    gameLoop.interrupt();
+    updateGameState(GameState.TERMINATED);
   }
 
   /**

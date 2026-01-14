@@ -127,4 +127,10 @@ public interface TowerDefenseService {
    * @return the last round number as a positive integer
    */
   int getCurrentRound();
+
+  /**
+   * Interrupts the GameLoop Thread and sets the GameState to "TERMINATED".
+   * After this Method has been called this Service should be used no longer.
+   */
+  void terminate();
 }

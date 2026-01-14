@@ -39,6 +39,6 @@ public class TowerDefenseLauncher extends Application {
 
   @Override
   public void stop() {
-    service.abortGame();
+    service.terminate();
   }
 }
