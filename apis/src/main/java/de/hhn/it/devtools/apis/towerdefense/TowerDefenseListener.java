@@ -29,7 +29,7 @@ public interface TowerDefenseListener {
   /**
    * Gets called, when the round is completed.
    */
-  void gameCompleted();
+  void waveCompleted();
 
   /**
    * Gets called, when the TowerMap changes.

@@ -145,7 +145,7 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
   }
 
   @Override
-  public void gameCompleted() {
+  public void waveCompleted() {
     sync();
   }
 

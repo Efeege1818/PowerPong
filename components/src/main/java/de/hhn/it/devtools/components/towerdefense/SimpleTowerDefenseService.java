@@ -281,7 +281,7 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
     gameLoop.stopGame();
     savedPlayerData = player;
     towerToolbox.saveData();
-    notifyListeners(TowerDefenseListener::gameCompleted);
+    notifyListeners(TowerDefenseListener::waveCompleted);
   }
 
   public EnemyToolbox getEnemyToolbox() {

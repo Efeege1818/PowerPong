@@ -49,7 +49,7 @@ public class TowerDefenseUsageDemo {
       }
 
       @Override
-      public void gameCompleted() {
+      public void waveCompleted() {
         System.out.println("Round " + service.getCurrentRound() + " Completed");
         service.startNextRound();
       }
