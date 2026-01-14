@@ -152,6 +152,9 @@ public class SimpleBattleManager implements BattleManager {
       case DOT -> {
         opponentMonster.addDot(move);
       }
+      case STANCE -> {
+        currentMonster.changeStance(move);
+      }
       default -> throw new IllegalStateException("Unknown move type: " + move.type());
     }
   }

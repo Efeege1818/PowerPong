@@ -2,11 +2,8 @@ package de.hhn.it.devtools.components.turnbasedbattle;
 
 import de.hhn.it.devtools.apis.turnbasedbattle.Element;
 import de.hhn.it.devtools.apis.turnbasedbattle.Monster;
-import de.hhn.it.devtools.apis.turnbasedbattle.move.AttackMove;
-import de.hhn.it.devtools.apis.turnbasedbattle.move.BuffMove;
-import de.hhn.it.devtools.apis.turnbasedbattle.move.DebuffMove;
-import de.hhn.it.devtools.apis.turnbasedbattle.move.DotMove;
-import de.hhn.it.devtools.apis.turnbasedbattle.move.Move;
+import de.hhn.it.devtools.apis.turnbasedbattle.move.*;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,6 +22,14 @@ public class Data {
   private final Move fireFireAtk2 = new AttackMove("Fire bomb", Element.FIRE, 15, 5, false, "PLACEHOLDER DESCRIPTION!", 1);
   private final Move fireBuff = new BuffMove("Pump up", Element.NORMAL, "attack", 15, 3, 4, false, "PLACEHOLDER DESCRIPTION!", 1);
   private final Move fireSpecial = new AttackMove("All out attack", Element.FIRE, 30, 1, true, "PLACEHOLDER DESCRIPTION!", 1);
+
+  // WaterMonster moves
+  private final Move waterWaterAtkFollowUp = new AttackMove("Water hit", Element.WATER, 5, 0, false, "PLACEHOLDER DESCRIPTION!", 1);
+  private final Move waterNormAtk = new AttackMove("Double Slice", Element.NORMAL, 7, 2, false, "PLACEHOLDER DESCRIPTION!", 2);
+  private final Move waterWaterAtk = new AttackMove("Sharpening Strike", Element.WATER, 5, 3, false, "PLACEHOLDER DESCRIPTION!", 3);
+  private final Move waterStance = new StanceMove("Water Dance", Element.NORMAL, 1, "PLACEHOLDER DESCRIPTION! Changes Stance");
+  //private final Move waterBuff
+  private final Move waterSpecial = new AttackMove("Waterfall", Element.NORMAL, 10, 3, true, "PLACEHOLDER DESCRIPTION!", 3, waterWaterAtkFollowUp);
 
   public Data() {
     this.moves = createMovesMap();
@@ -181,11 +186,11 @@ public class Data {
    */
   public HashMap<Integer, Move> getWaterMonsterMoves() {
     HashMap<Integer, Move> movesMap = new HashMap<>();
-    movesMap.put(1, createMovesMap().get(Element.WATER)[0]);
-    movesMap.put(2, createMovesMap().get(Element.WATER)[1]);
-    movesMap.put(3, createMovesMap().get(Element.WATER)[2]);
-    movesMap.put(4, createMovesMap().get(Element.WATER)[3]);
-    movesMap.put(5, createMovesMap().get(Element.WATER)[4]);
+    movesMap.put(1, waterNormAtk);
+    movesMap.put(2, waterWaterAtk);
+    movesMap.put(3, waterStance);
+    movesMap.put(4, waterWaterAtk);
+    movesMap.put(5, waterSpecial);
     return movesMap;
   }
 

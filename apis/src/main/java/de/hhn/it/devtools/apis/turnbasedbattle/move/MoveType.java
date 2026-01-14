@@ -28,4 +28,10 @@ public enum MoveType {
      * The move applies damage-over-time (DOT) to the opponent's monster.
      */
     DOT,
+
+    /**
+     * The move is a stance.
+     * Changes the stance of the user's monster.
+     */
+    STANCE,
 }
