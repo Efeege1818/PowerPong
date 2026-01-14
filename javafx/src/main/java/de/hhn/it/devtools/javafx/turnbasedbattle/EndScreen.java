@@ -75,6 +75,7 @@ public class EndScreen extends AnchorPane {
   public void setWinner(Integer playerId, Element element) {
     this.winnerPlayerId = playerId;
     this.winnerElement = element;
+    refresh();
   }
 
   public void refresh() {
