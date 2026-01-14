@@ -4,6 +4,7 @@ import de.hhn.it.devtools.javafx.controllers.template.PurProgrammingScreen;
 import de.hhn.it.devtools.javafx.controllers.template.ScreenController;
 import de.hhn.it.devtools.javafx.controllers.template.SingletonAttributeStore;
 import de.hhn.it.devtools.javafx.controllers.template.UnknownTransitionException;
+import de.hhn.it.devtools.javafx.towerdefense.controllers.TowerDefenseLauncher;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.AnchorPane;
@@ -20,20 +21,19 @@ public class TowerDefenseController extends Controller implements Initializable 
   ScreenController screenController;
 
   public TowerDefenseController() {
-    logger.debug("Template Controller created. Hey, if you have copied me, update this message!");
+    logger.debug("TowerDefense Controller created.");
   }
 
   @Override
   public void initialize(final URL location, final ResourceBundle resources) {
     // initialize screenController here because now we have the anchorPane.
     screenController = new ScreenController(templateAnchorPane);
-    SingletonAttributeStore singletonAttributeStore = SingletonAttributeStore.getReference();
-    singletonAttributeStore.setAttribute(SCREEN_CONTROLLER, screenController);
-    try {
-      screenController.switchTo(null, PurProgrammingScreen.SCREEN);
-    } catch (UnknownTransitionException e) {
-      e.printStackTrace();
-    }
 
+
+  }
+
+  @FXML
+  public void startGameButton() {
+    logger.info("Starting towerDefense Game");
   }
 }
