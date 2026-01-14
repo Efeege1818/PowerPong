@@ -10,12 +10,6 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Random;
 
-/*
- TODO: Check Min size- Max size + code time for game
- TODO: Implement tests
- TODO: Check Seed implementation (maybe in Constructor)
-*/
-
 /**
  * Utility class responsible for generating and managing the game map
  * for the tower defense component.
@@ -60,7 +54,7 @@ public class MapToolbox {
     for (int attempt = 1; attempt <= maxAttempts; attempt++) {
       try {
         Direction[][] map = new Direction[size][size];
-        for (int y = 0; y < size; y++) { // Important! y is fist as row, then x as column
+        for (int y = 0; y < size; y++) { // Important! y is first as row, then x as column
           for (int x = 0; x < size; x++) {
             map[y][x] = Direction.NONE;
           }
@@ -126,40 +120,6 @@ public class MapToolbox {
     }
 
     return grid.grid()[(int) coordinates.y()][(int) coordinates.x()] == Direction.NONE;
-  }
-
-  /**
-   * Calculates the two-dimensional distance between two coordinates.
-   *
-   * @param coordinate1 the first coordinate
-   * @param coordinate2 the second coordinate
-   * @return the Euclidean distance between the two coordinates
-   * @throws IllegalArgumentException if either coordinate is {@code null}
-   */
-  public double calcDistance(Coordinates coordinate1, Coordinates coordinate2)
-          throws IllegalArgumentException {
-    if (coordinate1 == null || coordinate2 == null) {
-      throw new IllegalArgumentException("Coordinates must not be null.");
-    }
-
-    return calcDistance(coordinate1.x() - coordinate2.x(), coordinate1.y() - coordinate2.y());
-  }
-
-  /**
-   * Calculates the absolute distance between two scalar values.
-   *
-   * <p>
-   * This method serves as a helper for distance calculations
-   * and returns the absolute difference of the two values.
-   * </p>
-   *
-   * @param coordinate1 the first value
-   * @param coordinate2 the second value
-   * @return the absolute distance between the two values
-   */
-  public float calcDistance(float coordinate1, float coordinate2) {
-
-    return Math.abs(coordinate1 - coordinate2);
   }
 
   /**
