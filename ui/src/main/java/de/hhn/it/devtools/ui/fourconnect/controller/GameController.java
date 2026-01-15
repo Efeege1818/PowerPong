@@ -7,9 +7,11 @@ import de.hhn.it.devtools.apis.fourconnect.Field;
 import de.hhn.it.devtools.apis.fourconnect.GameBoard;
 import de.hhn.it.devtools.apis.fourconnect.GameConfiguration;
 import de.hhn.it.devtools.apis.fourconnect.Player;
+import de.hhn.it.devtools.apis.fourconnect.PlayerColor;
 import de.hhn.it.devtools.components.fourconnect.provider.ConnectFourServiceImpl;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
@@ -112,7 +114,24 @@ public class GameController {
     try {
       service.dropChip(col);
       renderBoard();
+
+      // ✅ 1) Gewinner prüfen
+      Player winner = findWinner();
+      if (winner != null) {
+        showWinnerPopup(winner);
+        gameStarted = false; // keine Klicks mehr bis New Game
+        return;
+      }
+
+      // ✅ 2) Draw prüfen
+      if (isDraw()) {
+        showDrawPopup();
+        gameStarted = false;
+        return;
+      }
+
       statusLabel.setText("Your Turn: " + currentPlayerText());
+
     } catch (IllegalParameterException | OperationNotSupportedException ex) {
       statusLabel.setText("Nicht möglich: " + ex.getMessage());
     } catch (Exception ex) {
@@ -161,7 +180,93 @@ public class GameController {
       Player p = service.getCurrentPlayer();
       return p.name() + " (" + p.color().name() + ")";
     } catch (Exception e) {
-      return "?";
+      // Falls Spiel noch nicht gestartet
+      return "Player";
     }
+  }
+
+  // =========================
+  // ✅ Winner / Draw UI
+  // =========================
+
+  private void showWinnerPopup(Player winner) {
+    String text = (winner.color() == PlayerColor.RED)
+        ? "Red Player won the game"
+        : "Yellow Player won the game";
+
+    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    alert.setTitle("Game Over");
+    alert.setHeaderText(text);
+    alert.setContentText("Press 'New Game' to play again.");
+    alert.showAndWait();
+
+    statusLabel.setText(text);
+  }
+
+  private void showDrawPopup() {
+    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    alert.setTitle("Game Over");
+    alert.setHeaderText("Draw!");
+    alert.setContentText("No more moves left.");
+    alert.showAndWait();
+
+    statusLabel.setText("Draw!");
+  }
+
+  private boolean isDraw() {
+    GameBoard board = service.getBoard();
+
+    // Draw = oberste Reihe komplett voll (kein Feld mehr frei)
+    for (int c = 0; c < COLS; c++) {
+      if (board.getField(0, c).getOccupyingPlayer() == null) {
+        return false;
+      }
+    }
+    return findWinner() == null;
+  }
+
+  // =========================
+  // ✅ Win-Check (4 in a row)
+  // =========================
+
+  private Player findWinner() {
+    GameBoard board = service.getBoard();
+
+    for (int r = 0; r < ROWS; r++) {
+      for (int c = 0; c < COLS; c++) {
+        Player p = board.getField(r, c).getOccupyingPlayer();
+        if (p == null) continue;
+
+        // rechts
+        if (c + 3 < COLS
+            && samePlayer(board, r + 0, c + 1, p)
+            && samePlayer(board, r + 0, c + 2, p)
+            && samePlayer(board, r + 0, c + 3, p)) return p;
+
+        // runter
+        if (r + 3 < ROWS
+            && samePlayer(board, r + 1, c + 0, p)
+            && samePlayer(board, r + 2, c + 0, p)
+            && samePlayer(board, r + 3, c + 0, p)) return p;
+
+        // diagonal runter-rechts
+        if (r + 3 < ROWS && c + 3 < COLS
+            && samePlayer(board, r + 1, c + 1, p)
+            && samePlayer(board, r + 2, c + 2, p)
+            && samePlayer(board, r + 3, c + 3, p)) return p;
+
+        // diagonal runter-links
+        if (r + 3 < ROWS && c - 3 >= 0
+            && samePlayer(board, r + 1, c - 1, p)
+            && samePlayer(board, r + 2, c - 2, p)
+            && samePlayer(board, r + 3, c - 3, p)) return p;
+      }
+    }
+    return null;
+  }
+
+  private boolean samePlayer(GameBoard board, int r, int c, Player p) {
+    Player other = board.getField(r, c).getOccupyingPlayer();
+    return other != null && other.color() == p.color();
   }
 }

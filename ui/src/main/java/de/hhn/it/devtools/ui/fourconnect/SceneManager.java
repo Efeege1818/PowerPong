@@ -2,6 +2,10 @@ package de.hhn.it.devtools.ui.fourconnect;
 
 import java.io.IOException;
 
+import de.hhn.it.devtools.ui.fourconnect.controller.GameController;
+import de.hhn.it.devtools.ui.fourconnect.controller.MainController;
+import de.hhn.it.devtools.ui.fourconnect.controller.MainMenuController;
+import de.hhn.it.devtools.ui.fourconnect.controller.SelectController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -9,33 +13,47 @@ import javafx.stage.Stage;
 
 public class SceneManager {
 
-  private static Stage stage;
+  private final Stage stage;
 
-  public static void init(Stage primaryStage) {
-    stage = primaryStage;
+  public SceneManager(Stage stage) {
+    this.stage = stage;
   }
 
-  public static void showMain() {
-    show("/de/hhn/it/devtools/ui/fourconnect/fxml/main.fxml", "Connect Four Toxic - Main");
-  }
+public void showMain() {
+  loadAndSet("/de/hhn/it/devtools/ui/fourconnect/fxml/main.fxml", MainMenuController.class);
+}
 
-  public static void showSelect() {
-    show("/de/hhn/it/devtools/ui/fourconnect/fxml/select.fxml", "Connect Four Toxic - Select");
-  }
+public void showSelect() {
+  loadAndSet("/de/hhn/it/devtools/ui/fourconnect/fxml/select.fxml", SelectController.class);
+}
 
-  public static void showGame() {
-    show("/de/hhn/it/devtools/ui/fourconnect/fxml/game.fxml", "Connect Four Toxic - Game");
-  }
+public void showGame() {
+  loadAndSet("/de/hhn/it/devtools/ui/fourconnect/fxml/game.fxml", GameController.class);
+}
 
-  private static void show(String fxmlPath, String title) {
+
+
+  private void loadAndSet(String fxmlPath, Class<?> controllerClass) {
     try {
-      FXMLLoader loader = new FXMLLoader(SceneManager.class.getResource(fxmlPath));
+      FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+
+      // Controller-Factory: wir geben SceneManager rein
+      loader.setControllerFactory(type -> {
+        if (type == SelectController.class) return new SelectController(this);
+        if (type == MainController.class) return new MainController(this);
+        try {
+          return type.getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
+          throw new RuntimeException(e);
+        }
+      });
+
       Parent root = loader.load();
-      stage.setTitle(title);
-      stage.setScene(new Scene(root));
-      stage.show();
+      Scene scene = new Scene(root);
+      stage.setScene(scene);
+
     } catch (IOException e) {
-      throw new RuntimeException("Cannot load FXML: " + fxmlPath, e);
+      throw new RuntimeException("Could not load FXML: " + fxmlPath, e);
     }
   }
 }

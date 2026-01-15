@@ -7,8 +7,10 @@ public class MainApp extends Application {
 
   @Override
   public void start(Stage stage) {
-    SceneManager.init(stage);
-    SceneManager.showMain();
+    SceneManager sceneManager = new SceneManager(stage);
+    sceneManager.showSelect(); // Startscreen zuerst
+    stage.setTitle("ConnectFourToxic");
+    stage.show();
   }
 
   public static void main(String[] args) {
