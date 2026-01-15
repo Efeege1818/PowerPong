@@ -42,8 +42,8 @@ public class GrassMonster extends SimpleMonster {
 
   @Override
   protected void tickMonsterEffects() {
-    System.out.println((double)currentHp/maxHp);
-    double currentPercentHp = (double)currentHp/maxHp;
+    System.out.println((double) currentHp / maxHp);
+    double currentPercentHp = (double) currentHp / maxHp;
     oldPassiveStacks = passiveStacks;
     if (currentPercentHp > 0.4) {
       passiveStacks = 0;

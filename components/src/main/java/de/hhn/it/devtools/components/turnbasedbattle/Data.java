@@ -2,8 +2,13 @@ package de.hhn.it.devtools.components.turnbasedbattle;
 
 import de.hhn.it.devtools.apis.turnbasedbattle.Element;
 import de.hhn.it.devtools.apis.turnbasedbattle.Monster;
-import de.hhn.it.devtools.apis.turnbasedbattle.move.*;
-
+import de.hhn.it.devtools.apis.turnbasedbattle.move.AttackMove;
+import de.hhn.it.devtools.apis.turnbasedbattle.move.BuffMove;
+import de.hhn.it.devtools.apis.turnbasedbattle.move.CounterattackMove;
+import de.hhn.it.devtools.apis.turnbasedbattle.move.DebuffMove;
+import de.hhn.it.devtools.apis.turnbasedbattle.move.DotMove;
+import de.hhn.it.devtools.apis.turnbasedbattle.move.Move;
+import de.hhn.it.devtools.apis.turnbasedbattle.move.StanceMove;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,31 +20,49 @@ public class Data {
   private final Monster[] monsters;
 
   // FireMonster moves
-  private final Move fireNormAtkFollowUp = new BuffMove("Increases attack", Element.NORMAL, "attack", 5, 3, 0, false, "Increases attack", 1);
-  private final Move fireNormAtk = new AttackMove("Heating Flame", Element.NORMAL, 10, false, 2, false, "+5 ATK buff on hit!", 1, fireNormAtkFollowUp);
-  private final Move fireFireAtk1 = new AttackMove("Fire spear", Element.FIRE, 25, false, 3, false, "high DMG", 1);
-  private final Move fireFireAtk2 = new DotMove("Fire bombs", Element.FIRE, 15, 2, 5, false, "High DOT damage", 1);
-  private final Move fireBuff = new BuffMove("Pump up", Element.NORMAL, "attack", 15, 3, 4, false, "Strong DMG increase on next ATK", 1);
-  private final Move fireSpecial = new AttackMove("Volcanic Eruption", Element.FIRE, 30, false, 1, true, "charge condition: hitting ATKs (7)", 1);
+  private final Move fireNormAtkFollowUp = new BuffMove("Increases attack", Element.NORMAL,
+      "attack", 5, 3, 0, false, "Increases attack", 1);
+  private final Move fireNormAtk = new AttackMove("Heating Flame", Element.NORMAL,
+      10, false, 2, false, "+5 ATK buff on hit!", 1, fireNormAtkFollowUp);
+  private final Move fireFireAtk1 = new AttackMove("Fire spear", Element.FIRE,
+      25, false, 3, false, "high DMG", 1);
+  private final Move fireFireAtk2 = new DotMove("Fire bombs", Element.FIRE,
+      15, 2, 5, false, "High DOT damage", 1);
+  private final Move fireBuff = new BuffMove("Pump up", Element.NORMAL,
+      "attack", 15, 3, 4, false, "Strong DMG increase on next ATK", 1);
+  private final Move fireSpecial = new AttackMove("Volcanic Eruption", Element.FIRE,
+      30, false, 1, true, "charge condition: hitting ATKs (7)", 1);
 
   // WaterMonster moves
-  private final Move waterWaterAtkFollowUp = new AttackMove("Water hit", Element.WATER, 5, false, 0, false, "PLACEHOLDER DESCRIPTION!", 1);
-  private final Move waterWaterAtkCounter = new AttackMove("Water burst", Element.WATER, 25, false, 0, false, "PLACEHOLDER DESCRIPTION!", 1);
-  private final Move waterNormAtk = new AttackMove("Double Slice", Element.NORMAL, 7, false, 2, false, "2 weak hits", 2);
-  private final Move waterWaterAtk = new AttackMove("Sharpening Strike", Element.WATER, 5, true, 3, false, "3 weak hits High Crit chance (ignores DEF)", 3);
-  private final Move waterStance = new StanceMove("Water Dance", Element.NORMAL, 1, "Changes the stance of the monster (Crit stance or dodge stance)");
-  private final Move waterCounter = new CounterattackMove("River Reversal", Element.WATER, waterWaterAtkCounter, 3, false, "only ATKs if the enemy also ATKs in the same turn");
+  private final Move waterWaterAtkFollowUp = new AttackMove("Water hit", Element.WATER,
+      5, false, 0, false, "PLACEHOLDER DESCRIPTION!", 1);
+  private final Move waterWaterAtkCounter = new AttackMove("Water burst", Element.WATER,
+      25, false, 0, false, "PLACEHOLDER DESCRIPTION!", 1);
+  private final Move waterNormAtk = new AttackMove("Double Slice", Element.NORMAL,
+      7, false, 2, false, "2 weak hits", 2);
+  private final Move waterWaterAtk = new AttackMove("Sharpening Strike", Element.WATER,
+      5, true, 3, false, "3 weak hits High Crit chance (ignores DEF)", 3);
+  private final Move waterStance = new StanceMove("Water Dance", Element.NORMAL,
+      1, "Changes the stance of the monster (Crit stance or dodge stance)");
+  private final Move waterCounter = new CounterattackMove("River Reversal", Element.WATER,
+      waterWaterAtkCounter, 3, false, "only ATKs if the enemy also ATKs in the same turn");
   private final Move waterSpecial = new AttackMove("Waterfall", Element.NORMAL, 10, false, 3, true,
-          "3 normal hits + 3 water hits, +1 water/ normal hit per Crit with this Move\n" +
-          "charge condition: Hit Crits/ dodge ATKs (15 combined)", 3, waterWaterAtkFollowUp);
+          "3 normal hits + 3 water hits, +1 water/ normal hit per Crit with this Move\n"
+          + "charge condition: Hit Crits/ dodge ATKs (15 combined)", 3, waterWaterAtkFollowUp);
 
   // GrassMonster moves
-  private final Move grassPoison = new DotMove("Poison", Element.NORMAL, 5, 4, 0, false, "Poison", 1);
-  private final Move grassNormAtk = new AttackMove("Poison Sting", Element.NORMAL, 14, false, 2, false, "procs poison on hit", 1);
-  private final Move grassGrassAtk = new AttackMove("Poison Bomb", Element.GRASS, 21, false, 3, false, "mid DMG, poisons enemy", 1, grassPoison);
-  private final Move grassBuff = new BuffMove("Harden Skin", Element.NORMAL, "damageReduction", 0.5, 2, 5, false, "takes 50% less DMG for 2 turns", 1);
-  private final Move grassDebuff = new DebuffMove("Poison Absorb", Element.NORMAL, "attack", 1, 3, 3, false, "if this debuff is applied: doubles poison ticks", 1);
-  private final Move grassSpecial = new AttackMove("Leaf Cannon", Element.GRASS, 5, false, 0, false, "charge only increases when poison does DMG", 1);
+  private final Move grassPoison = new DotMove("Poison", Element.NORMAL,
+      5, 4, 0, false, "Poison", 1);
+  private final Move grassNormAtk = new AttackMove("Poison Sting", Element.NORMAL,
+      14, false, 2, false, "procs poison on hit", 1);
+  private final Move grassGrassAtk = new AttackMove("Poison Bomb", Element.GRASS,
+      21, false, 3, false, "mid DMG, poisons enemy", 1, grassPoison);
+  private final Move grassBuff = new BuffMove("Harden Skin", Element.NORMAL,
+      "damageReduction", 0.5, 2, 5, false, "takes 50% less DMG for 2 turns", 1);
+  private final Move grassDebuff = new DebuffMove("Poison Absorb", Element.NORMAL,
+      "attack", 1, 3, 3, false, "if this debuff is applied: doubles poison ticks", 1);
+  private final Move grassSpecial = new AttackMove("Leaf Cannon", Element.GRASS,
+      5, false, 0, false, "charge only increases when poison does DMG", 1);
 
   public Data() {
     this.monsters = createMonsters();

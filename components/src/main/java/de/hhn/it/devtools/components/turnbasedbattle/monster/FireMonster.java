@@ -10,7 +10,8 @@ public class FireMonster extends SimpleMonster {
   private static final org.slf4j.Logger logger =
           org.slf4j.LoggerFactory.getLogger(FireMonster.class);
 
-  private int fireMonsterPassiveStacks = 10; // Passive stacks for increased attack. Decreases by 1 each turn.
+  // Passive stacks for increased attack. Decreases by 1 each turn.
+  private int fireMonsterPassiveStacks = 10;
 
   private final int atkPassiveAmount = 2;
 

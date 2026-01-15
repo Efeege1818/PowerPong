@@ -121,7 +121,7 @@ public class SimpleBattleManager implements BattleManager {
     currentMonster.applyCooldown(moveNumber, selectedMove);
 
 
-    for(int count = 1; count <= selectedMove.executionCount(); count++) {
+    for (int count = 1; count <= selectedMove.executionCount(); count++) {
       logger.debug("Executing move {} of {}", count, selectedMove.executionCount());
 
       executeMove(selectedMove, selectedMove.type());
@@ -251,6 +251,7 @@ public class SimpleBattleManager implements BattleManager {
 
     return false;
   }
+
   public SimpleMonster getPlayer1Monster() {
     return p1Monster;
   }

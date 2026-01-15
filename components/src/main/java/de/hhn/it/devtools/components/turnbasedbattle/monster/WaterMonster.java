@@ -38,9 +38,9 @@ public class WaterMonster extends SimpleMonster {
 
     this.name = "Water Monster";
     this.focus = "Manipulates Dodge and Crit chances";
-    this.passiveInfo = "Water Flow \n" +
-            "Buffes Crit chance if this monster hits a crit hit in crit stance \n" +
-            "Buffes dodge chance if this monster dodges an ATK in dodge stance";
+    this.passiveInfo = "Water Flow \n"
+            + "Buffes Crit chance if this monster hits a crit hit in crit stance \n"
+            + "Buffes dodge chance if this monster dodges an ATK in dodge stance";
     this.imagePath = "/Monster Sprites/WasserMon.png";
     this.imagePathBack = "/Monster Sprites/WasserMon Back.png";
 
@@ -55,17 +55,17 @@ public class WaterMonster extends SimpleMonster {
   public void switchStance() {
     defenseStance = !defenseStance;
     attackStance = !attackStance;
-    if(passiveStacksDef > 0) {
+    if (passiveStacksDef > 0) {
       logger.debug("{} lost all {} stacks for it's defense stance!", name, passiveStacksDef);
       changeStat("evasionChance", -(passiveStacksDef * defPassiveAmount));
       passiveStacksDef = 0;
-    }
-    else if (passiveStacksCrit > 0) {
+    } else if (passiveStacksCrit > 0) {
       logger.debug("{} lost all {} stacks for it's attacking stance!", name, passiveStacksCrit);
       changeStat("critChance", -(passiveStacksCrit * critPassiveAmount));
       passiveStacksCrit = 0;
     }
-    logger.debug("{} stance switched to Defense: {}, Attack: {}", name, defenseStance, attackStance);
+    logger.debug("{} stance switched to Defense: {}, Attack: {}",
+        name, defenseStance, attackStance);
   }
 
   /**
@@ -90,7 +90,7 @@ public class WaterMonster extends SimpleMonster {
    * Increments the passive stacks for the attacking stance by 1.
    */
   private void increaseCritPassive() {
-    if(passiveStacksCrit >= 20) {
+    if (passiveStacksCrit >= 20) {
       return;
     }
     passiveStacksCrit++;
@@ -102,7 +102,7 @@ public class WaterMonster extends SimpleMonster {
    * Increments the passive stacks for the defense stance by 1.
    */
   private void increaseDefPassive() {
-    if(passiveStacksDef >= 20) {
+    if (passiveStacksDef >= 20) {
       return;
     }
     passiveStacksDef++;
@@ -129,12 +129,12 @@ public class WaterMonster extends SimpleMonster {
   private void increaseSpecialConditionStacks() {
     if (!isMoveLocked(5)) {
       return;
-    }
-    else if (specialConditionStacks >= specialConditionStacksThreshold) {
+    } else if (specialConditionStacks >= specialConditionStacksThreshold) {
       return;
     } else {
       specialConditionStacks++;
-      logger.debug("Increased special move condition stacks by one to {}/{} for {}", specialConditionStacks, specialConditionStacksThreshold, name);
+      logger.debug("Increased special move condition stacks by one to {}/{} for {}",
+          specialConditionStacks, specialConditionStacksThreshold, name);
     }
 
     if (specialConditionStacks == specialConditionStacksThreshold) {

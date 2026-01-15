@@ -10,7 +10,6 @@ import de.hhn.it.devtools.apis.turnbasedbattle.move.MoveType;
 import de.hhn.it.devtools.components.turnbasedbattle.monster.FireMonster;
 import de.hhn.it.devtools.components.turnbasedbattle.monster.GrassMonster;
 import de.hhn.it.devtools.components.turnbasedbattle.monster.WaterMonster;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -113,7 +112,8 @@ public class SimpleMonster {
     boolean isEffective = isElementEffective(this, move.element());
 
     if (move.name().equals("Leaf Cannon")) {
-      actualDamage = calculateDamage(move, this, attackingMonster, isCritical, isEffective, timesHitByPoison);
+      actualDamage = calculateDamage(move, this, attackingMonster, isCritical, isEffective,
+          timesHitByPoison);
     } else {
       actualDamage = calculateDamage(move, this, attackingMonster, isCritical, isEffective);
     }
@@ -245,6 +245,12 @@ public class SimpleMonster {
     logger.debug("{} buffed: {} {} and has now {}", name, amount, stat, getStat(stat));
   }
 
+  /**
+   * Changes the value of any stat.
+   *
+   * @param stat stat to be changed
+   * @param amount amount for stat to be changed by
+   */
   public void changeStat(String stat, double amount) {
     switch (stat) {
       case "health":
@@ -805,6 +811,9 @@ public class SimpleMonster {
     return takeDamageOnAttack;
   }
 
+  /**
+   * Removes the takeDamageOnAttack property.
+   */
   public void removeTakeDamageOnAttack() {
     if (takeDamageOnAttack != null) {
       logger.debug("{} won't get attacked anymore if it attacks.", name);
