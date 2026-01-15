@@ -55,8 +55,7 @@ public class TitleScreen extends StackPane {
 
     difficultyBox = new ChoiceBox<>();
     difficultyBox.getItems().setAll(Difficulty.values());
-    difficultyBox.valueProperty()
-            .bindBidirectional(viewModel.difficultyProperty());
+    difficultyBox.valueProperty().bindBidirectional(viewModel.difficultyProperty());
 
 
     title.textProperty().set("TOWER DEV");

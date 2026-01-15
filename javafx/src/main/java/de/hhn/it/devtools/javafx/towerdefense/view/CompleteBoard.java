@@ -36,7 +36,7 @@ public class CompleteBoard extends StackPane {
    *
    * @param viewModel the current ViewModel
    */
-  public CompleteBoard(TowerDefenseViewModel viewModel) {
+  CompleteBoard(TowerDefenseViewModel viewModel) {
 
     this.viewModel = viewModel;
 
@@ -44,8 +44,6 @@ public class CompleteBoard extends StackPane {
     gridProperty.bind(viewModel.getMap());
     gridSize = gridProperty.get().grid().length;
     boardDisplay();
-    gridProperty.addListener((obs, oldEx, newEx) -> Platform.runLater(this::boardDisplay));
-
 
     enemies.bind(viewModel.getEnemies());
     enemies.addListener((obs, oldEx, newEx) -> Platform.runLater(this::updateEnemies));
@@ -56,7 +54,8 @@ public class CompleteBoard extends StackPane {
     getChildren().addAll(mapGrid, towerContainer, enemyContainer);
   }
 
-  private void boardDisplay() {
+  void boardDisplay() {
+    mapGrid.getChildren().clear();
     mapGrid.widthProperty().divide(2);
     mapGrid.scaleXProperty().setValue(mapGrid.scaleXProperty().get());
     mapGrid.scaleYProperty().setValue(mapGrid.scaleYProperty().get());
@@ -65,8 +64,8 @@ public class CompleteBoard extends StackPane {
 
         Rectangle rectangle = new Rectangle(16, 16);
         rectangle.setStroke(Color.BLACK);
-        rectangle.setFill(gridProperty.get().grid()[row][col]
-            == Direction.NONE ? Color.DARKGREEN : Color.DARKGRAY);
+        rectangle.setFill(gridProperty.get().grid()[row][col] == Direction.NONE
+            ? Color.DARKGREEN : Color.DARKGRAY);
 
         mapGrid.add(rectangle, col, row);
       }

@@ -86,7 +86,6 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
       throw new IllegalStateException();
     }
     this.configuration = configuration;
-    mapToolbox = new MapToolbox(seed);
     mapToolbox.generateMap(configuration.mapSize());
     waveGenerator = new WaveGenerator(mapToolbox.getPath().getFirst(), seed, configuration);
   }
@@ -110,6 +109,7 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
     player = new Player(configuration.startingHealth(), configuration.startingMoney());
     notifyListeners(TowerDefenseListener::updateHealth);
     notifyListeners(TowerDefenseListener::updateMoney);
+    notifyListeners(TowerDefenseListener::updateMap);
   }
 
   @Override
@@ -135,6 +135,8 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
 
     waveGenerator = new WaveGenerator(mapToolbox.getPath().getFirst(), seed, configuration);
     player = new Player(configuration.startingHealth(), configuration.startingMoney());
+    notifyListeners(TowerDefenseListener::updateHealth);
+    notifyListeners(TowerDefenseListener::updateMoney);
 
     savedPlayerData = player;
     towerToolbox.saveData();

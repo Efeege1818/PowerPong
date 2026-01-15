@@ -79,7 +79,7 @@ public class GameScreen extends StackPane {
           && !showRoundCompletedOverlay.get());
 
       Platform.runLater(() -> {
-        if(newState == GameState.GAME_OVER) {
+        if (newState == GameState.GAME_OVER) {
           showGameEndedOverlay.setValue(true);
         }
         if (newState == GameState.PAUSED && oldState == GameState.RUNNING) {
@@ -106,6 +106,15 @@ public class GameScreen extends StackPane {
       } else {
         getChildren().remove(roundCompletedOverlay);
       }
+    });
+
+    // Update Map, if it has changed
+    viewModel.getMap().addListener((obs, newVal, oldVal) -> {
+      Platform.runLater(() -> {
+        completeBoard.boardDisplay();
+        prepareTowerPlacement();
+        logger.debug("Updated Board");
+      });
     });
 
     double scale = 3;
@@ -139,6 +148,7 @@ public class GameScreen extends StackPane {
 
       // Input clickable event here
       towerIcon.setOnMouseClicked(e -> {
+        logger.debug("Selected Tower {}", type);
         selectedTower = type;
       });
 
@@ -323,7 +333,7 @@ public class GameScreen extends StackPane {
 
     for (int row = 0; row < gridSize; row++) {
       for (int column = 0; column < gridSize; column++) {
-        // give easdcv rect an index, and cast to rectanle from node
+        // give each rect an index, and cast to rectangle from node
         Rectangle allRect = (Rectangle) completeBoard
                 .mapGrid
                 .getChildren()
@@ -333,6 +343,7 @@ public class GameScreen extends StackPane {
         int perfectColumn = column;
 
         allRect.setOnMouseClicked(event -> {
+          logger.debug("Place Tower at {}|{}", perfectRow, perfectColumn);
           if (selectedTower != null) {
             try {
               // TODO: uuid fix not int id 2

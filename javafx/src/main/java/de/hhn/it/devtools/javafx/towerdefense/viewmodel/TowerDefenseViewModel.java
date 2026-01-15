@@ -10,15 +10,11 @@ import de.hhn.it.devtools.apis.towerdefense.Tower;
 import de.hhn.it.devtools.apis.towerdefense.TowerDefenseListener;
 import de.hhn.it.devtools.apis.towerdefense.TowerDefenseService;
 import de.hhn.it.devtools.apis.towerdefense.TowerType;
-
 import java.util.Map;
-
 import javafx.application.Platform;
-import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -123,10 +119,6 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
 
   public ObjectProperty<Difficulty> difficultyProperty() {
     return difficulty;
-  }
-
-  public void editConfiguration(Configuration configuration) {
-    service.editConfiguration(configuration);
   }
 
   @Override
