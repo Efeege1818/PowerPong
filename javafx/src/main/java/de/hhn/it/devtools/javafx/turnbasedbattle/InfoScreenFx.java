@@ -129,10 +129,22 @@ public class InfoScreenFx extends VBox {
         );
 
         // RIGHT COLUMN (Monster image)
+
+
         VBox rightCol = new VBox();
         rightCol.setAlignment(Pos.TOP_CENTER);
         rightCol.setPadding(new Insets(12));
         rightCol.setPrefWidth(300);
+
+        HBox forCloseButton = new HBox();
+        forCloseButton.setAlignment(Pos.TOP_RIGHT);
+        Button close = new Button("Close Info");
+        close.setOnAction(e -> {
+            Stage stage = (Stage) close.getScene().getWindow();
+            stage.close();
+        });
+        forCloseButton.getChildren().add(close);
+        rightCol.getChildren().add(0,forCloseButton);
 
         ImageView MonsterView = viewModel.getImageView();
         if (MonsterView != null) {
@@ -166,14 +178,7 @@ public class InfoScreenFx extends VBox {
             rightCol.getChildren().add(fallback);
         }
 
-        VBox forCloseButton = new VBox();
-        Button close = new Button("Close Info");
-        close.setOnAction(e -> {
-            Stage stage = (Stage) close.getScene().getWindow();
-            stage.close();
-        });
-        forCloseButton.getChildren().add(close);
-        rightCol.getChildren().add(forCloseButton);
+
 
         // Put columns into content and add to this VBox
         content.getChildren().addAll(leftCol, rightCol);
