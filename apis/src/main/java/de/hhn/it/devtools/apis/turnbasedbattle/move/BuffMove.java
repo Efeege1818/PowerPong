@@ -30,6 +30,9 @@ public record BuffMove(MoveType type, String name, Element element, String stat,
   @Override
   public boolean isTrueDamage() { return false;}
 
+  @Override
+  public Move attackMove() { return null;}
+
   /**
    * Custom constructor without type parameter - type is always BUFF.
    */

@@ -137,12 +137,21 @@ public class SimpleBattleManager implements BattleManager {
         }
       }
     }
+    if (selectedMove.isSpecial()) {
+      currentMonster.lockMove(moveNumber);
+    }
     return 0; // no winner yet
   }
 
   private void executeMove(Move move, MoveType moveType) {
     switch (moveType) {
       case MoveType.ATTACK -> {
+        // Applies counterattack
+        if (currentMonster.hasTakeDamageOnAttack() != null) {
+          logger.debug("{} got counterattacked!", currentMonster.name);
+          currentMonster.takeDamage(currentMonster.hasTakeDamageOnAttack(), opponentMonster);
+        }
+
         // Do damage
         opponentMonster.takeDamage(move, currentMonster);
         if (move.followUpMove() != null) {
@@ -151,15 +160,30 @@ public class SimpleBattleManager implements BattleManager {
       }
       case MoveType.BUFF -> {
         currentMonster.addBuffOrDebuff(move);
+        if (currentMonster.hasTakeDamageOnAttack() != null) {
+          currentMonster.removeTakeDamageOnAttack();
+        }
       }
       case MoveType.DEBUFF -> {
         opponentMonster.addBuffOrDebuff(move);
+        if (currentMonster.hasTakeDamageOnAttack() != null) {
+          currentMonster.removeTakeDamageOnAttack();
+        }
       }
       case MoveType.DOT -> {
         opponentMonster.addDot(move);
+        if (currentMonster.hasTakeDamageOnAttack() != null) {
+          currentMonster.removeTakeDamageOnAttack();
+        }
       }
       case MoveType.STANCE -> {
         currentMonster.switchStance();
+        if (currentMonster.hasTakeDamageOnAttack() != null) {
+          currentMonster.removeTakeDamageOnAttack();
+        }
+      }
+      case MoveType.COUNTERATTACK -> {
+        opponentMonster.takeDamageOnAttack(move);
       }
       default -> throw new IllegalStateException("Unknown move type: " + move.type());
     }

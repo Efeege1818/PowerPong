@@ -34,4 +34,12 @@ public enum MoveType {
      * Changes the stance of the user's monster.
      */
     STANCE,
+
+    /**
+     * The move is a counterattack.
+     * A counterattack move that only deals damage if the opponent
+     * performs an attack during the same turn.
+     * If the opponent does not attack, this move has no effect.
+     */
+    COUNTERATTACK,
 }

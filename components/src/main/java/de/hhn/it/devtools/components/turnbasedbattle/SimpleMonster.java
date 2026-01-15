@@ -34,6 +34,7 @@ public class SimpleMonster {
   protected String passiveInfo;
   protected String imagePath;
   protected String imagePathBack;
+  protected Move takeDamageOnAttack = null;
 
   // ========== Internal Tracking (Buffs, DOTs, Cooldowns, Locked) ==========
 
@@ -744,6 +745,25 @@ public class SimpleMonster {
    */
   public Map<Integer, Integer> getMoveCooldowns() {
     return new HashMap<>(moveCooldowns);
+  }
+
+  // =========== Handles Counterattack ===========
+
+  public void takeDamageOnAttack(Move move) {
+    takeDamageOnAttack = move.attackMove();
+    logger.debug("{} gets attacked if it attacks.", name);
+  }
+
+  public Move hasTakeDamageOnAttack() {
+    return takeDamageOnAttack;
+  }
+
+  public void removeTakeDamageOnAttack() {
+    if (takeDamageOnAttack != null) {
+      logger.debug("{} won't get attacked anymore if it attacks.", name);
+    }
+    takeDamageOnAttack = null;
+
   }
 
   public String getImagePathBack() {

@@ -14,9 +14,11 @@ public class WaterMonster extends SimpleMonster {
   private boolean attackStance = true;
   private int passiveStacksCrit = 0;
   private int passiveStacksDef = 0;
+  private int specialConditionStacks = 0;
 
   private final double critPassiveAmount = 0.01;
   private final double defPassiveAmount = 0.015;
+  private final int specialConditionStacksThreshold = 15;
 
   /**
    * Creates a new WaterMonster.
@@ -112,6 +114,7 @@ public class WaterMonster extends SimpleMonster {
   public void handleCriticalHit() {
     if (attackStance) {
       increaseCritPassive();
+      increaseSpecialConditionStacks();
     }
   }
 
@@ -119,6 +122,24 @@ public class WaterMonster extends SimpleMonster {
   public void handleDodge() {
     if (defenseStance) {
       increaseDefPassive();
+      increaseSpecialConditionStacks();
+    }
+  }
+
+  private void increaseSpecialConditionStacks() {
+    if (!isMoveLocked(5)) {
+      return;
+    }
+    else if (specialConditionStacks >= specialConditionStacksThreshold) {
+      return;
+    } else {
+      specialConditionStacks++;
+      logger.debug("Increased special move condition stacks by one to {}/{} for {}", specialConditionStacks, specialConditionStacksThreshold, name);
+    }
+
+    if (specialConditionStacks == specialConditionStacksThreshold) {
+      unlockMove(5);
+      specialConditionStacks = 0;
     }
   }
 }

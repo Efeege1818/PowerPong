@@ -24,11 +24,14 @@ public class Data {
 
   // WaterMonster moves
   private final Move waterWaterAtkFollowUp = new AttackMove("Water hit", Element.WATER, 5, false, 0, false, "PLACEHOLDER DESCRIPTION!", 1);
+  private final Move waterWaterAtkCounter = new AttackMove("Water burst", Element.WATER, 25, false, 0, false, "PLACEHOLDER DESCRIPTION!", 1);
   private final Move waterNormAtk = new AttackMove("Double Slice", Element.NORMAL, 7, false, 2, false, "2 weak hits", 2);
   private final Move waterWaterAtk = new AttackMove("Sharpening Strike", Element.WATER, 5, true, 3, false, "3 weak hits High Crit chance (ignores DEF)", 3);
   private final Move waterStance = new StanceMove("Water Dance", Element.NORMAL, 1, "Changes the stance of the monster (Crit stance or dodge stance)");
-  //private final Move waterBuff
-  private final Move waterSpecial = new AttackMove("Waterfall", Element.NORMAL, 10, false, 3, true, "PLACEHOLDER DESCRIPTION!", 3, waterWaterAtkFollowUp);
+  private final Move waterCounter = new CounterattackMove("Wa", Element.WATER, waterWaterAtkCounter, 3, false, "PLACEHOLDER DESCRIPTION!");
+  private final Move waterSpecial = new AttackMove("Waterfall", Element.NORMAL, 10, false, 3, true,
+          "3 normal hits + 3 water hits, +1 water/ normal hit per Crit with this Move\n" +
+          "charge condition: Hit Crits/ dodge ATKs (15 combined)", 3, waterWaterAtkFollowUp);
 
   public Data() {
     this.monsters = createMonsters();
@@ -91,7 +94,7 @@ public class Data {
     movesMap.put(1, waterNormAtk);
     movesMap.put(2, waterWaterAtk);
     movesMap.put(3, waterStance);
-    movesMap.put(4, waterWaterAtk);
+    movesMap.put(4, waterCounter);
     movesMap.put(5, waterSpecial);
     return movesMap;
   }

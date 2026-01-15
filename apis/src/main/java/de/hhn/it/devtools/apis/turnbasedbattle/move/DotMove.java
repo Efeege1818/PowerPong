@@ -24,6 +24,9 @@ public record DotMove(MoveType type, String name, Element element, double damage
   @Override
   public boolean isTrueDamage() { return false;}
 
+  @Override
+  public Move attackMove() { return null;}
+
   /**
    * Custom constructor without type parameter - type is always DOT.
    */

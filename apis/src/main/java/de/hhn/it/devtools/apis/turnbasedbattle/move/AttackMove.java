@@ -9,9 +9,11 @@ import de.hhn.it.devtools.apis.turnbasedbattle.Element;
  * @param name move name.
  * @param element element of the move.
  * @param damage amount of damage dealt.
+ * @param trueDamage if attack ignores defense.
  * @param cooldown cooldown of the move.
  * @param isSpecial whether the move is special.
  * @param description description of the move.
+ * @param followUpMove followup move.
  */
 public record AttackMove(MoveType type, String name, Element element, double damage, boolean trueDamage, int cooldown, boolean isSpecial, String description, int executionCount, Move followUpMove) implements Move {
 
@@ -27,6 +29,9 @@ public record AttackMove(MoveType type, String name, Element element, double dam
 
   @Override
   public boolean isTrueDamage() { return trueDamage;}
+
+  @Override
+  public Move attackMove() { return null;}
 
   /**
    * Custom constructor without type parameter - type is always ATTACK.
