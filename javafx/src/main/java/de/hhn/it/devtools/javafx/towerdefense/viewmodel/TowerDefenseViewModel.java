@@ -113,7 +113,7 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
     return service.getTowerTypes();
   }
 
-  public ObjectProperty<GameState> getCurrentGameState() {
+  public ObjectProperty<GameState> getGameState() {
     return gameState;
   }
 

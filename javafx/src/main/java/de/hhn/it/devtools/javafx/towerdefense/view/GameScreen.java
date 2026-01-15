@@ -5,8 +5,6 @@ import de.hhn.it.devtools.javafx.towerdefense.controllers.ScreenManager;
 import de.hhn.it.devtools.javafx.towerdefense.controllers.ScreenType;
 import de.hhn.it.devtools.javafx.towerdefense.viewmodel.TowerDefenseViewModel;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -35,30 +33,25 @@ public class GameScreen extends StackPane {
     createDisplay();
   }
 
-  public void createDisplay() {
+  private void createDisplay() {
     mainLayout.setSpacing(1);
     mainLayout.setAlignment(Pos.CENTER);
 
     mainLayout.getChildren().addAll(
         createStatsDisplay(),
         completeBoard,
-        createTowerDisplay()
-//        createButtonDisplay()
+        createTowerDisplay(),
+        createButtonDisplay()
     );
     getChildren().add(mainLayout);
 
     prepareTowerPlacement();
 
-    viewModel.getCurrentGameState().addListener(new ChangeListener<GameState>() {
-      @Override
-      public void changed(ObservableValue<? extends GameState> observableValue, GameState gameState, GameState t1) {
-        Platform.runLater(new Runnable() {
-          @Override
-          public void run() {
-            if (gameState != GameState.RUNNING) {
-              createOverlayDisplay();
-            }
-          }
+    viewModel.getGameState().addListener((obs, oldState, newState) -> {
+      if (newState == GameState.GAME_OVER) {
+        Platform.runLater(() -> {
+          logger.debug("Showing Overlay Display");
+          getChildren().add(createOverlayDisplay());
         });
       }
     });
@@ -133,63 +126,63 @@ public class GameScreen extends StackPane {
 
 
 
-//  public GridPane createButtonDisplay() {
-//    Button startWaveButton = new Button("Start next Round");
-//    startWaveButton.setOnAction((event) -> {
-//      startWaveOnAction();
-//    });
-//    Button abortGameButton = new Button("Exit Game");
-//    abortGameButton.setOnAction((event) -> {
-//      abortGameOnAction();
-//    });
-//
-//    startWaveButton.disableProperty().bind(viewModel.getCurrentGameState().isEqualTo(GameState.RUNNING));
-//
-//    GridPane buttonDisplay = new GridPane();
-//    buttonDisplay.setAlignment(Pos.CENTER);
-//    buttonDisplay.setHgap(10);
-//
-//    buttonDisplay.add(startWaveButton, 0, 0);
-//    buttonDisplay.add(abortGameButton, 1, 0);
-//
-//    return buttonDisplay;
-//  }
+  public GridPane createButtonDisplay() {
+    Button startWaveButton = new Button("Start next Round");
+    startWaveButton.setOnAction((event) -> {
+      startWaveOnAction();
+    });
+    Button abortGameButton = new Button("Exit Game");
+    abortGameButton.setOnAction((event) -> {
+      abortGameOnAction();
+    });
 
-    public GridPane createOverlayDisplay() {
+    startWaveButton.disableProperty().bind(viewModel.getGameState().isEqualTo(GameState.RUNNING));
 
+    GridPane buttonDisplay = new GridPane();
+    buttonDisplay.setAlignment(Pos.CENTER);
+    buttonDisplay.setHgap(10);
 
+    buttonDisplay.add(startWaveButton, 0, 0);
+    buttonDisplay.add(abortGameButton, 1, 0);
 
-    GridPane overlayDisplay = new GridPane();
-    overlayDisplay.setAlignment(Pos.CENTER);
-    overlayDisplay.setHgap(10);
-
-//    if(viewModel.getGameOver().getValue().equals(true)) {
-//      Button retryButton = new Button("Retry");
-//      retryButton.setOnAction((event) -> {
-//        retryWaveOnAction();
-//      });
-//      Label lostLabel = new Label("You Lost");
-//      overlayDisplay.add(lostLabel, 0, 0);
-//    }else
-//
-
-
-    return overlayDisplay;
+    return buttonDisplay;
   }
-
+//
 //  public GridPane createOverlayDisplay() {
-//    // TODO: in "Game-Over" Overlay
-//    Button retryWaveButton = new Button("Retry this Round");
-//    retryWaveButton.setOnAction((event) -> {
-//      retryWaveOnAction();
-//    });
+//
+//
+//
 //    GridPane overlayDisplay = new GridPane();
 //    overlayDisplay.setAlignment(Pos.CENTER);
 //    overlayDisplay.setHgap(10);
-//    overlayDisplay.add(retryWaveButton, 0, 0);
+//
+////    if(viewModel.getGameOver().getValue().equals(true)) {
+////      Button retryButton = new Button("Retry");
+////      retryButton.setOnAction((event) -> {
+////        retryWaveOnAction();
+////      });
+////      Label lostLabel = new Label("You Lost");
+////      overlayDisplay.add(lostLabel, 0, 0);
+////    }else
+//
+//
 //
 //    return overlayDisplay;
 //  }
+
+  public GridPane createOverlayDisplay() {
+    // TODO: in "Game-Over" Overlay
+    Button retryWaveButton = new Button("Retry this Round");
+    retryWaveButton.setOnAction((event) -> {
+      retryWaveOnAction();
+    });
+    GridPane overlayDisplay = new GridPane();
+    overlayDisplay.setAlignment(Pos.CENTER);
+    overlayDisplay.setHgap(10);
+    overlayDisplay.add(retryWaveButton, 0, 0);
+
+    return overlayDisplay;
+  }
 
   public void prepareTowerPlacement() {
     int gridSize = viewModel.getMap().get().grid().length;

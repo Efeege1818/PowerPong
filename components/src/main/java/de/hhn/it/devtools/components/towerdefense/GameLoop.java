@@ -39,7 +39,6 @@ public class GameLoop extends Thread {
       }
 
       while (running) {
-        logger.debug("tick");
         service.tick();
         try {
           sleep(tickspeed);

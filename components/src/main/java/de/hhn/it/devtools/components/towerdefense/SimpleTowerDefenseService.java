@@ -24,6 +24,9 @@ import java.util.function.Consumer;
  */
 public class SimpleTowerDefenseService implements TowerDefenseService {
 
+  private static final org.slf4j.Logger logger =
+      org.slf4j.LoggerFactory.getLogger(SimpleTowerDefenseService.class);
+
   private MapToolbox mapToolbox;
   private EnemyToolbox enemyToolbox;
   private TowerToolbox towerToolbox;
@@ -277,6 +280,7 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
   }
 
   private void roundCompleted() {
+    logger.info("Round {} completed", currentRound);
     updateGameState(GameState.PAUSED);
     gameLoop.stopGame();
     savedPlayerData = player;
