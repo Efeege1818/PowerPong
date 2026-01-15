@@ -23,6 +23,8 @@ public class TitleScreen extends StackPane {
   Button config = new Button("config");
   Button exitGame = new Button("Exit Game");
   Label title = new Label();
+  private ChoiceBox<Difficulty> difficultyBox;
+
 
   public TitleScreen(ScreenManager screenManager) {
     alignmentProperty().set(Pos.CENTER_RIGHT);
@@ -50,13 +52,17 @@ public class TitleScreen extends StackPane {
       exitGame();
     });
 
-    config.setOnAction(event -> {
-      setConfig();
-    });
+
+    difficultyBox = new ChoiceBox<>();
+    difficultyBox.getItems().setAll(Difficulty.values());
+    difficultyBox.valueProperty()
+            .bindBidirectional(viewModel.difficultyProperty());
+
+    difficultyBox.setValue(Difficulty.NORMAL);
 
     title.textProperty().set("TOWER DEV");
     title.fontProperty().set(new Font("Impact", 20));
-    box.getChildren().addAll(title, startGame, exitGame, config);
+    box.getChildren().addAll(title, startGame, exitGame, difficultyBox);
     getChildren().addAll(box);
   }
 
@@ -68,10 +74,4 @@ public class TitleScreen extends StackPane {
     ((Stage) (getScene().getWindow())).close();
   }
 
-  public void setConfig() {
-    ChoiceBox<Difficulty> difficultyBox = new ChoiceBox<>();
-    difficultyBox.getItems().setAll(Difficulty.values());
-
-    difficultyBox.valueProperty().bindBidirectional(viewModel.difficultyProperty());
-  }
 }
