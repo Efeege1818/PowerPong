@@ -34,6 +34,7 @@ public class PauseScreenFx extends VBox {
 		public static final String SCREEN_NAME = "PauseScreen";
 
 		private final PauseScreenViewModel viewModel;
+		private final SimpleScreenManager screenManager;
 
 		// UI fields that need to be updated when switching monsters
 		private final Label titleLabel;
@@ -45,8 +46,9 @@ public class PauseScreenFx extends VBox {
 		private final VBox imageHolder; // container for the ImageView or fallback Circle
 		private final VBox statusBox;
 
-		public PauseScreenFx(PauseScreenViewModel viewModel) {
+		public PauseScreenFx(SimpleScreenManager screenManager, PauseScreenViewModel viewModel) {
 				this.viewModel = viewModel;
+				this.screenManager = screenManager;
 
 				// create updatable UI controls
 				titleLabel = new Label();
@@ -287,6 +289,7 @@ public class PauseScreenFx extends VBox {
 		public static class TestApp extends Application {
 				// Static holder used only for quick preview/testing
 				public static PauseScreenViewModel viewModelForTest;
+				public static SimpleScreenManager screenManagerForTest;
 				Data data = new Data();
 
 				@Override
@@ -299,7 +302,7 @@ public class PauseScreenFx extends VBox {
 										SimpleMonster.create(data.getMonsters()[1])
 						);
 
-						PauseScreenFx screen = new PauseScreenFx(vm);
+						PauseScreenFx screen = new PauseScreenFx(screenManagerForTest, vm);
 						Scene scene = new Scene(screen, 880, 560);
 						stage.setTitle("Pause Screen Preview");
 						stage.setScene(scene);

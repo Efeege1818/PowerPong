@@ -21,6 +21,7 @@ public class SimpleScreenManager implements ScreenManager {
   private Integer pendingWinnerPlayerId;
   private Element pendingWinnerElement;
   private InfoScreenViewModel infoViewModel;
+  private PauseScreenViewModel pauseViewModel;
 
 
   public SimpleScreenManager(final StackPane pane) {
@@ -62,7 +63,7 @@ public class SimpleScreenManager implements ScreenManager {
 
   private PauseScreenFx getPauseScreen() {
     if(pauseScreen == null) {
-      pauseScreen = new PauseScreenFx(null); //TODO: update PauseScreen to use ScreenManager
+      pauseScreen = new PauseScreenFx(this, pauseViewModel);
     }
     return pauseScreen;
   }
@@ -99,6 +100,12 @@ public class SimpleScreenManager implements ScreenManager {
     infoViewModel = new InfoScreenViewModel(monster);
     pane.getChildren().clear();
     pane.getChildren().add(getInfoScreen());
+  }
+
+  public void switchToPause(SimpleMonster monster1, SimpleMonster monster2) {
+    pauseViewModel = new PauseScreenViewModel(monster1, monster2);
+    pane.getChildren().clear();
+    pane.getChildren().add(getPauseScreen());
   }
 
   public void setPendingBattleService(SimpleTurnBasedBattleService service) {
