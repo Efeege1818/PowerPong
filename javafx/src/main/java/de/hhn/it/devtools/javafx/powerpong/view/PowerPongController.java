@@ -36,6 +36,7 @@ public class PowerPongController extends StackPane {
   private VBox pauseOverlay;
   private VBox countdownOverlay;
   private Label countdownLabel;
+  private double aiDifficulty = 1.0; // AI difficulty multiplier (0.6=easy, 1.0=medium, 1.5=hard)
 
   @FXML
   private Canvas gameCanvas;
@@ -87,6 +88,25 @@ public class PowerPongController extends StackPane {
 
   @FXML
   public void onStartVsAi(ActionEvent event) {
+    aiDifficulty = 0.5; // Default medium
+    startGame(GameMode.PLAYER_VS_AI);
+  }
+
+  @FXML
+  public void onStartVsAiEasy(ActionEvent event) {
+    aiDifficulty = 0.0; // Easy: slow reaction, big errors
+    startGame(GameMode.PLAYER_VS_AI);
+  }
+
+  @FXML
+  public void onStartVsAiMedium(ActionEvent event) {
+    aiDifficulty = 0.5; // Medium: balanced
+    startGame(GameMode.PLAYER_VS_AI);
+  }
+
+  @FXML
+  public void onStartVsAiHard(ActionEvent event) {
+    aiDifficulty = 1.0; // Hard: fast, precise
     startGame(GameMode.PLAYER_VS_AI);
   }
 
@@ -227,6 +247,10 @@ public class PowerPongController extends StackPane {
 
   private void startCountdownAndGame() {
     try {
+      // Set AI difficulty based on selected level (0=easy, 0.5=medium, 1.0=hard)
+      if (lastSelectedMode == GameMode.PLAYER_VS_AI) {
+        viewModel.setAiDifficulty(aiDifficulty);
+      }
       viewModel.startGame(lastSelectedMode);
     } catch (GameLogicException e) {
       e.printStackTrace();

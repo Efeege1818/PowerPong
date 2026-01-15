@@ -51,6 +51,19 @@ public class PowerPongMatchEngine implements PowerPongService {
 
   private GameState snapshot;
 
+  // AI difficulty settings
+  private double aiReactionDelay = 0.0; // seconds before AI reacts
+  private double aiPredictionError = 0.0; // random offset added to target
+  private double aiSpeedMultiplier = 1.0; // how fast AI can move (1.0 = normal)
+  private double aiReactionTimer = 0.0;
+  private double aiCachedTargetY = 300.0;
+
+  // AI random mistakes
+  private double aiMistakeChance = 0.0; // chance per update to make a mistake
+  private double aiMistakeDuration = 0.0; // how long the mistake lasts
+  private double aiCurrentMistakeTimer = 0.0; // countdown for current mistake
+  private int aiMistakeType = 0; // 0=none, 1=freeze, 2=wrong direction, 3=hesitate
+
   public PowerPongMatchEngine() {
     this(new Random());
   }
@@ -60,6 +73,43 @@ public class PowerPongMatchEngine implements PowerPongService {
     this.physics = new PhysicsEngine(this.random);
     this.powerUpManager = new PowerUpManager(this.physics, this.random);
     this.snapshot = buildSnapshot();
+  }
+
+  /**
+   * Sets AI difficulty level. Call before startGame.
+   * AI paddle moves at same speed as player - only intelligence changes.
+   * AI is always beatable, even on hard (has minimum reaction time & error).
+   * AI also makes random "mistakes" (freezes, wrong direction) based on
+   * difficulty.
+   * 
+   * @param difficulty 0.0 = Easy, 0.5 = Medium, 1.0 = Hard
+   */
+  public void setAiDifficulty(double difficulty) {
+    // Easy: slow reaction, big errors, frequent mistakes
+    // Hard: fast reaction, small errors, rare mistakes
+    // Paddle speed is ALWAYS the same as player (fair play)
+    difficulty = Math.max(0, Math.min(1, difficulty)); // clamp 0-1
+
+    // Reaction delay: 0.5s (easy) to 0.08s (hard) - always some delay!
+    this.aiReactionDelay = 0.08 + 0.42 * (1.0 - difficulty);
+
+    // Prediction error: 250px (easy) to 30px (hard) - always some error!
+    this.aiPredictionError = 30 + 220 * (1.0 - difficulty);
+
+    // Speed multiplier: always 1.0 (same as player)
+    this.aiSpeedMultiplier = 1.0;
+
+    // Random mistakes: 15% (easy) to 2% (hard) chance per reaction cycle
+    this.aiMistakeChance = 0.02 + 0.13 * (1.0 - difficulty);
+
+    // Mistake duration: 0.4s (easy) to 0.15s (hard)
+    this.aiMistakeDuration = 0.15 + 0.25 * (1.0 - difficulty);
+
+    // Reset cached values
+    this.aiReactionTimer = 0;
+    this.aiCachedTargetY = PhysicsEngine.FIELD_HEIGHT / 2.0;
+    this.aiCurrentMistakeTimer = 0;
+    this.aiMistakeType = 0;
   }
 
   private double survivalTime = 0;
@@ -147,30 +197,79 @@ public class PowerPongMatchEngine implements PowerPongService {
       return 0;
     }
 
+    // Handle ongoing mistakes
+    if (aiCurrentMistakeTimer > 0) {
+      aiCurrentMistakeTimer -= FRAME_TIME_SECONDS;
+      switch (aiMistakeType) {
+        case 1: // Freeze - AI stops moving
+          return 0;
+        case 2: // Wrong direction - AI moves away from ball
+          double paddleY = physics.getPaddle2Y();
+          return ball.y > paddleY ? -1 : 1; // Opposite of correct direction
+        case 3: // Hesitate - AI moves slowly
+          return calculateNormalAIMovement(ball) * 0.3;
+        default:
+          break;
+      }
+    }
+
     // AI Logic: Predict where the ball will be
     double targetY;
 
-    // Check if we have a secondary ball that is closer or more dangerous?
-    // For now, simpler: Focus on main ball.
+    // Only update target periodically based on reaction delay
+    aiReactionTimer += FRAME_TIME_SECONDS;
+    if (aiReactionTimer >= aiReactionDelay) {
+      aiReactionTimer = 0;
 
-    // If ball is moving towards AI (Player 2 is usually Right side, so vx > 0)
-    if (ball.vx > 0) {
-      targetY = physics.predictBallY(PhysicsEngine.RIGHT_PADDLE_X, ball);
-    } else {
-      // Idle behavior: Return to center
-      targetY = PhysicsEngine.FIELD_HEIGHT / 2.0;
+      // Random chance to make a mistake when updating target
+      if (random.nextDouble() < aiMistakeChance && ball.vx > 0) {
+        aiCurrentMistakeTimer = aiMistakeDuration;
+        aiMistakeType = 1 + random.nextInt(3); // 1, 2, or 3
+        // Apply mistake immediately
+        switch (aiMistakeType) {
+          case 1:
+            return 0; // Freeze
+          case 2: // Wrong direction
+            double py = physics.getPaddle2Y();
+            return ball.y > py ? -1 : 1;
+          case 3:
+            return calculateNormalAIMovement(ball) * 0.3; // Hesitate
+        }
+      }
+
+      // If ball is moving towards AI (Player 2 is usually Right side, so vx > 0)
+      double newTargetY;
+      if (ball.vx > 0) {
+        newTargetY = physics.predictBallY(PhysicsEngine.RIGHT_PADDLE_X, ball);
+        // Add prediction error based on difficulty (calculated once, not every frame)
+        newTargetY += (random.nextDouble() - 0.5) * 2 * aiPredictionError;
+        // Clamp to field bounds
+        newTargetY = Math.max(50, Math.min(PhysicsEngine.FIELD_HEIGHT - 50, newTargetY));
+      } else {
+        // Idle behavior: Return to center
+        newTargetY = PhysicsEngine.FIELD_HEIGHT / 2.0;
+      }
+      // Smooth transition to new target (reduces jitter)
+      aiCachedTargetY = aiCachedTargetY * 0.3 + newTargetY * 0.7;
     }
-
-    // Add some random error/smoothness if desired, but for "Best Possible", we want
-    // it sharp first.
+    targetY = aiCachedTargetY;
 
     double paddleY = physics.getPaddle2Y();
 
-    // Deadzone to prevent jitter
-    if (Math.abs(paddleY - targetY) < 10.0) {
+    // Larger deadzone to prevent jitter (25px instead of 10)
+    if (Math.abs(paddleY - targetY) < 25.0) {
       return 0;
     }
 
+    // Return direction at full speed (same as player)
+    return targetY > paddleY ? 1 : -1;
+  }
+
+  private double calculateNormalAIMovement(PhysicsEngine.Ball ball) {
+    double targetY = physics.predictBallY(PhysicsEngine.RIGHT_PADDLE_X, ball);
+    double paddleY = physics.getPaddle2Y();
+    if (Math.abs(paddleY - targetY) < 10.0)
+      return 0;
     return targetY > paddleY ? 1 : -1;
   }
 

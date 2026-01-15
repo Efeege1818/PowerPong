@@ -34,6 +34,16 @@ public class PowerPongViewModel implements PowerPongListener {
     this.gameStatus = new SimpleObjectProperty<>(GameStatus.MENU);
   }
 
+  public void setAiDifficulty(double difficulty) {
+    try {
+      // Use reflection as components module may have restricted access
+      var method = service.getClass().getMethod("setAiDifficulty", double.class);
+      method.invoke(service, difficulty);
+    } catch (Exception e) {
+      // Ignore if method not available
+    }
+  }
+
   public void startGame(final GameMode mode) throws GameLogicException {
     service.startGame(mode);
     service.removeListener(this);

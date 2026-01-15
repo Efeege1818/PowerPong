@@ -50,6 +50,11 @@ public class PhysicsEngine {
 
     private boolean noWalls;
 
+    // Rally speed increase
+    private int rallyHitCount = 0;
+    private static final double RALLY_SPEED_INCREASE = 0.03; // 3% faster per hit
+    private static final double MAX_RALLY_MULTIPLIER = 1.5; // Max 50% faster
+
     public PhysicsEngine(Random random) {
         this.random = random;
     }
@@ -62,6 +67,7 @@ public class PhysicsEngine {
         secondaryBall = null;
         resetModifiers();
         difficultyMultiplier = 1.0;
+        rallyHitCount = 0;
     }
 
     public void resetModifiers() {
@@ -227,7 +233,12 @@ public class PhysicsEngine {
 
     private void bounceFromPaddle(Ball current, int horizontalDirection, double paddleCenterY, double paddleHeight) {
         double relativeIntersect = (current.y - paddleCenterY) / (paddleHeight / 2.0);
-        double speed = getBaseBallSpeed();
+
+        // Increase rally hit count and apply speed boost
+        rallyHitCount++;
+        double rallyMultiplier = Math.min(MAX_RALLY_MULTIPLIER, 1.0 + (rallyHitCount * RALLY_SPEED_INCREASE));
+
+        double speed = getBaseBallSpeed() * rallyMultiplier;
         current.vx = horizontalDirection * speed;
         current.vy = relativeIntersect * speed;
     }
@@ -256,8 +267,10 @@ public class PhysicsEngine {
 
     private int checkScoring(Ball current) {
         if (current.x + BALL_RADIUS < -SCORING_MARGIN) {
+            rallyHitCount = 0; // Reset rally on score
             return 2; // Player 2 scores (ball went out left)
         } else if (current.x - BALL_RADIUS > FIELD_WIDTH + SCORING_MARGIN) {
+            rallyHitCount = 0; // Reset rally on score
             return 1; // Player 1 scores (ball went out right)
         }
         return 0;

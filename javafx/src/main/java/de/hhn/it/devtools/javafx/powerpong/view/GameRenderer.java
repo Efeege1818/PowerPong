@@ -44,6 +44,17 @@ public class GameRenderer {
     private double lastBallX = -1;
     private double lastBallY = -1;
 
+    // Screen shake effect
+    private double shakeIntensity = 0;
+    private double shakeOffsetX = 0;
+    private double shakeOffsetY = 0;
+
+    // Score animation (per player)
+    private double score1Scale = 1.0;
+    private double score2Scale = 1.0;
+    private int lastPlayer1Score = 0;
+    private int lastPlayer2Score = 0;
+
     private static class Particle {
         double x, y, vx, vy;
         double life, maxLife;
@@ -68,6 +79,37 @@ public class GameRenderer {
         particles.clear();
         lastBallX = -1;
         lastBallY = -1;
+        shakeIntensity = 0;
+        shakeOffsetX = 0;
+        shakeOffsetY = 0;
+        score1Scale = 1.0;
+        score2Scale = 1.0;
+        lastPlayer1Score = 0;
+        lastPlayer2Score = 0;
+    }
+
+    /**
+     * Trigger screen shake effect (call on collision).
+     */
+    public void triggerShake(double intensity) {
+        this.shakeIntensity = intensity;
+    }
+
+    /**
+     * Spawn goal particles when a point is scored.
+     */
+    public void spawnGoalParticles(int side) {
+        double x = (side == 1) ? LOGICAL_WIDTH - 20 : 20; // Right or left edge
+        double y = LOGICAL_HEIGHT / 2;
+        Color color = (side == 1) ? NEON_BLUE : NEON_PINK;
+
+        for (int i = 0; i < 20; i++) {
+            double angle = Math.random() * Math.PI * 2;
+            double speed = 5 + Math.random() * 8;
+            double vx = Math.cos(angle) * speed;
+            double vy = Math.sin(angle) * speed;
+            particles.add(new Particle(x, y + (Math.random() - 0.5) * 200, vx, vy, 1.0, color));
+        }
     }
 
     public void render(GraphicsContext gc, GameState state) {
@@ -83,8 +125,40 @@ public class GameRenderer {
         gc.setFill(BACKGROUND_COLOR);
         gc.fillRect(0, 0, canvasWidth, canvasHeight);
 
-        // Apply transformation for scaling (stretch to fill)
+        // Update screen shake
+        if (shakeIntensity > 0) {
+            shakeOffsetX = (Math.random() - 0.5) * shakeIntensity * 10;
+            shakeOffsetY = (Math.random() - 0.5) * shakeIntensity * 10;
+            shakeIntensity *= 0.85; // Decay
+            if (shakeIntensity < 0.1)
+                shakeIntensity = 0;
+        } else {
+            shakeOffsetX = 0;
+            shakeOffsetY = 0;
+        }
+
+        // Check for score changes (animate only the player who scored)
+        int p1Score = state.score().player1();
+        int p2Score = state.score().player2();
+        if (p1Score != lastPlayer1Score) {
+            score1Scale = 1.5; // Player 1 scored
+            lastPlayer1Score = p1Score;
+        }
+        if (p2Score != lastPlayer2Score) {
+            score2Scale = 1.5; // Player 2 scored
+            lastPlayer2Score = p2Score;
+        }
+        // Animate scores back to normal
+        if (score1Scale > 1.0) {
+            score1Scale = Math.max(1.0, score1Scale - 0.03);
+        }
+        if (score2Scale > 1.0) {
+            score2Scale = Math.max(1.0, score2Scale - 0.03);
+        }
+
+        // Apply transformation for scaling (stretch to fill) + shake
         gc.save();
+        gc.translate(shakeOffsetX, shakeOffsetY);
         gc.scale(scaleX, scaleY);
 
         // Draw Field Decorations (Line, Scores)
@@ -177,16 +251,20 @@ public class GameRenderer {
         gc.strokeLine(LOGICAL_WIDTH / 2, 0, LOGICAL_WIDTH / 2, LOGICAL_HEIGHT);
         gc.setLineDashes(null);
 
-        // 2. Draw Background Scores
-        gc.setFill(Color.web("#222222")); // Subtle dark grey for background score
-        gc.setFont(javafx.scene.text.Font.font("Arial", javafx.scene.text.FontWeight.BOLD, 150));
+        // 2. Draw Background Scores with per-player animation
         gc.setTextAlign(javafx.scene.text.TextAlignment.CENTER);
         gc.setTextBaseline(javafx.geometry.VPos.CENTER);
 
-        // Player 1 Score (Left Center)
+        // Player 1 Score (Left Center) - with individual animation
+        double fontSize1 = 150 * score1Scale;
+        gc.setFill(Color.web("#333333").deriveColor(0, 1, 1, Math.min(1.0, 0.3 + (score1Scale - 1.0))));
+        gc.setFont(javafx.scene.text.Font.font("Arial", javafx.scene.text.FontWeight.BOLD, fontSize1));
         gc.fillText(String.valueOf(state.score().player1()), LOGICAL_WIDTH / 4, LOGICAL_HEIGHT / 2);
 
-        // Player 2 Score (Right Center)
+        // Player 2 Score (Right Center) - with individual animation
+        double fontSize2 = 150 * score2Scale;
+        gc.setFill(Color.web("#333333").deriveColor(0, 1, 1, Math.min(1.0, 0.3 + (score2Scale - 1.0))));
+        gc.setFont(javafx.scene.text.Font.font("Arial", javafx.scene.text.FontWeight.BOLD, fontSize2));
         gc.fillText(String.valueOf(state.score().player2()), LOGICAL_WIDTH * 3 / 4, LOGICAL_HEIGHT / 2);
     }
 
@@ -224,10 +302,12 @@ public class GameRenderer {
             // Left paddle collision (ball moving right after being on left side)
             if (leftPaddle != null && lastBallX < 100 && ballX > lastBallX && ballX < 100) {
                 spawnCollisionParticles(ballX, ball.yPosition(), NEON_BLUE);
+                triggerShake(1.0); // Screen shake on paddle hit
             }
             // Right paddle collision (ball moving left after being on right side)
             if (rightPaddle != null && lastBallX > 700 && ballX < lastBallX && ballX > 700) {
                 spawnCollisionParticles(ballX, ball.yPosition(), NEON_PINK);
+                triggerShake(1.0); // Screen shake on paddle hit
             }
         }
         lastBallX = ball.xPosition();
