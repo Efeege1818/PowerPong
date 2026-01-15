@@ -22,7 +22,7 @@ import javafx.scene.shape.Rectangle;
  */
 public class CompleteBoard extends StackPane {
   TowerDefenseViewModel viewModel;
-  private final int size;
+  private final int gridSize;
   ObjectProperty<Grid> gridProperty = new SimpleObjectProperty<>();
   GridPane mapGrid = new GridPane();
   ListProperty<Enemy> enemies = new SimpleListProperty<>();
@@ -42,7 +42,7 @@ public class CompleteBoard extends StackPane {
 
     alignmentProperty().set(Pos.TOP_LEFT);
     gridProperty.bind(viewModel.getMap());
-    size = gridProperty.get().grid().length;
+    gridSize = gridProperty.get().grid().length;
 
     enemies.bind(viewModel.getEnemies());
     enemies.addListener((obs, oldEx, newEx) -> Platform.runLater(this::updateEnemies));
@@ -59,8 +59,8 @@ public class CompleteBoard extends StackPane {
     mapGrid.widthProperty().divide(2);
     mapGrid.scaleXProperty().setValue(mapGrid.scaleXProperty().get());
     mapGrid.scaleYProperty().setValue(mapGrid.scaleYProperty().get());
-    for (int row = 0; row < size; row++) {
-      for (int col = 0; col < size; col++) {
+    for (int row = 0; row < gridSize; row++) {
+      for (int col = 0; col < gridSize; col++) {
 
         Rectangle rectangle = new Rectangle(16, 16);
         rectangle.setStroke(Color.BLACK);
@@ -97,25 +97,12 @@ public class CompleteBoard extends StackPane {
 
     Rectangle rectangle;
     for (Enemy enemy : enemies) {
-      switch (enemy.type()) {
-        case LARGE -> {
-          rectangle = new Rectangle(10, 10);
-          rectangle.setFill(Color.DARKRED);
-        }
-        case MEDIUM -> {
-          rectangle = new Rectangle(8, 8);
-          rectangle.setFill(Color.CRIMSON);
-        }
-        case SMALL -> {
-          rectangle = new Rectangle(5, 5);
-          rectangle.setFill(Color.RED);
-        }
-        default -> rectangle = new Rectangle(5, 5);
-      }
+      double size = viewModel.getEnemySize(enemy.type());
+      rectangle = new Rectangle(size, size);
+      rectangle.setFill(viewModel.getEnemyColour(enemy.type()));
       rectangle.setStroke(Color.BLACK);
-      // TODO: Replace the 3.5 (Voodoo Constants) Values with the real calculations for different Enemy Types
-      rectangle.setTranslateX(enemy.coordinates().x() * 17 + 3.5);
-      rectangle.setTranslateY(enemy.coordinates().y() * 17 + 3.5);
+      rectangle.setTranslateX(enemy.coordinates().x() * 17 + (17 - size) / 2);
+      rectangle.setTranslateY(enemy.coordinates().y() * 17 + (17 - size) / 2);
       enemyContainer.getChildren().add(rectangle);
     }
   }

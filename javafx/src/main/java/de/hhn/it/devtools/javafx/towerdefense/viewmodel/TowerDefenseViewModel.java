@@ -3,6 +3,7 @@ package de.hhn.it.devtools.javafx.towerdefense.viewmodel;
 import de.hhn.it.devtools.apis.towerdefense.Configuration;
 import de.hhn.it.devtools.apis.towerdefense.Difficulty;
 import de.hhn.it.devtools.apis.towerdefense.Enemy;
+import de.hhn.it.devtools.apis.towerdefense.EnemyType;
 import de.hhn.it.devtools.apis.towerdefense.GameState;
 import de.hhn.it.devtools.apis.towerdefense.Grid;
 import de.hhn.it.devtools.apis.towerdefense.Tower;
@@ -186,6 +187,24 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
       case MELEE -> Color.BLUE;
       case RANGED -> Color.CYAN;
       case MONEYMAKER -> Color.DARKBLUE;
+      default -> Color.HOTPINK; // Use Hotpink as default value to spot errors
+    };
+  }
+
+  public int getEnemySize(EnemyType type) {
+    return switch (type) {
+      case SMALL -> 5;
+      case MEDIUM -> 8;
+      case LARGE -> 10;
+      default -> 15;
+    };
+  }
+
+  public Color getEnemyColour(EnemyType type) {
+    return switch (type) {
+      case SMALL -> Color.RED;
+      case MEDIUM -> Color.CRIMSON;
+      case LARGE -> Color.DARKRED;
       default -> Color.HOTPINK; // Use Hotpink as default value to spot errors
     };
   }
