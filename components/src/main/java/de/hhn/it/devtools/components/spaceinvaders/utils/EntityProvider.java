@@ -377,6 +377,10 @@ public class EntityProvider {
     return barriers;
   }
 
+  /**
+   * clears projectiles of board.
+   *
+   */
   public void clearProjectiles() {
     for (SimpleProjectile p : projectiles) {
       p.inverse();
