@@ -32,8 +32,8 @@ public class FireMonster extends SimpleMonster {
     this.moves = monster.moves();
 
     this.name = "Fire Monster";
-    this.focus = "FOCUS INFO PLACEHOLDER";
-    this.passiveInfo = "PASSIVE INFO PLACEHOLDER";
+    this.focus = "Buffs the power of its hard-hitting moves";
+    this.passiveInfo = "Smoldering embers\n" + "Starts with high attack buff that lowers each turn";
     this.imagePath = "/Monster Sprites/FeuerMon.png";
     this.imagePathBack = "/Monster Sprites/FeuerMon Back.png";
 

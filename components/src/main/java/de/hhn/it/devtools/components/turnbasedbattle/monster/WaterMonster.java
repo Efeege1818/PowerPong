@@ -39,8 +39,8 @@ public class WaterMonster extends SimpleMonster {
     this.name = "Water Monster";
     this.focus = "Manipulates Dodge and Crit chances";
     this.passiveInfo = "Water Flow \n"
-            + "Buffes Crit chance if this monster hits a crit hit in crit stance \n"
-            + "Buffes dodge chance if this monster dodges an ATK in dodge stance";
+            + "Buffs crit chance if this monster hits a crit hit in crit stance \n"
+            + "Buffs dodge chance if this monster dodges an ATK in dodge stance";
     this.imagePath = "/Monster Sprites/WasserMon.png";
     this.imagePathBack = "/Monster Sprites/WasserMon Back.png";
 

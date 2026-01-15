@@ -31,8 +31,8 @@ public class GrassMonster extends SimpleMonster {
     this.moves = monster.moves();
 
     this.name = "Grass Monster";
-    this.focus = "FOCUS INFO PLACEHOLDER";
-    this.passiveInfo = "Emergency Defence\n" + "Increases DEF with lower HP";
+    this.focus = "Poisons the enemy while buffing its own defense";
+    this.passiveInfo = "Emergency Defense\n" + "Increases DEF with lower HP";
     this.imagePath = "/Monster Sprites/PflanzeMon.png";
     this.imagePathBack = "/Monster Sprites/PflanzeMon Back.png";
 
