@@ -59,20 +59,19 @@ class EnemySystem {
     int y = playerPos.y() + (int) (Math.sin(angle) * distance);
 
     int hp = (int) (50 * ctx.getConfiguration().difficultyMultiplier());
-    int statMulitpliertime = 1;
+    int statMultiplierTime = 1;
 
-    if(service.getElapsedTime() >= 300 && service.getElapsedTime() < 600)
-    {
-      statMulitpliertime = 2;
-    }else if(service.getElapsedTime()>= 600){
-      statMulitpliertime = 4;
+    if (service.getElapsedTime() >= 300 && service.getElapsedTime() < 600) {
+      statMultiplierTime = 2;
+    } else if (service.getElapsedTime() >= 600) {
+      statMultiplierTime = 4;
     }
     Enemy enemy = new Enemy(
             ctx.getNextEnemyId(),
             new Position(x, y),
-            hp * statMulitpliertime, hp * statMulitpliertime,
+            hp * statMultiplierTime, hp * statMultiplierTime,
             2.0,
-            10 * statMulitpliertime,
+            10 * statMultiplierTime,
             10
     );
 
