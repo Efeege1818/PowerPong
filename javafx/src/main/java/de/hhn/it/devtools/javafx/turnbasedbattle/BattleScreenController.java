@@ -7,10 +7,14 @@ import de.hhn.it.devtools.apis.turnbasedbattle.UnknownTransitionException;
 import de.hhn.it.devtools.apis.turnbasedbattle.move.Move;
 import de.hhn.it.devtools.components.turnbasedbattle.SimpleMonster;
 import de.hhn.it.devtools.components.turnbasedbattle.SimpleTurnBasedBattleService;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -18,6 +22,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 
 import java.util.HashMap;
 import java.util.List;
@@ -45,6 +50,9 @@ public class BattleScreenController {
   @FXML private Label keyLabelBuff;
   @FXML private Label keyLabelDebuff;
   @FXML private Label keyLabelSpecial;
+
+  @FXML private ProgressBar player1HpBar;
+  @FXML private ProgressBar player2HpBar;
 
   private TurnBasedBattleService service;
   private SimpleScreenManager screenManager;
@@ -170,6 +178,26 @@ public class BattleScreenController {
     }
   }
 
+  private void updateHpBars(SimpleMonster monster1, SimpleMonster monster2) {
+    if (player1HpBar != null) {
+      double p1Progress = (double) monster1.getCurrentHp() / monster1.getMaxHp();
+      Timeline tl = new Timeline(
+          new KeyFrame(Duration.millis(300),
+              new KeyValue(player1HpBar.progressProperty(), p1Progress))
+      );
+      tl.play();
+    }
+
+    if (player2HpBar != null) {
+      double p2Progress = (double) monster2.getCurrentHp() / monster2.getMaxHp();
+      Timeline tl = new Timeline(
+          new KeyFrame(Duration.millis(300),
+              new KeyValue(player2HpBar.progressProperty(), p2Progress))
+      );
+      tl.play();
+    }
+  }
+
   private void refreshFromGameState() {
     if (!(service instanceof SimpleTurnBasedBattleService concrete)) return;
 
@@ -187,6 +215,7 @@ public class BattleScreenController {
     updateMonsterSides(p1Turn);
     updateStatusSides(p1Turn);
     updateMonsterImages(p1Turn, m1, m2);
+    updateHpBars(m1, m2);
   }
 
   private void render() {
