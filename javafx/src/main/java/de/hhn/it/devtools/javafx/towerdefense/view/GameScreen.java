@@ -55,7 +55,7 @@ public class GameScreen extends StackPane {
     tutorialLayout.getChildren().add(createTowerDefenseTutorialDisplay());
 
     HBox rootLayout = new HBox();
-    rootLayout.setSpacing(50);
+    rootLayout.setSpacing(5);
     rootLayout.setAlignment(Pos.TOP_CENTER);
     rootLayout.getChildren().addAll(mainLayout, tutorialLayout);
 
