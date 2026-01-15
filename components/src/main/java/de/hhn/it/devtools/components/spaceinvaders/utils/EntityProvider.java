@@ -125,7 +125,7 @@ public class EntityProvider {
     int row = 1;
     int col = 1;
 
-    for (int i = 1; i <= Constants.NUMBER_OF_ALIENS; i++) {
+    for (int i = 1; i <= Constants.NUMBER_OF_ALIENS + service.getRound() - 1; i++) {
       aliens.put(i, new SimpleAlien(
               new Coordinate(col * 25, 25 * row),
               AlienType.BASIC,
@@ -375,5 +375,19 @@ public class EntityProvider {
     barrierGrid.values().forEach(list -> list.forEach(barrier ->
             barriers.put(barrier.getId(), barrier)));
     return barriers;
+  }
+
+  /**
+   * clears projectiles of board.
+   *
+   */
+  public void clearProjectiles() {
+    for (SimpleProjectile p : projectiles) {
+      p.inverse();
+    }
+    service.notifyListeners(l ->
+        l.updateProjectiles(projectiles.stream()
+            .map(SimpleProjectile::getImmtProjectile).toArray(Projectile[]::new)));
+    projectiles.clear();
   }
 }

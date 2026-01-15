@@ -101,11 +101,12 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
   @Override
   public void nextRound() throws IllegalStateException {
     logger.debug("Service NextRound");
-    entityProvider.generateAliens();
     checkIfGameStateIsLegal(GameState.PAUSED);
     this.gameState = GameState.RUNNING;
     notifyListeners((l) -> l.changedGameState(gameState));
     notifyListeners((l) -> l.updateRound(++round));
+    entityProvider.generateAliens();
+    entityProvider.clearProjectiles();
     synchronized (simpleGameLoop) {
       this.simpleGameLoop.notify();
     }
@@ -218,6 +219,10 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
       abort();
     }
 
+  }
+
+  public int getRound() {
+    return round;
   }
 
   protected GameState getGameState() {
