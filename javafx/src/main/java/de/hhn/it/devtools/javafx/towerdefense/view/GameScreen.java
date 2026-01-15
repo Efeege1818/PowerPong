@@ -43,11 +43,23 @@ public class GameScreen extends StackPane {
     mainLayout.getChildren().addAll(
         createStatsDisplay(),
         completeBoard,
-        createTowerDisplay(),
+        createTowerDisplay()
         //createButtonDisplay(),
-        createTowerDefenseTutorialDisplay()
+        //createTowerDefenseTutorialDisplay()
     );
     getChildren().add(mainLayout);
+
+    VBox tutorialLayout = new VBox();
+    tutorialLayout.setSpacing(1);
+    tutorialLayout.setAlignment(Pos.CENTER_RIGHT);
+    tutorialLayout.getChildren().add(createTowerDefenseTutorialDisplay());
+
+    HBox rootLayout = new HBox();
+    rootLayout.setSpacing(50);
+    rootLayout.setAlignment(Pos.TOP_CENTER);
+    rootLayout.getChildren().addAll(mainLayout, tutorialLayout);
+
+    getChildren().add(rootLayout);
 
     prepareTowerPlacement();
 
