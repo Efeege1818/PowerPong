@@ -12,7 +12,8 @@
 <?import javafx.scene.effect.Glow?>
 <?import javafx.scene.text.Font?>
 
-<fx:root prefHeight="600.0" prefWidth="800.0" type="StackPane" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root type="StackPane" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+         style="-fx-background-color: rgb(5, 5, 25);">
    <children>
       <Canvas fx:id="gameCanvas" height="600.0" width="800.0" />
       
@@ -60,16 +61,10 @@
          </children>
       </StackPane>
 
-      <VBox fx:id="menuBox" alignment="CENTER" spacing="30.0" visible="true">
+      <VBox fx:id="menuBox" alignment="CENTER" spacing="20.0" visible="true" 
+            maxWidth="Infinity" maxHeight="Infinity">
          <style>
-            -fx-background-color: rgba(10, 10, 25, 0.85);
-            -fx-background-radius: 30;
-            -fx-border-radius: 30;
-            -fx-border-color: rgba(255, 255, 255, 0.1);
-            -fx-border-width: 1;
-            -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 20, 0, 0, 0);
-            -fx-max-width: 500;
-            -fx-max-height: 520;
+            -fx-background-color: linear-gradient(to bottom, rgb(5, 5, 25), rgb(15, 10, 35));
             -fx-padding: 40;
          </style>
          <children>
@@ -94,30 +89,40 @@
             </VBox>
 
             <!-- Menu Buttons -->
-            <VBox spacing="15.0" alignment="CENTER" prefWidth="400.0">
+            <VBox spacing="12.0" alignment="CENTER" maxWidth="600">
                 <!-- Classic Mode -->
-                <Button mnemonicParsing="false" onAction="#onStartClassic" text="CLASSIC DUEL" maxWidth="Infinity" style="-fx-background-color: rgba(0, 243, 255, 0.15); -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 18px; -fx-background-radius: 10; -fx-cursor: hand; -fx-border-color: rgba(0, 243, 255, 0.5); -fx-border-radius: 10;">
+                <Button mnemonicParsing="false" onAction="#onStartClassic" text="🎮 CLASSIC DUEL" maxWidth="Infinity" prefHeight="50" style="-fx-background-color: linear-gradient(to bottom, rgba(0, 243, 255, 0.3), rgba(0, 150, 200, 0.15)); -fx-text-fill: #00f3ff; -fx-font-weight: bold; -fx-font-size: 18px; -fx-background-radius: 25; -fx-cursor: hand; -fx-border-color: #00f3ff; -fx-border-radius: 25; -fx-border-width: 2;">
                     <effect>
-                        <javafx.scene.effect.Glow level="0.3"/>
+                        <javafx.scene.effect.DropShadow color="#00f3ff" radius="12" spread="0.2"/>
                     </effect>
                 </Button>
                 
                 <!-- VS AI with Difficulty Levels -->
-                <VBox spacing="5" alignment="CENTER">
-                    <Label text="PLAYER VS AI" textFill="#0aff0a" style="-fx-font-weight: bold; -fx-font-size: 14;"/>
-                    <HBox spacing="8" alignment="CENTER">
-                        <Button mnemonicParsing="false" onAction="#onStartVsAiEasy" text="Einfach" prefWidth="90" style="-fx-background-color: rgba(10, 255, 10, 0.15); -fx-text-fill: white; -fx-font-size: 13px; -fx-background-radius: 8; -fx-cursor: hand; -fx-border-color: rgba(10, 255, 10, 0.4); -fx-border-radius: 8;"/>
-                        <Button mnemonicParsing="false" onAction="#onStartVsAiMedium" text="Mittel" prefWidth="90" style="-fx-background-color: rgba(10, 255, 10, 0.25); -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 13px; -fx-background-radius: 8; -fx-cursor: hand; -fx-border-color: rgba(10, 255, 10, 0.6); -fx-border-radius: 8;"/>
-                        <Button mnemonicParsing="false" onAction="#onStartVsAiHard" text="Schwer" prefWidth="90" style="-fx-background-color: rgba(255, 100, 10, 0.3); -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 13px; -fx-background-radius: 8; -fx-cursor: hand; -fx-border-color: rgba(255, 100, 10, 0.6); -fx-border-radius: 8;"/>
+                <VBox spacing="8" alignment="CENTER" style="-fx-background-color: rgba(10, 255, 10, 0.08); -fx-background-radius: 15; -fx-padding: 12;">
+                    <Label text="🤖 PLAYER VS AI" textFill="#0aff0a" style="-fx-font-weight: bold; -fx-font-size: 15;">
+                        <effect>
+                            <javafx.scene.effect.Glow level="0.5"/>
+                        </effect>
+                    </Label>
+                    <HBox spacing="10" alignment="CENTER">
+                        <Button mnemonicParsing="false" onAction="#onStartVsAiEasy" text="😊 Einfach" prefWidth="100" prefHeight="38" style="-fx-background-color: linear-gradient(to bottom, rgba(100, 255, 100, 0.25), rgba(50, 200, 50, 0.1)); -fx-text-fill: #7fff7f; -fx-font-size: 12px; -fx-font-weight: bold; -fx-background-radius: 20; -fx-cursor: hand; -fx-border-color: #7fff7f; -fx-border-radius: 20; -fx-border-width: 1.5;"/>
+                        <Button mnemonicParsing="false" onAction="#onStartVsAiMedium" text="😐 Mittel" prefWidth="100" prefHeight="38" style="-fx-background-color: linear-gradient(to bottom, rgba(255, 200, 50, 0.3), rgba(200, 150, 30, 0.15)); -fx-text-fill: #ffc832; -fx-font-weight: bold; -fx-font-size: 12px; -fx-background-radius: 20; -fx-cursor: hand; -fx-border-color: #ffc832; -fx-border-radius: 20; -fx-border-width: 1.5;"/>
+                        <Button mnemonicParsing="false" onAction="#onStartVsAiHard" text="😈 Schwer" prefWidth="100" prefHeight="38" style="-fx-background-color: linear-gradient(to bottom, rgba(255, 80, 80, 0.35), rgba(200, 50, 50, 0.15)); -fx-text-fill: #ff6464; -fx-font-weight: bold; -fx-font-size: 12px; -fx-background-radius: 20; -fx-cursor: hand; -fx-border-color: #ff6464; -fx-border-radius: 20; -fx-border-width: 1.5;"/>
                     </HBox>
                 </VBox>
                 
-                <!-- Power-Up Mode (Featured) -->
-                <Button mnemonicParsing="false" onAction="#onStartPowerUp" text="⚡ POWER-UP CHAOS ⚡" maxWidth="Infinity" style="-fx-background-color: linear-gradient(to right, #ff00cc, #333399); -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 20px; -fx-background-radius: 10; -fx-cursor: hand; -fx-effect: dropshadow(three-pass-box, rgba(255, 0, 255, 0.4), 10, 0, 0, 0);">
+                <!-- Power-Up Mode (Featured) - Most prominent -->
+                <Button mnemonicParsing="false" onAction="#onStartPowerUp" text="⚡ POWER-UP CHAOS ⚡" maxWidth="Infinity" prefHeight="60" style="-fx-background-color: linear-gradient(to right, #ff00cc, #6600ff, #00ccff); -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 22px; -fx-background-radius: 30; -fx-cursor: hand; -fx-border-color: white; -fx-border-radius: 30; -fx-border-width: 2;">
+                    <effect>
+                        <javafx.scene.effect.DropShadow color="#ff00ff" radius="20" spread="0.3"/>
+                    </effect>
                 </Button>
                 
                 <!-- Survival -->
-                <Button mnemonicParsing="false" onAction="#onStartSurvival" text="SURVIVAL" maxWidth="Infinity" style="-fx-background-color: rgba(255, 255, 0, 0.15); -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 18px; -fx-background-radius: 10; -fx-cursor: hand; -fx-border-color: rgba(255, 255, 0, 0.5); -fx-border-radius: 10;">
+                <Button mnemonicParsing="false" onAction="#onStartSurvival" text="💀 SURVIVAL" maxWidth="Infinity" prefHeight="50" style="-fx-background-color: linear-gradient(to bottom, rgba(255, 220, 0, 0.3), rgba(200, 150, 0, 0.15)); -fx-text-fill: #ffdc00; -fx-font-weight: bold; -fx-font-size: 18px; -fx-background-radius: 25; -fx-cursor: hand; -fx-border-color: #ffdc00; -fx-border-radius: 25; -fx-border-width: 2;">
+                    <effect>
+                        <javafx.scene.effect.DropShadow color="#ffdc00" radius="10" spread="0.15"/>
+                    </effect>
                 </Button>
             </VBox>
             
@@ -143,9 +148,9 @@
             <!-- Footer -->
             <HBox alignment="CENTER" spacing="20.0">
                  <padding>
-                     <Insets top="10.0" />
+                     <Insets top="5.0" />
                  </padding>
-                 <Button mnemonicParsing="false" onAction="#onExitGame" text="EXIT GAME" style="-fx-background-color: transparent; -fx-text-fill: #ff4444; -fx-font-size: 14px; -fx-cursor: hand; -fx-font-weight: bold;"/>
+                 <Button mnemonicParsing="false" onAction="#onExitGame" text="✕ EXIT" style="-fx-background-color: transparent; -fx-text-fill: #ff4444; -fx-font-size: 12px; -fx-cursor: hand; -fx-font-weight: bold;"/>
             </HBox>
          </children>
       </VBox>

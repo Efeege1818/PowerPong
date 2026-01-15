@@ -132,46 +132,60 @@ public class PowerPongController extends StackPane {
       // Create a new canvas for the fullscreen window
       Canvas fullscreenCanvas = new Canvas();
 
-      // Create game over overlay for fullscreen
-      VBox fullscreenGameOverBox = new VBox(20);
+      // Create game over overlay for fullscreen (neon styled)
+      VBox fullscreenGameOverBox = new VBox(25);
       fullscreenGameOverBox.setAlignment(javafx.geometry.Pos.CENTER);
-      fullscreenGameOverBox.setStyle("-fx-background-color: rgba(0,0,0,0.8); -fx-padding: 50;");
+      fullscreenGameOverBox.setStyle(
+          "-fx-background-color: rgba(5, 5, 20, 0.9); -fx-padding: 60; -fx-background-radius: 30; -fx-border-radius: 30; -fx-border-color: rgba(255,255,255,0.2); -fx-border-width: 2;");
+      fullscreenGameOverBox.setMaxWidth(500);
+      fullscreenGameOverBox.setMaxHeight(350);
       fullscreenGameOverBox.setVisible(false);
 
       Label fullscreenWinnerLabel = new Label();
-      fullscreenWinnerLabel.setStyle("-fx-font-size: 48; -fx-font-weight: bold;");
+      fullscreenWinnerLabel.setStyle("-fx-font-size: 52; -fx-font-weight: bold;");
+      fullscreenWinnerLabel.setEffect(new javafx.scene.effect.DropShadow(25, Color.WHITE));
 
-      javafx.scene.control.Button rematchBtn = new javafx.scene.control.Button("Rematch");
-      rematchBtn.setStyle("-fx-font-size: 24; -fx-padding: 15 40;");
+      javafx.scene.control.Button rematchBtn = new javafx.scene.control.Button("🔄 REMATCH");
+      rematchBtn.setStyle(
+          "-fx-background-color: linear-gradient(to bottom, rgba(0, 243, 255, 0.4), rgba(0, 150, 200, 0.2)); -fx-text-fill: #00f3ff; -fx-font-size: 22; -fx-font-weight: bold; -fx-padding: 15 50; -fx-background-radius: 25; -fx-border-color: #00f3ff; -fx-border-radius: 25; -fx-border-width: 2; -fx-cursor: hand;");
+      rematchBtn.setEffect(new javafx.scene.effect.DropShadow(15, Color.web("#00f3ff")));
       rematchBtn.setOnAction(e -> {
         fullscreenGameOverBox.setVisible(false);
         startCountdownAndGame();
       });
 
-      javafx.scene.control.Button menuBtn = new javafx.scene.control.Button("Zurück zum Menü");
-      menuBtn.setStyle("-fx-font-size: 24; -fx-padding: 15 40;");
+      javafx.scene.control.Button menuBtn = new javafx.scene.control.Button("🏠 MENÜ");
+      menuBtn.setStyle(
+          "-fx-background-color: linear-gradient(to bottom, rgba(255, 100, 100, 0.3), rgba(200, 50, 50, 0.15)); -fx-text-fill: #ff6464; -fx-font-size: 18; -fx-font-weight: bold; -fx-padding: 12 40; -fx-background-radius: 20; -fx-border-color: #ff6464; -fx-border-radius: 20; -fx-border-width: 1.5; -fx-cursor: hand;");
       menuBtn.setOnAction(e -> closeFullscreenAndReturnToMenu());
 
       fullscreenGameOverBox.getChildren().addAll(fullscreenWinnerLabel, rematchBtn, menuBtn);
 
-      // Create pause overlay
-      pauseOverlay = new VBox(20);
+      // Create pause overlay (neon styled)
+      pauseOverlay = new VBox(25);
       pauseOverlay.setAlignment(javafx.geometry.Pos.CENTER);
-      pauseOverlay.setStyle("-fx-background-color: rgba(0,0,0,0.7); -fx-padding: 50;");
+      pauseOverlay.setStyle(
+          "-fx-background-color: rgba(5, 5, 20, 0.85); -fx-padding: 50; -fx-background-radius: 25; -fx-border-radius: 25; -fx-border-color: rgba(255,255,0,0.3); -fx-border-width: 2;");
+      pauseOverlay.setMaxWidth(450);
+      pauseOverlay.setMaxHeight(320);
       pauseOverlay.setVisible(false);
 
-      Label pauseLabel = new Label("PAUSIERT");
-      pauseLabel.setStyle("-fx-font-size: 60; -fx-font-weight: bold; -fx-text-fill: white;");
+      Label pauseLabel = new Label("⏸ PAUSIERT");
+      pauseLabel.setStyle("-fx-font-size: 52; -fx-font-weight: bold; -fx-text-fill: #ffdc00;");
+      pauseLabel.setEffect(new javafx.scene.effect.DropShadow(20, Color.web("#ffdc00")));
 
       Label pauseHint = new Label("Drücke P zum Fortsetzen");
-      pauseHint.setStyle("-fx-font-size: 24; -fx-text-fill: #aaaaaa;");
+      pauseHint.setStyle("-fx-font-size: 18; -fx-text-fill: #888888;");
 
-      javafx.scene.control.Button resumeBtn = new javafx.scene.control.Button("Fortsetzen");
-      resumeBtn.setStyle("-fx-font-size: 24; -fx-padding: 15 40;");
+      javafx.scene.control.Button resumeBtn = new javafx.scene.control.Button("▶ FORTSETZEN");
+      resumeBtn.setStyle(
+          "-fx-background-color: linear-gradient(to bottom, rgba(100, 255, 100, 0.3), rgba(50, 200, 50, 0.15)); -fx-text-fill: #7fff7f; -fx-font-size: 20; -fx-font-weight: bold; -fx-padding: 12 45; -fx-background-radius: 22; -fx-border-color: #7fff7f; -fx-border-radius: 22; -fx-border-width: 2; -fx-cursor: hand;");
+      resumeBtn.setEffect(new javafx.scene.effect.DropShadow(12, Color.web("#7fff7f")));
       resumeBtn.setOnAction(e -> togglePause());
 
-      javafx.scene.control.Button pauseMenuBtn = new javafx.scene.control.Button("Zurück zum Menü");
-      pauseMenuBtn.setStyle("-fx-font-size: 20; -fx-padding: 10 30;");
+      javafx.scene.control.Button pauseMenuBtn = new javafx.scene.control.Button("🏠 MENÜ");
+      pauseMenuBtn.setStyle(
+          "-fx-background-color: linear-gradient(to bottom, rgba(255, 100, 100, 0.25), rgba(200, 50, 50, 0.1)); -fx-text-fill: #ff6464; -fx-font-size: 16; -fx-font-weight: bold; -fx-padding: 10 35; -fx-background-radius: 18; -fx-border-color: #ff6464; -fx-border-radius: 18; -fx-border-width: 1.5; -fx-cursor: hand;");
       pauseMenuBtn.setOnAction(e -> closeFullscreenAndReturnToMenu());
 
       pauseOverlay.getChildren().addAll(pauseLabel, pauseHint, resumeBtn, pauseMenuBtn);
@@ -184,6 +198,7 @@ public class PowerPongController extends StackPane {
 
       countdownLabel = new Label("3");
       countdownLabel.setStyle("-fx-font-size: 150; -fx-font-weight: bold; -fx-text-fill: white;");
+      countdownLabel.setEffect(new javafx.scene.effect.DropShadow(30, Color.web("#00f3ff")));
       countdownOverlay.getChildren().add(countdownLabel);
 
       StackPane gameRoot = new StackPane(fullscreenCanvas, fullscreenGameOverBox, pauseOverlay, countdownOverlay);
@@ -293,9 +308,15 @@ public class PowerPongController extends StackPane {
   }
 
   private void togglePause() {
-    if (viewModel.getGameState().status() == GameStatus.PLAYER_1_WINS ||
+    // Don't allow pause during countdown
+    if (countdownOverlay != null && countdownOverlay.isVisible()) {
+      return;
+    }
+
+    if (viewModel.getGameState() == null ||
+        viewModel.getGameState().status() == GameStatus.PLAYER_1_WINS ||
         viewModel.getGameState().status() == GameStatus.PLAYER_2_WINS) {
-      return; // Don't pause if game is over
+      return; // Don't pause if game is over or not started
     }
 
     isPaused = !isPaused;
