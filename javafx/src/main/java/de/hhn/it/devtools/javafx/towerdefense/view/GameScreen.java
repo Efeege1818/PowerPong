@@ -44,8 +44,6 @@ public class GameScreen extends StackPane {
         createStatsDisplay(),
         completeBoard,
         createTowerDisplay()
-        //createButtonDisplay(),
-        //createTowerDefenseTutorialDisplay()
     );
     getChildren().add(mainLayout);
 
@@ -174,8 +172,6 @@ public class GameScreen extends StackPane {
 
   public GridPane createOverlayDisplay() {
 
-
-
     GridPane overlayDisplay = new GridPane();
     overlayDisplay.setAlignment(Pos.CENTER);
     overlayDisplay.setHgap(10);
@@ -242,7 +238,7 @@ public class GameScreen extends StackPane {
 
     Label towerTut = new Label("To defend yourself, you need to place towers that kill enemies.\n" +
             "Click the tower you want to place and select a free tile to place it. \n" +
-            "Enemies spawn at the first part of the path (left) and move to the end (right).\n" +
+            "Enemies spawn at the first part of the path and move to the end.\n" +
             "Once reached. You lose health based on the enemy type.");
     towerTut.setStyle("-fx-font-style: italic; -fx-font-size: 12;");
     towerTut.setWrapText(true);
@@ -259,7 +255,7 @@ public class GameScreen extends StackPane {
     towerCost1.setTextFill(Color.GOLD);
     towerIcon1.getChildren().addAll(towerIconRect1, towerCost1);
 
-    Label descLabel1 = new Label("The Moneymaker Tower generates some money throughout the round " +
+    Label descLabel1 = new Label("The Moneymaker Tower generates some money throughout \nthe round" +
             "- does no damage however.");
     descLabel1.setWrapText(true);
 
