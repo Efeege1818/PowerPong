@@ -12,10 +12,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
@@ -102,8 +99,7 @@ public class PauseScreenFx extends VBox {
 				forCloseButton.setAlignment(Pos.TOP_RIGHT);
 				Button close = new Button("Back to Battle");
 				close.setOnAction(e -> {
-						Stage stage = (Stage) close.getScene().getWindow();
-						stage.close();
+					((Pane) getParent()).getChildren().remove(this);
 				});
 				forCloseButton.getChildren().add(close);
 				rightCol.getChildren().add(0,forCloseButton);
