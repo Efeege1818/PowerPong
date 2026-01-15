@@ -28,7 +28,7 @@ public class Data {
   private final Move waterNormAtk = new AttackMove("Double Slice", Element.NORMAL, 7, false, 2, false, "2 weak hits", 2);
   private final Move waterWaterAtk = new AttackMove("Sharpening Strike", Element.WATER, 5, true, 3, false, "3 weak hits High Crit chance (ignores DEF)", 3);
   private final Move waterStance = new StanceMove("Water Dance", Element.NORMAL, 1, "Changes the stance of the monster (Crit stance or dodge stance)");
-  private final Move waterCounter = new CounterattackMove("Wa", Element.WATER, waterWaterAtkCounter, 3, false, "PLACEHOLDER DESCRIPTION!");
+  private final Move waterCounter = new CounterattackMove("River Reversal", Element.WATER, waterWaterAtkCounter, 3, false, "only ATKs if the enemy also ATKs in the same turn");
   private final Move waterSpecial = new AttackMove("Waterfall", Element.NORMAL, 10, false, 3, true,
           "3 normal hits + 3 water hits, +1 water/ normal hit per Crit with this Move\n" +
           "charge condition: Hit Crits/ dodge ATKs (15 combined)", 3, waterWaterAtkFollowUp);
