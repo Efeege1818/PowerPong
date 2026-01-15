@@ -118,11 +118,13 @@ public class PowerUpManager {
 
         for (FieldPowerUp powerUp : powerUps) {
             if (collides(ball, powerUp)) {
-                int owner = ball.x < PhysicsEngine.FIELD_WIDTH / 2.0 ? 1 : 2;
+                // Owner is determined by ball direction: ball moving right (vx > 0) means
+                // Player 1 hit it
+                int owner = ball.vx > 0 ? 1 : 2;
                 applyPowerUp(owner, powerUp.type);
                 collected.add(powerUp);
             } else if (secondaryBall != null && collides(secondaryBall, powerUp)) {
-                int owner = secondaryBall.x < PhysicsEngine.FIELD_WIDTH / 2.0 ? 1 : 2;
+                int owner = secondaryBall.vx > 0 ? 1 : 2;
                 applyPowerUp(owner, powerUp.type);
                 collected.add(powerUp);
             }

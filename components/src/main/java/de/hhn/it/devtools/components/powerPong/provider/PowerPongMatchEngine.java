@@ -138,10 +138,8 @@ public class PowerPongMatchEngine implements PowerPongService {
   }
 
   private double getBallSpeedMultiplier(GameMode mode) {
-    if (mode == GameMode.CLASSIC_DUEL || mode == GameMode.POWERUP_DUEL) {
-      return PVP_BALL_SPEED_MULTIPLIER;
-    }
-    return 1.0;
+    // All modes now start with the same ball speed
+    return PVP_BALL_SPEED_MULTIPLIER; // 0.7
   }
 
   @Override
