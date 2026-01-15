@@ -20,7 +20,7 @@ public record StanceMove(MoveType type, String name, Element element, int cooldo
 
   @Override
   public int executionCount() {
-    return 0;
+    return 1;
   }
 
   @Override

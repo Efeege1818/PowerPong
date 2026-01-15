@@ -94,6 +94,7 @@ public class SimpleMonster {
 
     // Check if the attack is evaded
     if (Math.random() < evasionChance) {
+      handleDodge();
       logger.debug("{} evaded the attack.", name);
       return;
     }
@@ -225,10 +226,10 @@ public class SimpleMonster {
         attack += (int) amount;
         break;
       case "evasionChance":
-        evasionChance = Math.max(0.0, Math.min(1.0, evasionChance + amount));
+        evasionChance = evasionChance + amount;
         break;
       case "critChance":
-        critChance = Math.max(0.0, Math.min(1.0, critChance + amount));
+        critChance = critChance + amount;
         break;
       case "defense":
         defense += (int) amount;
@@ -320,8 +321,11 @@ public class SimpleMonster {
     logger.debug("{} debuff removed: {} and has now {}", name, stat, getStat(stat));
   }
 
-  public void changeStance(Move move) {
-    //TODO: Implement Stance switch
+  /**
+   * If the monster changes it's stance then this method gets called.
+   * Method must be overridden by specific Monster.
+   */
+  public void switchStance() {
   }
 
   /**
@@ -329,6 +333,13 @@ public class SimpleMonster {
    * Method must be overridden by specific Monster.
    */
   public void handleCriticalHit() {
+  }
+
+  /**
+   * If the monster dodges an attack this method gets called.
+   * Method must be overridden by specific Monster.
+   */
+  public void handleDodge() {
   }
 
   /**

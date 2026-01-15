@@ -136,24 +136,24 @@ public class SimpleBattleManager implements BattleManager {
 
   private void executeMove(Move move, MoveType moveType) {
     switch (moveType) {
-      case ATTACK -> {
+      case MoveType.ATTACK -> {
         // Do damage
         opponentMonster.takeDamage(move, currentMonster);
         if (move.followUpMove() != null) {
           executeMove(move.followUpMove(), move.followUpMove().type());
         }
       }
-      case BUFF -> {
+      case MoveType.BUFF -> {
         currentMonster.addBuffOrDebuff(move);
       }
-      case DEBUFF -> {
+      case MoveType.DEBUFF -> {
         opponentMonster.addBuffOrDebuff(move);
       }
-      case DOT -> {
+      case MoveType.DOT -> {
         opponentMonster.addDot(move);
       }
-      case STANCE -> {
-        currentMonster.changeStance(move);
+      case MoveType.STANCE -> {
+        currentMonster.switchStance();
       }
       default -> throw new IllegalStateException("Unknown move type: " + move.type());
     }
