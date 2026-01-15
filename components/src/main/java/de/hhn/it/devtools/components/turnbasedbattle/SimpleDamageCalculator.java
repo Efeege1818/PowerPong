@@ -34,7 +34,9 @@ public class SimpleDamageCalculator {
       logger.debug("Effective attack! Damage increased by 50%");
     }
 
-    damage -= target.getDefense();
+    if(!move.isTrueDamage()) {
+      damage -= target.getDefense();
+    }
 
     if (damage < 0) {
       return 0;

@@ -35,7 +35,7 @@ public class SimpleMonster {
   protected String imagePath;
   protected String imagePathBack;
 
-  // ========== Internal Tracking (Buffs, DOTs, Cooldowns) ==========
+  // ========== Internal Tracking (Buffs, DOTs, Cooldowns, Locked) ==========
 
   /**
    * Tracks active buffs/debuffs on this monster.
@@ -54,6 +54,12 @@ public class SimpleMonster {
    * Key: move index, Value: remaining cooldown turns.i
    */
   private Map<Integer, Integer> moveCooldowns = new HashMap<>();
+
+  /**
+   * Tracks if move is locked.
+   * Key: move index, Value: locked or unlocked
+   */
+  private Map<Integer, Boolean> lockedMoves = new HashMap<>();
 
 
   /**
@@ -94,6 +100,7 @@ public class SimpleMonster {
 
     // Check if the attack is evaded
     if (Math.random() < evasionChance) {
+      handleDodge();
       logger.debug("{} evaded the attack.", name);
       return;
     }
@@ -225,10 +232,10 @@ public class SimpleMonster {
         attack += (int) amount;
         break;
       case "evasionChance":
-        evasionChance = Math.max(0.0, Math.min(1.0, evasionChance + amount));
+        evasionChance = evasionChance + amount;
         break;
       case "critChance":
-        critChance = Math.max(0.0, Math.min(1.0, critChance + amount));
+        critChance = critChance + amount;
         break;
       case "defense":
         defense += (int) amount;
@@ -320,15 +327,32 @@ public class SimpleMonster {
     logger.debug("{} debuff removed: {} and has now {}", name, stat, getStat(stat));
   }
 
-  public void changeStance(Move move) {
-    //TODO: Implement Stance switch
+  /**
+   * Ticks monster specific effects.
+   * Method must be overridden by specific Monster or leave empty if no effect.
+   */
+  protected void tickMonsterEffects() {
+  }
+
+  /**
+   * If the monster changes it's stance then this method gets called.
+   * Method must be overridden by specific Monster or leave empty if no effect.
+   */
+  public void switchStance() {
   }
 
   /**
    * If the monster lands a critical hit this method gets called.
-   * Method must be overridden by specific Monster.
+   * Method must be overridden by specific Monster or leave empty if no effect.
    */
   public void handleCriticalHit() {
+  }
+
+  /**
+   * If the monster dodges an attack this method gets called.
+   * Method must be overridden by specific Monster or leave empty if no effect.
+   */
+  public void handleDodge() {
   }
 
   /**
@@ -469,16 +493,46 @@ public class SimpleMonster {
   }
 
   /**
+   * Locks a move.
+   *
+   * @param moveIndex the index of the move.
+   */
+  public void lockMove(int moveIndex) {
+    lockedMoves.put(moveIndex, true);
+    logger.debug("Move {} is now locked", moves.get(moveIndex).name());
+  }
+
+  /**
+   * Unlocks a move.
+   *
+   * @param moveIndex the index of the move.
+   */
+  public void unlockMove(int moveIndex) {
+    lockedMoves.put(moveIndex, false);
+    logger.debug("Move {} is now unlocked", moves.get(moveIndex).name());
+  }
+
+  /**
+   * Checks if move is locked.
+   *
+   * @param moveIndex the index of the move.
+   * @return if move is locked.
+   */
+  public boolean isMoveLocked(int moveIndex) {
+    if (lockedMoves.get(moveIndex) == null) {
+      return false;
+    }
+    return lockedMoves.get(moveIndex);
+  }
+
+  /**
    * Ticks all active effects (buffs, DOTs, cooldowns).
    */
   public void tickAllEffects() {
     tickBuffs();
     applyAndTickDots();
     tickCooldowns();
-
-    if (this instanceof FireMonster) {
-      ((FireMonster) this).tickFireMonsterEffects();
-    }
+    tickMonsterEffects();
   }
 
   // ========== Buff/Debuff Tracking Methods ==========

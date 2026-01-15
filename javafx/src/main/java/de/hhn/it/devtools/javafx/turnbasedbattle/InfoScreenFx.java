@@ -140,8 +140,7 @@ public class InfoScreenFx extends VBox {
         forCloseButton.setAlignment(Pos.TOP_RIGHT);
         Button close = new Button("Close Info");
         close.setOnAction(e -> {
-            Stage stage = (Stage) close.getScene().getWindow();
-            stage.close();
+            screenManager.switchTo(SCREEN_NAME, SelectScreen.SCREEN_NAME);
         });
         forCloseButton.getChildren().add(close);
         rightCol.getChildren().add(0,forCloseButton);

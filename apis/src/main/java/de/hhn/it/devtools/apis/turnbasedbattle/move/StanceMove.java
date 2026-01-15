@@ -20,13 +20,16 @@ public record StanceMove(MoveType type, String name, Element element, int cooldo
 
   @Override
   public int executionCount() {
-    return 0;
+    return 1;
   }
 
   @Override
   public Move followUpMove() {
     return null;
   }
+
+  @Override
+  public boolean isTrueDamage() { return false;}
 
   /**
    * Custom constructor without type parameter - type is always STANCE.

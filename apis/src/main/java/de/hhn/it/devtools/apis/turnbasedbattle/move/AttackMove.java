@@ -13,7 +13,7 @@ import de.hhn.it.devtools.apis.turnbasedbattle.Element;
  * @param isSpecial whether the move is special.
  * @param description description of the move.
  */
-public record AttackMove(MoveType type, String name, Element element, double damage, int cooldown, boolean isSpecial, String description, int executionCount, Move followUpMove) implements Move {
+public record AttackMove(MoveType type, String name, Element element, double damage, boolean trueDamage, int cooldown, boolean isSpecial, String description, int executionCount, Move followUpMove) implements Move {
 
   @Override
   public double amount() {
@@ -25,15 +25,18 @@ public record AttackMove(MoveType type, String name, Element element, double dam
     return "health";
   }
 
+  @Override
+  public boolean isTrueDamage() { return trueDamage;}
+
   /**
    * Custom constructor without type parameter - type is always ATTACK.
    */
-  public AttackMove(String name, Element element, double damage, int cooldown, boolean isSpecial, String description, int executionCount, Move followUpMove) {
-    this(MoveType.ATTACK, name, element, damage, cooldown, isSpecial, description, executionCount, followUpMove);
+  public AttackMove(String name, Element element, double damage, boolean trueDamage, int cooldown, boolean isSpecial, String description, int executionCount, Move followUpMove) {
+    this(MoveType.ATTACK, name, element, damage, trueDamage, cooldown, isSpecial, description, executionCount, followUpMove);
   }
 
-  public AttackMove(String name, Element element, double damage, int cooldown, boolean isSpecial, String description, int executionCount) {
-    this(MoveType.ATTACK, name, element, damage, cooldown, isSpecial, description, executionCount, null);
+  public AttackMove(String name, Element element, double damage, boolean trueDamage, int cooldown, boolean isSpecial, String description, int executionCount) {
+    this(MoveType.ATTACK, name, element, damage, trueDamage, cooldown, isSpecial, description, executionCount, null);
   }
 
   /**

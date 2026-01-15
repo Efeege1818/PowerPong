@@ -12,6 +12,8 @@ public class FireMonster extends SimpleMonster {
 
   private int fireMonsterPassiveStacks = 10; // Passive stacks for increased attack. Decreases by 1 each turn.
 
+  private final int atkPassiveAmount = 2;
+
   /**
    * Creates a new FireMonster.
    *
@@ -20,7 +22,7 @@ public class FireMonster extends SimpleMonster {
   public FireMonster(Monster monster) {
     this.maxHp = monster.maxHp();
     this.currentHp = monster.maxHp();
-    this.attack = monster.attack() + fireMonsterPassiveStacks * 2;
+    this.attack = monster.attack() + fireMonsterPassiveStacks * atkPassiveAmount;
     this.defense = monster.defense();
     this.evasionChance = monster.evasionChance();
     this.critChance = monster.critChance();
@@ -37,11 +39,12 @@ public class FireMonster extends SimpleMonster {
     logger.debug("{} created: {}", name, toString());
   }
 
-  public void tickFireMonsterEffects() {
+  @Override
+  protected void tickMonsterEffects() {
     if (fireMonsterPassiveStacks > 0) {
       fireMonsterPassiveStacks--;
       logger.debug("FireMonster passive stacks decreased to {}", fireMonsterPassiveStacks);
-      changeStat("attack", -2.0);
+      changeStat("attack", -atkPassiveAmount);
     }
   }
 }

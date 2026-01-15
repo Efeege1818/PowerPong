@@ -37,6 +37,7 @@ public class BattleScreenController {
   @FXML private Button btnBuffCrit;
   @FXML private Button btnDebuffHit;
   @FXML private Button btnSpecialAtk;
+  @FXML private Button pauseButton;
 
   @FXML private Label keyLabelElemental;
   @FXML private Label keyLabelNormal;
@@ -88,6 +89,11 @@ public class BattleScreenController {
     }
 
     render();
+  }
+
+  @FXML
+  public void onActionPause() {
+    screenManager.switchToPause(SimpleMonster.create(service.getPlayer1().monster()), SimpleMonster.create(service.getPlayer2().monster()));
   }
 
 

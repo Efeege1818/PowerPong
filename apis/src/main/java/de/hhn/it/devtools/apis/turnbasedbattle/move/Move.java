@@ -14,6 +14,7 @@ public interface Move {
   Element element();
   int executionCount();
   Move followUpMove();
+  boolean isTrueDamage();
 
   // Optional methods with default implementations
   default double amount() {

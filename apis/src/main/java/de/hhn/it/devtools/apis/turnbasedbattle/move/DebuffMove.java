@@ -27,6 +27,9 @@ public record DebuffMove(MoveType type, String name, Element element, String sta
     return stat;
   }
 
+  @Override
+  public boolean isTrueDamage() { return false;}
+
   /**
    * Custom constructor without type parameter - type is always DEBUFF.
    */
