@@ -8,7 +8,6 @@ module devtools.javafx {
   requires javafx.graphics;
   requires java.desktop;
   requires java.naming;
-  requires devtools.javafx;
   uses de.hhn.it.devtools.apis.examples.coffeemakerservice.CoffeeMakerService;
   uses de.hhn.it.devtools.apis.examples.coffeemakerservice.AdminCoffeeMakerService;
   uses de.hhn.it.devtools.apis.towerdefense.TowerDefenseService;
