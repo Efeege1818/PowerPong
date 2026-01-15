@@ -28,6 +28,9 @@ public record StanceMove(MoveType type, String name, Element element, int cooldo
     return null;
   }
 
+  @Override
+  public boolean isTrueDamage() { return false;}
+
   /**
    * Custom constructor without type parameter - type is always STANCE.
    */

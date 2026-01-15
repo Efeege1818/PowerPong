@@ -27,6 +27,9 @@ public record BuffMove(MoveType type, String name, Element element, String stat,
     return stat;
   }
 
+  @Override
+  public boolean isTrueDamage() { return false;}
+
   /**
    * Custom constructor without type parameter - type is always BUFF.
    */
