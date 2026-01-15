@@ -4,6 +4,7 @@ import de.hhn.it.devtools.apis.turnbasedbattle.UnknownTransitionException;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 public class Launcher extends Application {
@@ -11,7 +12,7 @@ public class Launcher extends Application {
   @Override
   public void start(Stage stage) {
     // Root container that screens will be swapped into
-    AnchorPane rootPane = new AnchorPane();
+    StackPane rootPane = new StackPane();
 
     // Screen manager
     SimpleScreenManager screenManager = new SimpleScreenManager(rootPane);

@@ -6,10 +6,11 @@ import de.hhn.it.devtools.apis.turnbasedbattle.UnknownTransitionException;
 import de.hhn.it.devtools.components.turnbasedbattle.SimpleMonster;
 import de.hhn.it.devtools.components.turnbasedbattle.SimpleTurnBasedBattleService;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 
 public class SimpleScreenManager implements ScreenManager {
 
-  Pane pane;
+  private final StackPane pane;
   private SelectScreen selectScreen;
   private BattleScreen battleScreen;
   private EndScreen endScreen;
@@ -22,12 +23,16 @@ public class SimpleScreenManager implements ScreenManager {
   private InfoScreenViewModel infoViewModel;
 
 
-  public SimpleScreenManager(final Pane pane) {
+  public SimpleScreenManager(final StackPane pane) {
     this.pane = pane;
   }
 
   private SelectScreen getSelectScreen() {
-    return new SelectScreen(this);
+    if(selectScreen == null) {
+      selectScreen = new SelectScreen(this);
+    }
+
+    return selectScreen;
   }
 
   private BattleScreen getBattleScreen() {
