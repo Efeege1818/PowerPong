@@ -5,6 +5,7 @@ import de.hhn.it.devtools.javafx.towerdefense.controllers.ScreenManager;
 import de.hhn.it.devtools.javafx.towerdefense.controllers.ScreenType;
 import de.hhn.it.devtools.javafx.towerdefense.viewmodel.TowerDefenseViewModel;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -48,7 +49,7 @@ public class GameScreen extends StackPane {
     prepareTowerPlacement();
 
     viewModel.getGameState().addListener((obs, oldState, newState) -> {
-      if (newState != GameState.RUNNING && oldState == GameState.RUNNING) {
+      if ((newState == GameState.PAUSED || newState == GameState.GAME_OVER) && oldState == GameState.RUNNING) {
         Platform.runLater(() -> {
           logger.debug("Showing Overlay Display");
           getChildren().add(createOverlayDisplay());
@@ -156,7 +157,7 @@ public class GameScreen extends StackPane {
     overlayDisplay.setAlignment(Pos.CENTER);
     overlayDisplay.setHgap(10);
 
-    if(viewModel.getGameOver().getValue().equals(true)) {
+    if(viewModel.getGameState().getValue().equals(GameState.GAME_OVER)) {
       Button retryButton = new Button("Retry");
       retryButton.setOnAction((event) -> {
         retryWaveOnAction();
@@ -177,8 +178,11 @@ public class GameScreen extends StackPane {
     Button abortGameButton = new Button("Exit Game");
     abortGameButton.setOnAction((event) -> {
       abortGameOnAction();
+      getChildren().removeLast();
     });
     overlayDisplay.add(abortGameButton, 1, 1);
+
+    overlayDisplay.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
 
     return overlayDisplay;
   }
