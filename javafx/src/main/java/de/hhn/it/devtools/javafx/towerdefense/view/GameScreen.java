@@ -171,7 +171,7 @@ public class GameScreen extends StackPane {
       continueButton.setOnAction((event) -> {
         getChildren().removeLast();
       });
-      Label wonLabel = new Label("You Completed Round " + viewModel.getRound());
+      Label wonLabel = new Label("You Completed Round " + viewModel.getRound().getValue());
       overlayDisplay.add(wonLabel, 1, 0);
       overlayDisplay.add(continueButton, 0, 1);
     }
