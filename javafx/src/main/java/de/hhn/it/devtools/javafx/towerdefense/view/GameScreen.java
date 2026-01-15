@@ -164,23 +164,23 @@ public class GameScreen extends StackPane {
         getChildren().removeLast();
       });
       Label lostLabel = new Label("You Lost");
-      overlayDisplay.add(lostLabel, 0, 0);
-      overlayDisplay.add(retryButton, 1, 0);
+      overlayDisplay.add(lostLabel, 1, 0);
+      overlayDisplay.add(retryButton, 0, 1);
     } else {
       Button continueButton = new Button("Continue");
       continueButton.setOnAction((event) -> {
         getChildren().removeLast();
       });
-      Label wonLabel = new Label("You Completed Round X");
-      overlayDisplay.add(wonLabel, 0, 0);
-      overlayDisplay.add(continueButton, 1, 0);
+      Label wonLabel = new Label("You Completed Round " + viewModel.getRound());
+      overlayDisplay.add(wonLabel, 1, 0);
+      overlayDisplay.add(continueButton, 0, 1);
     }
     Button abortGameButton = new Button("Exit Game");
     abortGameButton.setOnAction((event) -> {
       abortGameOnAction();
       getChildren().removeLast();
     });
-    overlayDisplay.add(abortGameButton, 1, 1);
+    overlayDisplay.add(abortGameButton, 2, 1);
 
     overlayDisplay.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
 
