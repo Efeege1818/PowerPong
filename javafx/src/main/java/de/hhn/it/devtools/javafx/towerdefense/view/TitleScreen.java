@@ -58,7 +58,6 @@ public class TitleScreen extends StackPane {
     difficultyBox.valueProperty()
             .bindBidirectional(viewModel.difficultyProperty());
 
-    difficultyBox.setValue(Difficulty.NORMAL);
 
     title.textProperty().set("TOWER DEV");
     title.fontProperty().set(new Font("Impact", 20));
