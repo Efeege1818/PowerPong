@@ -9,6 +9,7 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -165,6 +166,15 @@ public class InfoScreenFx extends VBox {
             rightCol.getChildren().add(fallback);
         }
 
+        VBox forCloseButton = new VBox();
+        Button close = new Button("Close Info");
+        close.setOnAction(e -> {
+            Stage stage = (Stage) close.getScene().getWindow();
+            stage.close();
+        });
+        forCloseButton.getChildren().add(close);
+        rightCol.getChildren().add(forCloseButton);
+
         // Put columns into content and add to this VBox
         content.getChildren().addAll(leftCol, rightCol);
         HBox.setHgrow(leftCol, Priority.ALWAYS);
@@ -172,46 +182,48 @@ public class InfoScreenFx extends VBox {
     }
 
 
-//    /**
-//     * main — quick preview launcher.
-//     * Coded by AI for testing while coding
-//     */
-//    public static void main(String[] args) {
-//        // --- Prepare test data BEFORE launching JavaFX ---
-//        // Monster record requires at least 5 moves according to your record validation.
-//        Data data = new Data();
-//
-//        // Create runtime monster and view model
-//        SimpleMonster runtimeMonster = SimpleMonster.create(data.getMonsters()[2]);
-//        InfoScreenViewModel viewModel = new InfoScreenViewModel(runtimeMonster);
-//
-//        // Pass the viewModel into the TestApp via a static field
-//        TestApp.viewModelForTest = viewModel;
-//
-//        // Now launch the JavaFX application (this will call TestApp.start)
-//        launch(TestApp.class, args);
-//
-//        // Code after launch runs only after the JavaFX window is closed.
-//    }
+    /**
+     * main — quick preview launcher.
+     * Coded by AI for testing while coding
+     */
+    public static void main(String[] args) {
+        // --- Prepare test data BEFORE launching JavaFX ---
+        // Monster record requires at least 5 moves according to your record validation.
+        Data data = new Data();
 
-//    public static class TestApp extends Application {
-//        // Static holder used only for quick preview/testing
-//        public static InfoScreenViewModel viewModelForTest;
-//        Data data = new Data();
-//
-//        @Override
-//        public void start(Stage stage) {
-//            // Defensive check — create a fallback view model if the static holder is null
-//            InfoScreenViewModel vm = viewModelForTest != null
-//                    ? viewModelForTest
-//                    : new InfoScreenViewModel(SimpleMonster.create(data.getMonsters()[0]));
-//
-//            InfoScreenFx screen = new InfoScreenFx(vm);
-//            Scene scene = new Scene(screen, 880, 560);
-//            stage.setTitle("Info Screen Preview");
-//            stage.setScene(scene);
-//            stage.show();
-//        }
-//
-//    }
+        // Create runtime monster and view model
+        SimpleMonster runtimeMonster = SimpleMonster.create(data.getMonsters()[2]);
+        InfoScreenViewModel viewModel = new InfoScreenViewModel(runtimeMonster);
+
+        // Pass the viewModel into the TestApp via a static field
+        TestApp.viewModelForTest = viewModel;
+
+        // Now launch the JavaFX application (this will call TestApp.start)
+        launch(TestApp.class, args);
+
+        // Code after launch runs only after the JavaFX window is closed.
+    }
+
+    public static class TestApp extends Application {
+        // Static holder used only for quick preview/testing
+        public static InfoScreenViewModel viewModelForTest;
+        public static SimpleScreenManager simpleScreenManagerForTest;
+        Data data = new Data();
+
+        @Override
+        public void start(Stage stage) {
+            // Defensive check — create a fallback view model if the static holder is null
+            InfoScreenViewModel vm = viewModelForTest != null
+                    ? viewModelForTest
+                    : new InfoScreenViewModel(SimpleMonster.create(data.getMonsters()[0]));
+
+
+            InfoScreenFx screen = new InfoScreenFx(simpleScreenManagerForTest,vm);
+            Scene scene = new Scene(screen, 880, 560);
+            stage.setTitle("Info Screen Preview");
+            stage.setScene(scene);
+            stage.show();
+        }
+
+    }
 }
