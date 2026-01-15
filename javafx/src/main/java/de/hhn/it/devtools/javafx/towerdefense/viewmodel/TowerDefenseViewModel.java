@@ -1,6 +1,7 @@
 package de.hhn.it.devtools.javafx.towerdefense.viewmodel;
 
 import de.hhn.it.devtools.apis.towerdefense.Configuration;
+import de.hhn.it.devtools.apis.towerdefense.Difficulty;
 import de.hhn.it.devtools.apis.towerdefense.Enemy;
 import de.hhn.it.devtools.apis.towerdefense.GameState;
 import de.hhn.it.devtools.apis.towerdefense.Grid;
@@ -8,7 +9,9 @@ import de.hhn.it.devtools.apis.towerdefense.Tower;
 import de.hhn.it.devtools.apis.towerdefense.TowerDefenseListener;
 import de.hhn.it.devtools.apis.towerdefense.TowerDefenseService;
 import de.hhn.it.devtools.apis.towerdefense.TowerType;
+
 import java.util.Map;
+
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
@@ -27,7 +30,7 @@ import javafx.scene.paint.Color;
 public class TowerDefenseViewModel implements TowerDefenseListener {
 
   private static final org.slf4j.Logger logger =
-      org.slf4j.LoggerFactory.getLogger(TowerDefenseViewModel.class);
+          org.slf4j.LoggerFactory.getLogger(TowerDefenseViewModel.class);
 
   private final TowerDefenseService service;
   private final ObjectProperty<Grid> map = new SimpleObjectProperty<>();
@@ -40,6 +43,7 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
   private final IntegerProperty money = new SimpleIntegerProperty();
   private final BooleanProperty gameOver = new SimpleBooleanProperty();
   private final ObjectProperty<GameState> gameState = new SimpleObjectProperty<>();
+  private final ObjectProperty<Difficulty> difficulty = new SimpleObjectProperty<>();
 
   public TowerDefenseViewModel(TowerDefenseService service) {
     this.service = service;
@@ -115,6 +119,18 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
 
   public ObjectProperty<GameState> getGameState() {
     return gameState;
+  }
+
+  public ObjectProperty<Difficulty> difficultyProperty() {
+    return difficulty;
+  }
+
+  public Difficulty getDifficulty() {
+    return difficulty.get();
+  }
+
+  public void setDifficulty(Difficulty difficulty) {
+    this.difficulty.set(difficulty);
   }
 
   public void editConfiguration(Configuration configuration) {

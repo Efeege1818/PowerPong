@@ -1,11 +1,13 @@
 package de.hhn.it.devtools.javafx.towerdefense.view;
 
+import de.hhn.it.devtools.apis.towerdefense.Difficulty;
 import de.hhn.it.devtools.javafx.towerdefense.controllers.ScreenManager;
 import de.hhn.it.devtools.javafx.towerdefense.controllers.ScreenType;
 import de.hhn.it.devtools.javafx.towerdefense.viewmodel.TowerDefenseViewModel;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -49,7 +51,7 @@ public class TitleScreen extends StackPane {
     });
 
     config.setOnAction(event -> {
-
+      setConfig();
     });
 
     title.textProperty().set("TOWER DEV");
@@ -67,7 +69,9 @@ public class TitleScreen extends StackPane {
   }
 
   public void setConfig() {
-    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-    // TODO: implement config logic
+    ChoiceBox<Difficulty> difficultyBox = new ChoiceBox<>();
+    difficultyBox.getItems().setAll(Difficulty.values());
+
+    difficultyBox.valueProperty().bindBidirectional(viewModel.difficultyProperty());
   }
 }
