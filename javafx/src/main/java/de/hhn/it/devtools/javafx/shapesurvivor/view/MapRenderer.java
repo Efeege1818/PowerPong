@@ -68,67 +68,82 @@ public class MapRenderer {
   }
 
   private void renderRock(GraphicsContext gc, int x, int y, int width, int height) {
-    // Main rock body
-    gc.setFill(Color.rgb(105, 105, 105));
-    gc.fillOval(x, y, width, height);
+    double cx = x + width / 2.0;
+    double cy = y + (height / 2.0) - 0.2;
 
-    // Highlight
-    gc.setFill(Color.rgb(169, 169, 169));
-    gc.fillOval(x + 5, y + 3, (double) width / 3, (double) height / 3);
+    double[] px = {
+            cx - 16, cx - 8, cx + 12, cx + 18, cx + 10, cx - 14
+    };
+    double[] py = {
+            cy + 12,  cy + 10, cy + 11, cy + 8,  cy - 12,  cy - 10
+    };
 
     // Shadow
-    gc.setFill(Color.rgb(70, 70, 70));
-    gc.fillOval(x + width - 10, y + height - 10, (double) width / 4, (double) height / 4);
+    gc.setFill(Color.rgb(0, 0, 0, 0.25));
+    gc.fillOval(cx - 14, cy + 6, 28, 6);
 
-    // Border
-    gc.setStroke(Color.rgb(85, 85, 85));
-    gc.setLineWidth(2);
-    gc.strokeOval(x, y, width, height);
+    // Base
+    gc.setFill(Color.rgb(140, 145, 155));
+    gc.fillPolygon(px, py, px.length);
+
+    // Outline
+    gc.setStroke(Color.rgb(90, 95, 105));
+    gc.setLineWidth(1);
+    gc.strokePolygon(px, py, px.length);
   }
 
   private void renderTree(GraphicsContext gc, int x, int y, int width, int height) {
+
     int centerX = x + width / 2;
     int centerY = y + height / 2;
 
-    // Tree trunk
-    gc.setFill(Color.rgb(101, 67, 33));
-    gc.fillRect(centerX - 3, centerY - 2, 6, height);
+    // Shadow
+    gc.setFill(Color.rgb( 0, 0, 0, 0.25));
+    gc.fillOval(centerX - 20, centerY + 16, 40, 16);
 
-    // Tree foliage (3 circles)
-    gc.setFill(Color.rgb(34, 139, 34));
-    gc.fillOval(centerX - 10, centerY - 12, 20, 20);
-    gc.fillOval(centerX - 12, centerY - 8, 24, 20);
-    gc.fillOval(centerX - 8, centerY - 4, 16, 16);
+    // Trunk
+    gc.setFill(Color.rgb( 130, 90, 50));
+    gc.fillRect(centerX - 6, centerY, 12, 20);
 
-    // Darker outline
-    gc.setStroke(Color.rgb(0, 100, 0));
-    gc.setLineWidth(1);
-    gc.strokeOval(centerX - 10, centerY - 12, 20, 20);
+    // Canopy
+    gc.setFill(Color.rgb(2, 66, 15));
+    gc.fillOval(centerX - 32, centerY - 40, 64, 52);
+
   }
 
   private void renderWall(GraphicsContext gc, int x, int y, int width, int height) {
-    // Wall base
+    // Base
     gc.setFill(Color.rgb(112, 128, 144));
     gc.fillRect(x, y, width, height);
 
-    // Brick pattern
-    gc.setStroke(Color.rgb(70, 80, 90));
-    gc.setLineWidth(2);
+    // CLIP START
+    gc.save();
+    gc.beginPath();
+    gc.rect(x, y, width, height);
+    gc.clip();
 
+    // Brick pattern
     int brickWidth = 30;
     int brickHeight = 10;
 
+    gc.setStroke(Color.rgb(70, 80, 90));
+    gc.setLineWidth(1);
+
     for (int by = 0; by < height; by += brickHeight) {
-      int offset = (by / brickHeight % 2) * (brickWidth / 2);
+      int offset = ((by / brickHeight) % 2) * (brickWidth / 2);
       for (int bx = -offset; bx < width; bx += brickWidth) {
         gc.strokeRect(x + bx, y + by, brickWidth, brickHeight);
       }
     }
 
-    // Border
+    // CLIP END
+    gc.restore();
+
+    // Border (drawn after clipping!)
     gc.setStroke(Color.rgb(50, 60, 70));
     gc.setLineWidth(3);
     gc.strokeRect(x, y, width, height);
+
   }
 
   private void renderPillar(GraphicsContext gc, int x, int y, int width, int height) {
