@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<StackPane xmlns="http://javafx.com/javafx/21"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="de.hhn.it.devtools.ui.fourconnect.controller.MainController">
+
+  <!-- Background: wenn du noch kein Bild hast, bleibt es einfach leer -->
+  <ImageView fx:id="bgImage" preserveRatio="false" fitWidth="980" fitHeight="600"/>
+
+  <VBox alignment="CENTER" spacing="20">
+    <Button text="New Game" onAction="#onNewGame"
+            style="-fx-font-size: 28; -fx-background-color: #34d11f; -fx-text-fill: black; -fx-padding: 16 60;"/>
+    <Button text="Load Game" onAction="#onLoadGame"
+            style="-fx-font-size: 28; -fx-background-color: #d7a11d; -fx-text-fill: black; -fx-padding: 16 60;"/>
+  </VBox>
+
+</StackPane>
