@@ -134,5 +134,10 @@ public interface TowerDefenseService {
    */
   void terminate();
 
+  /**
+   * Changes the difficulty of the game.
+   *
+   * @param difficulty the difficulty to apply
+   */
   void setDifficulty(Difficulty difficulty);
 }
