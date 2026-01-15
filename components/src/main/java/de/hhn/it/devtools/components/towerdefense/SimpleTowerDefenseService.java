@@ -88,6 +88,8 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
     }
     this.configuration = configuration;
     player = new Player(configuration.startingHealth(), configuration.startingMoney());
+    notifyListeners(TowerDefenseListener::updateHealth);
+    notifyListeners(TowerDefenseListener::updateMoney);
     mapToolbox = new MapToolbox(seed);
     mapToolbox.generateMap(configuration.mapSize());
     waveGenerator = new WaveGenerator(mapToolbox.getPath().getFirst(), seed, configuration);
