@@ -1,4 +1,9 @@
 rootProject.name = 'gaming-dvtls-25-ws'
 
 
-include ':apis', ':components', ':javafx'
+include ':apis', ':components', ':javafx', ':ui'
+
+
+
+
+
