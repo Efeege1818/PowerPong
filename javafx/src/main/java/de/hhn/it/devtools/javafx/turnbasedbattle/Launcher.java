@@ -27,6 +27,8 @@ public class Launcher extends Application {
     // Scene & Stage
     Scene scene = new Scene(rootPane, 600, 400);
     stage.setTitle("Turn Based Battle");
+    stage.setFullScreen(true);
+    stage.setFullScreenExitHint("");
     stage.setScene(scene);
     stage.show();
   }

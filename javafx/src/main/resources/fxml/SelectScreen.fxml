@@ -5,83 +5,83 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" type="AnchorPane" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" type="AnchorPane" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
 
     <children>
 
-        <Label fx:id="headingLabel" layoutX="91.0" layoutY="32.0" text="Press Button to pick your monster">
+        <Label fx:id="headingLabel" layoutX="291.0" layoutY="86.0" text="Press Button to pick your monster">
             <font>
-                <Font name="System Bold" size="26.0" />
+                <Font name="System Bold" size="70.0" />
             </font>
         </Label>
 
-        <ImageView fx:id="fireMonImage" fitHeight="166.0" fitWidth="106.0" layoutX="44.0" layoutY="142.0" onMouseClicked="#openFireInfo" pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="fireMonImage" fitHeight="448.0" fitWidth="339.0" layoutX="141.0" layoutY="383.0" onMouseClicked="#openFireInfo" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@../Monster%20Sprites/FeuerMon.png" />
             </image>
         </ImageView>
 
-        <ImageView fx:id="waterMonImage" fitHeight="150.0" fitWidth="200.0" layoutX="222.0" layoutY="150.0" onMouseClicked="#openWaterInfo" pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="waterMonImage" fitHeight="405.0" fitWidth="640.0" layoutX="710.0" layoutY="405.0" onMouseClicked="#openWaterInfo" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@../Monster%20Sprites/WasserMon.png" />
             </image>
         </ImageView>
 
-        <ImageView fx:id="grassMonImage" fitHeight="150.0" fitWidth="200.0" layoutX="449.0" layoutY="150.0" onMouseClicked="#openGrassInfo" pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="grassMonImage" fitHeight="405.0" fitWidth="640.0" layoutX="1437.0" layoutY="405.0" onMouseClicked="#openGrassInfo" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@../Monster%20Sprites/PflanzeMon.png" />
             </image>
         </ImageView>
 
-        <Label fx:id="aLabel" layoutX="81.0" layoutY="102.0" text="A" textFill="RED">
+        <Label fx:id="aLabel" layoutX="259.0" layoutY="275.0" text="A" textFill="RED">
             <font>
-                <Font size="32.0" />
+                <Font size="86.0" />
             </font>
         </Label>
 
-        <Label fx:id="sLabel" layoutX="291.0" layoutY="102.0" text="S" textFill="RED">
+        <Label fx:id="sLabel" layoutX="931.0" layoutY="275.0" text="S" textFill="RED">
             <font>
-                <Font size="32.0" />
+                <Font size="86.0" />
             </font>
         </Label>
 
-        <Label fx:id="dLabel" layoutX="496.0" layoutY="102.0" text="D" textFill="RED">
+        <Label fx:id="dLabel" layoutX="1587.0" layoutY="275.0" text="D" textFill="RED">
             <font>
-                <Font size="32.0" />
+                <Font size="86.0" />
             </font>
         </Label>
 
-        <Label fx:id="player1Label" layoutX="14.0" layoutY="70.0" text="Player 1" textFill="RED">
+        <Label fx:id="player1Label" layoutX="44.0" layoutY="189.0" text="Player 1" textFill="RED">
             <font>
-                <Font size="24.0" />
+                <Font size="65.0" />
             </font>
         </Label>
 
-        <Label fx:id="player2Label" layoutX="496.0" layoutY="347.0" text="Player 2" textFill="#006fff">
+        <Label fx:id="player2Label" layoutX="1587.0" layoutY="936.0" text="Player 2" textFill="#006fff">
             <font>
-                <Font size="24.0" />
+                <Font size="65.0" />
             </font>
         </Label>
 
-        <Label fx:id="jLabel" layoutX="85.0" layoutY="300.0" text="J" textFill="#006fff">
+        <Label fx:id="jLabel" layoutX="272.0" layoutY="810.0" text="J" textFill="#006fff">
             <font>
-                <Font size="32.0" />
+                <Font size="86.0" />
             </font>
         </Label>
 
-        <Label fx:id="kLabel" layoutX="290.0" layoutY="300.0" text="K" textFill="#006fff">
+        <Label fx:id="kLabel" layoutX="928.0" layoutY="810.0" text="K" textFill="#006fff">
             <font>
-                <Font size="32.0" />
+                <Font size="86.0" />
             </font>
         </Label>
 
-        <Label fx:id="lLabel" layoutX="499.0" layoutY="300.0" text="L" textFill="#006fff">
+        <Label fx:id="lLabel" layoutX="1597.0" layoutY="810.0" text="L" textFill="#006fff">
             <font>
-                <Font size="32.0" />
+                <Font size="86.0" />
             </font>
         </Label>
 
-        <Button fx:id="exitButton" layoutX="22.0" layoutY="357.0" mnemonicParsing="false" onAction="#onActionExitGame" text="Exit Game" />
+        <Button fx:id="exitButton" layoutX="70.0" layoutY="964.0" mnemonicParsing="false" onAction="#onActionExitGame" text="Exit Game" />
     </children>
 
 </fx:root>

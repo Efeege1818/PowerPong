@@ -128,24 +128,24 @@ public class InfoScreenFx extends VBox {
                 attacksTitle, attacksList
         );
 
-        // RIGHT COLUMN (Monster image)
-
+        // RIGHT COLUMN
 
         VBox rightCol = new VBox();
         rightCol.setAlignment(Pos.TOP_CENTER);
         rightCol.setPadding(new Insets(12));
         rightCol.setPrefWidth(300);
 
+        // close Button
         HBox forCloseButton = new HBox();
         forCloseButton.setAlignment(Pos.TOP_RIGHT);
         Button close = new Button("Close Info");
         close.setOnAction(e -> {
-            Stage stage = (Stage) close.getScene().getWindow();
-            stage.close();
+            screenManager.switchTo(SCREEN_NAME, SelectScreen.SCREEN_NAME);
         });
         forCloseButton.getChildren().add(close);
         rightCol.getChildren().add(0,forCloseButton);
 
+        // Monster image
         ImageView MonsterView = viewModel.getImageView();
         if (MonsterView != null) {
             MonsterView.setFitWidth(260);

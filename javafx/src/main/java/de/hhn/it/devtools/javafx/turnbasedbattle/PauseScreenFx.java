@@ -34,6 +34,7 @@ public class PauseScreenFx extends VBox {
 		public static final String SCREEN_NAME = "PauseScreen";
 
 		private final PauseScreenViewModel viewModel;
+		private final SimpleScreenManager screenManager;
 
 		// UI fields that need to be updated when switching monsters
 		private final Label titleLabel;
@@ -45,8 +46,9 @@ public class PauseScreenFx extends VBox {
 		private final VBox imageHolder; // container for the ImageView or fallback Circle
 		private final VBox statusBox;
 
-		public PauseScreenFx(PauseScreenViewModel viewModel) {
+		public PauseScreenFx(SimpleScreenManager screenManager, PauseScreenViewModel viewModel) {
 				this.viewModel = viewModel;
+				this.screenManager = screenManager;
 
 				// create updatable UI controls
 				titleLabel = new Label();
@@ -95,6 +97,16 @@ public class PauseScreenFx extends VBox {
 				rightCol.setAlignment(Pos.TOP_CENTER);
 				rightCol.setPadding(new Insets(12));
 				rightCol.setPrefWidth(300);
+
+				HBox forCloseButton = new HBox();
+				forCloseButton.setAlignment(Pos.TOP_RIGHT);
+				Button close = new Button("Back to Battle");
+				close.setOnAction(e -> {
+						Stage stage = (Stage) close.getScene().getWindow();
+						stage.close();
+				});
+				forCloseButton.getChildren().add(close);
+				rightCol.getChildren().add(0,forCloseButton);
 
 				imageHolder = new VBox();
 				imageHolder.setAlignment(Pos.CENTER);
@@ -287,6 +299,7 @@ public class PauseScreenFx extends VBox {
 		public static class TestApp extends Application {
 				// Static holder used only for quick preview/testing
 				public static PauseScreenViewModel viewModelForTest;
+				public static SimpleScreenManager screenManagerForTest;
 				Data data = new Data();
 
 				@Override
@@ -299,7 +312,7 @@ public class PauseScreenFx extends VBox {
 										SimpleMonster.create(data.getMonsters()[1])
 						);
 
-						PauseScreenFx screen = new PauseScreenFx(vm);
+						PauseScreenFx screen = new PauseScreenFx(screenManagerForTest, vm);
 						Scene scene = new Scene(screen, 880, 560);
 						stage.setTitle("Pause Screen Preview");
 						stage.setScene(scene);
