@@ -260,9 +260,11 @@ public class BattleScreenController {
     String title = (move.name() != null && !move.name().isBlank()) ? move.name() : ("Move " + moveIndex);
 
     boolean onCd = monster.isMoveOnCooldown(moveIndex);
+    boolean isLocked = monster.isMoveLocked(moveIndex);
     int remaining = monster.getRemainingCooldown(moveIndex);
 
     button.setDisable(onCd);
+    button.setDisable(isLocked);
     button.setText(onCd ? (title + " (CD " + remaining + ")") : title);
 
     if (tooltip != null) {

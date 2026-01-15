@@ -31,7 +31,7 @@ public class Data {
   private final Move fireBuff = new BuffMove("Pump up", Element.NORMAL,
       "attack", 15, 3, 4, false, "Strong DMG increase on next ATK", 1);
   private final Move fireSpecial = new AttackMove("Volcanic Eruption", Element.FIRE,
-      30, false, 1, true, "charge condition: hitting ATKs (7)", 1);
+      30, false, 1, true, "Very high attack\n" + "charge condition: hitting ATKs (7)", 1);
 
   // WaterMonster moves
   private final Move waterWaterAtkFollowUp = new AttackMove("Water hit", Element.WATER,
@@ -47,8 +47,8 @@ public class Data {
   private final Move waterCounter = new CounterattackMove("River Reversal", Element.WATER,
       waterWaterAtkCounter, 3, false, "only ATKs if the enemy also ATKs in the same turn");
   private final Move waterSpecial = new AttackMove("Waterfall", Element.NORMAL, 10, false, 3, true,
-          "3 normal hits + 3 water hits, +1 water/ normal hit per Crit with this Move\n"
-          + "charge condition: Hit Crits/ dodge ATKs (15 combined)", 3, waterWaterAtkFollowUp);
+          "3 normal hits + 3 water hits, +1 water/normal hit per Crit with this Move\n"
+          + "charge condition: Hit Crits/dodge ATKs (15 combined)", 3, waterWaterAtkFollowUp);
 
   // GrassMonster moves
   private final Move grassPoison = new DotMove("Poison", Element.NORMAL,
@@ -62,7 +62,7 @@ public class Data {
   private final Move grassDebuff = new DebuffMove("Poison Absorb", Element.NORMAL,
       "attack", 1, 3, 3, false, "if this debuff is applied: doubles poison ticks", 1);
   private final Move grassSpecial = new AttackMove("Leaf Cannon", Element.GRASS,
-      5, false, 0, false, "charge only increases when poison does DMG", 1);
+      5, false, 0, false, "Does more damage with higher charge\n" + "charge only increases when poison does DMG", 1);
 
   public Data() {
     this.monsters = createMonsters();
