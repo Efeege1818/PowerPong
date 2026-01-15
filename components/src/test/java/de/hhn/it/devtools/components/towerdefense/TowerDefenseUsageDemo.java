@@ -55,7 +55,7 @@ public class TowerDefenseUsageDemo {
       }
 
       @Override
-      public void updateMap() {
+      public void updateTowerMap() {
       }
 
       @Override

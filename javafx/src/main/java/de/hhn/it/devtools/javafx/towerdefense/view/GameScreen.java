@@ -43,9 +43,14 @@ public class GameScreen extends StackPane {
     mainLayout.getChildren().addAll(
         createStatsDisplay(),
         completeBoard,
+<<<<<<< HEAD
         createTowerDisplay(),
         createButtonDisplay(),
         createTowerDefenseTutorialDisplay()
+=======
+        createTowerDisplay()
+//        createButtonDisplay()
+>>>>>>> e10d53ef8ea21a34d2f01d9efb3ba1882936641a
     );
     getChildren().add(mainLayout);
 
@@ -97,6 +102,14 @@ public class GameScreen extends StackPane {
       towerDisplay.add(towerIcon, columnIndex++, rowIndex);
     }
 
+    Button startWaveButton = new Button("Start next Round");
+    startWaveButton.setOnAction((event) -> {
+      startWaveOnAction();
+    });
+    startWaveButton.disableProperty().bind(viewModel.getGameState().isEqualTo(GameState.RUNNING));
+
+    towerDisplay.add(startWaveButton,4,0);
+
     return towerDisplay;
   }
 
@@ -130,27 +143,27 @@ public class GameScreen extends StackPane {
 
 
 
-  public GridPane createButtonDisplay() {
-    Button startWaveButton = new Button("Start next Round");
-    startWaveButton.setOnAction((event) -> {
-      startWaveOnAction();
-    });
-    Button abortGameButton = new Button("Exit Game");
-    abortGameButton.setOnAction((event) -> {
-      abortGameOnAction();
-    });
-
-    startWaveButton.disableProperty().bind(viewModel.getGameState().isEqualTo(GameState.RUNNING));
-
-    GridPane buttonDisplay = new GridPane();
-    buttonDisplay.setAlignment(Pos.CENTER);
-    buttonDisplay.setHgap(10);
-
-    buttonDisplay.add(startWaveButton, 0, 0);
-    buttonDisplay.add(abortGameButton, 1, 0);
-
-    return buttonDisplay;
-  }
+//  public GridPane createButtonDisplay() {
+//    Button startWaveButton = new Button("Start next Round");
+//    startWaveButton.setOnAction((event) -> {
+//      startWaveOnAction();
+//    });
+//    Button abortGameButton = new Button("Exit Game");
+//    abortGameButton.setOnAction((event) -> {
+//      abortGameOnAction();
+//    });
+//
+//    startWaveButton.disableProperty().bind(viewModel.getGameState().isEqualTo(GameState.RUNNING));
+//
+//    GridPane buttonDisplay = new GridPane();
+//    buttonDisplay.setAlignment(Pos.CENTER);
+//    buttonDisplay.setHgap(10);
+//
+//    buttonDisplay.add(startWaveButton, 0, 0);
+//    buttonDisplay.add(abortGameButton, 1, 0);
+//
+//    return buttonDisplay;
+//  }
 
   public GridPane createOverlayDisplay() {
 
@@ -174,7 +187,7 @@ public class GameScreen extends StackPane {
       continueButton.setOnAction((event) -> {
         getChildren().removeLast();
       });
-      Label wonLabel = new Label("You Completed Round " + viewModel.getRound());
+      Label wonLabel = new Label("You Completed Round " + viewModel.getRound().getValue());
       overlayDisplay.add(wonLabel, 1, 0);
       overlayDisplay.add(continueButton, 0, 1);
     }

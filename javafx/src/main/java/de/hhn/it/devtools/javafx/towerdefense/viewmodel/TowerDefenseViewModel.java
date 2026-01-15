@@ -42,7 +42,6 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
   private final IntegerProperty round = new SimpleIntegerProperty();
   private final IntegerProperty health = new SimpleIntegerProperty();
   private final IntegerProperty money = new SimpleIntegerProperty();
-  private final BooleanProperty gameOver = new SimpleBooleanProperty();
   private final ObjectProperty<GameState> gameState = new SimpleObjectProperty<>();
   private final ObjectProperty<Difficulty> difficulty = new SimpleObjectProperty<>(Difficulty.NORMAL);
 
@@ -68,6 +67,7 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
 
   public void abortGame() {
     service.abortGame();
+    map.setValue(service.getMap());
     sync();
   }
 
@@ -114,10 +114,6 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
     return towers;
   }
 
-  public BooleanProperty getGameOver() {
-    return gameOver;
-  }
-
   public Map<TowerType, Integer> getTowerTypes() {
     return service.getTowerTypes();
   }
@@ -153,12 +149,7 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
   }
 
   @Override
-  public void gameEnded() {
-    gameOver.setValue(true);
-  }
-
-  @Override
-  public void waveCompleted() {
+  public void updateTowerMap() {
     sync();
   }
 

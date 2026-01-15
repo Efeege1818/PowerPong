@@ -22,17 +22,12 @@ public interface TowerDefenseListener {
   void updateMoney();
 
   /**
-   * Gets called, when the players health are reduced to zero.
-   */
-  void gameEnded();
-
-  /**
-   * Gets called, when the round is completed.
-   */
-  void waveCompleted();
-
-  /**
    * Gets called, when the TowerMap changes.
+   */
+  void updateTowerMap();
+
+  /**
+   * Gets called, then the Map Changes.
    */
   void updateMap();
 

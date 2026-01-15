@@ -2,7 +2,6 @@ package de.hhn.it.devtools.components.towerdefense;
 
 import de.hhn.it.devtools.apis.towerdefense.Configuration;
 import de.hhn.it.devtools.apis.towerdefense.Coordinates;
-import de.hhn.it.devtools.apis.towerdefense.Difficulty;
 import de.hhn.it.devtools.apis.towerdefense.Enemy;
 import de.hhn.it.devtools.apis.towerdefense.GameState;
 import de.hhn.it.devtools.apis.towerdefense.Grid;
@@ -34,7 +33,7 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
   private TowerToolbox towerToolbox;
   private WaveGenerator waveGenerator;
 
-  private final long seed;
+  private long seed;
   private GameState currentGameState;
   private final List<TowerDefenseListener> listeners = new ArrayList<>();
   private final GameLoop gameLoop;
@@ -87,7 +86,6 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
       throw new IllegalStateException();
     }
     this.configuration = configuration;
-    player = new Player(configuration.startingHealth(), configuration.startingMoney());
     mapToolbox = new MapToolbox(seed);
     mapToolbox.generateMap(configuration.mapSize());
     waveGenerator = new WaveGenerator(mapToolbox.getPath().getFirst(), seed, configuration);
@@ -105,15 +103,22 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
 
   @Override
   public void startGame() throws IllegalStateException {
+    if (currentGameState != GameState.READY) {
+      throw new IllegalStateException();
+    }
     updateGameState(GameState.PAUSED);
+    player = new Player(configuration.startingHealth(), configuration.startingMoney());
+    notifyListeners(TowerDefenseListener::updateHealth);
+    notifyListeners(TowerDefenseListener::updateMoney);
   }
 
   @Override
   public void abortGame() throws IllegalStateException {
-    configuration = new Configuration();
+    seed = new Random().nextLong();
 
     mapToolbox = new MapToolbox(seed);
     mapToolbox.generateMap(configuration.mapSize());
+    notifyListeners(TowerDefenseListener::updateMap);
 
     resetGame();
 
@@ -204,7 +209,7 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
     }
     updateMoney(-TowerToolbox.getCost(tower.type()));
     towerToolbox.addTower(tower);
-    notifyListeners(TowerDefenseListener::updateMap);
+    notifyListeners(TowerDefenseListener::updateTowerMap);
   }
 
   /**
@@ -285,7 +290,6 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
   private void roundFailed() {
     updateGameState(GameState.GAME_OVER);
     gameLoop.stopGame();
-    notifyListeners(TowerDefenseListener::gameEnded);
   }
 
   private void roundCompleted() {
@@ -294,7 +298,6 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
     gameLoop.stopGame();
     savedPlayerData = player;
     towerToolbox.saveData();
-    notifyListeners(TowerDefenseListener::waveCompleted);
   }
 
   public EnemyToolbox getEnemyToolbox() {

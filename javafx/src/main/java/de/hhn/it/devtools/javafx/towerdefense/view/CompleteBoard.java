@@ -43,6 +43,9 @@ public class CompleteBoard extends StackPane {
     alignmentProperty().set(Pos.TOP_LEFT);
     gridProperty.bind(viewModel.getMap());
     gridSize = gridProperty.get().grid().length;
+    boardDisplay();
+    gridProperty.addListener((obs, oldEx, newEx) -> Platform.runLater(this::boardDisplay));
+
 
     enemies.bind(viewModel.getEnemies());
     enemies.addListener((obs, oldEx, newEx) -> Platform.runLater(this::updateEnemies));
@@ -50,12 +53,10 @@ public class CompleteBoard extends StackPane {
     towers.bind(viewModel.getTowers());
     towers.addListener((obs, oldEx, newEx) -> Platform.runLater(this::updateTowers));
 
-    boardDisplay();
     getChildren().addAll(mapGrid, towerContainer, enemyContainer);
   }
 
   private void boardDisplay() {
-    this.gridProperty.bind(viewModel.getMap());
     mapGrid.widthProperty().divide(2);
     mapGrid.scaleXProperty().setValue(mapGrid.scaleXProperty().get());
     mapGrid.scaleYProperty().setValue(mapGrid.scaleYProperty().get());
