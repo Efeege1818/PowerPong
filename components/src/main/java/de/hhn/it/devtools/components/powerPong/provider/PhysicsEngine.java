@@ -52,8 +52,8 @@ public class PhysicsEngine {
 
     // Rally speed increase (reduced for smoother gameplay)
     private int rallyHitCount = 0;
-    private static final double RALLY_SPEED_INCREASE = 0.015; // 1.5% faster per hit (was 3%)
-    private static final double MAX_RALLY_MULTIPLIER = 1.3; // Max 30% faster (was 50%)
+    private static final double RALLY_SPEED_INCREASE = 0.02; // 2% faster per hit
+    private static final double MAX_RALLY_MULTIPLIER = 1.3; // Max 30% faster
 
     public PhysicsEngine(Random random) {
         this.random = random;

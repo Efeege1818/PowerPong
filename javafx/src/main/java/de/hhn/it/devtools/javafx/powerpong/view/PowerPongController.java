@@ -216,10 +216,15 @@ public class PowerPongController extends StackPane {
         if (newStatus == GameStatus.PLAYER_1_WINS || newStatus == GameStatus.PLAYER_2_WINS) {
           gameTimer.stop();
           if (newStatus == GameStatus.PLAYER_1_WINS) {
-            fullscreenWinnerLabel.setText("SPIELER 1 GEWINNT!");
+            fullscreenWinnerLabel.setText("DU GEWINNST!");
             fullscreenWinnerLabel.setTextFill(Color.web("#00f3ff")); // Neon Blue
           } else {
-            fullscreenWinnerLabel.setText("SPIELER 2 GEWINNT!");
+            // Check if we're in AI mode
+            if (lastSelectedMode == GameMode.PLAYER_VS_AI || lastSelectedMode == GameMode.SURVIVAL) {
+              fullscreenWinnerLabel.setText("KI GEWINNT!");
+            } else {
+              fullscreenWinnerLabel.setText("SPIELER 2 GEWINNT!");
+            }
             fullscreenWinnerLabel.setTextFill(Color.web("#ff00ff")); // Neon Pink
           }
           fullscreenGameOverBox.setVisible(true);

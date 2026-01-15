@@ -44,7 +44,10 @@ public class PowerPongViewModel implements PowerPongListener {
     }
   }
 
+  private GameMode currentMode = null;
+
   public void startGame(final GameMode mode) throws GameLogicException {
+    this.currentMode = mode;
     service.startGame(mode);
     service.removeListener(this);
     service.addListener(this);
@@ -119,9 +122,14 @@ public class PowerPongViewModel implements PowerPongListener {
       gameStatus.set(finalStatus);
       gameState.set(finalState);
       if (finalStatus == GameStatus.PLAYER_1_WINS) {
-        winnerText.set("PLAYER 1 WINS!");
+        winnerText.set("DU GEWINNST!");
       } else if (finalStatus == GameStatus.PLAYER_2_WINS) {
-        winnerText.set("PLAYER 2 WINS!");
+        // Check if we're in AI mode
+        if (currentMode == GameMode.PLAYER_VS_AI || currentMode == GameMode.SURVIVAL) {
+          winnerText.set("KI GEWINNT!");
+        } else {
+          winnerText.set("SPIELER 2 GEWINNT!");
+        }
       }
     });
   }
