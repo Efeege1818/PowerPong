@@ -64,9 +64,9 @@ public class EnemyToolbox {
    */
   public static int getMoney(EnemyType type) throws NoSuchElementException {
     return switch (type) {
-      case SMALL -> 1;
-      case MEDIUM -> 2;
-      case LARGE -> 3;
+      case SMALL -> 5;
+      case MEDIUM -> 10;
+      case LARGE -> 15;
       default -> throw new NoSuchElementException();
     };
   }

@@ -80,6 +80,6 @@ public record Configuration(int mapSize,
   }
 
   public static int DEFAULT_MAP_SIZE = 10;
-  public static float DEFAULT_ENEMY_POWER_MULTIPLIER = 10.0f;
+  public static float DEFAULT_ENEMY_POWER_MULTIPLIER = 50.0f;
 
 }
