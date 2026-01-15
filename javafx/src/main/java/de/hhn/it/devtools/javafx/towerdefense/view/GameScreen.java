@@ -86,7 +86,7 @@ public class GameScreen extends StackPane {
   public GridPane createTowerDisplay() {
     GridPane towerDisplay = new GridPane();
     towerDisplay.setAlignment(Pos.CENTER_LEFT);
-    towerDisplay.setHgap(10);
+    towerDisplay.setHgap(1);
 
     int columnIndex = 0;
     int rowIndex = 0;
