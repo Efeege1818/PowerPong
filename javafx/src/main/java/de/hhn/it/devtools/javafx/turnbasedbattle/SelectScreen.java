@@ -3,6 +3,7 @@ package de.hhn.it.devtools.javafx.turnbasedbattle;
 import de.hhn.it.devtools.apis.turnbasedbattle.Monster;
 import de.hhn.it.devtools.apis.turnbasedbattle.Player;
 import de.hhn.it.devtools.components.turnbasedbattle.Data;
+import de.hhn.it.devtools.components.turnbasedbattle.SimpleMonster;
 import de.hhn.it.devtools.components.turnbasedbattle.SimpleTurnBasedBattleService;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -65,6 +66,21 @@ public class SelectScreen extends AnchorPane {
   @FXML
   public void onActionExitGame() {
     javafx.application.Platform.exit();
+  }
+
+  @FXML
+  public void openFireInfo() {
+    screenManager.switchToInfo(SimpleMonster.create(data.getMonsters()[0]));
+  }
+
+  @FXML
+  public void openWaterInfo() {
+    screenManager.switchToInfo(SimpleMonster.create(data.getMonsters()[2]));
+  }
+
+  @FXML
+  public void openGrassInfo() {
+    screenManager.switchToInfo(SimpleMonster.create(data.getMonsters()[1]));
   }
 
   private void monsterForP1(Monster monster) {

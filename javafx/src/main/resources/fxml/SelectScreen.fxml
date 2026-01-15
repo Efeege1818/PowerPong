@@ -15,19 +15,19 @@
             </font>
         </Label>
 
-        <ImageView fx:id="fireMonImage" fitHeight="166.0" fitWidth="106.0" layoutX="44.0" layoutY="142.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="fireMonImage" fitHeight="166.0" fitWidth="106.0" layoutX="44.0" layoutY="142.0" onMouseClicked="#openFireInfo" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@../Monster%20Sprites/FeuerMon.png" />
             </image>
         </ImageView>
 
-        <ImageView fx:id="waterMonImage" fitHeight="150.0" fitWidth="200.0" layoutX="222.0" layoutY="150.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="waterMonImage" fitHeight="150.0" fitWidth="200.0" layoutX="222.0" layoutY="150.0" onMouseClicked="#openWaterInfo" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@../Monster%20Sprites/WasserMon.png" />
             </image>
         </ImageView>
 
-        <ImageView fx:id="grassMonImage" fitHeight="150.0" fitWidth="200.0" layoutX="449.0" layoutY="150.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="grassMonImage" fitHeight="150.0" fitWidth="200.0" layoutX="449.0" layoutY="150.0" onMouseClicked="#openGrassInfo" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@../Monster%20Sprites/PflanzeMon.png" />
             </image>

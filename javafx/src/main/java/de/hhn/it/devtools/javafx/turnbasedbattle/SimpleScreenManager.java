@@ -3,6 +3,7 @@ package de.hhn.it.devtools.javafx.turnbasedbattle;
 import de.hhn.it.devtools.apis.turnbasedbattle.Element;
 import de.hhn.it.devtools.apis.turnbasedbattle.ScreenManager;
 import de.hhn.it.devtools.apis.turnbasedbattle.UnknownTransitionException;
+import de.hhn.it.devtools.components.turnbasedbattle.SimpleMonster;
 import de.hhn.it.devtools.components.turnbasedbattle.SimpleTurnBasedBattleService;
 import javafx.scene.layout.Pane;
 
@@ -18,6 +19,7 @@ public class SimpleScreenManager implements ScreenManager {
   private SimpleTurnBasedBattleService pendingBattleService;
   private Integer pendingWinnerPlayerId;
   private Element pendingWinnerElement;
+  private InfoScreenViewModel infoViewModel;
 
 
   public SimpleScreenManager(final Pane pane) {
@@ -48,7 +50,7 @@ public class SimpleScreenManager implements ScreenManager {
 
   private InfoScreenFx getInfoScreen() {
     if(infoScreen == null) {
-      infoScreen = new InfoScreenFx(null); //TODO: update InfoScreen to use ScreenManager
+      infoScreen = new InfoScreenFx(this, infoViewModel);
     }
     return infoScreen;
   }
@@ -86,6 +88,12 @@ public class SimpleScreenManager implements ScreenManager {
 
       default: throw new UnknownTransitionException("Unknown screen: ", fromScreen, toScreen);
     }
+  }
+
+  public void switchToInfo(SimpleMonster monster) {
+    infoViewModel = new InfoScreenViewModel(monster);
+    pane.getChildren().clear();
+    pane.getChildren().add(getInfoScreen());
   }
 
   public void setPendingBattleService(SimpleTurnBasedBattleService service) {
