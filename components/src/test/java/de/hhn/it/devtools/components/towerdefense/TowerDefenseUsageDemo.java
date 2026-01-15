@@ -25,7 +25,7 @@ public class TowerDefenseUsageDemo {
         System.out.println(service.getPlayer().money() + "$");
       }
 
-      @Override
+      //@Override
       public void gameEnded() {
         System.out.println("GAME OVER");
         if (!triedAgain) {
@@ -48,7 +48,7 @@ public class TowerDefenseUsageDemo {
         }
       }
 
-      @Override
+      //@Override
       public void waveCompleted() {
         System.out.println("Round " + service.getCurrentRound() + " Completed");
         service.startNextRound();
@@ -56,6 +56,11 @@ public class TowerDefenseUsageDemo {
 
       @Override
       public void updateTowerMap() {
+      }
+
+      @Override
+      public void updateMap() {
+
       }
 
       @Override

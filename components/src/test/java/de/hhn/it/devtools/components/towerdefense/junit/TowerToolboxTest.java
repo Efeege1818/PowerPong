@@ -49,9 +49,9 @@ public class TowerToolboxTest {
 
   @Test
   void testGetCost() {
-    assertEquals(10, TowerToolbox.getCost(TowerType.MELEE));
-    assertEquals(15, TowerToolbox.getCost(TowerType.RANGED));
-    assertEquals(20, TowerToolbox.getCost(TowerType.MONEYMAKER));
+    assertEquals(100, TowerToolbox.getCost(TowerType.MELEE));
+    assertEquals(150, TowerToolbox.getCost(TowerType.RANGED));
+    assertEquals(200, TowerToolbox.getCost(TowerType.MONEYMAKER));
   }
 
   @Test

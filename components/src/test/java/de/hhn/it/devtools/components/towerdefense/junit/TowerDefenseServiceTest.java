@@ -1,5 +1,6 @@
 package de.hhn.it.devtools.components.towerdefense.junit;
 
+import de.hhn.it.devtools.apis.towerdefense.Configuration;
 import de.hhn.it.devtools.apis.towerdefense.Coordinates;
 import de.hhn.it.devtools.apis.towerdefense.GameState;
 import de.hhn.it.devtools.apis.towerdefense.Tower;
@@ -25,6 +26,10 @@ public class TowerDefenseServiceTest {
 
   @Test
   public void testDefaultStartingMoneyAndHealth() {
+
+    service.editConfiguration(new Configuration(10, 50, 100, 1, 1, 1));
+    service.startGame();
+
     Assertions.assertEquals(100, service.getPlayer().money());
     Assertions.assertEquals(50, service.getPlayer().health());
   }
@@ -49,6 +54,10 @@ public class TowerDefenseServiceTest {
 
   @Test
   public void testUpdateMoney() {
+
+    service.editConfiguration(new Configuration(10, 50, 100, 1, 1, 1));
+    service.startGame();
+
     service.updateMoney(10);
     service.updateMoney(7);
     service.updateMoney(13);
@@ -60,7 +69,6 @@ public class TowerDefenseServiceTest {
   public void testStartNextRound() {
     service.startGame();
     service.startNextRound();
-
   }
 
   @Test
@@ -106,9 +114,9 @@ public class TowerDefenseServiceTest {
   }
 
   @Test
-  public void testStartGameTwiceDoesNotThrow() {
+  public void testStartGameTwiceDoesThrow() {
     service.startGame();
-    Assertions.assertDoesNotThrow(() -> service.startGame());
+    Assertions.assertThrows(IllegalStateException.class, () -> service.startGame());
   }
 
   @Test
@@ -154,6 +162,8 @@ public class TowerDefenseServiceTest {
 
   @Test
   public void testAbortGameResetsStateAndPlayer() {
+    service.editConfiguration(new Configuration(10, 50, 80, 1, 1, 1));
+
     service.startGame();
     service.updateMoney(20);
     service.updateHealth(-10);
@@ -188,17 +198,19 @@ public class TowerDefenseServiceTest {
 
   @Test
   public void testPlaceTowerNotEnoughMoney() {
+    service.editConfiguration(new Configuration(10, 50, 199, 1, 1, 1));
     service.startGame();
 
     Tower expensiveTower = new Tower(new Coordinates(0, 0), TowerType.MONEYMAKER);
 
-    service.updateMoney(100);
 
     Assertions.assertThrows(IllegalArgumentException.class, () -> service.placeTower(expensiveTower));
   }
 
   @Test
   public void testUpdateMoneyBelowZeroThrowsException() {
+    service.editConfiguration(new Configuration(10, 50, 100, 1, 1, 1));
+    service.startGame();
     Assertions.assertThrows(IllegalArgumentException.class, () -> service.updateMoney(-101));
   }
 }

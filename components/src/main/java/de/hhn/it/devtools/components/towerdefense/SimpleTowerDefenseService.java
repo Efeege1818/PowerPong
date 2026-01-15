@@ -10,7 +10,6 @@ import de.hhn.it.devtools.apis.towerdefense.Tower;
 import de.hhn.it.devtools.apis.towerdefense.TowerDefenseListener;
 import de.hhn.it.devtools.apis.towerdefense.TowerDefenseService;
 import de.hhn.it.devtools.apis.towerdefense.TowerType;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

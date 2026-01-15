@@ -47,9 +47,9 @@ public class EnemyToolboxTest {
 
   @Test
   void testGetMoney() {
-    assertEquals(1, EnemyToolbox.getMoney(EnemyType.SMALL));
-    assertEquals(2, EnemyToolbox.getMoney(EnemyType.MEDIUM));
-    assertEquals(3, EnemyToolbox.getMoney(EnemyType.LARGE));
+    assertEquals(5, EnemyToolbox.getMoney(EnemyType.SMALL));
+    assertEquals(10, EnemyToolbox.getMoney(EnemyType.MEDIUM));
+    assertEquals(15, EnemyToolbox.getMoney(EnemyType.LARGE));
   }
 
   @Test
@@ -130,7 +130,7 @@ public class EnemyToolboxTest {
 
     int money = toolbox.moneyPerEnemy();
 
-    assertEquals(3, money);
+    assertEquals(15, money);
   }
 
   @Test

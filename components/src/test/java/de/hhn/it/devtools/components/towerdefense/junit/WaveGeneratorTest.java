@@ -17,7 +17,7 @@ public class WaveGeneratorTest {
   private static final org.slf4j.Logger logger =
       org.slf4j.LoggerFactory.getLogger(WaveGeneratorTest.class);
 
-  private final Configuration configuration = new Configuration();
+  private final Configuration configuration = new Configuration(10,50,100,10,1,1);
 
   @Test
   public void createWaveTest() {
