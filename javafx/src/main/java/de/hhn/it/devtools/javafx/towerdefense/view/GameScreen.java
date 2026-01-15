@@ -5,6 +5,8 @@ import de.hhn.it.devtools.javafx.towerdefense.controllers.ScreenManager;
 import de.hhn.it.devtools.javafx.towerdefense.controllers.ScreenType;
 import de.hhn.it.devtools.javafx.towerdefense.viewmodel.TowerDefenseViewModel;
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -21,16 +23,23 @@ public class GameScreen extends StackPane {
   private static final org.slf4j.Logger logger =
       org.slf4j.LoggerFactory.getLogger(GameScreen.class);
 
+  private final GridPane overlayDisplay;
+
   ScreenManager screenManager;
   TowerDefenseViewModel viewModel;
   CompleteBoard completeBoard;
   VBox mainLayout = new VBox();
   TowerType selectedTower = null;
 
+  BooleanProperty showOverlay = new SimpleBooleanProperty();
+  BooleanProperty enableNextWaveButton = new SimpleBooleanProperty();
+
   public GameScreen(ScreenManager screenManager) {
     this.screenManager = screenManager;
     this.viewModel = screenManager.getViewModel();
     this.completeBoard = new CompleteBoard(viewModel);
+
+    overlayDisplay = createOverlayDisplay();
 
     setAlignment(Pos.CENTER);
     createDisplay();
@@ -62,11 +71,22 @@ public class GameScreen extends StackPane {
     prepareTowerPlacement();
 
     viewModel.getGameState().addListener((obs, oldState, newState) -> {
+      enableNextWaveButton.set(newState != GameState.RUNNING && !showOverlay.get());
+
       if ((newState == GameState.PAUSED || newState == GameState.GAME_OVER) && oldState == GameState.RUNNING) {
         Platform.runLater(() -> {
-          logger.debug("Showing Overlay Display");
-          getChildren().add(createOverlayDisplay());
+          showOverlay.setValue(true);
         });
+      }
+    });
+
+    showOverlay.addListener((obs, oldVal, newVal) -> {
+      enableNextWaveButton.set(viewModel.getGameState().get() != GameState.RUNNING && !newVal);
+      if (newVal) {
+        logger.debug("Showing Overlay Display");
+        getChildren().add(overlayDisplay);
+      } else {
+        getChildren().remove(overlayDisplay);
       }
     });
 
@@ -111,7 +131,7 @@ public class GameScreen extends StackPane {
     startWaveButton.setOnAction((event) -> {
       startWaveOnAction();
     });
-    startWaveButton.disableProperty().bind(viewModel.getGameState().isEqualTo(GameState.RUNNING));
+    startWaveButton.disableProperty().bind(enableNextWaveButton.not());
 
     towerDisplay.add(startWaveButton,4,0);
 
@@ -176,11 +196,11 @@ public class GameScreen extends StackPane {
     overlayDisplay.setAlignment(Pos.CENTER);
     overlayDisplay.setHgap(10);
 
-    if(viewModel.getGameState().getValue().equals(GameState.GAME_OVER)) {
+    if (viewModel.getGameState().getValue().equals(GameState.GAME_OVER)) {
       Button retryButton = new Button("Retry");
       retryButton.setOnAction((event) -> {
         retryWaveOnAction();
-        getChildren().removeLast();
+        showOverlay.set(false);
       });
       Label lostLabel = new Label("You Lost");
       overlayDisplay.add(lostLabel, 1, 0);
@@ -188,7 +208,7 @@ public class GameScreen extends StackPane {
     } else {
       Button continueButton = new Button("Continue");
       continueButton.setOnAction((event) -> {
-        getChildren().removeLast();
+        showOverlay.set(false);
       });
       Label wonLabel = new Label("You Completed Round " + viewModel.getRound().getValue());
       overlayDisplay.add(wonLabel, 1, 0);
@@ -197,7 +217,7 @@ public class GameScreen extends StackPane {
     Button abortGameButton = new Button("Exit Game");
     abortGameButton.setOnAction((event) -> {
       abortGameOnAction();
-      getChildren().removeLast();
+      showOverlay.set(false);
     });
     overlayDisplay.add(abortGameButton, 2, 1);
 
@@ -332,7 +352,7 @@ public class GameScreen extends StackPane {
     }
   }
 
-  public void startWaveOnAction() {
+  private void startWaveOnAction() {
     try {
       viewModel.startNextRound();
     } catch (IllegalStateException e) {
@@ -343,9 +363,8 @@ public class GameScreen extends StackPane {
     }
   }
 
-  public void retryWaveOnAction() {
+  private void retryWaveOnAction() {
     try {
-      // TODO: retryRound();
       viewModel.retryRound();
     } catch (IllegalStateException e) {
       // Temporary Solution for Illegal Button press
@@ -355,7 +374,7 @@ public class GameScreen extends StackPane {
     }
   }
 
-  public void abortGameOnAction() {
+  private void abortGameOnAction() {
     try {
       viewModel.abortGame();
       screenManager.switchTo(ScreenType.TITLE_SCREEN);

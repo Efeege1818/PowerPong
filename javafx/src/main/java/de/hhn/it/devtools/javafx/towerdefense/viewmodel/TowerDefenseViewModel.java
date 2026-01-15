@@ -48,8 +48,7 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
   public TowerDefenseViewModel(TowerDefenseService service) {
     this.service = service;
     this.service.addListener(this);
-    map.set(service.getMap());
-    round.set(service.getCurrentRound());
+    sync();
 
     difficultyProperty().addListener((obs, oldVal, newVal) -> {
       service.editConfiguration(new Configuration(newVal));
@@ -203,10 +202,11 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
     Platform.runLater(() -> {
       towers.setAll(service.getTowerBoard().values());
       enemies.setAll(service.getCurrentEnemies());
-      this.map.set(service.getMap());
+      map.set(service.getMap());
       health.set(service.getPlayer().health());
       money.set(service.getPlayer().money());
       round.set(service.getCurrentRound());
+      gameState.set(service.getCurrentGameState());
     });
   }
 }
