@@ -4,6 +4,9 @@ import de.hhn.it.devtools.apis.towerdefense.*;
 import de.hhn.it.devtools.javafx.towerdefense.controllers.ScreenManager;
 import de.hhn.it.devtools.javafx.towerdefense.controllers.ScreenType;
 import de.hhn.it.devtools.javafx.towerdefense.viewmodel.TowerDefenseViewModel;
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -30,10 +33,6 @@ public class GameScreen extends StackPane {
 
     setAlignment(Pos.CENTER);
     createDisplay();
-
-    viewModel.getGameOver().addListener((obs, oldEx, newEx) -> {
-      getChildren().add(createOverlayDisplay());
-    });
   }
 
   public void createDisplay() {
@@ -50,9 +49,17 @@ public class GameScreen extends StackPane {
 
     prepareTowerPlacement();
 
-    viewModel.getGameOver().addListener((obs, oldEx, newEx) -> {
-      if (newEx == true) {
-        getChildren().add(createOverlayDisplay());
+    viewModel.getCurrentGameState().addListener(new ChangeListener<GameState>() {
+      @Override
+      public void changed(ObservableValue<? extends GameState> observableValue, GameState gameState, GameState t1) {
+        Platform.runLater(new Runnable() {
+          @Override
+          public void run() {
+            if (gameState != GameState.RUNNING) {
+              createOverlayDisplay();
+            }
+          }
+        });
       }
     });
 
@@ -150,14 +157,21 @@ public class GameScreen extends StackPane {
 
     public GridPane createOverlayDisplay() {
 
-    Button retryWaveButton = new Button("Retry this Round");
-    retryWaveButton.setOnAction((event) -> {
-      retryWaveOnAction();
-    });
+
+
     GridPane overlayDisplay = new GridPane();
     overlayDisplay.setAlignment(Pos.CENTER);
     overlayDisplay.setHgap(10);
-    overlayDisplay.add(retryWaveButton, 0, 0);
+
+//    if(viewModel.getGameOver().getValue().equals(true)) {
+//      Button retryButton = new Button("Retry");
+//      retryButton.setOnAction((event) -> {
+//        retryWaveOnAction();
+//      });
+//      Label lostLabel = new Label("You Lost");
+//      overlayDisplay.add(lostLabel, 0, 0);
+//    }else
+//
 
 
     return overlayDisplay;
