@@ -201,7 +201,7 @@ public class GameScreen extends StackPane {
     });
     overlayDisplay.add(abortGameButton, 2, 1);
 
-    overlayDisplay.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
+    overlayDisplay.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
 
     return overlayDisplay;
   }
