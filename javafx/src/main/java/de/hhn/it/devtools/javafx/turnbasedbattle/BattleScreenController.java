@@ -16,7 +16,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 import java.util.HashMap;
 import java.util.List;
@@ -93,7 +95,22 @@ public class BattleScreenController {
 
   @FXML
   public void onActionPause() {
-    screenManager.switchToPause(SimpleMonster.create(service.getPlayer1().monster()), SimpleMonster.create(service.getPlayer2().monster()));
+    Stage stage = new Stage();
+    StackPane root = new StackPane();
+    SimpleScreenManager screenManagerForPause = new SimpleScreenManager(root);
+
+    try {
+      screenManagerForPause.switchToPause(SimpleMonster.create(service.getPlayer1().monster()), SimpleMonster.create(service.getPlayer2().monster()));
+    } catch (UnknownTransitionException e) {
+      throw new RuntimeException(e);
+    }
+
+    Scene scene = new Scene(root, 600, 400);
+    stage.setTitle("PauseScreen");
+    stage.setFullScreen(true);
+    stage.setFullScreenExitHint("");
+    stage.setScene(scene);
+    stage.show();
   }
 
 

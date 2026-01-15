@@ -17,12 +17,17 @@
 
                 <!-- ===================== TOP: Turn Label ===================== -->
                 <top>
-                    <HBox alignment="TOP_LEFT" spacing="10.0" style="-fx-padding: 10 0 0 60;" BorderPane.alignment="TOP_LEFT">
+                    <HBox alignment="CENTER_LEFT" spacing="10.0" style="-fx-padding: 10 0 0 60;" BorderPane.alignment="TOP_LEFT">
                         <Label fx:id="turnLabel" text="Player 1 turn" textFill="RED">
                             <font><Font name="System Bold" size="50.0" /></font>
                         </Label>
-                  <Button fx:id="pauseButton" alignment="TOP_RIGHT" mnemonicParsing="false" onAction="#onActionPause" text="Pause" />
+
+                        <!-- Spacer pushes the Pause button to the right -->
+                        <Region HBox.hgrow="ALWAYS" />
+
+                        <Button fx:id="pauseButton" alignment="CENTER" mnemonicParsing="false" onAction="#onActionPause" text="Pause" />
                     </HBox>
+
                 </top>
 
                 <!-- ===================== CENTER: Arena ===================== -->
