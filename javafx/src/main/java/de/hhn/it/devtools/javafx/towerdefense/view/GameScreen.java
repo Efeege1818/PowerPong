@@ -23,7 +23,8 @@ public class GameScreen extends StackPane {
   private static final org.slf4j.Logger logger =
       org.slf4j.LoggerFactory.getLogger(GameScreen.class);
 
-  private final GridPane overlayDisplay;
+  private final GridPane gameEndedOverlay;
+  private final GridPane roundCompletedOverlay;
 
   ScreenManager screenManager;
   TowerDefenseViewModel viewModel;
@@ -31,7 +32,8 @@ public class GameScreen extends StackPane {
   VBox mainLayout = new VBox();
   TowerType selectedTower = null;
 
-  BooleanProperty showOverlay = new SimpleBooleanProperty();
+  BooleanProperty showRoundCompletedOverlay = new SimpleBooleanProperty();
+  BooleanProperty showGameEndedOverlay = new SimpleBooleanProperty();
   BooleanProperty enableNextWaveButton = new SimpleBooleanProperty();
 
   public GameScreen(ScreenManager screenManager) {
@@ -39,7 +41,8 @@ public class GameScreen extends StackPane {
     this.viewModel = screenManager.getViewModel();
     this.completeBoard = new CompleteBoard(viewModel);
 
-    overlayDisplay = createOverlayDisplay();
+    gameEndedOverlay = createGameEndedOverlay();
+    roundCompletedOverlay = createRoundCompletedOverlay();
 
     setAlignment(Pos.CENTER);
     createDisplay();
@@ -71,22 +74,37 @@ public class GameScreen extends StackPane {
     prepareTowerPlacement();
 
     viewModel.getGameState().addListener((obs, oldState, newState) -> {
-      enableNextWaveButton.set(newState != GameState.RUNNING && !showOverlay.get());
+      enableNextWaveButton.set(newState != GameState.RUNNING
+          && !showGameEndedOverlay.get()
+          && !showRoundCompletedOverlay.get());
 
-      if ((newState == GameState.PAUSED || newState == GameState.GAME_OVER) && oldState == GameState.RUNNING) {
-        Platform.runLater(() -> {
-          showOverlay.setValue(true);
-        });
+      Platform.runLater(() -> {
+        if(newState == GameState.GAME_OVER) {
+          showGameEndedOverlay.setValue(true);
+        }
+        if (newState == GameState.PAUSED && oldState == GameState.RUNNING) {
+          showRoundCompletedOverlay.setValue(true);
+        }
+      });
+    });
+
+    showGameEndedOverlay.addListener((obs, oldVal, newVal) -> {
+      enableNextWaveButton.set(viewModel.getGameState().get() != GameState.RUNNING && !newVal);
+      if (newVal) {
+        logger.debug("Showing Game Ended Display");
+        getChildren().add(gameEndedOverlay);
+      } else {
+        getChildren().remove(gameEndedOverlay);
       }
     });
 
-    showOverlay.addListener((obs, oldVal, newVal) -> {
+    showRoundCompletedOverlay.addListener((obs, oldVal, newVal) -> {
       enableNextWaveButton.set(viewModel.getGameState().get() != GameState.RUNNING && !newVal);
       if (newVal) {
-        logger.debug("Showing Overlay Display");
-        getChildren().add(overlayDisplay);
+        logger.debug("Showing Round Completed Display");
+        getChildren().add(roundCompletedOverlay);
       } else {
-        getChildren().remove(overlayDisplay);
+        getChildren().remove(roundCompletedOverlay);
       }
     });
 
@@ -101,7 +119,7 @@ public class GameScreen extends StackPane {
     });
   }
 
-  public GridPane createTowerDisplay() {
+  private GridPane createTowerDisplay() {
     GridPane towerDisplay = new GridPane();
     towerDisplay.setAlignment(Pos.CENTER_LEFT);
     towerDisplay.setHgap(1);
@@ -138,7 +156,7 @@ public class GameScreen extends StackPane {
     return towerDisplay;
   }
 
-  public GridPane createStatsDisplay() {
+  private GridPane createStatsDisplay() {
     GridPane statsDisplay = new GridPane();
     statsDisplay.setAlignment(Pos.CENTER);
     statsDisplay.setHgap(10);
@@ -165,82 +183,60 @@ public class GameScreen extends StackPane {
     return statsDisplay;
   }
 
+  private GridPane createGameEndedOverlay() {
+    GridPane display = new GridPane();
+    display.setAlignment(Pos.CENTER);
+    display.setHgap(10);
 
+    Button retryButton = new Button("Retry");
+    retryButton.setOnAction((event) -> {
+      retryWaveOnAction();
+      showGameEndedOverlay.set(false);
+    });
+    Label lostLabel = new Label("You Lost");
+    display.add(lostLabel, 1, 0);
+    display.add(retryButton, 0, 1);
 
-
-//  public GridPane createButtonDisplay() {
-//    Button startWaveButton = new Button("Start next Round");
-//    startWaveButton.setOnAction((event) -> {
-//      startWaveOnAction();
-//    });
-//    Button abortGameButton = new Button("Exit Game");
-//    abortGameButton.setOnAction((event) -> {
-//      abortGameOnAction();
-//    });
-//
-//    startWaveButton.disableProperty().bind(viewModel.getGameState().isEqualTo(GameState.RUNNING));
-//
-//    GridPane buttonDisplay = new GridPane();
-//    buttonDisplay.setAlignment(Pos.CENTER);
-//    buttonDisplay.setHgap(10);
-//
-//    buttonDisplay.add(startWaveButton, 0, 0);
-//    buttonDisplay.add(abortGameButton, 1, 0);
-//
-//    return buttonDisplay;
-//  }
-
-  public GridPane createOverlayDisplay() {
-
-    GridPane overlayDisplay = new GridPane();
-    overlayDisplay.setAlignment(Pos.CENTER);
-    overlayDisplay.setHgap(10);
-
-    if (viewModel.getGameState().getValue().equals(GameState.GAME_OVER)) {
-      Button retryButton = new Button("Retry");
-      retryButton.setOnAction((event) -> {
-        retryWaveOnAction();
-        showOverlay.set(false);
-      });
-      Label lostLabel = new Label("You Lost");
-      overlayDisplay.add(lostLabel, 1, 0);
-      overlayDisplay.add(retryButton, 0, 1);
-    } else {
-      Button continueButton = new Button("Continue");
-      continueButton.setOnAction((event) -> {
-        showOverlay.set(false);
-      });
-      Label wonLabel = new Label("You Completed Round " + viewModel.getRound().getValue());
-      overlayDisplay.add(wonLabel, 1, 0);
-      overlayDisplay.add(continueButton, 0, 1);
-    }
     Button abortGameButton = new Button("Exit Game");
     abortGameButton.setOnAction((event) -> {
       abortGameOnAction();
-      showOverlay.set(false);
+      showGameEndedOverlay.set(false);
     });
-    overlayDisplay.add(abortGameButton, 2, 1);
+    display.add(abortGameButton, 2, 1);
 
-    overlayDisplay.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
 
-    return overlayDisplay;
+    display.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
+
+    return display;
   }
 
-//  public GridPane createOverlayDisplay() {
-//    // TODO: in "Game-Over" Overlay
-//    Button retryWaveButton = new Button("Retry this Round");
-//    retryWaveButton.setOnAction((event) -> {
-//      retryWaveOnAction();
-//    });
-//    GridPane overlayDisplay = new GridPane();
-//    overlayDisplay.setAlignment(Pos.CENTER);
-//    overlayDisplay.setHgap(10);
-//    overlayDisplay.add(retryWaveButton, 0, 0);
-//
-//    return overlayDisplay;
-//  }
+  private GridPane createRoundCompletedOverlay() {
+    GridPane display = new GridPane();
+    display.setAlignment(Pos.CENTER);
+    display.setHgap(10);
 
-  public GridPane createTowerDefenseTutorialDisplay() {
+    Button continueButton = new Button("Continue");
+    continueButton.setOnAction((event) -> {
+      showRoundCompletedOverlay.set(false);
+    });
+    Label wonLabel = new Label("You Completed Round " + viewModel.getRound().getValue());
+    display.add(wonLabel, 1, 0);
+    display.add(continueButton, 0, 1);
+
+    Button abortGameButton = new Button("Exit Game");
+    abortGameButton.setOnAction((event) -> {
+      abortGameOnAction();
+      showRoundCompletedOverlay.set(false);
+    });
+    display.add(abortGameButton, 2, 1);
+
+    display.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
+
+    return display;
+
+  }
+
+  private GridPane createTowerDefenseTutorialDisplay() {
     GridPane tutorialDisplay = new GridPane();
     tutorialDisplay.setAlignment(Pos.CENTER);
     tutorialDisplay.setHgap(10);
@@ -322,7 +318,7 @@ public class GameScreen extends StackPane {
     };
   }
 
-  public void prepareTowerPlacement() {
+  private void prepareTowerPlacement() {
     int gridSize = viewModel.getMap().get().grid().length;
 
     for (int row = 0; row < gridSize; row++) {
