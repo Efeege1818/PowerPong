@@ -42,6 +42,8 @@ public class WaterMonster extends SimpleMonster {
     this.imagePath = "/Monster Sprites/WasserMon.png";
     this.imagePathBack = "/Monster Sprites/WasserMon Back.png";
 
+    lockMove(5);
+
     logger.debug("{} created: {}", name, toString());
   }
 

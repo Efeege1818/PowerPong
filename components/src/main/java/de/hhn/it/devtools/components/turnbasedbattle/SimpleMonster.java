@@ -35,7 +35,7 @@ public class SimpleMonster {
   protected String imagePath;
   protected String imagePathBack;
 
-  // ========== Internal Tracking (Buffs, DOTs, Cooldowns) ==========
+  // ========== Internal Tracking (Buffs, DOTs, Cooldowns, Locked) ==========
 
   /**
    * Tracks active buffs/debuffs on this monster.
@@ -54,6 +54,12 @@ public class SimpleMonster {
    * Key: move index, Value: remaining cooldown turns.i
    */
   private Map<Integer, Integer> moveCooldowns = new HashMap<>();
+
+  /**
+   * Tracks if move is locked.
+   * Key: move index, Value: locked or unlocked
+   */
+  private Map<Integer, Boolean> lockedMoves = new HashMap<>();
 
 
   /**
@@ -484,6 +490,39 @@ public class SimpleMonster {
    */
   public String getPassiveInfo() {
     return passiveInfo;
+  }
+
+  /**
+   * Locks a move.
+   *
+   * @param moveIndex the index of the move.
+   */
+  public void lockMove(int moveIndex) {
+    lockedMoves.put(moveIndex, true);
+    logger.debug("Move {} is now locked", moves.get(moveIndex).name());
+  }
+
+  /**
+   * Unlocks a move.
+   *
+   * @param moveIndex the index of the move.
+   */
+  public void unlockMove(int moveIndex) {
+    lockedMoves.put(moveIndex, false);
+    logger.debug("Move {} is now unlocked", moves.get(moveIndex).name());
+  }
+
+  /**
+   * Checks if move is locked.
+   *
+   * @param moveIndex the index of the move.
+   * @return if move is locked.
+   */
+  public boolean isMoveLocked(int moveIndex) {
+    if (lockedMoves.get(moveIndex) == null) {
+      return false;
+    }
+    return lockedMoves.get(moveIndex);
   }
 
   /**

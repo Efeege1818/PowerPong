@@ -26,7 +26,7 @@ public class Data {
   private final Move waterWaterAtkFollowUp = new AttackMove("Water hit", Element.WATER, 5, false, 0, false, "PLACEHOLDER DESCRIPTION!", 1);
   private final Move waterNormAtk = new AttackMove("Double Slice", Element.NORMAL, 7, false, 2, false, "2 weak hits", 2);
   private final Move waterWaterAtk = new AttackMove("Sharpening Strike", Element.WATER, 5, true, 3, false, "3 weak hits High Crit chance (ignores DEF)", 3);
-  private final Move waterStance = new StanceMove("Water Dance", Element.NORMAL, 1, "PLACEHOLDER DESCRIPTION! Changes Stance");
+  private final Move waterStance = new StanceMove("Water Dance", Element.NORMAL, 1, "Changes the stance of the monster (Crit stance or dodge stance)");
   //private final Move waterBuff
   private final Move waterSpecial = new AttackMove("Waterfall", Element.NORMAL, 10, false, 3, true, "PLACEHOLDER DESCRIPTION!", 3, waterWaterAtkFollowUp);
 

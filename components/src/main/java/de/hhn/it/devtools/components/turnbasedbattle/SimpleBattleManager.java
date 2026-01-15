@@ -95,6 +95,12 @@ public class SimpleBattleManager implements BattleManager {
       throw new IllegalArgumentException("Invalid move number.");
     }
 
+    // Check if move is locked
+    if (currentMonster.isMoveLocked(moveNumber)) {
+      logger.debug("Move {} is locked!", moveNumber);
+      throw new IllegalStateException("Move is locked.");
+    }
+
     // Check if move is on cooldown
     if (currentMonster.isMoveOnCooldown(moveNumber)) {
       int remaining = currentMonster.getRemainingCooldown(moveNumber);
