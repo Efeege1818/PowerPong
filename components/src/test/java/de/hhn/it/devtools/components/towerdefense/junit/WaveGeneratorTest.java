@@ -17,13 +17,7 @@ public class WaveGeneratorTest {
   private static final org.slf4j.Logger logger =
       org.slf4j.LoggerFactory.getLogger(WaveGeneratorTest.class);
 
-  private final Configuration configuration = new Configuration(
-      Configuration.DEFAULT_MAP_SIZE,
-      Configuration.DEFAULT_STARTING_HEALTH,
-      Configuration.DEFAULT_STARTING_MONEY,
-      Configuration.DEFAULT_ENEMY_POWER_MULTIPLIER,
-      Configuration.DEFAULT_ENEMY_HEALTH_MULTIPLIER,
-      Configuration.DEFAULT_ESCALATION);
+  private final Configuration configuration = new Configuration();
 
   @Test
   public void createWaveTest() {

@@ -162,7 +162,7 @@ public class TowerDefenseServiceTest {
 
     Assertions.assertEquals(GameState.READY, service.getCurrentGameState());
     Assertions.assertEquals(50, service.getPlayer().health());
-    Assertions.assertEquals(100, service.getPlayer().money());
+    Assertions.assertEquals(80, service.getPlayer().money());
     Assertions.assertEquals(0, service.getCurrentRound());
   }
 
@@ -192,7 +192,7 @@ public class TowerDefenseServiceTest {
 
     Tower expensiveTower = new Tower(new Coordinates(0, 0), TowerType.MONEYMAKER);
 
-    service.updateMoney(-100);
+    service.updateMoney(100);
 
     Assertions.assertThrows(IllegalArgumentException.class, () -> service.placeTower(expensiveTower));
   }

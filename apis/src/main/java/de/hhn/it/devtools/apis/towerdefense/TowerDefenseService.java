@@ -27,7 +27,7 @@ public interface TowerDefenseService {
    *
    * @param configuration the new Configuration
    */
-  void editConfiguration(Configuration configuration);
+  void editConfiguration(Configuration configuration) throws IllegalStateException;
 
   /**
    * Adds a listener to the list.
@@ -133,11 +133,4 @@ public interface TowerDefenseService {
    * After this Method has been called this Service should be used no longer.
    */
   void terminate();
-
-  /**
-   * Changes the difficulty of the game.
-   *
-   * @param difficulty the difficulty to apply
-   */
-  void setDifficulty(Difficulty difficulty);
 }

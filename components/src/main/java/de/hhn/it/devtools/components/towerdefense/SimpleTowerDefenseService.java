@@ -82,8 +82,15 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
   }
 
   @Override
-  public void editConfiguration(Configuration configuration) {
+  public void editConfiguration(Configuration configuration) throws IllegalStateException {
+    if (currentGameState != GameState.READY) {
+      throw new IllegalStateException();
+    }
     this.configuration = configuration;
+    player = new Player(configuration.startingHealth(), configuration.startingMoney());
+    mapToolbox = new MapToolbox(seed);
+    mapToolbox.generateMap(configuration.mapSize());
+    waveGenerator = new WaveGenerator(mapToolbox.getPath().getFirst(), seed, configuration);
   }
 
   @Override
@@ -262,44 +269,6 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
       roundCompleted();
     }
     notifyListeners(TowerDefenseListener::tick);
-  }
-
-  public void setDifficulty(Difficulty difficulty) {
-    switch (difficulty) {
-      case EASY -> configuration = new Configuration(
-              configuration.mapSize(),
-              configuration.startingHealth(),
-              configuration.startingMoney(),
-              configuration.enemyPowerMultiplier(),
-              configuration.enemyHealthMultiplier(),
-              configuration.escalation()
-      );
-      case NORMAL -> configuration = new Configuration(
-              configuration.mapSize(),
-              50,
-              100,
-              1.0f,
-              1.0f,
-              configuration.escalation()
-      );
-
-      case HARD -> configuration = new Configuration(
-              configuration.mapSize(),
-              35,
-              80,
-              1.3f,
-              1.4f,
-              configuration.escalation()
-      );
-      case IMPOSSIBLE -> configuration = new Configuration(
-              configuration.mapSize(),
-              20,
-              60,
-              1.8f,
-              2.0f,
-              configuration.escalation()
-      );
-    }
   }
 
   private void updateGameState(GameState newGameState) {

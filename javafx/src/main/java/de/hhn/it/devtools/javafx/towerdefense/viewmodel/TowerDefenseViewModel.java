@@ -51,6 +51,10 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
     this.service.addListener(this);
     map.set(service.getMap());
     round.set(service.getCurrentRound());
+
+    difficultyProperty().addListener((obs, oldVal, newVal) -> {
+      service.editConfiguration(new Configuration(newVal));
+    });
   }
 
   public void addTower(Tower tower) {
@@ -124,14 +128,6 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
 
   public ObjectProperty<Difficulty> difficultyProperty() {
     return difficulty;
-  }
-
-  public Difficulty getDifficulty() {
-    return difficulty.get();
-  }
-
-  public void setDifficulty(Difficulty difficulty) {
-    service.setDifficulty(difficulty);
   }
 
   public void editConfiguration(Configuration configuration) {
