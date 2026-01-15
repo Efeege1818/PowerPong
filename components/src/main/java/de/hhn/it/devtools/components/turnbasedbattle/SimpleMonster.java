@@ -322,22 +322,29 @@ public class SimpleMonster {
   }
 
   /**
+   * Ticks monster specific effects.
+   * Method must be overridden by specific Monster or leave empty if no effect.
+   */
+  protected void tickMonsterEffects() {
+  }
+
+  /**
    * If the monster changes it's stance then this method gets called.
-   * Method must be overridden by specific Monster.
+   * Method must be overridden by specific Monster or leave empty if no effect.
    */
   public void switchStance() {
   }
 
   /**
    * If the monster lands a critical hit this method gets called.
-   * Method must be overridden by specific Monster.
+   * Method must be overridden by specific Monster or leave empty if no effect.
    */
   public void handleCriticalHit() {
   }
 
   /**
    * If the monster dodges an attack this method gets called.
-   * Method must be overridden by specific Monster.
+   * Method must be overridden by specific Monster or leave empty if no effect.
    */
   public void handleDodge() {
   }
@@ -486,10 +493,7 @@ public class SimpleMonster {
     tickBuffs();
     applyAndTickDots();
     tickCooldowns();
-
-    if (this instanceof FireMonster) {
-      ((FireMonster) this).tickFireMonsterEffects();
-    }
+    tickMonsterEffects();
   }
 
   // ========== Buff/Debuff Tracking Methods ==========
