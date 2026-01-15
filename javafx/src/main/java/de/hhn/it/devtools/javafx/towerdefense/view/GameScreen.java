@@ -43,14 +43,9 @@ public class GameScreen extends StackPane {
     mainLayout.getChildren().addAll(
         createStatsDisplay(),
         completeBoard,
-<<<<<<< HEAD
         createTowerDisplay(),
-        createButtonDisplay(),
+        //createButtonDisplay(),
         createTowerDefenseTutorialDisplay()
-=======
-        createTowerDisplay()
-//        createButtonDisplay()
->>>>>>> e10d53ef8ea21a34d2f01d9efb3ba1882936641a
     );
     getChildren().add(mainLayout);
 
