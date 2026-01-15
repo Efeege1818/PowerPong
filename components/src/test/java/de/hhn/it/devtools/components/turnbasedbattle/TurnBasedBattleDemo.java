@@ -19,7 +19,7 @@ public class TurnBasedBattleDemo {
 
         Data data = new Data();
 
-        Monster monster1 = data.getMonsters()[0];
+        Monster monster1 = data.getMonsters()[1];
         Monster monster2 = data.getMonsters()[2];
 
         Player player1 = new Player(1, monster1, 0);

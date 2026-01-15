@@ -33,6 +33,14 @@ public class Data {
           "3 normal hits + 3 water hits, +1 water/ normal hit per Crit with this Move\n" +
           "charge condition: Hit Crits/ dodge ATKs (15 combined)", 3, waterWaterAtkFollowUp);
 
+  // GrassMonster moves
+  private final Move grassPoison = new DotMove("Poison", Element.NORMAL, 5, 4, 0, false, "Poison", 1);
+  private final Move grassNormAtk = new AttackMove("Poison Sting", Element.NORMAL, 14, false, 2, false, "procs poison on hit", 1);
+  private final Move grassGrassAtk = new AttackMove("Poison Bomb", Element.GRASS, 21, false, 3, false, "mid DMG, poisons enemy", 1, grassPoison);
+  private final Move grassBuff = new BuffMove("Harden Skin", Element.NORMAL, "damageReduction", 0.5, 2, 5, false, "takes 50% less DMG for 2 turns", 1);
+  private final Move grassDebuff = new DebuffMove("Poison Absorb", Element.NORMAL, "attack", 1, 3, 3, false, "if this debuff is applied: doubles poison ticks", 1);
+  private final Move grassSpecial = new AttackMove("Leaf Cannon", Element.GRASS, 5, false, 0, false, "charge only increases when poison does DMG", 1);
+
   public Data() {
     this.monsters = createMonsters();
   }
@@ -76,11 +84,11 @@ public class Data {
    */
   public HashMap<Integer, Move> getGrassMonsterMoves() {
     HashMap<Integer, Move> movesMap = new HashMap<>();
-    movesMap.put(1, waterStance);
-    movesMap.put(2, waterStance);
-    movesMap.put(3, waterStance);
-    movesMap.put(4, waterStance);
-    movesMap.put(5, waterStance);
+    movesMap.put(1, grassNormAtk);
+    movesMap.put(2, grassGrassAtk);
+    movesMap.put(3, grassBuff);
+    movesMap.put(4, grassDebuff);
+    movesMap.put(5, grassSpecial);
     return movesMap;
   }
 

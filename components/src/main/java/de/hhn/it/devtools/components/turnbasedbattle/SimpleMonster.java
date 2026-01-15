@@ -4,6 +4,7 @@ import static de.hhn.it.devtools.components.turnbasedbattle.SimpleDamageCalculat
 
 import de.hhn.it.devtools.apis.turnbasedbattle.Element;
 import de.hhn.it.devtools.apis.turnbasedbattle.Monster;
+import de.hhn.it.devtools.apis.turnbasedbattle.move.DotMove;
 import de.hhn.it.devtools.apis.turnbasedbattle.move.Move;
 import de.hhn.it.devtools.apis.turnbasedbattle.move.MoveType;
 import de.hhn.it.devtools.components.turnbasedbattle.monster.FireMonster;
@@ -35,6 +36,7 @@ public class SimpleMonster {
   protected String imagePath;
   protected String imagePathBack;
   protected Move takeDamageOnAttack = null;
+  protected int timesHitByPoison = 0;
 
   // ========== Internal Tracking (Buffs, DOTs, Cooldowns, Locked) ==========
 
@@ -109,7 +111,12 @@ public class SimpleMonster {
     boolean isCritical = Math.random() < attackingMonster.getCritChance();
     boolean isEffective = isElementEffective(this, move.element());
 
-    actualDamage = calculateDamage(move, this, attackingMonster, isCritical, isEffective);
+    if (move.name().equals("Leaf Cannon")) {
+      actualDamage = calculateDamage(move, this, attackingMonster, isCritical, isEffective, timesHitByPoison);
+    } else {
+      actualDamage = calculateDamage(move, this, attackingMonster, isCritical, isEffective);
+    }
+
 
     if (actualDamage > currentHp) {
       currentHp = 0;
@@ -122,6 +129,15 @@ public class SimpleMonster {
     }
 
     logger.debug("{} took {} damage and has {} hp left.", name, actualDamage, currentHp);
+
+    if (move.name().equals("Poison Sting")) {
+      for (Map.Entry<Integer, Move> entry : activeDots.entrySet()) {
+        Move poisonMove = entry.getValue();
+        if (poisonMove.name().equals("Poison")) {
+          takeDotDamage(poisonMove.amount());
+        }
+      }
+    }
   }
 
   /**
@@ -130,11 +146,11 @@ public class SimpleMonster {
    *
    * @param amount the amount of damage to take.
    */
-  public void takeTrueDamage(int amount) {
+  public void takeTrueDamage(double amount) {
     if (amount > currentHp) {
       currentHp = 0;
     } else {
-      currentHp -= amount;
+      currentHp -= (int) amount;
     }
     logger.debug("{} took {} true damage and has {} hp left.", name, amount, currentHp);
   }
@@ -183,11 +199,11 @@ public class SimpleMonster {
    *
    * @param amount the amount of health to subtract
    */
-  public void takeDotDamage(int amount) {
+  public void takeDotDamage(double amount) {
     if (amount <= 0) {
       return;
     }
-    currentHp -= amount;
+    currentHp -= (int) amount;
     if (currentHp < 0) {
       currentHp = 0;
     }
@@ -218,6 +234,9 @@ public class SimpleMonster {
       case "defense":
         defense += (int) amount;
         break;
+      case "damageReduction":
+        damageReduction += amount;
+        break;
       default:
         logger.warn("{} Invalid stat for buff: {}", name, stat);
     }
@@ -240,6 +259,9 @@ public class SimpleMonster {
         break;
       case "defense":
         defense += (int) amount;
+        break;
+      case "damageReduction":
+        damageReduction += amount;
         break;
       default:
         logger.warn("{} Invalid stat for changing: {}", name, stat);
@@ -268,6 +290,9 @@ public class SimpleMonster {
       case "critChance":
         critChance = Math.max(0.0, Math.min(1.0, critChance - amount));
         break;
+      case "damageReduction":
+        damageReduction -= amount;
+        break;
       default:
         logger.warn("{} Invalid stat for debuff: {}", name, stat);
     }
@@ -295,6 +320,9 @@ public class SimpleMonster {
       case "defense":
         defense -= (int) amount;
         break;
+      case "damageReduction":
+        damageReduction -= amount;
+        break;
       default:
         logger.warn("{} Invalid stat for removing buff: {}", name, stat);
     }
@@ -321,6 +349,9 @@ public class SimpleMonster {
         break;
       case "defense":
         defense += (int) amount;
+        break;
+      case "damageReduction":
+        damageReduction += amount;
         break;
       default:
         logger.warn("{} Invalid stat for removing debuff: {}", name, stat);
@@ -461,6 +492,8 @@ public class SimpleMonster {
         return String.valueOf(evasionChance);
       case "critChance":
         return String.valueOf(critChance);
+      case "damageReduction":
+        return String.valueOf(damageReduction);
       default:
         throw new IllegalArgumentException("Invalid stat: " + stat);
     }
@@ -648,6 +681,18 @@ public class SimpleMonster {
           takeDotDamage(damage);
           logger.debug("DOT '{}' dealt {} damage to {} ({} turns left after this)",
               move.description(), damage, name, duration - 1);
+          if (move.name().equals("Poison")) {
+            timesHitByPoison++;
+            logger.debug("{} was {} times hit by poison", name, timesHitByPoison);
+            for (Map.Entry<Integer, Move> entry2 : activeBuffs.entrySet()) {
+              Move leechMove = entry2.getValue();
+              if (leechMove.name().equals("Poison Absorb")) {
+                takeDotDamage(damage);
+                timesHitByPoison++;
+                logger.debug("{} was {} times hit by poison", name, timesHitByPoison);
+              }
+            }
+          }
         }
 
         // Reduce duration
