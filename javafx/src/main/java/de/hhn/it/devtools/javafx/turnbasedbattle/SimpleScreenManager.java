@@ -55,10 +55,7 @@ public class SimpleScreenManager implements ScreenManager {
   }
 
   private InfoScreenFx getInfoScreen() {
-    if(infoScreen == null) {
-      infoScreen = new InfoScreenFx(this, infoViewModel);
-    }
-    return infoScreen;
+    return new InfoScreenFx(this, infoViewModel);
   }
 
   private PauseScreenFx getPauseScreen() {
