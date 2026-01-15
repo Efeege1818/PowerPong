@@ -5,6 +5,7 @@ import de.hhn.it.devtools.javafx.towerdefense.controllers.ScreenManager;
 import de.hhn.it.devtools.javafx.towerdefense.controllers.ScreenType;
 import de.hhn.it.devtools.javafx.towerdefense.viewmodel.TowerDefenseViewModel;
 import javafx.application.Platform;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
@@ -13,6 +14,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.TextAlignment;
 
 public class GameScreen extends StackPane {
 
@@ -42,7 +44,8 @@ public class GameScreen extends StackPane {
         createStatsDisplay(),
         completeBoard,
         createTowerDisplay(),
-        createButtonDisplay()
+        createButtonDisplay(),
+        createTowerDefenseTutorialDisplay()
     );
     getChildren().add(mainLayout);
 
@@ -200,6 +203,88 @@ public class GameScreen extends StackPane {
 //
 //    return overlayDisplay;
 //  }
+
+  public GridPane createTowerDefenseTutorialDisplay() {
+    GridPane tutorialDisplay = new GridPane();
+    tutorialDisplay.setAlignment(Pos.CENTER);
+    tutorialDisplay.setHgap(10);
+    tutorialDisplay.setVgap(5);
+
+    Label title = new Label("Tower Defense Tutorial - How to play:");
+    title.setStyle("-fx-font-weight: bold; -fx-font-size: 16;");
+    title.setWrapText(true);
+    title.setTextAlignment(TextAlignment.CENTER);
+    title.setMaxWidth(400);
+    GridPane.setHalignment(title, HPos.CENTER);
+    tutorialDisplay.add(title, 0, 0, 2, 1);
+
+    int rowIndex = 1;
+
+    Label towerTut = new Label("To defend yourself, you need to place towers that kill enemies.\n" +
+            "Click the tower you want to place and select a free tile to place it. \n" +
+            "Enemies spawn at the first part of the path (left) and move to the end (right).\n" +
+            "Once reached. You lose health based on the enemy type.");
+    towerTut.setStyle("-fx-font-style: italic; -fx-font-size: 12;");
+    towerTut.setWrapText(true);
+    towerTut.setTextAlignment(TextAlignment.LEFT);
+    towerTut.setMaxWidth(400);
+    GridPane.setHalignment(towerTut, HPos.LEFT);
+    tutorialDisplay.add(towerTut, 0, ++rowIndex, 2, 1);
+
+    StackPane towerIcon1 = new StackPane();
+    Rectangle towerIconRect1 = new Rectangle(20, 20);
+    towerIconRect1.setFill(viewModel.getTowerColors(TowerType.MONEYMAKER));
+    int towerCostNumber1 = viewModel.getTowerTypes().get(TowerType.MONEYMAKER);
+    Label towerCost1 = new Label(String.valueOf(towerCostNumber1));
+    towerCost1.setTextFill(Color.GOLD);
+    towerIcon1.getChildren().addAll(towerIconRect1, towerCost1);
+
+    Label descLabel1 = new Label("The Moneymaker Tower generates some money throughout the round " +
+            "- does no damage however.");
+    descLabel1.setWrapText(true);
+
+    tutorialDisplay.add(towerIcon1, 0, ++rowIndex);
+    tutorialDisplay.add(descLabel1, 1, rowIndex);
+
+    StackPane towerIcon2 = new StackPane();
+    Rectangle towerIconRect2 = new Rectangle(20, 20);
+    towerIconRect2.setFill(viewModel.getTowerColors(TowerType.MELEE));
+    int towerCostNumber2 = viewModel.getTowerTypes().get(TowerType.MELEE);
+    Label towerCost2 = new Label(String.valueOf(towerCostNumber2));
+    towerCost2.setTextFill(Color.GOLD);
+    towerIcon2.getChildren().addAll(towerIconRect2, towerCost2);
+
+    Label descLabel2 = new Label("The Melee Tower does good damage, however has a small range.");
+    descLabel2.setWrapText(true);
+
+    tutorialDisplay.add(towerIcon2, 0, ++rowIndex);
+    tutorialDisplay.add(descLabel2, 1, rowIndex);
+
+    StackPane towerIcon3 = new StackPane();
+    Rectangle towerIconRect3 = new Rectangle(20, 20);
+    towerIconRect3.setFill(viewModel.getTowerColors(TowerType.RANGED));
+    int towerCostNumber3 = viewModel.getTowerTypes().get(TowerType.RANGED);
+    Label towerCost3 = new Label(String.valueOf(towerCostNumber3));
+    towerCost3.setTextFill(Color.GOLD);
+    towerIcon3.getChildren().addAll(towerIconRect3, towerCost3);
+
+    Label descLabel3 = new Label("The Ranged Tower does little damage within a wide range.");
+    descLabel3.setWrapText(true);
+
+    tutorialDisplay.add(towerIcon3, 0, ++rowIndex);
+    tutorialDisplay.add(descLabel3, 1, rowIndex);
+
+    return tutorialDisplay;
+  }
+
+  private String getTowerDescription(TowerType type) {
+    return switch (type) {
+      case MONEYMAKER -> "Generates extra money each round.";
+      case MELEE -> "Hurts enemies in a close range";
+      case RANGED -> "Shoots enemies in wide range.";
+      default -> "No description available.";
+    };
+  }
 
   public void prepareTowerPlacement() {
     int gridSize = viewModel.getMap().get().grid().length;
