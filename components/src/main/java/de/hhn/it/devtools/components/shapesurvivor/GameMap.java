@@ -169,6 +169,20 @@ public class GameMap {
     return visible;
   }
 
+  /**
+   * Clears obstacles in a radius around a position (typically for spawn safety).
+   */
+  public void clearSpawnArea(Position center, int radius) {
+    obstacles.removeIf(obs -> {
+      int obsCenterX = obs.xpos() + obs.width() / 2;
+      int obsCenterY = obs.ypos() + obs.height() / 2;
+      int dx = obsCenterX - center.x();
+      int dy = obsCenterY - center.y();
+      double distance = Math.sqrt(dx * dx + dy * dy);
+      return distance < radius;
+    });
+  }
+
   public List<Obstacle> getObstacles() {
     return new ArrayList<>(obstacles);
   }

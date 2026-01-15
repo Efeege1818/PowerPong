@@ -17,6 +17,7 @@ public class SimpleGameLoopService implements GameLoopService {
 
   private final Runnable updateCallback;
   private final Lock stateLock = new ReentrantLock();
+  private final Lock executionLock = new ReentrantLock();
 
   private ScheduledExecutorService executor;
   private ScheduledFuture<?> scheduledTask;
@@ -47,7 +48,7 @@ public class SimpleGameLoopService implements GameLoopService {
       paused = false;
 
       executor = Executors.newSingleThreadScheduledExecutor(r ->
-              new Thread(r, "GameLoop-Executor"));
+          new Thread(r, "GameLoop-Executor"));
 
       scheduleTask();
     } finally {
@@ -63,14 +64,31 @@ public class SimpleGameLoopService implements GameLoopService {
         throw new IllegalStateException("Game loop is not running");
       }
 
+      // Set flag first to prevent new executions
       running = false;
       paused = false;
 
+      // Cancel the scheduled task
       if (scheduledTask != null) {
-        scheduledTask.cancel(true);
+        scheduledTask.cancel(false);
       }
+    } finally {
+      stateLock.unlock();
+    }
+
+    executionLock.lock();
+    executionLock.unlock();
+
+    // Now shutdown the executor
+    stateLock.lock();
+    try {
       if (executor != null) {
         executor.shutdownNow();
+        try {
+          executor.awaitTermination(100, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+          Thread.currentThread().interrupt();
+        }
       }
 
       scheduledTask = null;
@@ -94,6 +112,8 @@ public class SimpleGameLoopService implements GameLoopService {
     } finally {
       stateLock.unlock();
     }
+    executionLock.lock();
+    executionLock.unlock();
   }
 
   @Override
@@ -130,7 +150,7 @@ public class SimpleGameLoopService implements GameLoopService {
       this.updatesPerSecond = updatesPerSecond;
 
       // Reschedule if currently running
-      if (running) {
+      if (running && scheduledTask != null) {
         scheduledTask.cancel(false);
         scheduleTask();
       }
@@ -156,12 +176,20 @@ public class SimpleGameLoopService implements GameLoopService {
     long periodNs = 1_000_000_000L / updatesPerSecond;
 
     scheduledTask = executor.scheduleAtFixedRate(() -> {
-      if (!paused && running) {
-        try {
-          updateCallback.run();
-        } catch (Exception e) {
-          System.err.println("Error during game update: " + e.getMessage());
+      if (!running || paused) {
+        return;
+      }
+      executionLock.lock();
+      try {
+        if (!running || paused) {
+          return;
         }
+
+        updateCallback.run();
+      } catch (Exception e) {
+        System.err.println("Error during game update: " + e.getMessage());
+      } finally {
+        executionLock.unlock();
       }
     }, 0, periodNs, TimeUnit.NANOSECONDS);
   }

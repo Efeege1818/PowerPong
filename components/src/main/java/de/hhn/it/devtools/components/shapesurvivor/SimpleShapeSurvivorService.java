@@ -99,6 +99,8 @@ public class SimpleShapeSurvivorService implements ShapeSurvivorService {
 
     gameContext.setPlayer(state);
 
+    gameContext.getGameMap().clearSpawnArea(startPosition, 100);
+
     for (Weapon weapon : weapons) {
       gameContext.getWeaponStates().put(weapon.type(), new WeaponAnimationState());
     }
