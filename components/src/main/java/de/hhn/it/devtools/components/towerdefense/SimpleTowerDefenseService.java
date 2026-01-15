@@ -2,6 +2,7 @@ package de.hhn.it.devtools.components.towerdefense;
 
 import de.hhn.it.devtools.apis.towerdefense.Configuration;
 import de.hhn.it.devtools.apis.towerdefense.Coordinates;
+import de.hhn.it.devtools.apis.towerdefense.Difficulty;
 import de.hhn.it.devtools.apis.towerdefense.Enemy;
 import de.hhn.it.devtools.apis.towerdefense.GameState;
 import de.hhn.it.devtools.apis.towerdefense.Grid;
@@ -10,6 +11,7 @@ import de.hhn.it.devtools.apis.towerdefense.Tower;
 import de.hhn.it.devtools.apis.towerdefense.TowerDefenseListener;
 import de.hhn.it.devtools.apis.towerdefense.TowerDefenseService;
 import de.hhn.it.devtools.apis.towerdefense.TowerType;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +27,7 @@ import java.util.function.Consumer;
 public class SimpleTowerDefenseService implements TowerDefenseService {
 
   private static final org.slf4j.Logger logger =
-      org.slf4j.LoggerFactory.getLogger(SimpleTowerDefenseService.class);
+          org.slf4j.LoggerFactory.getLogger(SimpleTowerDefenseService.class);
 
   private MapToolbox mapToolbox;
   private EnemyToolbox enemyToolbox;
@@ -145,7 +147,7 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
   public void startNextRound() throws IllegalStateException {
     if (currentGameState != GameState.PAUSED) {
       throw new IllegalStateException(
-          "Operation startNextRound is only allowed for GameState PAUSED");
+              "Operation startNextRound is only allowed for GameState PAUSED");
     }
     currentRound += 1;
     enemyQueue = waveGenerator.generateWave(currentRound);
@@ -262,6 +264,44 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
     notifyListeners(TowerDefenseListener::tick);
   }
 
+  public void setDifficulty(Difficulty difficulty) {
+    switch (difficulty) {
+      case EASY -> configuration = new Configuration(
+              configuration.mapSize(),
+              configuration.startingHealth(),
+              configuration.startingMoney(),
+              configuration.enemyPowerMultiplier(),
+              configuration.enemyHealthMultiplier(),
+              configuration.escalation()
+      );
+      case NORMAL -> configuration = new Configuration(
+              configuration.mapSize(),
+              50,
+              100,
+              1.0f,
+              1.0f,
+              configuration.escalation()
+      );
+
+      case HARD -> configuration = new Configuration(
+              configuration.mapSize(),
+              35,
+              80,
+              1.3f,
+              1.4f,
+              configuration.escalation()
+      );
+      case IMPOSSIBLE -> configuration = new Configuration(
+              configuration.mapSize(),
+              20,
+              60,
+              1.8f,
+              2.0f,
+              configuration.escalation()
+      );
+    }
+  }
+
   private void updateGameState(GameState newGameState) {
     currentGameState = newGameState;
     notifyListeners(TowerDefenseListener::updateGameState);
@@ -297,7 +337,7 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
   }
 
   public MapToolbox getMapToolbox() {
-    return  mapToolbox;
+    return mapToolbox;
   }
 
 }

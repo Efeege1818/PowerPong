@@ -44,7 +44,7 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
   private final IntegerProperty money = new SimpleIntegerProperty();
   private final BooleanProperty gameOver = new SimpleBooleanProperty();
   private final ObjectProperty<GameState> gameState = new SimpleObjectProperty<>();
-  private final ObjectProperty<Difficulty> difficulty = new SimpleObjectProperty<>();
+  private final ObjectProperty<Difficulty> difficulty = new SimpleObjectProperty<>(Difficulty.NORMAL);
 
   public TowerDefenseViewModel(TowerDefenseService service) {
     this.service = service;
@@ -131,7 +131,7 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
   }
 
   public void setDifficulty(Difficulty difficulty) {
-    this.difficulty.set(difficulty);
+    service.setDifficulty(difficulty);
   }
 
   public void editConfiguration(Configuration configuration) {

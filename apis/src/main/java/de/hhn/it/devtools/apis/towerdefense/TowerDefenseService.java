@@ -133,4 +133,6 @@ public interface TowerDefenseService {
    * After this Method has been called this Service should be used no longer.
    */
   void terminate();
+
+  void setDifficulty(Difficulty difficulty);
 }
