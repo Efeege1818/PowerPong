@@ -68,9 +68,9 @@ public class TowerToolbox {
    */
   public static int getCost(TowerType type) throws NoSuchElementException {
     return switch (type) {
-      case MELEE -> 10;
-      case RANGED -> 15;
-      case MONEYMAKER -> 20;
+      case MELEE -> 100;
+      case RANGED -> 150;
+      case MONEYMAKER -> 200;
       default -> throw new NoSuchElementException();
     };
   }

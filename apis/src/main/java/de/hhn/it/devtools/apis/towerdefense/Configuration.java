@@ -54,10 +54,10 @@ public record Configuration(int mapSize,
 
         // Starting Money
         switch (difficulty) {
-          case EASY -> 100;
-          case NORMAL -> 80;
-          case HARD -> 60;
-          case IMPOSSIBLE -> 40;
+          case EASY -> 200;
+          case NORMAL -> 150;
+          case HARD -> 125;
+          case IMPOSSIBLE -> 100;
         },
 
         DEFAULT_ENEMY_POWER_MULTIPLIER,
