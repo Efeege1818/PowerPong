@@ -15,6 +15,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -94,6 +95,11 @@ public class BattleScreenController {
     for (SlotBinding s : slots) {
       if (s.button() != null) {
         s.button().setOnAction(e -> executeMoveSafely(s.slot().moveIndex));
+
+        Tooltip tooltip = new Tooltip();
+        tooltip.setWrapText(true);
+        tooltip.setMaxWidth(280);
+        s.button().setTooltip(tooltip);
       }
     }
 
@@ -107,7 +113,6 @@ public class BattleScreenController {
     PauseScreenFx pauseScreen = new PauseScreenFx(screenManager, pauseViewModel);
     root.getChildren().add(pauseScreen);
   }
-
 
   public void setDependencies(SimpleScreenManager screenManager, TurnBasedBattleService service) {
     this.screenManager = screenManager;
@@ -243,6 +248,8 @@ public class BattleScreenController {
   private void configureMoveButton(Button button, SimpleMonster monster, int moveIndex, boolean p1Turn) {
     if (button == null) return;
 
+    Tooltip tooltip = button.getTooltip();
+
     if (!monster.hasMove(moveIndex)) {
       button.setText("(no move)");
       button.setDisable(true);
@@ -257,6 +264,10 @@ public class BattleScreenController {
 
     button.setDisable(onCd);
     button.setText(onCd ? (title + " (CD " + remaining + ")") : title);
+
+    if (tooltip != null) {
+      tooltip.setText(move.description());
+    }
   }
 
   private void updateMonsterSides(boolean p1Turn) {
