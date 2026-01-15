@@ -96,6 +96,16 @@ public class PauseScreenFx extends VBox {
 				rightCol.setPadding(new Insets(12));
 				rightCol.setPrefWidth(300);
 
+				HBox forCloseButton = new HBox();
+				forCloseButton.setAlignment(Pos.TOP_RIGHT);
+				Button close = new Button("Back to Battle");
+				close.setOnAction(e -> {
+						Stage stage = (Stage) close.getScene().getWindow();
+						stage.close();
+				});
+				forCloseButton.getChildren().add(close);
+				rightCol.getChildren().add(0,forCloseButton);
+
 				imageHolder = new VBox();
 				imageHolder.setAlignment(Pos.CENTER);
 
