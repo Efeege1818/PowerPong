@@ -37,6 +37,7 @@ public class SimpleMonster {
   protected String imagePathBack;
   protected Move takeDamageOnAttack = null;
   protected int timesHitByPoison = 0;
+  protected int attacksHit = 0;
 
   // ========== Internal Tracking (Buffs, DOTs, Cooldowns, Locked) ==========
 
@@ -117,6 +118,7 @@ public class SimpleMonster {
       actualDamage = calculateDamage(move, this, attackingMonster, isCritical, isEffective);
     }
 
+    attackingMonster.attacksHit++;
 
     if (actualDamage > currentHp) {
       currentHp = 0;

@@ -36,6 +36,8 @@ public class FireMonster extends SimpleMonster {
     this.imagePath = "/Monster Sprites/FeuerMon.png";
     this.imagePathBack = "/Monster Sprites/FeuerMon Back.png";
 
+    lockMove(5);
+
     logger.debug("{} created: {}", name, toString());
   }
 
@@ -45,6 +47,12 @@ public class FireMonster extends SimpleMonster {
       fireMonsterPassiveStacks--;
       logger.debug("FireMonster passive stacks decreased to {}", fireMonsterPassiveStacks);
       changeStat("attack", -atkPassiveAmount);
+    }
+    if (!isMoveLocked(5)) {
+      return;
+    } else if (attacksHit >= 7) {
+      unlockMove(5);
+      attacksHit = 0;
     }
   }
 }
