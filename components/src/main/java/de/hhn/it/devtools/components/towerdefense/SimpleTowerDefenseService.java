@@ -152,7 +152,8 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
     currentRound--;
     player = savedPlayerData;
     towerToolbox.loadData();
-    updateGameState(GameState.READY);
+    enemyToolbox = new EnemyToolbox(this);
+    updateGameState(GameState.PAUSED);
   }
 
   @Override
