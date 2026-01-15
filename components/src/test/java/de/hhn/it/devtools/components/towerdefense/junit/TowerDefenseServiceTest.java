@@ -60,5 +60,87 @@ public class TowerDefenseServiceTest {
 
   }
 
+  @Test
+  public void testEnemyToolboxExists() {
+    Assertions.assertNotNull(service.getEnemyToolbox());
+  }
+
+  @Test
+  public void testTowerToolboxExists() {
+    Assertions.assertNotNull(service.getTowerToolbox());
+  }
+
+  @Test
+  public void testMapToolboxExists() {
+    Assertions.assertNotNull(service.getMapToolbox());
+  }
+
+  @Test
+  public void testStartNextRoundOnlyWhenRunning() {
+    service.startGame();
+    Assertions.assertDoesNotThrow(() -> service.startNextRound());
+  }
+
+  @Test
+  public void testStartNextRoundNotAllowedWhenReady() {
+    Assertions.assertThrows(IllegalStateException.class, () -> service.startNextRound());
+  }
+
+  @Test
+  public void testMoneyIncreasesAfterRound() {
+    service.startGame();
+    int before = service.getPlayer().money();
+
+    service.startNextRound();
+
+    int after = service.getPlayer().money();
+    Assertions.assertTrue(after >= before);
+  }
+
+  @Test
+  public void testStartGameDoesNotThrow() {
+    Assertions.assertDoesNotThrow(() -> service.startGame());
+  }
+
+  @Test
+  public void testStartGameTwiceDoesNotThrow() {
+    service.startGame();
+    Assertions.assertDoesNotThrow(() -> service.startGame());
+  }
+
+  @Test
+  public void testStartNextRoundAfterStartGameDoesNotThrow() {
+    service.startGame();
+    Assertions.assertDoesNotThrow(() -> service.startNextRound());
+  }
+
+  @Test
+  public void testPlayerNotNullAfterActions() {
+    service.startGame();
+    service.updateMoney(5);
+    service.updateHealth(-5);
+
+    Assertions.assertNotNull(service.getPlayer());
+  }
+
+  @Test
+  public void testUpdateHealthChangesValue() {
+    int before = service.getPlayer().health();
+
+    service.updateHealth(-1);
+
+    int after = service.getPlayer().health();
+    Assertions.assertEquals(before - 1, after);
+  }
+
+  @Test
+  public void testUpdateMoneyChangesValue() {
+    int before = service.getPlayer().money();
+
+    service.updateMoney(1);
+
+    int after = service.getPlayer().money();
+    Assertions.assertEquals(before + 1, after);
+  }
 }
 

@@ -12,10 +12,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.UUID;
 
-public class EnemyToolBoxTest {
+public class EnemyToolboxTest {
 
   private static final org.slf4j.Logger logger =
-          org.slf4j.LoggerFactory.getLogger(EnemyToolBoxTest.class);
+          org.slf4j.LoggerFactory.getLogger(EnemyToolboxTest.class);
 
   private SimpleTowerDefenseService service;
   private EnemyToolbox toolbox;
