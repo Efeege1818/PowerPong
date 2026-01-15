@@ -5,6 +5,7 @@ import de.hhn.it.devtools.javafx.towerdefense.controllers.ScreenManager;
 import de.hhn.it.devtools.javafx.towerdefense.controllers.ScreenType;
 import de.hhn.it.devtools.javafx.towerdefense.viewmodel.TowerDefenseViewModel;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.HPos;
@@ -229,7 +230,8 @@ public class GameScreen extends StackPane {
     continueButton.setOnAction((event) -> {
       showRoundCompletedOverlay.set(false);
     });
-    Label wonLabel = new Label("You Completed Round " + viewModel.getRound().getValue());
+    Label wonLabel = new Label();
+    wonLabel.textProperty().bind(viewModel.getRound().asString("You Completed Round %d"));
     display.add(wonLabel, 1, 0);
     display.add(continueButton, 0, 1);
 
