@@ -125,7 +125,7 @@ public class EntityProvider {
     int row = 1;
     int col = 1;
 
-    for (int i = 1; i <= Constants.NUMBER_OF_ALIENS+ service.getRound() - 1; i++) {
+    for (int i = 1; i <= Constants.NUMBER_OF_ALIENS + service.getRound() - 1; i++) {
       aliens.put(i, new SimpleAlien(
               new Coordinate(col * 25, 25 * row),
               AlienType.BASIC,
