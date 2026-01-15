@@ -11,7 +11,9 @@ public class WaterMonster extends SimpleMonster {
           org.slf4j.LoggerFactory.getLogger(WaterMonster.class);
 
   private boolean defenseStance = false;
-  private boolean attackStance = false;
+  private boolean attackStance = true;
+  private int passiveStacksCrit = 0;
+  private int passiveStacksDef = 0;
 
   /**
    * Creates a new WaterMonster.
@@ -30,7 +32,7 @@ public class WaterMonster extends SimpleMonster {
     this.moves = monster.moves();
 
     this.name = "Water Monster";
-    this.focus = "Manipulates Dodge and Krit chances";
+    this.focus = "Manipulates Dodge and Crit chances";
     this.passiveInfo = "Dodges are more likely";
     this.imagePath = "/Monster Sprites/WasserMon.png";
     this.imagePathBack = "/Monster Sprites/WasserMon Back.png";
@@ -65,4 +67,24 @@ public class WaterMonster extends SimpleMonster {
     return attackStance;
   }
 
+  private void increaseCritPassive() {
+    if(passiveStacksCrit >= 20) {
+      return;
+    }
+    passiveStacksCrit++;
+    critChance += 0.01;
+    if (critChance > 1) {
+      critChance = 1;
+    }
+    logger.debug("{} landed a critical hit and it's attacking passive stacks went up.", name);
+    logger.debug("{} crit chance went up to {}", name, critChance);
+
+  }
+
+  @Override
+  public void handleCriticalHit() {
+    if (attackStance) {
+      increaseCritPassive();
+    }
+  }
 }

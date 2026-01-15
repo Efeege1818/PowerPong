@@ -109,6 +109,10 @@ public class SimpleMonster {
       currentHp -= actualDamage;
     }
 
+    if (actualDamage > 0 && isCritical) {
+      attackingMonster.handleCriticalHit();
+    }
+
     logger.debug("{} took {} damage and has {} hp left.", name, actualDamage, currentHp);
   }
 
@@ -321,6 +325,13 @@ public class SimpleMonster {
   }
 
   /**
+   * If the monster lands a critical hit this method gets called.
+   * Method must be overridden by specific Monster.
+   */
+  public void handleCriticalHit() {
+  }
+
+  /**
    * Checks if the monster is still alive.
    *
    * @return true if the monster has HP remaining, false otherwise.
@@ -363,102 +374,46 @@ public class SimpleMonster {
     return moves.containsKey(index);
   }
 
-  /**
-   * Gets the attack stat of the monster.
-   *
-   * @return the attack value.
-   */
   public int getAttack() {
     return attack;
   }
 
-  /**
-   * Gets the critical hit chance of the monster.
-   *
-   * @return the critical hit chance (0.0 to 1.0).
-   */
   public double getCritChance() {
     return critChance;
   }
 
-  /**
-   * Gets the current HP of the monster.
-   *
-   * @return the current HP.
-   */
   public int getCurrentHp() {
     return currentHp;
   }
 
-  /**
-   * Gets the defense stat of the monster.
-   *
-   * @return the defense value.
-   */
   public int getDefense() {
     return defense;
   }
 
-  /**
-   * Gets the damage reduction of the monster.
-   *
-   * @return the damage reduction.
-   */
   public double getDamageReduction() {
     return damageReduction;
   }
 
-  /**
-   * Gets the element type of the monster.
-   *
-   * @return the element.
-   */
   public Element getElement() {
     return element;
   }
 
-  /**
-   * Gets the evasion chance of the monster.
-   *
-   * @return the evasion chance (0.0 to 1.0).
-   */
   public double getEvasionChance() {
     return evasionChance;
   }
 
-  /**
-   * Gets the maximum HP of the monster.
-   *
-   * @return the maximum HP.
-   */
   public int getMaxHp() {
     return maxHp;
   }
 
-  /**
-   * Gets a move by its index.
-   *
-   * @param index the index of the move.
-   * @return the move at the specified index.
-   */
   public Move getMove(int index) {
     return moves.get(index);
   }
 
-  /**
-   * Gets all moves of the monster.
-   *
-   * @return a HashMap containing all moves indexed by their position.
-   */
   public HashMap<Integer, Move> getMoves() {
     return moves;
   }
 
-  /**
-   * Gets the name of the monster.
-   *
-   * @return the name.
-   */
   public String getName() {
     return name;
   }

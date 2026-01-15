@@ -140,7 +140,7 @@ public class Data {
     return new Monster[] {
       new Monster(100, 10, 10, 0.1, 0.1, Element.FIRE, getFireMonsterMoves()),
       new Monster(120, 8, 8, 0.2, 0.2, Element.GRASS, getGrassMonsterMoves()),
-      new Monster(150, 6, 6, 0.3, 0.3, Element.WATER, getWaterMonsterMoves()),
+      new Monster(150, 6, 6, 0.3, 0.99, Element.WATER, getWaterMonsterMoves()),
       new Monster(150, 10, 10, 0.1, 0.1, Element.WATER, getOverTunedMonsterMoves())
     };
   }

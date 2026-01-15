@@ -44,5 +44,4 @@ public class FireMonster extends SimpleMonster {
       changeStat("attack", -2.0);
     }
   }
-
 }
