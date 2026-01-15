@@ -1,6 +1,9 @@
 package de.hhn.it.devtools.components.towerdefense.junit;
 
+import de.hhn.it.devtools.apis.towerdefense.Coordinates;
 import de.hhn.it.devtools.apis.towerdefense.GameState;
+import de.hhn.it.devtools.apis.towerdefense.Tower;
+import de.hhn.it.devtools.apis.towerdefense.TowerType;
 import de.hhn.it.devtools.components.towerdefense.SimpleTowerDefenseService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -141,6 +144,62 @@ public class TowerDefenseServiceTest {
 
     int after = service.getPlayer().money();
     Assertions.assertEquals(before + 1, after);
+  }
+
+  @Test
+  public void testStartGameSetsPausedState() {
+    service.startGame();
+    Assertions.assertEquals(GameState.PAUSED, service.getCurrentGameState());
+  }
+
+  @Test
+  public void testAbortGameResetsStateAndPlayer() {
+    service.startGame();
+    service.updateMoney(20);
+    service.updateHealth(-10);
+
+    service.abortGame();
+
+    Assertions.assertEquals(GameState.READY, service.getCurrentGameState());
+    Assertions.assertEquals(50, service.getPlayer().health());
+    Assertions.assertEquals(100, service.getPlayer().money());
+    Assertions.assertEquals(0, service.getCurrentRound());
+  }
+
+  @Test
+  public void testRetryNotAllowedWhenNotGameOver() {
+    service.startGame();
+    Assertions.assertThrows(IllegalStateException.class, () -> service.retry());
+  }
+
+  @Test
+  public void testStartNextRoundIncrementsRound() {
+    service.startGame();
+    service.startNextRound();
+
+    Assertions.assertEquals(1, service.getCurrentRound());
+    Assertions.assertEquals(GameState.RUNNING, service.getCurrentGameState());
+  }
+
+  @Test
+  public void testPlaceTowerNullThrowsException() {
+    Assertions.assertThrows(IllegalArgumentException.class, () -> service.placeTower(null));
+  }
+
+  @Test
+  public void testPlaceTowerNotEnoughMoney() {
+    service.startGame();
+
+    Tower expensiveTower = new Tower(new Coordinates(0, 0), TowerType.MONEYMAKER);
+
+    service.updateMoney(-100);
+
+    Assertions.assertThrows(IllegalArgumentException.class, () -> service.placeTower(expensiveTower));
+  }
+
+  @Test
+  public void testUpdateMoneyBelowZeroThrowsException() {
+    Assertions.assertThrows(IllegalArgumentException.class, () -> service.updateMoney(-101));
   }
 }
 
