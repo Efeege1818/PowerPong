@@ -449,6 +449,11 @@ public class SimpleMonster {
     timesHitPoison = amount;
   }
 
+  public void resetTimesHitPoison() {
+    timesHitPoison = 0;
+    timesHitByPoison = 0;
+  }
+
   @Override
   public String toString() {
     return String.format("SimpleMonster[HP: %d/%d, ATK: %d, DEF: %d, Element: %s,"

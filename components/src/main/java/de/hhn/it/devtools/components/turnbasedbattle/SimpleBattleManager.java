@@ -141,6 +141,10 @@ public class SimpleBattleManager implements BattleManager {
     if (selectedMove.isSpecial() && !selectedMove.name().equals("Leaf Cannon")) {
       currentMonster.lockMove(moveNumber);
     }
+    if (selectedMove.name().equals("Leaf Cannon")) {
+      currentMonster.resetTimesHitPoison();
+      opponentMonster.resetTimesHitPoison();
+    }
     return 0; // no winner yet
   }
 
