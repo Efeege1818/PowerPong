@@ -124,6 +124,21 @@
                         <javafx.scene.effect.DropShadow color="#ffdc00" radius="10" spread="0.15"/>
                     </effect>
                 </Button>
+                
+                <!-- Extras Row (Guide & Highscores) -->
+                <HBox spacing="10" alignment="CENTER">
+                    <Button mnemonicParsing="false" onAction="#onOpenCompendium" text="📘 GUIDE" maxWidth="Infinity" HBox.hgrow="ALWAYS" prefHeight="45" style="-fx-background-color: linear-gradient(to bottom, rgba(50, 150, 255, 0.2), rgba(20, 80, 200, 0.1)); -fx-text-fill: #a0cfff; -fx-font-weight: bold; -fx-font-size: 16px; -fx-background-radius: 25; -fx-cursor: hand; -fx-border-color: #a0cfff; -fx-border-radius: 25; -fx-border-width: 1.5;">
+                        <effect>
+                            <javafx.scene.effect.DropShadow color="#a0cfff" radius="8" spread="0.1"/>
+                        </effect>
+                    </Button>
+
+                    <Button mnemonicParsing="false" onAction="#onOpenHighscores" text="🏆 SCORES" maxWidth="Infinity" HBox.hgrow="ALWAYS" prefHeight="45" style="-fx-background-color: linear-gradient(to bottom, rgba(255, 220, 0, 0.25), rgba(200, 150, 0, 0.15)); -fx-text-fill: #ffdc00; -fx-font-weight: bold; -fx-font-size: 16px; -fx-background-radius: 25; -fx-cursor: hand; -fx-border-color: #ffdc00; -fx-border-radius: 25; -fx-border-width: 1.5;">
+                        <effect>
+                            <javafx.scene.effect.DropShadow color="#ffdc00" radius="8" spread="0.1"/>
+                        </effect>
+                    </Button>
+                </HBox>
             </VBox>
             
             <!-- Controls Help -->
@@ -152,6 +167,133 @@
                  </padding>
                  <Button mnemonicParsing="false" onAction="#onExitGame" text="✕ EXIT" style="-fx-background-color: transparent; -fx-text-fill: #ff4444; -fx-font-size: 12px; -fx-cursor: hand; -fx-font-weight: bold;"/>
             </HBox>
+         </children>
+      </VBox>
+
+      <!-- Power-Up Compendium Overlay -->
+      <VBox fx:id="compendiumBox" alignment="CENTER" spacing="20.0" visible="false" maxHeight="Infinity" maxWidth="Infinity" style="-fx-background-color: rgba(5, 5, 25, 0.98);">
+         <children>
+            <Label text="POWER-UP GUIDE" textFill="WHITE">
+               <font>
+                  <Font name="Arial Black" size="42.0" />
+               </font>
+               <effect>
+                  <javafx.scene.effect.Glow level="0.8" />
+               </effect>
+            </Label>
+            
+            <javafx.scene.control.ScrollPane fitToWidth="true" style="-fx-background: transparent; -fx-background-color: transparent;" hbarPolicy="NEVER" maxWidth="700" maxHeight="450">
+               <content>
+                  <VBox spacing="15" style="-fx-background-color: transparent; -fx-padding: 20;" alignment="CENTER">
+                     <!-- 1. BIGGER PADDLE (Green) -->
+                     <HBox spacing="20" alignment="CENTER_LEFT" style="-fx-background-color: rgba(10, 255, 10, 0.1); -fx-background-radius: 10; -fx-padding: 10;">
+                        <javafx.scene.shape.Rectangle width="40" height="40" fill="#0aff0a" arcWidth="10" arcHeight="10" />
+                        <VBox>
+                           <Label text="RIESEN-SCHLÄGER" textFill="#0aff0a" style="-fx-font-weight: bold; -fx-font-size: 16;">
+                               <effect><javafx.scene.effect.Glow level="0.8"/></effect>
+                           </Label>
+                           <Label text="Vergrößert deinen Schläger für bessere Abwehr." textFill="WHITE" style="-fx-font-size: 14;" wrapText="true"/>
+                        </VBox>
+                     </HBox>
+                     
+                     <!-- 2. SMALLER ENEMY (Red) -->
+                     <HBox spacing="20" alignment="CENTER_LEFT" style="-fx-background-color: rgba(255, 10, 10, 0.1); -fx-background-radius: 10; -fx-padding: 10;">
+                        <javafx.scene.shape.Rectangle width="40" height="40" fill="#ff0a0a" arcWidth="10" arcHeight="10" />
+                        <VBox>
+                           <Label text="MINI-GEGNER" textFill="#ff0a0a" style="-fx-font-weight: bold; -fx-font-size: 16;">
+                               <effect><javafx.scene.effect.Glow level="0.8"/></effect>
+                           </Label>
+                           <Label text="Schrumpt den Schläger des Gegners." textFill="WHITE" style="-fx-font-size: 14;" wrapText="true"/>
+                        </VBox>
+                     </HBox>
+
+                     <!-- 3. SHIELD (Blue) -->
+                     <HBox spacing="20" alignment="CENTER_LEFT" style="-fx-background-color: rgba(0, 243, 255, 0.1); -fx-background-radius: 10; -fx-padding: 10;">
+                        <javafx.scene.shape.Rectangle width="40" height="40" fill="#00f3ff" arcWidth="10" arcHeight="10" />
+                        <VBox>
+                           <Label text="SCHUTZSCHILD" textFill="#00f3ff" style="-fx-font-weight: bold; -fx-font-size: 16;">
+                               <effect><javafx.scene.effect.Glow level="0.8"/></effect>
+                           </Label>
+                           <Label text="Blockiert einmalig einen Ball, falls du ihn verpasst." textFill="WHITE" style="-fx-font-size: 14;" wrapText="true"/>
+                        </VBox>
+                     </HBox>
+                     
+                     <!-- 4. SLOW ENEMY (Yellow) -->
+                     <HBox spacing="20" alignment="CENTER_LEFT" style="-fx-background-color: rgba(255, 255, 0, 0.1); -fx-background-radius: 10; -fx-padding: 10;">
+                        <javafx.scene.shape.Rectangle width="40" height="40" fill="#ffff00" arcWidth="10" arcHeight="10" />
+                        <VBox>
+                           <Label text="SLOW MOTION" textFill="#ffff00" style="-fx-font-weight: bold; -fx-font-size: 16;">
+                               <effect><javafx.scene.effect.Glow level="0.8"/></effect>
+                           </Label>
+                           <Label text="Verlangsamt den Gegner drastisch." textFill="WHITE" style="-fx-font-size: 14;" wrapText="true"/>
+                        </VBox>
+                     </HBox>
+                     
+                     <!-- 5. BARRIERLESS (Cyan) -->
+                     <HBox spacing="20" alignment="CENTER_LEFT" style="-fx-background-color: rgba(0, 255, 255, 0.1); -fx-background-radius: 10; -fx-padding: 10;">
+                        <javafx.scene.shape.Rectangle width="40" height="40" fill="CYAN" arcWidth="10" arcHeight="10" />
+                        <VBox>
+                           <Label text="WARP ZONE" textFill="CYAN" style="-fx-font-weight: bold; -fx-font-size: 16;">
+                               <effect><javafx.scene.effect.Glow level="0.8"/></effect>
+                           </Label>
+                           <Label text="Entfernt Wände: Ball fliegt oben raus und kommt unten wieder rein." textFill="WHITE" style="-fx-font-size: 14;" wrapText="true"/>
+                        </VBox>
+                     </HBox>
+
+                     <!-- 6. FASTER BALL (Orange) -->
+                     <HBox spacing="20" alignment="CENTER_LEFT" style="-fx-background-color: rgba(255, 165, 0, 0.1); -fx-background-radius: 10; -fx-padding: 10;">
+                        <javafx.scene.shape.Rectangle width="40" height="40" fill="ORANGE" arcWidth="10" arcHeight="10" />
+                        <VBox>
+                           <Label text="AGGRESSIVE BALL" textFill="ORANGE" style="-fx-font-weight: bold; -fx-font-size: 16;">
+                               <effect><javafx.scene.effect.Glow level="0.8"/></effect>
+                           </Label>
+                           <Label text="Ball beschleunigt, sobald er die Hälfte des Gegners erreicht." textFill="WHITE" style="-fx-font-size: 14;" wrapText="true"/>
+                        </VBox>
+                     </HBox>
+
+                     <!-- 7. DOUBLE BALL (White) -->
+                     <HBox spacing="20" alignment="CENTER_LEFT" style="-fx-background-color: rgba(255, 255, 255, 0.1); -fx-background-radius: 10; -fx-padding: 10;">
+                        <javafx.scene.shape.Rectangle width="40" height="40" fill="WHITE" arcWidth="10" arcHeight="10" />
+                        <VBox>
+                           <Label text="MULTIBALL" textFill="WHITE" style="-fx-font-weight: bold; -fx-font-size: 16;">
+                               <effect><javafx.scene.effect.Glow level="0.8"/></effect>
+                           </Label>
+                           <Label text="Spawnt sofort einen zweiten Ball ins Spiel." textFill="WHITE" style="-fx-font-size: 14;" wrapText="true"/>
+                  
+                           </VBox>
+                     </HBox>
+                  </VBox>
+               </content>
+            </javafx.scene.control.ScrollPane>
+            
+            <Button mnemonicParsing="false" onAction="#onCloseCompendium" text="← ZURÜCK" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-border-color: white; -fx-border-width: 2px; -fx-border-radius: 5; -fx-padding: 10 30; -fx-cursor: hand; -fx-font-weight: bold; -fx-font-size: 18px;">
+            </Button>
+         </children>
+      </VBox>
+
+
+      <!-- Highscores Overlay -->
+      <VBox fx:id="highscoreBox" alignment="CENTER" spacing="20.0" visible="false" maxHeight="Infinity" maxWidth="Infinity" style="-fx-background-color: rgba(5, 5, 25, 0.98);">
+         <children>
+            <Label text="HIGHSCORES" textFill="#ffdc00">
+               <font>
+                  <Font name="Arial Black" size="42.0" />
+               </font>
+               <effect>
+                  <javafx.scene.effect.Glow level="0.8" />
+               </effect>
+            </Label>
+            
+            <javafx.scene.control.ScrollPane fitToWidth="true" style="-fx-background: transparent; -fx-background-color: transparent;" hbarPolicy="NEVER" maxWidth="600" maxHeight="450">
+               <content>
+                  <VBox fx:id="highscoreListContainer" spacing="10" style="-fx-background-color: transparent; -fx-padding: 20;" alignment="CENTER">
+                     <!-- Dynamic Content -->
+                  </VBox>
+               </content>
+            </javafx.scene.control.ScrollPane>
+            
+            <Button mnemonicParsing="false" onAction="#onCloseHighscores" text="← ZURÜCK" style="-fx-background-color: transparent; -fx-text-fill: white; -fx-border-color: white; -fx-border-width: 2px; -fx-border-radius: 5; -fx-padding: 10 30; -fx-cursor: hand; -fx-font-weight: bold; -fx-font-size: 18px;">
+            </Button>
          </children>
       </VBox>
    </children>

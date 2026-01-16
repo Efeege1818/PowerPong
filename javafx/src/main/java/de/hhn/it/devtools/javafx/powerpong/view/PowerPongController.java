@@ -52,6 +52,12 @@ public class PowerPongController extends StackPane {
   private Label scoreLabel;
   @FXML
   private Label winnerLabel;
+  @FXML
+  private VBox compendiumBox;
+  @FXML
+  private VBox highscoreBox;
+  @FXML
+  private VBox highscoreListContainer;
 
   private static final double GAME_WIDTH = 800.0;
   private static final double GAME_HEIGHT = 600.0;
@@ -141,6 +147,76 @@ public class PowerPongController extends StackPane {
   @FXML
   public void onRestartGame(ActionEvent event) {
     startGame(lastSelectedMode);
+  }
+
+  @FXML
+  public void onOpenCompendium(ActionEvent event) {
+    menuBox.setVisible(false);
+    compendiumBox.setVisible(true);
+  }
+
+  @FXML
+  public void onCloseCompendium(ActionEvent event) {
+    compendiumBox.setVisible(false);
+    menuBox.setVisible(true);
+  }
+
+  @FXML
+  public void onOpenHighscores(ActionEvent event) {
+    menuBox.setVisible(false);
+    highscoreBox.setVisible(true);
+
+    highscoreListContainer.getChildren().clear();
+    List<HighscoreManager.HighscoreEntry> entries = highscoreManager.getEntries();
+
+    java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd.MM.yyyy HH:mm");
+
+    if (entries.isEmpty()) {
+      Label emptyLbl = new Label("Noch keine Highscores vorhanden.");
+      emptyLbl.setStyle("-fx-text-fill: #aaaaaa; -fx-font-size: 16; -fx-font-style: italic;");
+      highscoreListContainer.getChildren().add(emptyLbl);
+    } else {
+      int rank = 1;
+      for (HighscoreManager.HighscoreEntry entry : entries) {
+        javafx.scene.layout.HBox row = new javafx.scene.layout.HBox(20);
+        row.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        row.setStyle("-fx-background-color: rgba(255,255,255,0.08); -fx-background-radius: 10; -fx-padding: 10 20;");
+
+        Label rankLbl = new Label("#" + rank);
+        rankLbl.setPrefWidth(60);
+        rankLbl.setStyle("-fx-font-weight: bold; -fx-font-size: 22;");
+
+        Color rankColor = Color.WHITE;
+        if (rank == 1)
+          rankColor = Color.web("#ffdc00"); // Gold
+        else if (rank == 2)
+          rankColor = Color.web("#e0e0e0"); // Silver
+        else if (rank == 3)
+          rankColor = Color.web("#cd7f32"); // Bronze
+        rankLbl.setTextFill(rankColor);
+        // Add glow for top 3
+        if (rank <= 3) {
+          rankLbl.setEffect(new javafx.scene.effect.Glow(0.6));
+        }
+
+        Label scoreLbl = new Label(entry.score() + " Pts");
+        scoreLbl.setPrefWidth(200);
+        scoreLbl.setStyle("-fx-font-weight: bold; -fx-font-size: 18; -fx-text-fill: white;");
+
+        Label dateLbl = new Label(sdf.format(new java.util.Date(entry.timestamp())));
+        dateLbl.setStyle("-fx-font-size: 14; -fx-text-fill: #888888;");
+
+        row.getChildren().addAll(rankLbl, scoreLbl, dateLbl);
+        highscoreListContainer.getChildren().add(row);
+        rank++;
+      }
+    }
+  }
+
+  @FXML
+  public void onCloseHighscores(ActionEvent event) {
+    highscoreBox.setVisible(false);
+    menuBox.setVisible(true);
   }
 
   private void startGame(GameMode mode) {
