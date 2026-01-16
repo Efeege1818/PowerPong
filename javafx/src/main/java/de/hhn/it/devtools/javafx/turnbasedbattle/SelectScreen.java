@@ -8,6 +8,7 @@ import de.hhn.it.devtools.components.turnbasedbattle.SimpleTurnBasedBattleServic
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.shape.Circle;
 
 import java.io.IOException;
 
@@ -23,9 +24,14 @@ public class SelectScreen extends AnchorPane {
   private Monster p1Monster;
   private Monster p2Monster;
   Data data = new Data();
+  @FXML private Circle p1SelectedCircle;
+  @FXML private Circle p2SelectedCircle;
 
   public SelectScreen(SimpleScreenManager screenManager) {
     this.screenManager = screenManager;
+
+    p1SelectedCircle = new Circle();
+    p2SelectedCircle = new Circle();
 
     FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/SelectScreen.fxml"));
     loader.setRoot(this);
@@ -40,6 +46,9 @@ public class SelectScreen extends AnchorPane {
 
   @FXML
   public void initialize() {
+    p1SelectedCircle.setVisible(false);
+    p2SelectedCircle.setVisible(false);
+
     this.setFocusTraversable(true);
 
     this.setOnKeyPressed(event -> {
@@ -87,6 +96,7 @@ public class SelectScreen extends AnchorPane {
     if(!selected1) {
       p1Monster = monster;
       selected1 = true;
+      p1SelectedCircle.setVisible(true);
       logger.debug("Player 1 selected: " + monster.element() + "MONSTER");
       checkSelectionFinished();
     }
@@ -96,6 +106,7 @@ public class SelectScreen extends AnchorPane {
     if(!selected2) {
       p2Monster = monster;
       selected2 = true;
+      p2SelectedCircle.setVisible(true);
       logger.debug("Player 2 selected: " + monster.element() + "MONSTER");
       checkSelectionFinished();
     }
@@ -104,6 +115,9 @@ public class SelectScreen extends AnchorPane {
   private void checkSelectionFinished() {
     if(isSelectionFinished()) {
       logger.debug("Both players have picked a monster. Switching screen now...");
+
+      p1SelectedCircle.setVisible(false);
+      p2SelectedCircle.setVisible(false);
 
       SimpleTurnBasedBattleService service = new SimpleTurnBasedBattleService();
       Player player1 = new Player(1, p1Monster, 0);

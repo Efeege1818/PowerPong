@@ -3,6 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
 
 <fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" type="AnchorPane" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
@@ -82,6 +83,8 @@
         </Label>
 
         <Button fx:id="exitButton" layoutX="70.0" layoutY="964.0" mnemonicParsing="false" onAction="#onActionExitGame" text="Exit Game" />
+      <Circle fx:id="p1SelectedCircle" fill="#2fd30e" layoutX="338.0" layoutY="236.0" radius="35.0" stroke="BLACK" strokeType="INSIDE" />
+      <Circle fx:id="p2SelectedCircle" fill="#2fd30e" layoutX="1537.0" layoutY="989.0" radius="35.0" stroke="BLACK" strokeType="INSIDE" />
     </children>
 
 </fx:root>
