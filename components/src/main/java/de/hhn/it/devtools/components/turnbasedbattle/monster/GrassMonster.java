@@ -12,7 +12,7 @@ public class GrassMonster extends SimpleMonster {
 
   private int passiveStacks = 0;
   private int oldPassiveStacks = 0;
-  private int passiveDefAmount = 5;
+  private int passiveDefAmount = 2;
 
   /**
    * Creates a new GrassMonster.

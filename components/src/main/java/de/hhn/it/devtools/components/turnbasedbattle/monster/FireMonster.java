@@ -14,7 +14,7 @@ public class FireMonster extends SimpleMonster {
   private int fireMonsterPassiveStacks = 10;
 
   private final int atkPassiveAmount = 2;
-  private final int attacksHitThreshold = 7;
+  private final int attacksHitThreshold = 4;
 
   /**
    * Creates a new FireMonster.

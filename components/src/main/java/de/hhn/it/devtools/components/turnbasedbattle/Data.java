@@ -21,7 +21,7 @@ public class Data {
 
   // FireMonster moves
   private final Move fireNormAtkFollowUp = new BuffMove("Increases attack", Element.NORMAL,
-      "attack", 5, 3, 0, false, "Increases attack", 1);
+      "attack", 7, 3, 0, false, "Increases attack", 1);
   private final Move fireNormAtk = new AttackMove("Heating Flame", Element.NORMAL,
       10, false, 2, false, "+5 ATK buff on hit!", 1, fireNormAtkFollowUp);
   private final Move fireFireAtk1 = new AttackMove("Fire spear", Element.FIRE,
@@ -31,7 +31,7 @@ public class Data {
   private final Move fireBuff = new BuffMove("Pump up", Element.NORMAL,
       "attack", 15, 3, 4, false, "Strong DMG increase on next ATK", 1);
   private final Move fireSpecial = new AttackMove("Volcanic Eruption", Element.FIRE,
-      30, false, 1, true, "Very high attack\n" + "charge condition: hitting ATKs (7)", 1);
+      50, false, 1, true, "Very high attack\n" + "charge condition: hitting ATKs (4)", 1);
 
   // WaterMonster moves
   private final Move waterWaterAtkFollowUp = new AttackMove("Water hit", Element.WATER,
@@ -48,7 +48,7 @@ public class Data {
       waterWaterAtkCounter, 3, false, "only ATKs if the enemy also ATKs in the same turn");
   private final Move waterSpecial = new AttackMove("Waterfall", Element.NORMAL, 10, false, 3, true,
           "3 normal hits + 3 water hits, +1 water/normal hit per Crit with this Move\n"
-          + "charge condition: Hit Crits/dodge ATKs (15 combined)", 3, waterWaterAtkFollowUp);
+          + "charge condition: Hit Crits/dodge ATKs (9 combined)", 3, waterWaterAtkFollowUp);
 
   // GrassMonster moves
   private final Move grassPoison = new DotMove("Poison", Element.NORMAL,
@@ -75,9 +75,9 @@ public class Data {
    */
   private Monster[] createMonsters() {
     return new Monster[] {
-      new Monster(900, 10, 3, 0.1, 0.1, Element.FIRE, getFireMonsterMoves()),
-      new Monster(1000, 8, 8, 0.2, 0.2, Element.GRASS, getGrassMonsterMoves()),
-      new Monster(750, 6, 6, 0.1, 0.1, Element.WATER, getWaterMonsterMoves()),
+      new Monster(450, 10, 3, 0.1, 0.1, Element.FIRE, getFireMonsterMoves()),
+      new Monster(400, 8, 8, 0.1, 0.1, Element.GRASS, getGrassMonsterMoves()),
+      new Monster(475, 6, 8, 0.2, 0.4, Element.WATER, getWaterMonsterMoves()),
     };
   }
 

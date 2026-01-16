@@ -18,7 +18,7 @@ public class WaterMonster extends SimpleMonster {
 
   private final double critPassiveAmount = 0.01;
   private final double defPassiveAmount = 0.015;
-  private final int specialConditionStacksThreshold = 15;
+  private final int specialConditionStacksThreshold = 9;
 
   /**
    * Creates a new WaterMonster.

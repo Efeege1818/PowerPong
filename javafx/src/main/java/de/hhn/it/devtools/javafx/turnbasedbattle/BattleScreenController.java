@@ -118,9 +118,12 @@ public class BattleScreenController {
     root.getChildren().add(pauseScreen);
   }
 
+  public String fullMessage = "";
+
   private void showBattleMessage(String text) {
+    fullMessage += text + "\n";
     Platform.runLater(() -> {
-      battleMessageLabel.setText(text);
+      battleMessageLabel.setText(fullMessage);
       battleMessageLabel.setOpacity(0);
       battleMessageLabel.setVisible(true);
 
@@ -173,6 +176,7 @@ public class BattleScreenController {
 
   private void executeMoveSafely(int moveIndex) {
     if (service == null) return;
+    fullMessage = "";
     if (service.getGameState() != GameState.RUNNING) return;
 
     if (service instanceof SimpleTurnBasedBattleService concrete) {

@@ -65,10 +65,12 @@ public class SimpleDamageCalculator {
     if (isCritical) {
       damage *= 1.5; // TODO: hardcoded critical multiplier
       logger.debug("Critical hit! Damage increased by 50%");
+      BattleLog.post("Critical hit! Damage increased by 50%");
     }
     if (isEffective) {
       damage *= 1.5; // TODO: hardcoded effective multiplier
       logger.debug("Effective attack! Damage increased by 50%");
+      BattleLog.post("Effective attack! Damage increased by 50%");
     }
 
     if (!move.isTrueDamage()) {
