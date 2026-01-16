@@ -75,9 +75,9 @@ public class Data {
    */
   private Monster[] createMonsters() {
     return new Monster[] {
-      new Monster(180, 10, 3, 0.1, 0.1, Element.FIRE, getFireMonsterMoves()),
-      new Monster(200, 8, 8, 0.2, 0.2, Element.GRASS, getGrassMonsterMoves()),
-      new Monster(150, 6, 6, 0.1, 0.1, Element.WATER, getWaterMonsterMoves()),
+      new Monster(1800, 10, 3, 0.1, 0.1, Element.FIRE, getFireMonsterMoves()),
+      new Monster(2000, 8, 8, 0.2, 0.2, Element.GRASS, getGrassMonsterMoves()),
+      new Monster(1500, 6, 6, 0.1, 0.1, Element.WATER, getWaterMonsterMoves()),
     };
   }
 
