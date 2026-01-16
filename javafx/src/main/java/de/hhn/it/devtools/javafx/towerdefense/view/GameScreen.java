@@ -5,7 +5,6 @@ import de.hhn.it.devtools.javafx.towerdefense.controllers.ScreenManager;
 import de.hhn.it.devtools.javafx.towerdefense.controllers.ScreenType;
 import de.hhn.it.devtools.javafx.towerdefense.viewmodel.TowerDefenseViewModel;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.HPos;
@@ -49,6 +48,9 @@ public class GameScreen extends StackPane {
     createDisplay();
   }
 
+  /**
+   * Pulls all displays and places them in a specific order on the main screen.
+   */
   private void createDisplay() {
     mainLayout.setSpacing(1);
     mainLayout.setAlignment(Pos.CENTER);
@@ -129,6 +131,11 @@ public class GameScreen extends StackPane {
     });
   }
 
+  /**
+   * Makes a tower display which orders the towersIcons and initializes them.
+   *
+   * @return the GridPane with the final full layout, ready to be added
+   */
   private GridPane createTowerDisplay() {
     GridPane towerDisplay = new GridPane();
     towerDisplay.setAlignment(Pos.CENTER_LEFT);
@@ -143,7 +150,6 @@ public class GameScreen extends StackPane {
       towerIconRect.setFill(viewModel.getTowerColors(type));
       int towerCostNumber = viewModel.getTowerTypes().get(type);
       Label towerCost = new Label(String.valueOf(towerCostNumber));
-//      towerCost.setTextFill(Color.GOLD);
 
       towerIcon.getChildren().addAll(towerIconRect, towerCost);
 
@@ -167,6 +173,11 @@ public class GameScreen extends StackPane {
     return towerDisplay;
   }
 
+  /**
+   * Makes a player stats display which orders them and prepares them to be added.
+   *
+   * @return the GridPane with the final full layout, ready to be added
+   */
   private GridPane createStatsDisplay() {
     GridPane statsDisplay = new GridPane();
     statsDisplay.setAlignment(Pos.CENTER);
@@ -194,6 +205,11 @@ public class GameScreen extends StackPane {
     return statsDisplay;
   }
 
+  /**
+   * Makes an overlay to be shown when a round failed, including all buttons.
+   *
+   * @return the GridPane with the final full layout, ready to be added once needed
+   */
   private GridPane createGameEndedOverlay() {
     GridPane display = new GridPane();
     display.setAlignment(Pos.CENTER);
@@ -221,6 +237,11 @@ public class GameScreen extends StackPane {
     return display;
   }
 
+  /**
+   * Makes an overlay to be shown when a round is completed, including all buttons.
+   *
+   * @return the GridPane with the final full layout, ready to be added once needed
+   */
   private GridPane createRoundCompletedOverlay() {
     GridPane display = new GridPane();
     display.setAlignment(Pos.CENTER);
@@ -248,6 +269,11 @@ public class GameScreen extends StackPane {
 
   }
 
+  /**
+   * Makes a tutorial of the Gameplay showing how to place towers and more.
+   *
+   * @return the GridPane with the final full layout, ready to be added once needed
+   */
   private GridPane createTowerDefenseTutorialDisplay() {
     GridPane tutorialDisplay = new GridPane();
     tutorialDisplay.setAlignment(Pos.CENTER);
@@ -280,7 +306,6 @@ public class GameScreen extends StackPane {
     towerIconRect1.setFill(viewModel.getTowerColors(TowerType.MONEYMAKER));
     int towerCostNumber1 = viewModel.getTowerTypes().get(TowerType.MONEYMAKER);
     Label towerCost1 = new Label(String.valueOf(towerCostNumber1));
-//    towerCost1.setTextFill(Color.GOLD);
     towerIcon1.getChildren().addAll(towerIconRect1, towerCost1);
 
     Label descLabel1 = new Label("The Moneymaker Tower generates some money throughout \nthe round" +
@@ -295,7 +320,6 @@ public class GameScreen extends StackPane {
     towerIconRect2.setFill(viewModel.getTowerColors(TowerType.MELEE));
     int towerCostNumber2 = viewModel.getTowerTypes().get(TowerType.MELEE);
     Label towerCost2 = new Label(String.valueOf(towerCostNumber2));
-//    towerCost2.setTextFill(Color.GOLD);
     towerIcon2.getChildren().addAll(towerIconRect2, towerCost2);
 
     Label descLabel2 = new Label("The Melee Tower does good damage, however has a small range.");
@@ -309,7 +333,6 @@ public class GameScreen extends StackPane {
     towerIconRect3.setFill(viewModel.getTowerColors(TowerType.RANGED));
     int towerCostNumber3 = viewModel.getTowerTypes().get(TowerType.RANGED);
     Label towerCost3 = new Label(String.valueOf(towerCostNumber3));
-//    towerCost3.setTextFill(Color.GOLD);
     towerIcon3.getChildren().addAll(towerIconRect3, towerCost3);
 
     Label descLabel3 = new Label("The Ranged Tower does little damage within a wide range.");
@@ -321,6 +344,11 @@ public class GameScreen extends StackPane {
     return tutorialDisplay;
   }
 
+  /**
+   * A basic converter for the type to String.
+   *
+   * @return the String description of a towerType
+   */
   private String getTowerDescription(TowerType type) {
     return switch (type) {
       case MONEYMAKER -> "Generates extra money each round.";
@@ -330,12 +358,14 @@ public class GameScreen extends StackPane {
     };
   }
 
+  /**
+   * Makes a click-event possible for the grid so a player can place a desired tower.
+   */
   private void prepareTowerPlacement() {
     int gridSize = viewModel.getMap().get().grid().length;
 
     for (int row = 0; row < gridSize; row++) {
       for (int column = 0; column < gridSize; column++) {
-        // give each rect an index, and cast to rectangle from node
         Rectangle allRect = (Rectangle) completeBoard
                 .mapGrid
                 .getChildren()
@@ -348,7 +378,6 @@ public class GameScreen extends StackPane {
           logger.debug("Place Tower at {}|{}", perfectRow, perfectColumn);
           if (selectedTower != null) {
             try {
-              // TODO: uuid fix not int id 2
               viewModel.addTower(new Tower(new Coordinates(perfectColumn, perfectRow), selectedTower));
               selectedTower = null; // reset if didn't work
             } catch (IllegalArgumentException e) {
@@ -361,34 +390,40 @@ public class GameScreen extends StackPane {
     }
   }
 
+  /**
+   * Starts the next possible wave, if one is queued.
+   */
   private void startWaveOnAction() {
     try {
       viewModel.startNextRound();
     } catch (IllegalStateException e) {
-      // Temporary Solution for Illegal Button press
       Alert alert = new Alert(Alert.AlertType.ERROR);
       alert.setContentText("Wave can't be started");
       alert.showAndWait();
     }
   }
 
+  /**
+   * Starts a possible retry-able round, once one failed.
+   */
   private void retryWaveOnAction() {
     try {
       viewModel.retryRound();
     } catch (IllegalStateException e) {
-      // Temporary Solution for Illegal Button press
       Alert alert = new Alert(Alert.AlertType.ERROR);
       alert.setContentText("Wave can't be started");
       alert.showAndWait();
     }
   }
 
+  /**
+   * Aborts the game.
+   */
   private void abortGameOnAction() {
     try {
       viewModel.abortGame();
       screenManager.switchTo(ScreenType.TITLE_SCREEN);
     } catch (IllegalStateException e) {
-      // Temporary Solution for Illegal Button press
       Alert alert = new Alert(Alert.AlertType.ERROR);
       alert.setContentText("Wave can't be started");
       alert.showAndWait();
