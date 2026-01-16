@@ -1,0 +1,123 @@
+package de.hhn.it.devtools.components.spaceinvaders.junit;
+
+import de.hhn.it.devtools.apis.spaceinvaders.GameState;
+import de.hhn.it.devtools.apis.spaceinvaders.SpaceInvadersListener;
+import de.hhn.it.devtools.components.spaceinvaders.SimpleGameLoop;
+import de.hhn.it.devtools.components.spaceinvaders.SimpleSpaceInvadersService;
+import org.junit.jupiter.api.Test;
+
+import java.lang.reflect.Field;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class SimpleServiceResumeResetTest {
+
+  private static class TestLoop extends SimpleGameLoop {
+    private final AtomicBoolean stopCalled;
+
+    TestLoop(SimpleSpaceInvadersService svc, AtomicBoolean stopCalled) {
+      super(svc);
+      this.stopCalled = stopCalled;
+    }
+
+    @Override
+    public void stopGame() {
+      stopCalled.set(true);
+    }
+  }
+
+  @Test
+  void testResetStopsGameLoopAndSetsPrepared() throws Exception {
+    SimpleSpaceInvadersService svc = new SimpleSpaceInvadersService();
+
+    // set state to RUNNING so reset is sensible
+    Field gs = svc.getClass().getDeclaredField("gameState");
+    gs.setAccessible(true);
+    gs.set(svc, GameState.RUNNING);
+
+    AtomicBoolean stopCalled = new AtomicBoolean(false);
+    TestLoop loop = new TestLoop(svc, stopCalled);
+
+    Field loopField = svc.getClass().getDeclaredField("simpleGameLoop");
+    loopField.setAccessible(true);
+    loopField.set(svc, loop);
+
+    // call reset
+    svc.reset();
+
+    assertEquals(GameState.PREPARED, gs.get(svc));
+    assertTrue(stopCalled.get(), "reset() should call stopGame() on the game loop");
+  }
+
+  @Test
+  void testResumeFromPausedNotifiesAndWakesLoop() throws Exception {
+    SimpleSpaceInvadersService svc = new SimpleSpaceInvadersService();
+
+    // set private gameState to PAUSED so resume() is allowed
+    Field gs = svc.getClass().getDeclaredField("gameState");
+    gs.setAccessible(true);
+    gs.set(svc, GameState.PAUSED);
+
+    // create a loop instance to synchronize on
+    Field loopField = svc.getClass().getDeclaredField("simpleGameLoop");
+    loopField.setAccessible(true);
+    SimpleGameLoop loopInstance = new SimpleGameLoop(svc);
+    loopField.set(svc, loopInstance);
+
+    // prepare a waiter thread that waits on the loopInstance
+    AtomicBoolean awakened = new AtomicBoolean(false);
+    Thread waiter = new Thread(() -> {
+      synchronized (loopInstance) {
+        try {
+          loopInstance.wait(2000);
+          awakened.set(true);
+        } catch (InterruptedException e) {
+          // ignore
+        }
+      }
+    });
+    waiter.start();
+
+    // small pause to ensure waiter is waiting
+    Thread.sleep(50);
+
+    AtomicReference<GameState> seenState = new AtomicReference<>();
+    svc.addListener(new SpaceInvadersListener() {
+      @Override public void updateBarrier(de.hhn.it.devtools.apis.spaceinvaders.entities.Barrier barrier) {}
+      @Override public void updateAliens(de.hhn.it.devtools.apis.spaceinvaders.entities.Alien[] aliens) {}
+      @Override public void updateShip(de.hhn.it.devtools.apis.spaceinvaders.entities.Ship ship) {}
+      @Override public void updateProjectiles(de.hhn.it.devtools.apis.spaceinvaders.entities.Projectile[] projectile) {}
+      @Override public void damageAlien(de.hhn.it.devtools.apis.spaceinvaders.entities.Alien alien) {}
+      @Override public void updateSound(de.hhn.it.devtools.apis.spaceinvaders.Sound sound) {}
+      @Override public void changedGameState(GameState gameState) { seenState.set(gameState); }
+      @Override public void updateRound(int round) {}
+      @Override public void gameEnded() {}
+      @Override public void updateScore(int score) {}
+      @Override public void updateGameConfiguration(de.hhn.it.devtools.apis.spaceinvaders.GameConfiguration configuration) {}
+    });
+
+    // call resume; this should notify the waiting thread and set gameState to RUNNING
+    svc.resume();
+
+    // wait for waiter to finish
+    waiter.join(1000);
+
+    assertEquals(GameState.RUNNING, gs.get(svc));
+    assertEquals(GameState.RUNNING, seenState.get());
+    assertTrue(awakened.get(), "resume() should wake up a thread waiting on the game loop object");
+  }
+
+  @Test
+  void testResumeWhenNotPausedThrows() throws Exception {
+    SimpleSpaceInvadersService svc = new SimpleSpaceInvadersService();
+    Field gs = svc.getClass().getDeclaredField("gameState");
+    gs.setAccessible(true);
+    gs.set(svc, GameState.RUNNING);
+
+    assertThrows(IllegalStateException.class, svc::resume);
+  }
+}
+

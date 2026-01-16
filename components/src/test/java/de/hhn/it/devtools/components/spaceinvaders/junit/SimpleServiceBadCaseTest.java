@@ -1,6 +1,7 @@
 package de.hhn.it.devtools.components.spaceinvaders.junit;
 
 import de.hhn.it.devtools.apis.spaceinvaders.GameState;
+import de.hhn.it.devtools.apis.spaceinvaders.exceptions.IllegalConfigurationException;
 import de.hhn.it.devtools.components.spaceinvaders.SimpleSpaceInvadersService;
 import org.junit.jupiter.api.Test;
 
@@ -24,7 +25,7 @@ class SimpleServiceBadCaseTest {
   @Test
   void testConfigureNullThrows() {
     SimpleSpaceInvadersService svc = new SimpleSpaceInvadersService();
-    assertThrows(RuntimeException.class, () -> svc.configure(null));
+    assertThrows(IllegalConfigurationException.class, () -> svc.configure(null));
   }
 
   @Test
