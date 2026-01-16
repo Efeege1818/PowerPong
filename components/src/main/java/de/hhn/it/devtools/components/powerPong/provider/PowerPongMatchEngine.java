@@ -141,6 +141,16 @@ public class PowerPongMatchEngine implements PowerPongService {
 
     physics.reset();
     physics.setDifficultyMultiplier(getBallSpeedMultiplier(mode));
+
+    if (mode == GameMode.SURVIVAL) {
+      physics.setRallySpeedIncrease(0.02);
+      physics.setMaxRallyMultiplier(1.5);
+    } else {
+      // Accelerate faster in normal modes to prevent boring rallies
+      physics.setRallySpeedIncrease(0.10); // 10% faster per hit
+      physics.setMaxRallyMultiplier(3.0);
+    }
+
     powerUpManager.reset();
 
     physics.launchBall(-1); // Always launch towards player in Survival initially? Or random? Random is

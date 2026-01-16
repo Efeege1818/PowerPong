@@ -52,11 +52,23 @@ public class PhysicsEngine {
 
     // Rally speed increase (reduced for smoother gameplay)
     private int rallyHitCount = 0;
-    private static final double RALLY_SPEED_INCREASE = 0.02; // 2% faster per hit
-    private static final double MAX_RALLY_MULTIPLIER = 1.5; // Max 50% faster
+    private double rallySpeedIncrease = 0.02; // 2% faster per hit
+    private double maxRallyMultiplier = 1.5; // Max 50% faster
+
+    public void setRallySpeedIncrease(double increase) {
+        this.rallySpeedIncrease = increase;
+    }
+
+    public void setMaxRallyMultiplier(double max) {
+        this.maxRallyMultiplier = max;
+    }
 
     public PhysicsEngine(Random random) {
         this.random = random;
+    }
+
+    public double getRallyMultiplier() {
+        return Math.min(maxRallyMultiplier, 1.0 + (rallyHitCount * rallySpeedIncrease));
     }
 
     // reset methods
@@ -111,10 +123,6 @@ public class PhysicsEngine {
 
     public double getBaseBallSpeed() {
         return baseBallSpeed * difficultyMultiplier;
-    }
-
-    public double getRallyMultiplier() {
-        return Math.min(MAX_RALLY_MULTIPLIER, 1.0 + (rallyHitCount * RALLY_SPEED_INCREASE));
     }
 
     // Start ball & control double ball
@@ -240,7 +248,7 @@ public class PhysicsEngine {
 
         // Increase rally hit count and apply speed boost
         rallyHitCount++;
-        double rallyMultiplier = Math.min(MAX_RALLY_MULTIPLIER, 1.0 + (rallyHitCount * RALLY_SPEED_INCREASE));
+        double rallyMultiplier = Math.min(maxRallyMultiplier, 1.0 + (rallyHitCount * rallySpeedIncrease));
 
         double speed = getBaseBallSpeed() * rallyMultiplier;
         current.vx = horizontalDirection * speed;
