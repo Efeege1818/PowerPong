@@ -30,7 +30,16 @@ public class PowerPongServiceController extends Controller implements Initializa
     // Also set on parent's parent if available
     powerPongAnchorPane.parentProperty().addListener((obs, oldParent, newParent) -> {
       if (newParent instanceof javafx.scene.layout.Region region) {
-        region.setStyle(gradient);
+        System.out.println("PowerPongController attached to parent: " + newParent);
+        // Force anchor constraints on SELF when attached to parent (which is
+        // RootController's AnchorPane)
+        if (newParent instanceof AnchorPane) {
+          AnchorPane.setTopAnchor(powerPongAnchorPane, 0.0);
+          AnchorPane.setBottomAnchor(powerPongAnchorPane, 0.0);
+          AnchorPane.setLeftAnchor(powerPongAnchorPane, 0.0);
+          AnchorPane.setRightAnchor(powerPongAnchorPane, 0.0);
+        }
+        // region.setStyle(gradient); // Optional: tint parent too
       }
     });
 
@@ -46,31 +55,7 @@ public class PowerPongServiceController extends Controller implements Initializa
   }
 
   private void addDecorativeGlow(AnchorPane pane) {
-    // Retro grid pattern for arcade aesthetic
-
-    // Horizontal grid lines
-    for (int i = 0; i < 15; i++) {
-      javafx.scene.shape.Line hLine = new javafx.scene.shape.Line(0, 0, 1000, 0);
-      hLine.setStroke(javafx.scene.paint.Color.web("#00f3ff", 0.08));
-      hLine.setStrokeWidth(1);
-      AnchorPane.setTopAnchor(hLine, (double) (i * 50 + 25));
-      AnchorPane.setLeftAnchor(hLine, 0.0);
-      AnchorPane.setRightAnchor(hLine, 0.0);
-      hLine.setMouseTransparent(true);
-      pane.getChildren().add(hLine);
-    }
-
-    // Vertical grid lines (fewer)
-    for (int i = 0; i < 20; i++) {
-      javafx.scene.shape.Line vLine = new javafx.scene.shape.Line(0, 0, 0, 800);
-      vLine.setStroke(javafx.scene.paint.Color.web("#ff00ff", 0.05));
-      vLine.setStrokeWidth(1);
-      AnchorPane.setLeftAnchor(vLine, (double) (i * 50 + 25));
-      AnchorPane.setTopAnchor(vLine, 0.0);
-      AnchorPane.setBottomAnchor(vLine, 0.0);
-      vLine.setMouseTransparent(true);
-      pane.getChildren().add(vLine);
-    }
+    // Simple background - no extra elements to avoid lag
   }
 
   @Override

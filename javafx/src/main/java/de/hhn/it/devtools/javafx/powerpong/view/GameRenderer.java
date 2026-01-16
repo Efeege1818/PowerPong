@@ -55,6 +55,14 @@ public class GameRenderer {
     private int lastPlayer1Score = 0;
     private int lastPlayer2Score = 0;
 
+    // Shield visual tracking (set externally when shield is active)
+    private boolean player1ShieldActive = false;
+    private boolean player2ShieldActive = false;
+
+    // Power-up collection flash effect
+    private double collectionFlashAlpha = 0;
+    private Color collectionFlashColor = Color.WHITE;
+
     private static class Particle {
         double x, y, vx, vy;
         double life, maxLife;
@@ -86,6 +94,31 @@ public class GameRenderer {
         score2Scale = 1.0;
         lastPlayer1Score = 0;
         lastPlayer2Score = 0;
+        player1ShieldActive = false;
+        player2ShieldActive = false;
+        collectionFlashAlpha = 0;
+    }
+
+    /** Set shield active status for rendering visual shield behind paddle */
+    public void setShieldActive(int player, boolean active) {
+        if (player == 1)
+            player1ShieldActive = active;
+        else
+            player2ShieldActive = active;
+    }
+
+    /** Trigger collection flash effect when power-up is picked up */
+    public void triggerCollectionEffect(Color color) {
+        collectionFlashAlpha = 0.4;
+        collectionFlashColor = color;
+        // Spawn particles at random location for collection
+        for (int i = 0; i < 15; i++) {
+            double angle = Math.random() * Math.PI * 2;
+            double speed = 3 + Math.random() * 5;
+            double vx = Math.cos(angle) * speed;
+            double vy = Math.sin(angle) * speed;
+            particles.add(new Particle(LOGICAL_WIDTH / 2, LOGICAL_HEIGHT / 2, vx, vy, 0.8, color));
+        }
     }
 
     /**
@@ -164,6 +197,14 @@ public class GameRenderer {
         // Draw Field Decorations (Line, Scores)
         drawFieldDecorations(gc, state);
 
+        // Draw shields behind paddles first (so paddles appear on top)
+        if (player1ShieldActive && state.player1Paddle() != null) {
+            drawShieldBehindPaddle(gc, state.player1Paddle(), true);
+        }
+        if (player2ShieldActive && state.player2Paddle() != null) {
+            drawShieldBehindPaddle(gc, state.player2Paddle(), false);
+        }
+
         if (state.player1Paddle() != null) {
             drawNeonPaddle(gc, state.player1Paddle(), NEON_BLUE);
         }
@@ -189,6 +230,19 @@ public class GameRenderer {
             for (PowerUpState powerUp : powerUps) {
                 drawNeonPowerUp(gc, powerUp);
             }
+        }
+
+        // Draw collection flash effect overlay
+        if (collectionFlashAlpha > 0) {
+            gc.setEffect(null);
+            gc.setFill(collectionFlashColor.deriveColor(0, 1, 1, collectionFlashAlpha));
+            // Draw over the entire logical field
+            gc.fillRect(0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT);
+
+            // Decay
+            collectionFlashAlpha -= 0.02;
+            if (collectionFlashAlpha < 0)
+                collectionFlashAlpha = 0;
         }
 
         // Restore original transformation
@@ -286,6 +340,30 @@ public class GameRenderer {
         gc.fillRoundRect(x + 2, y + 2, w - 4, h - 4, 8, 8);
     }
 
+    private void drawShieldBehindPaddle(GraphicsContext gc, PaddleState paddle, boolean isPlayer1) {
+        double paddleX = paddle.xPosition();
+        double paddleY = paddle.yPosition();
+        double paddleH = paddle.height();
+
+        // Shield position: behind the paddle (towards the goal)
+        double shieldX = isPlayer1 ? paddleX - 15 : paddleX + paddle.width() + 5;
+        double shieldW = 10;
+        double shieldH = paddleH + 40; // Taller than paddle
+        double shieldY = paddleY - shieldH / 2;
+
+        Color shieldColor = Color.web("#00f3ff"); // Cyan glow
+
+        // Outer glow
+        gc.setEffect(new javafx.scene.effect.DropShadow(25, shieldColor));
+        gc.setFill(shieldColor.deriveColor(0, 1, 1, 0.6));
+        gc.fillRoundRect(shieldX, shieldY, shieldW, shieldH, 5, 5);
+
+        // Inner bright core
+        gc.setEffect(null);
+        gc.setFill(Color.WHITE.deriveColor(0, 1, 1, 0.9));
+        gc.fillRoundRect(shieldX + 2, shieldY + 5, shieldW - 4, shieldH - 10, 3, 3);
+    }
+
     private void drawNeonBall(GraphicsContext gc, BallState ball, GameState state) {
         double r = ball.radius();
         double d = r * 2;
@@ -331,67 +409,38 @@ public class GameRenderer {
         double cx = powerUp.xPosition();
         double cy = powerUp.yPosition();
 
-        // Glow
-        gc.setEffect(new javafx.scene.effect.DropShadow(15, color));
+        // NO DropShadow - simpler rendering for performance
+        gc.setEffect(null);
 
-        // Outer Ring
-        gc.setStroke(color);
-        gc.setLineWidth(2);
-        gc.strokeOval(x, y, d, d);
-
-        // Inner Fill (transparent)
-        gc.setFill(color.deriveColor(0, 1, 1, 0.2));
+        // Filled background circle
+        gc.setFill(color.deriveColor(0, 1, 0.4, 0.9));
         gc.fillOval(x, y, d, d);
 
-        // Draw Icon
-        gc.setStroke(Color.WHITE);
-        gc.setLineWidth(2);
-        gc.setEffect(null); // Clear glow for icon sharpness (optional, or keep it)
+        // Bright colored border
+        gc.setStroke(color.brighter());
+        gc.setLineWidth(3);
+        gc.strokeOval(x, y, d, d);
 
-        switch (powerUp.type()) {
-            case BIGGER_PADDLE:
-                // Up Arrow / Plus
-                gc.strokeLine(cx, cy - r / 2, cx, cy + r / 2);
-                gc.strokeLine(cx - r / 2, cy, cx + r / 2, cy);
-                break;
-            case SMALLER_ENEMY_PADDLE:
-                // Down Arrow / Minus
-                gc.strokeLine(cx - r / 2, cy, cx + r / 2, cy);
-                break;
-            case DOUBLE_BALL:
-                // Two dots
-                gc.setFill(Color.WHITE);
-                gc.fillOval(cx - 5, cy - 5, 4, 4);
-                gc.fillOval(cx + 1, cy + 1, 4, 4);
-                break;
-            case SHIELD:
-                // Shield / Square
-                gc.strokeRect(cx - r / 2, cy - r / 2, r, r);
-                break;
-            case BARRIERLESS:
-                // Broken line / Slash
-                gc.strokeLine(cx - r / 2, cy + r / 2, cx + r / 2, cy - r / 2);
-                break;
-            case SLOW_ENEMY_PADDLE:
-                // Snail / Slow (<<)
-                gc.strokeLine(cx + 2, cy - 4, cx - 2, cy);
-                gc.strokeLine(cx + 2, cy + 4, cx - 2, cy);
-                gc.strokeLine(cx - 2, cy - 4, cx - 6, cy);
-                gc.strokeLine(cx - 2, cy + 4, cx - 6, cy);
-                break;
-            case FASTER_BALL_ENEMY_SIDE:
-                // Fast (>>)
-                gc.strokeLine(cx - 2, cy - 4, cx + 2, cy);
-                gc.strokeLine(cx - 2, cy + 4, cx + 2, cy);
-                gc.strokeLine(cx + 2, cy - 4, cx + 6, cy);
-                gc.strokeLine(cx + 2, cy + 4, cx + 6, cy);
-                break;
-        }
+        // Symbol with nice font
+        gc.setFill(Color.WHITE);
+        gc.setFont(javafx.scene.text.Font.font("Segoe UI Symbol", javafx.scene.text.FontWeight.BOLD, r * 1.0));
+        gc.setTextAlign(javafx.scene.text.TextAlignment.CENTER);
+        gc.setTextBaseline(javafx.geometry.VPos.CENTER);
 
-        gc.setEffect(null);
+        String symbol = switch (powerUp.type()) {
+            case BIGGER_PADDLE -> "↑";
+            case SMALLER_ENEMY_PADDLE -> "↓";
+            case DOUBLE_BALL -> "◆";
+            case SHIELD -> "■";
+            case BARRIERLESS -> "✕";
+            case SLOW_ENEMY_PADDLE -> "◎";
+            case FASTER_BALL_ENEMY_SIDE -> "»";
+        };
+
+        gc.fillText(symbol, cx, cy);
     }
 
-    private Color getColorForPowerUp(PowerUpType type) {
+    public Color getColorForPowerUp(PowerUpType type) {
         return switch (type) {
             case BIGGER_PADDLE -> NEON_GREEN;
             case SMALLER_ENEMY_PADDLE -> NEON_RED;

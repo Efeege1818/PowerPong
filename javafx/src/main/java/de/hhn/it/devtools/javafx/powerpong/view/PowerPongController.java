@@ -72,6 +72,12 @@ public class PowerPongController extends StackPane {
     gameTimer = new GameTimer();
     scoreLabel.textProperty().bind(viewModel.scoreTextProperty());
     winnerLabel.textProperty().bind(viewModel.winnerTextProperty());
+
+    // Connect power-up collection events to visual effects
+    viewModel.setOnPowerUpCollected(type -> {
+      renderer.triggerCollectionEffect(renderer.getColorForPowerUp(type));
+    });
+
     // Game over handling is now done in the fullscreen window (see startGame
     // method)
   }
@@ -137,7 +143,7 @@ public class PowerPongController extends StackPane {
       fullscreenGameOverBox.setAlignment(javafx.geometry.Pos.CENTER);
       fullscreenGameOverBox.setStyle(
           "-fx-background-color: rgba(5, 5, 20, 0.9); -fx-padding: 60; -fx-background-radius: 30; -fx-border-radius: 30; -fx-border-color: rgba(255,255,255,0.2); -fx-border-width: 2;");
-      fullscreenGameOverBox.setMaxWidth(500);
+      fullscreenGameOverBox.setMaxWidth(800);
       fullscreenGameOverBox.setMaxHeight(350);
       fullscreenGameOverBox.setVisible(false);
 
@@ -406,10 +412,52 @@ public class PowerPongController extends StackPane {
   private final GameRenderer renderer = new GameRenderer();
 
   private class GameTimer extends AnimationTimer {
+    private long lastTime = 0;
+    private final double[] deltaHistory = new double[10];
+    private int deltaIndex = 0;
+    private double deltaSum = 0;
+    private int deltaCount = 0;
+
+    @Override
+    public void start() {
+      lastTime = 0;
+      deltaIndex = 0;
+      deltaSum = 0;
+      deltaCount = 0;
+      super.start();
+    }
+
     @Override
     public void handle(long now) {
+      if (lastTime == 0) {
+        lastTime = now;
+        return;
+      }
+
+      double rawDelta = (now - lastTime) / 1_000_000_000.0;
+      lastTime = now;
+
+      // Cap delta time to prevent physics explosion (e.g. max 0.05s)
+      if (rawDelta > 0.05) {
+        rawDelta = 0.05;
+      }
+
+      // Rolling average to smooth out jitter
+      if (deltaCount < 10) {
+        deltaHistory[deltaCount] = rawDelta;
+        deltaSum += rawDelta;
+        deltaCount++;
+      } else {
+        deltaSum -= deltaHistory[deltaIndex];
+        deltaHistory[deltaIndex] = rawDelta;
+        deltaSum += rawDelta;
+        deltaIndex = (deltaIndex + 1) % 10;
+      }
+
+      double avgDelta = deltaSum / deltaCount;
+
       try {
-        GameState state = viewModel.updateGame();
+        GameState state = viewModel.updateGame(avgDelta);
         if (state != null) {
           render(state);
         }
@@ -421,6 +469,12 @@ public class PowerPongController extends StackPane {
 
   private void render(GameState state) {
     GraphicsContext gc = gameCanvas.getGraphicsContext2D();
+
+    if (viewModel != null) {
+      renderer.setShieldActive(1, viewModel.hasShield(1));
+      renderer.setShieldActive(2, viewModel.hasShield(2));
+    }
+
     renderer.render(gc, state);
   }
 }

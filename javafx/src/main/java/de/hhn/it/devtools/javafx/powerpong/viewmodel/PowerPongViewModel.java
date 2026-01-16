@@ -63,6 +63,10 @@ public class PowerPongViewModel implements PowerPongListener {
     gameStatus.set(GameStatus.MENU);
   }
 
+  public boolean hasShield(int player) {
+    return service.hasShield(player);
+  }
+
   public void pause() {
     service.setPaused(true);
     service.removeListener(this);
@@ -78,9 +82,13 @@ public class PowerPongViewModel implements PowerPongListener {
   }
 
   public GameState updateGame() throws GameLogicException {
+    return updateGame(1.0 / 60.0);
+  }
+
+  public GameState updateGame(double deltaSeconds) throws GameLogicException {
     GameState state = service.getGameState();
     if (state != null && state.status() == GameStatus.RUNNING) {
-      service.updateGame(playerInput);
+      service.updateGame(playerInput, deltaSeconds);
       state = service.getGameState();
     }
     gameState.set(state);
@@ -134,8 +142,17 @@ public class PowerPongViewModel implements PowerPongListener {
     });
   }
 
+  private java.util.function.Consumer<PowerUpType> onPowerUpCollectedHandler;
+
+  public void setOnPowerUpCollected(java.util.function.Consumer<PowerUpType> handler) {
+    this.onPowerUpCollectedHandler = handler;
+  }
+
   @Override
   public void onPowerUpCollected(final int idx, final PowerUpType type) {
+    if (onPowerUpCollectedHandler != null) {
+      Platform.runLater(() -> onPowerUpCollectedHandler.accept(type));
+    }
   }
 
   private String formatScore(final int p1, final int p2) {

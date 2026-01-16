@@ -14,12 +14,20 @@ public interface PowerPongService {
     /**
      * Calculates the next game state (frame).
      * This method should ideally be called by the UI
-     * on every frame of the game loop (e.g., from a JavaFX AnimationTimer's handle method).
+     * on every frame of the game loop.
      *
-     * @param input The current player inputs (key presses) for both paddles, typically updated via
-     *              JavaFX {@code Scene#setOnKeyPressed} / {@code setOnKeyReleased} handlers.
+     * @param input        The current player inputs.
+     * @param deltaSeconds The time elapsed since the last frame in seconds.
      * @throws GameLogicException if an error occurs during game state calculation.
      */
+    void updateGame(PlayerInput input, double deltaSeconds) throws GameLogicException;
+
+    /**
+     * Legacy update method assuming fixed 60Hz.
+     * 
+     * @deprecated Use {@link #updateGame(PlayerInput, double)} instead.
+     */
+    @Deprecated
     void updateGame(PlayerInput input) throws GameLogicException;
 
     /**
@@ -28,7 +36,7 @@ public interface PowerPongService {
      * paddles, ball, and score.
      *
      * @return An (immutable) GameState object representing
-     * the complete state of the game.
+     *         the complete state of the game.
      */
     GameState getGameState();
 
@@ -40,15 +48,19 @@ public interface PowerPongService {
     void setPaused(boolean isPaused);
 
     /**
-     * Forces the game to stop immediately and transitions into a terminal {@link GameStatus}.
-     * Implementations should use this when the user quits from the menu or the application closes.
+     * Forces the game to stop immediately and transitions into a terminal
+     * {@link GameStatus}.
+     * Implementations should use this when the user quits from the menu or the
+     * application closes.
      */
     void endGame();
 
     /**
-     * Registers a {@link PowerPongListener} so the UI can react to events (Observer pattern).
+     * Registers a {@link PowerPongListener} so the UI can react to events (Observer
+     * pattern).
      *
-     * @param listener listener instance; silently ignored when null or already registered.
+     * @param listener listener instance; silently ignored when null or already
+     *                 registered.
      */
     void addListener(PowerPongListener listener);
 
@@ -57,5 +69,13 @@ public interface PowerPongService {
      *
      * @param listener listener instance to remove.
      */
-    void removeListener(PowerPongListener listener);    
+    void removeListener(PowerPongListener listener);
+
+    /**
+     * Checks if a player currently has an active shield.
+     * 
+     * @param player 1 for left player, 2 for right player
+     * @return true if shield is active
+     */
+    boolean hasShield(int player);
 }

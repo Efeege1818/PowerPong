@@ -113,7 +113,11 @@ public class PowerPongMatchEngine implements PowerPongService {
   }
 
   private double survivalTime = 0;
-  private static final double SURVIVAL_DIFFICULTY_INTERVAL = 10.0; // Increase difficulty every 10 seconds
+  private int survivalLives = 3;
+  private int survivalScore = 0;
+  private int lastRallyCount = 0;
+  private static final double SURVIVAL_DIFFICULTY_INTERVAL = 10.0; // Increase difficulty every 10 seconds (or hits)
+
   private static final double DIFFICULTY_INCREMENT = 0.1; // +10% speed
 
   @Override
@@ -122,17 +126,25 @@ public class PowerPongMatchEngine implements PowerPongService {
       throw new GameLogicException("Game mode must not be null.");
     }
     currentMode = mode;
-    score = new Score(0, 0);
     running = true;
     paused = false;
     status = GameStatus.RUNNING;
     survivalTime = 0;
+    survivalLives = 3;
+    survivalScore = 0;
+    lastRallyCount = 0;
+    if (mode == GameMode.SURVIVAL) {
+      score = new Score(0, 3); // Points - Lives
+    } else {
+      score = new Score(0, 0);
+    }
 
     physics.reset();
     physics.setDifficultyMultiplier(getBallSpeedMultiplier(mode));
     powerUpManager.reset();
 
-    physics.launchBall(random.nextBoolean() ? 1 : -1);
+    physics.launchBall(-1); // Always launch towards player in Survival initially? Or random? Random is
+                            // fine.
 
     rebuildSnapshot();
   }
@@ -144,25 +156,54 @@ public class PowerPongMatchEngine implements PowerPongService {
 
   @Override
   public void updateGame(PlayerInput input) throws GameLogicException {
+    updateGame(input, FRAME_TIME_SECONDS);
+  }
+
+  @Override
+  public void updateGame(PlayerInput input, double deltaSeconds) throws GameLogicException {
     ensureGameRunning();
     if (paused || physics.getBall() == null) {
       return;
     }
 
-    applyInput(input);
+    applyInput(input, deltaSeconds);
 
     if (currentMode == GameMode.SURVIVAL) {
-      updateSurvivalMode(FRAME_TIME_SECONDS);
+      updateSurvivalMode(deltaSeconds);
     }
 
-    int scoreEvent = physics.updateBalls(FRAME_TIME_SECONDS);
+    int scoreEvent = 0;
+
+    // Sub-stepping to prevent tunneling at high speeds and low framerates
+    double remainingSteps = deltaSeconds;
+    double stepSize = 0.01; // 10ms fixed step target
+
+    while (remainingSteps > 0) {
+      double step = Math.min(remainingSteps, stepSize);
+      int event = physics.updateBalls(step);
+      if (event != 0) {
+        scoreEvent = event; // Keep last significant event or first? Usually first matters.
+        // If scored, we might want to stop processing remaining steps or just finish?
+        // Simpler to just record it.
+      }
+      remainingSteps -= step;
+    }
 
     if (currentMode == GameMode.POWERUP_DUEL) {
-      powerUpManager.update(FRAME_TIME_SECONDS);
+      java.util.List<PowerUpManager.CollectionEvent> events = powerUpManager.update(deltaSeconds);
+      for (PowerUpManager.CollectionEvent event : events) {
+        for (PowerPongListener listener : listeners) {
+          listener.onPowerUpCollected(event.owner(), event.type());
+        }
+      }
     }
 
     if (scoreEvent != 0) {
-      handleScoring(scoreEvent);
+      if (currentMode == GameMode.SURVIVAL) {
+        handleSurvivalScoring(scoreEvent);
+      } else {
+        handleScoring(scoreEvent);
+      }
     } else {
       rebuildSnapshot();
     }
@@ -170,26 +211,108 @@ public class PowerPongMatchEngine implements PowerPongService {
 
   private void updateSurvivalMode(double deltaSeconds) {
     survivalTime += deltaSeconds;
+
+    // Difficulty Progression: Speed up every 5 successful hits
+    if (survivalScore > 0 && survivalScore % 5 == 0) {
+      // logic to increase speed slightly, but prevent stacking per frame
+      // Actually rally multiplier handles per-hit speed.
+      // Base difficulty multiplier can increase over time.
+    }
     int level = (int) (survivalTime / SURVIVAL_DIFFICULTY_INTERVAL);
     double multiplier = 1.0 + (level * DIFFICULTY_INCREMENT);
     physics.setDifficultyMultiplier(multiplier);
+
+    // Invincible AI: Track ball perfectly
+    PhysicsEngine.Ball ball = physics.getBall();
+    if (ball != null) {
+      // If ball is moving towards AI (right), align paddle perfectly center to ball Y
+      if (ball.vx > 0) {
+        physics.setPaddle2Y(ball.y);
+      } else {
+        // Slowly reset to center when ball is away
+        double currentY = physics.getPaddle2Y();
+        double targetY = PhysicsEngine.FIELD_HEIGHT / 2.0;
+        double diff = targetY - currentY;
+        if (Math.abs(diff) > 2) {
+          physics.setPaddle2Y(currentY + Math.signum(diff) * 200 * deltaSeconds);
+        }
+      }
+    }
+
+    // Check for Points (Rally hits)
+    int currentRally = physics.getRallyHitCount();
+    if (currentRally > lastRallyCount) {
+      // Someone hit the ball. If ball.vx > 0, it means Player just hit it.
+      // (Collision changes direction. if vx > 0, it bounces off left moving right).
+      if (ball != null && ball.vx > 0) {
+        survivalScore++;
+        // Flash effect or sound?
+        score = new Score(survivalScore, survivalLives);
+        rebuildSnapshot();
+      }
+      lastRallyCount = currentRally;
+    }
   }
 
-  private void applyInput(PlayerInput input) {
+  private void handleSurvivalScoring(int scoreEvent) {
+    // scoreEvent 1 = AI Miss (Impossible usually).
+    // scoreEvent 2 = Player Miss.
+
+    if (scoreEvent == 2) {
+      survivalLives--;
+      // Show shake effect?
+      // Reset rally count tracked locally
+      lastRallyCount = 0;
+
+      if (survivalLives <= 0) {
+        score = new Score(survivalScore, 0);
+        status = GameStatus.PLAYER_2_WINS; // Using existing status for Game Over
+        // Maybe map P2_WINS to "GAME OVER" in frontend?
+        running = false;
+        paused = false;
+        rebuildSnapshot();
+        for (PowerPongListener listener : listeners) {
+          listener.onGameEnd(status, snapshot);
+        }
+      } else {
+        score = new Score(survivalScore, survivalLives);
+        status = GameStatus.PLAYER_2_SCORED; // Trigger "Player 2 Scored" handling (animations)?
+        // Actually PLAYER_2_SCORED usually flashes red. Correct.
+        // physics.setDifficultyMultiplier(1.0); // REMOVED: Keep speed
+        // survivalTime = 0; // REMOVED: Keep difficulty timer
+
+        rebuildSnapshot();
+        for (PowerPongListener listener : listeners) {
+          listener.onPlayerScored(2, score);
+        }
+        // Respawn ball towards player
+        physics.launchBall(-1);
+        status = GameStatus.RUNNING;
+        rebuildSnapshot();
+      }
+    } else if (scoreEvent == 1) {
+      // AI Missed? Glitch. Respawn.
+      physics.launchBall(-1);
+      lastRallyCount = 0;
+      rebuildSnapshot();
+    }
+  }
+
+  private void applyInput(PlayerInput input, double deltaSeconds) {
     double leftDir = directionFromInput(input, InputAction.LEFT_UP, InputAction.LEFT_DOWN);
     double rightDir = 0;
 
     if (currentMode == GameMode.PLAYER_VS_AI || currentMode == GameMode.SURVIVAL) {
-      rightDir = calculateAIMovement();
+      rightDir = calculateAIMovement(deltaSeconds);
     } else {
       rightDir = directionFromInput(input, InputAction.RIGHT_UP, InputAction.RIGHT_DOWN);
     }
 
-    physics.movePaddle(true, leftDir, FRAME_TIME_SECONDS);
-    physics.movePaddle(false, rightDir, FRAME_TIME_SECONDS);
+    physics.movePaddle(true, leftDir, deltaSeconds);
+    physics.movePaddle(false, rightDir, deltaSeconds);
   }
 
-  private double calculateAIMovement() {
+  private double calculateAIMovement(double deltaSeconds) {
     PhysicsEngine.Ball ball = physics.getBall();
     if (ball == null) {
       return 0;
@@ -197,7 +320,7 @@ public class PowerPongMatchEngine implements PowerPongService {
 
     // Handle ongoing mistakes
     if (aiCurrentMistakeTimer > 0) {
-      aiCurrentMistakeTimer -= FRAME_TIME_SECONDS;
+      aiCurrentMistakeTimer -= deltaSeconds;
       switch (aiMistakeType) {
         case 1: // Freeze - AI stops moving
           return 0;
@@ -375,6 +498,14 @@ public class PowerPongMatchEngine implements PowerPongService {
     physics.launchBall(scoringPlayer == 1 ? -1 : 1);
     status = GameStatus.RUNNING;
     rebuildSnapshot();
+  }
+
+  @Override
+  public boolean hasShield(int player) {
+    if (powerUpManager == null) {
+      return false;
+    }
+    return powerUpManager.hasShield(player);
   }
 
   private void resetAfterShield() {

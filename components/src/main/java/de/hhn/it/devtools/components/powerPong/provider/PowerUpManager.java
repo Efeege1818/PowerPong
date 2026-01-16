@@ -23,13 +23,13 @@ import java.util.Random;
  */
 public class PowerUpManager {
 
-    private static final double POWERUP_SPAWN_INTERVAL = 6.0; // seconds
-    private static final double POWERUP_RADIUS = 20.0; // Increased from 12.0
-    private static final double EFFECT_DURATION_SECONDS = 8.0;
+    private static final double POWERUP_SPAWN_INTERVAL = 6.0; // seconds (base, randomized in maybeSpawnPowerUp)
+    private static final double POWERUP_RADIUS = 20.0;
+    private static final double EFFECT_DURATION_SECONDS = 5.0; // Reduced from 8.0 for faster gameplay
     private static final double ENLARGE_FACTOR = 1.4;
     private static final double SHRINK_FACTOR = 0.65;
     private static final double SLOW_FACTOR = 0.5;
-    private static final double FAST_BALL_FACTOR = 1.35;
+    private static final double FAST_BALL_FACTOR = 1.25; // Reduced from 1.35 for better balance
 
     private final Random random;
     private final PhysicsEngine physics;
@@ -54,25 +54,29 @@ public class PowerUpManager {
         rightShield = false;
     }
 
-    public void update(double deltaSeconds) {
-        spawnTimer += deltaSeconds;
-        maybeSpawnPowerUp();
-        handlePowerUpCollisions();
-        updateEffects(deltaSeconds);
-        applyContinuousEffects();
+    public record CollectionEvent(int owner, PowerUpType type) {
     }
 
-    private double nextSpawnThreshold = 5.0; // Initial threshold
+    public java.util.List<CollectionEvent> update(double deltaSeconds) {
+        spawnTimer += deltaSeconds;
+        maybeSpawnPowerUp();
+        java.util.List<CollectionEvent> events = handlePowerUpCollisions();
+        updateEffects(deltaSeconds);
+        applyContinuousEffects();
+        return events;
+    }
+
+    private double nextSpawnThreshold = 4.0; // Initial threshold
 
     private void maybeSpawnPowerUp() {
-        // Randomize spawn interval (5 to 12 seconds)
+        // Randomize spawn interval (4 to 9 seconds - moderately fast)
         if (spawnTimer < nextSpawnThreshold) {
             return;
         }
 
         // Reset timer and pick new random interval immediately
         spawnTimer = 0;
-        nextSpawnThreshold = 5.0 + random.nextDouble() * 7.0;
+        nextSpawnThreshold = 4.0 + random.nextDouble() * 5.0; // 4-9 seconds
 
         // "Natural" density: High chance to stop if we already have 2, hard limit at 3
         if (powerUps.size() >= 3) {
@@ -108,9 +112,10 @@ public class PowerUpManager {
         return false;
     }
 
-    private void handlePowerUpCollisions() {
+    private java.util.List<CollectionEvent> handlePowerUpCollisions() {
+        java.util.List<CollectionEvent> events = new ArrayList<>();
         if (powerUps.isEmpty()) {
-            return;
+            return events;
         }
         List<FieldPowerUp> collected = new ArrayList<>();
         Ball ball = physics.getBall();
@@ -118,18 +123,19 @@ public class PowerUpManager {
 
         for (FieldPowerUp powerUp : powerUps) {
             if (collides(ball, powerUp)) {
-                // Owner is determined by ball direction: ball moving right (vx > 0) means
-                // Player 1 hit it
                 int owner = ball.vx > 0 ? 1 : 2;
                 applyPowerUp(owner, powerUp.type);
                 collected.add(powerUp);
+                events.add(new CollectionEvent(owner, powerUp.type));
             } else if (secondaryBall != null && collides(secondaryBall, powerUp)) {
                 int owner = secondaryBall.vx > 0 ? 1 : 2;
                 applyPowerUp(owner, powerUp.type);
                 collected.add(powerUp);
+                events.add(new CollectionEvent(owner, powerUp.type));
             }
         }
         powerUps.removeAll(collected);
+        return events;
     }
 
     private boolean collides(Ball candidate, FieldPowerUp powerUp) {

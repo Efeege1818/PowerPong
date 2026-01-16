@@ -28,8 +28,8 @@ public class PhysicsEngine {
     public static final double RIGHT_PADDLE_X = FIELD_WIDTH - LEFT_PADDLE_X - PADDLE_WIDTH;
 
     // Base speeds (modifiable for difficulty)
-    private double basePaddleSpeed = 400.0; // px / second
-    private double baseBallSpeed = 360.0; // px / second
+    private double basePaddleSpeed = 650.0; // px / second
+    private double baseBallSpeed = 500.0; // px / second
     private double difficultyMultiplier = 1.0;
 
     private static final double POWERUP_SPAWN_INTERVAL = 6.0; // seconds
@@ -53,7 +53,7 @@ public class PhysicsEngine {
     // Rally speed increase (reduced for smoother gameplay)
     private int rallyHitCount = 0;
     private static final double RALLY_SPEED_INCREASE = 0.02; // 2% faster per hit
-    private static final double MAX_RALLY_MULTIPLIER = 1.3; // Max 30% faster
+    private static final double MAX_RALLY_MULTIPLIER = 1.5; // Max 50% faster
 
     public PhysicsEngine(Random random) {
         this.random = random;
@@ -292,6 +292,17 @@ public class PhysicsEngine {
     // Helper for AI
     public double getPaddle2Y() {
         return paddle2CenterY;
+    }
+
+    public void setPaddle2Y(double y) {
+        double currentHeight = PADDLE_HEIGHT * rightHeightFactor;
+        double minY = currentHeight / 2.0;
+        double maxY = FIELD_HEIGHT - currentHeight / 2.0;
+        this.paddle2CenterY = clamp(y, minY, maxY);
+    }
+
+    public int getRallyHitCount() {
+        return rallyHitCount;
     }
 
     public List<BallState> getBallStates() {
