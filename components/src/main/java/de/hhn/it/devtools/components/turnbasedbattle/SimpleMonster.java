@@ -396,6 +396,16 @@ public class SimpleMonster {
   }
 
   /**
+   * Method to get the current special move condition progress
+   * Method must be overridden by specific Monster or leave empty if no effect.
+   *
+   * @return String with progress
+   */
+  public String getSpecialProgress() {
+    return "";
+  }
+
+  /**
    * Checks if the monster is still alive.
    *
    * @return true if the monster has HP remaining, false otherwise.

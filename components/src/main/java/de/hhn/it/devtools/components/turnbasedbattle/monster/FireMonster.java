@@ -14,6 +14,7 @@ public class FireMonster extends SimpleMonster {
   private int fireMonsterPassiveStacks = 10;
 
   private final int atkPassiveAmount = 2;
+  private final int attacksHitThreshold = 7;
 
   /**
    * Creates a new FireMonster.
@@ -51,9 +52,15 @@ public class FireMonster extends SimpleMonster {
     }
     if (!isMoveLocked(5)) {
       return;
-    } else if (attacksHit >= 7) {
+    } else if (attacksHit >= attacksHitThreshold) {
       unlockMove(5);
       attacksHit = 0;
     }
+  }
+
+
+  @Override
+  public String getSpecialProgress() {
+    return (attacksHit + "/" + attacksHitThreshold);
   }
 }

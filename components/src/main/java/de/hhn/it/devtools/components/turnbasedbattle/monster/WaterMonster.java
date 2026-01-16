@@ -126,6 +126,11 @@ public class WaterMonster extends SimpleMonster {
     }
   }
 
+  @Override
+  public String getSpecialProgress() {
+    return (specialConditionStacks + "/" + specialConditionStacksThreshold);
+  }
+
   private void increaseSpecialConditionStacks() {
     if (!isMoveLocked(5)) {
       return;

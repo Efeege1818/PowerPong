@@ -260,11 +260,12 @@ public class BattleScreenController {
 
     boolean onCd = monster.isMoveOnCooldown(moveIndex);
     boolean isLocked = monster.isMoveLocked(moveIndex);
+    String specialProgress = monster.getSpecialProgress();
     int remaining = monster.getRemainingCooldown(moveIndex);
 
     button.setDisable(onCd || isLocked);
     if (isLocked) {
-      button.setText(title + " (Locked)");
+      button.setText(title + " (Locked) " + specialProgress);
     } else if (onCd) {
       button.setText(title + " (Cooldown: " + remaining + ")");
     } else {
