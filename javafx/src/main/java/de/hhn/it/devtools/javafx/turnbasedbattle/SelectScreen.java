@@ -116,7 +116,14 @@ public class SelectScreen extends AnchorPane {
       screenManager.setPendingBattleService(service);
 
       screenManager.switchTo(SelectScreen.SCREEN_NAME, BattleScreen.SCREEN_NAME);
+
+      resetSelection();
     }
+  }
+
+  private void resetSelection() {
+    selected1 = false;
+    selected2 = false;
   }
 
   private boolean isSelectionFinished() {
