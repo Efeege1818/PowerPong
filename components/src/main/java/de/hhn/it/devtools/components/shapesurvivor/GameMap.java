@@ -56,11 +56,11 @@ public class GameMap {
           Obstacle.ObstacleType
               .values()[chunkRandom.nextInt(Obstacle.ObstacleType.values().length)];
       int size = switch (type) {
-        case ROCK -> 20 + chunkRandom.nextInt(30);
+        case ROCK -> 20; //+ chunkRandom.nextInt(30);
         case TREE -> 15;
         case WALL -> 60 + chunkRandom.nextInt(40);
         case PILLAR -> 20 + chunkRandom.nextInt(20);
-        case BUSH -> 1;
+        case BUSH -> 0;
       };
 
       int height = type == Obstacle.ObstacleType.WALL ? 20 : size;

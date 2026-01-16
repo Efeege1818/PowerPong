@@ -22,7 +22,8 @@ public class MapRenderer {
                           )
                   )
           );
-
+  private static final long WORLD_SEED = 12345L;
+  private static final int DECAL_GRID = 50;
   public void renderMap(GraphicsContext gc, GameMap map, Position cameraPos) {
     if (map == null) return;
 
@@ -31,7 +32,8 @@ public class MapRenderer {
 
     // Render background
     renderBackground(gc, cameraPos, canvasWidth, canvasHeight);
-
+    // Render decals
+    renderGroundDecals(gc, cameraPos, canvasWidth, canvasHeight);
     // Render only visible obstacles
     renderObstacles(gc, map, cameraPos, canvasWidth, canvasHeight);
   }
@@ -179,5 +181,74 @@ public class MapRenderer {
 
   private void renderBush(GraphicsContext gc, int x, int y){
     gc.drawImage(BUSH_IMAGE, x, y, 100, 100);
+  }
+
+  private void renderGroundDecals(GraphicsContext gc, Position cameraPos, int width, int height) {
+    int worldLeft = cameraPos.x() - width / 2;
+    int worldTop  = cameraPos.y() - height / 2;
+
+    int startX = floorToGrid(worldLeft, DECAL_GRID);
+    int startY = floorToGrid(worldTop, DECAL_GRID);
+
+    int endX = worldLeft + width + DECAL_GRID;
+    int endY = worldTop + height + DECAL_GRID;
+
+    for (int wx = startX; wx <= endX; wx += DECAL_GRID) {
+      for (int wy = startY; wy <= endY; wy += DECAL_GRID) {
+
+        long h = hash2D(wx, wy, WORLD_SEED);
+        // dirt, grass or pebbles
+        int kind = (int) ((h >>> 16) % 3);
+
+        if ((h & 0xFF) > 50) continue;
+
+        int sx = wx - cameraPos.x() + width / 2;
+        int sy = wy - cameraPos.y() + height / 2;
+
+        int size = 12 + (int) ((h >>> 8) % 25);
+
+
+        if (kind == 0) { // dirt
+          gc.setFill(Color.rgb(87, 42, 3, 0.17));
+          gc.fillOval(sx - size / 2, sy - size / 3, size, (int) (size * 0.55));
+        } else if (kind == 1){ // grass
+          gc.setFill(Color.rgb(11, 64, 4, 0.09));
+          gc.fillOval(sx - size / 2, sy - size / 3, size, (int) (size * 0.60));
+        } else {
+          gc.setFill(Color.rgb(133, 133, 133, 0.5));
+
+          int count = 3 + (int) ((h >>> 20) % 5); // 3-7 pebbles
+          int baseR = 2 + (int) ((h >>> 24) % 3);
+
+          for (int i = 0; i < count; i++) {
+            long hi = hash2D(wx + i * 31, wy + i * 17, WORLD_SEED);
+
+            int dx = (int) ((hi >>> 8) % 14) - 7;
+            int dy = (int) ((hi >>> 12) % 10) - 5;
+            int r  = baseR + (int) (hi % 2);
+
+            gc.fillOval(sx + dx - r, sy + dy - r, 2 * r, 2 * r);
+          }
+        }
+      }
+    }
+  }
+
+  private static int floorToGrid(int v, int grid) {
+    int r = v % grid;
+    if (r < 0) r += grid;
+    return v - r;
+  }
+
+  private static long hash2D(int x, int y, long seed) {
+    long h = seed;
+    h ^= (long) x * 0x9E3779B97F4A7C15L;
+    h ^= (long) y * 0xC2B2AE3D27D4EB4FL;
+    h ^= (h >>> 33);
+    h *= 0xFF51AFD7ED558CCDL;
+    h ^= (h >>> 33);
+    h *= 0xC4CEB9FE1A85EC53L;
+    h ^= (h >>> 33);
+    return h;
   }
 }
