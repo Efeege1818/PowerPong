@@ -81,6 +81,18 @@ public class GameRenderer {
     private double collectionFlashAlpha = 0;
     private Color collectionFlashColor = Color.WHITE;
 
+    // Animated Tron-style background grid
+    private double gridAnimationPhase = 0;
+    private static final double GRID_SPACING = 40.0;
+    private static final Color GRID_COLOR = Color.web("#00f3ff", 0.08); // Subtle cyan
+    private static final Color GRID_PULSE_COLOR = Color.web("#00f3ff", 0.25); // Brighter pulse
+
+    // Confetti system for win celebration
+    private static final int MAX_CONFETTI = 150;
+    private final Particle[] confettiPool = new Particle[MAX_CONFETTI];
+    private int activeConfettiCount = 0;
+    private boolean confettiActive = false;
+
     // Image Caches (Bit Blit Optimization)
     private final Map<PowerUpType, Image> powerUpImageCache = new HashMap<>();
     private Image ballImageCache;
@@ -91,6 +103,10 @@ public class GameRenderer {
         // Initialize particle pool
         for (int i = 0; i < MAX_PARTICLES; i++) {
             particlePool[i] = new Particle();
+        }
+        // Initialize confetti pool
+        for (int i = 0; i < MAX_CONFETTI; i++) {
+            confettiPool[i] = new Particle();
         }
     }
 
@@ -210,6 +226,7 @@ public class GameRenderer {
     private static class Particle {
         double x, y, vx, vy;
         double life, maxLife;
+        double size = 6.0; // Size for confetti particles
         Color color;
         boolean active = false;
     }
@@ -349,6 +366,9 @@ public class GameRenderer {
         gc.translate(shakeOffsetX, shakeOffsetY);
         gc.scale(scaleX, scaleY);
 
+        // Draw animated Tron-style background grid
+        drawTronGrid(gc);
+
         // Draw Field Decorations (Line, Scores)
         drawFieldDecorations(gc, state);
 
@@ -401,6 +421,9 @@ public class GameRenderer {
             if (collectionFlashAlpha < 0)
                 collectionFlashAlpha = 0;
         }
+
+        // Draw confetti (win celebration)
+        updateAndDrawConfetti(gc);
 
         // Restore original transformation
         gc.restore();
@@ -721,5 +744,140 @@ public class GameRenderer {
             case FASTER_BALL_ENEMY_SIDE -> Color.ORANGE;
             default -> Color.MAGENTA;
         };
+    }
+
+    // ==================== TRON GRID ====================
+
+    private void drawTronGrid(GraphicsContext gc) {
+        // Animate grid phase
+        gridAnimationPhase += 0.02;
+        if (gridAnimationPhase > GRID_SPACING)
+            gridAnimationPhase = 0;
+
+        gc.setStroke(GRID_COLOR);
+        gc.setLineWidth(1.0);
+
+        // Vertical lines with animation offset
+        for (double x = -gridAnimationPhase; x < LOGICAL_WIDTH + GRID_SPACING; x += GRID_SPACING) {
+            // Pulse effect on certain lines
+            if (Math.abs((x + gridAnimationPhase) % (GRID_SPACING * 4)) < 2) {
+                gc.setStroke(GRID_PULSE_COLOR);
+            } else {
+                gc.setStroke(GRID_COLOR);
+            }
+            gc.strokeLine(x, 0, x, LOGICAL_HEIGHT);
+        }
+
+        // Horizontal lines (static)
+        gc.setStroke(GRID_COLOR);
+        for (double y = 0; y < LOGICAL_HEIGHT + GRID_SPACING; y += GRID_SPACING) {
+            gc.strokeLine(0, y, LOGICAL_WIDTH, y);
+        }
+    }
+
+    // ==================== CONFETTI ====================
+
+    private static final Color[] CONFETTI_COLORS = {
+            Color.web("#ff00ff"), Color.web("#00f3ff"), Color.web("#ffdc00"),
+            Color.web("#00ff00"), Color.web("#ff3366"), Color.WHITE
+    };
+
+    /** Triggers confetti explosion from center of screen */
+    public void triggerConfetti() {
+        confettiActive = true;
+        activeConfettiCount = 0;
+        java.util.Random rand = new java.util.Random();
+
+        double centerX = LOGICAL_WIDTH / 2.0;
+        double centerY = LOGICAL_HEIGHT / 2.0;
+
+        for (int i = 0; i < MAX_CONFETTI && activeConfettiCount < MAX_CONFETTI; i++) {
+            Particle p = confettiPool[activeConfettiCount++];
+            p.active = true;
+            p.x = centerX + (rand.nextDouble() - 0.5) * 100;
+            p.y = centerY;
+            p.vx = (rand.nextDouble() - 0.5) * 600; // Wide spread
+            p.vy = -rand.nextDouble() * 400 - 200; // Upward burst
+            p.life = 1.0;
+            p.color = CONFETTI_COLORS[rand.nextInt(CONFETTI_COLORS.length)];
+            p.size = 6 + rand.nextDouble() * 8;
+        }
+    }
+
+    private void updateAndDrawConfetti(GraphicsContext gc) {
+        if (!confettiActive)
+            return;
+
+        boolean anyActive = false;
+        double gravity = 15.0; // Pixels per frame (downward pull)
+
+        for (int i = 0; i < activeConfettiCount; i++) {
+            Particle p = confettiPool[i];
+            if (!p.active)
+                continue;
+
+            anyActive = true;
+            p.x += p.vx * 0.016; // Assume ~60fps
+            p.y += p.vy * 0.016;
+            p.vy += gravity; // Gravity
+            p.life -= 0.008; // Fade out
+
+            if (p.life <= 0 || p.y > LOGICAL_HEIGHT + 50) {
+                p.active = false;
+                continue;
+            }
+
+            gc.setFill(p.color.deriveColor(0, 1, 1, p.life));
+            // Draw as small rotating rectangles for confetti effect
+            gc.save();
+            gc.translate(p.x, p.y);
+            gc.rotate(p.x * 0.5 + p.y * 0.3); // Spin based on position
+            gc.fillRect(-p.size / 2, -p.size / 4, p.size, p.size / 2);
+            gc.restore();
+        }
+
+        if (!anyActive) {
+            confettiActive = false;
+            activeConfettiCount = 0;
+        }
+    }
+
+    // ==================== EFFECT TIMER BARS ====================
+
+    private java.util.Map<Integer, java.util.List<EffectTimerInfo>> effectTimers = new java.util.HashMap<>();
+
+    public record EffectTimerInfo(Color color, double remainingRatio) {
+    }
+
+    /** Set effect timers to display under paddles */
+    public void setEffectTimers(int player, java.util.List<EffectTimerInfo> timers) {
+        effectTimers.put(player, timers);
+    }
+
+    private void drawEffectTimerBars(GraphicsContext gc, PaddleState paddle, int player) {
+        java.util.List<EffectTimerInfo> timers = effectTimers.get(player);
+        if (timers == null || timers.isEmpty())
+            return;
+
+        double paddleX = paddle.xPosition();
+        double paddleY = paddle.yPosition() + paddle.height() / 2 + 8; // Below paddle
+        double barWidth = paddle.width();
+        double barHeight = 4;
+        double spacing = 6;
+
+        int index = 0;
+        for (EffectTimerInfo timer : timers) {
+            double y = paddleY + index * spacing;
+
+            // Background bar
+            gc.setFill(Color.gray(0.2, 0.5));
+            gc.fillRect(paddleX, y, barWidth, barHeight);
+
+            // Progress bar
+            gc.setFill(timer.color.deriveColor(0, 1, 1, 0.8));
+            gc.fillRect(paddleX, y, barWidth * timer.remainingRatio, barHeight);
+
+            index++;
+        }
     }
 }

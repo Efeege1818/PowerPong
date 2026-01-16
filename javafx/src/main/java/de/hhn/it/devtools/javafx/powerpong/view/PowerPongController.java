@@ -263,6 +263,8 @@ public class PowerPongController extends StackPane {
               fullscreenWinnerLabel.setTextFill(Color.web("#ff00ff")); // Neon Pink
             }
           }
+          // Trigger confetti celebration!
+          renderer.triggerConfetti();
           fullscreenGameOverBox.setVisible(true);
         }
       });
@@ -281,7 +283,9 @@ public class PowerPongController extends StackPane {
 
       // Start countdown before game
       startCountdownAndGame();
-    } catch (Exception e) {
+    } catch (
+
+    Exception e) {
       e.printStackTrace();
     }
   }

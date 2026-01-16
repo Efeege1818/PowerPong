@@ -25,11 +25,18 @@ public class PowerUpManager {
 
     private static final double POWERUP_SPAWN_INTERVAL = 6.0; // seconds (base, randomized in maybeSpawnPowerUp)
     private static final double POWERUP_RADIUS = 20.0;
-    private static final double EFFECT_DURATION_SECONDS = 5.0; // Reduced from 8.0 for faster gameplay
+
+    // Per-PowerUp effect durations (in seconds)
+    private static final double DURATION_PADDLE_SIZE = 10.0; // Bigger/Smaller paddle lasts even longer
+    private static final double DURATION_SLOW_PADDLE = 5.0; // Slow enemy paddle
+    private static final double DURATION_BARRIERLESS = 4.0; // No walls (shorter - very impactful)
+    private static final double DURATION_DOUBLE_BALL = 8.0; // Double ball lasts longer
+    private static final double DURATION_FAST_BALL = 5.0; // Fast ball on enemy side
+
     private static final double ENLARGE_FACTOR = 1.4;
     private static final double SHRINK_FACTOR = 0.65;
     private static final double SLOW_FACTOR = 0.5;
-    private static final double FAST_BALL_FACTOR = 1.25; // Reduced from 1.35 for better balance
+    private static final double FAST_BALL_FACTOR = 1.5; // Increased from 1.25 for more impact
 
     private final Random random;
     private final PhysicsEngine physics;
@@ -94,11 +101,57 @@ public class PowerUpManager {
             double y = margin + random.nextDouble() * (PhysicsEngine.FIELD_HEIGHT - 2 * margin);
 
             if (!isOverlapping(x, y)) {
-                PowerUpType type = PowerUpType.values()[random.nextInt(PowerUpType.values().length)];
+                PowerUpType type = selectWeightedPowerUpType();
                 powerUps.add(new FieldPowerUp(x, y, type));
                 break;
             }
         }
+    }
+
+    /**
+     * Select a power-up type with weighted probabilities.
+     * Shield spawns less frequently. Prevents duplicate types on field.
+     */
+    private PowerUpType selectWeightedPowerUpType() {
+        // Weights: 1.0 = normal, lower = less likely
+        double[] weights = {
+                1.0, // BIGGER_PADDLE
+                1.0, // SMALLER_ENEMY_PADDLE
+                1.0, // SLOW_ENEMY_PADDLE
+                1.0, // BARRIERLESS
+                1.0, // DOUBLE_BALL
+                1.0, // FASTER_BALL_ENEMY_SIDE
+                0.4 // SHIELD - spawns less frequently (40% of normal)
+        };
+
+        // Anti-duplicate: Set weight to 0 for types already on the field
+        for (FieldPowerUp existing : powerUps) {
+            int typeIndex = existing.type.ordinal();
+            if (typeIndex < weights.length) {
+                weights[typeIndex] = 0;
+            }
+        }
+
+        double totalWeight = 0;
+        for (double w : weights)
+            totalWeight += w;
+
+        // If all weights are 0 (all types on field), fallback to random
+        if (totalWeight <= 0) {
+            return PowerUpType.values()[random.nextInt(PowerUpType.values().length)];
+        }
+
+        double roll = random.nextDouble() * totalWeight;
+        double cumulative = 0;
+        PowerUpType[] types = PowerUpType.values();
+
+        for (int i = 0; i < types.length; i++) {
+            cumulative += weights[i];
+            if (roll < cumulative) {
+                return types[i];
+            }
+        }
+        return types[types.length - 1]; // Fallback
     }
 
     private boolean isOverlapping(double x, double y) {
@@ -155,31 +208,31 @@ public class PowerUpManager {
                     physics.setLeftHeightFactor(ENLARGE_FACTOR);
                 else
                     physics.setRightHeightFactor(ENLARGE_FACTOR);
-                addTimedEffect(type, owner, EFFECT_DURATION_SECONDS);
+                addTimedEffect(type, owner, DURATION_PADDLE_SIZE);
             }
             case SMALLER_ENEMY_PADDLE -> {
                 if (owner == 1)
                     physics.setRightHeightFactor(SHRINK_FACTOR);
                 else
                     physics.setLeftHeightFactor(SHRINK_FACTOR);
-                addTimedEffect(type, owner, EFFECT_DURATION_SECONDS);
+                addTimedEffect(type, owner, DURATION_PADDLE_SIZE);
             }
             case SLOW_ENEMY_PADDLE -> {
                 if (owner == 1)
                     physics.setRightSpeedFactor(SLOW_FACTOR);
                 else
                     physics.setLeftSpeedFactor(SLOW_FACTOR);
-                addTimedEffect(type, owner, EFFECT_DURATION_SECONDS);
+                addTimedEffect(type, owner, DURATION_SLOW_PADDLE);
             }
             case BARRIERLESS -> {
                 physics.setNoWalls(true);
-                addTimedEffect(type, owner, EFFECT_DURATION_SECONDS);
+                addTimedEffect(type, owner, DURATION_BARRIERLESS);
             }
             case DOUBLE_BALL -> {
                 physics.spawnSecondaryBall();
-                addTimedEffect(type, owner, EFFECT_DURATION_SECONDS);
+                addTimedEffect(type, owner, DURATION_DOUBLE_BALL);
             }
-            case FASTER_BALL_ENEMY_SIDE -> addTimedEffect(type, owner, EFFECT_DURATION_SECONDS);
+            case FASTER_BALL_ENEMY_SIDE -> addTimedEffect(type, owner, DURATION_FAST_BALL);
             case SHIELD -> {
                 if (owner == 1)
                     leftShield = true;
