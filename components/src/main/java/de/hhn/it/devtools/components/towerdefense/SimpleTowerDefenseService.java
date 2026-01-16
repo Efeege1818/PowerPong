@@ -166,8 +166,9 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
     currentRound += 1;
     enemyQueue = waveGenerator.generateWave(currentRound);
 
-    updateGameState(GameState.RUNNING);
     gameLoop.startGame();
+    updateGameState(GameState.RUNNING);
+
   }
 
   @Override
@@ -296,8 +297,8 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
 
   private void roundCompleted() {
     logger.info("Round {} completed", currentRound);
-    updateGameState(GameState.PAUSED);
     gameLoop.stopGame();
+    updateGameState(GameState.PAUSED);
     savedPlayerData = player;
     towerToolbox.saveData();
   }
