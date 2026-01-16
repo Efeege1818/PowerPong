@@ -42,7 +42,7 @@ public class GameMap {
     int startX = chunkX * CHUNK_SIZE;
     int startY = chunkY * CHUNK_SIZE;
 
-    int obstacleCount = 3 + chunkRandom.nextInt(3);
+    int obstacleCount = 4 + chunkRandom.nextInt(3);
 
     for (int i = 0; i < obstacleCount; i++) {
       int x = startX + chunkRandom.nextInt(CHUNK_SIZE - 60);
@@ -60,6 +60,7 @@ public class GameMap {
         case TREE -> 15;
         case WALL -> 60 + chunkRandom.nextInt(40);
         case PILLAR -> 20 + chunkRandom.nextInt(20);
+        case BUSH -> 1;
       };
 
       int height = type == Obstacle.ObstacleType.WALL ? 20 : size;

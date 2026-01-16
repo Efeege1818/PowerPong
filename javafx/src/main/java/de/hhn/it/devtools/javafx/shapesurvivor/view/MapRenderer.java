@@ -4,13 +4,24 @@ import de.hhn.it.devtools.apis.shapesurvivor.Position;
 import de.hhn.it.devtools.components.shapesurvivor.GameMap;
 import de.hhn.it.devtools.apis.shapesurvivor.Obstacle;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+
+import java.util.Objects;
 
 /**
  * Renders the game map including obstacles with camera support.
  */
 public class MapRenderer {
 
+  private static final Image BUSH_IMAGE =
+          new Image(
+                  Objects.requireNonNull(
+                          MapRenderer.class.getResourceAsStream(
+                                  "/fxml/shapesurvivor/bush.png"
+                          )
+                  )
+          );
   public void renderMap(GraphicsContext gc, GameMap map, Position cameraPos) {
     if (map == null) return;
 
@@ -63,6 +74,7 @@ public class MapRenderer {
         case TREE -> renderTree(gc, screenX, screenY, obstacle.width(), obstacle.height());
         case WALL -> renderWall(gc, screenX, screenY, obstacle.width(), obstacle.height());
         case PILLAR -> renderPillar(gc, screenX, screenY, obstacle.width(), obstacle.height());
+        case BUSH -> renderBush(gc, screenX, screenY, obstacle.width(), obstacle.height());
       }
     }
   }
@@ -93,6 +105,7 @@ public class MapRenderer {
   }
 
   private void renderTree(GraphicsContext gc, int x, int y, int width, int height) {
+
 
     int centerX = x + width / 2;
     int centerY = y + height / 2;
@@ -161,5 +174,10 @@ public class MapRenderer {
     // Highlight
     gc.setFill(Color.rgb(192, 192, 192));
     gc.fillRect(x, y + 5, 3, height - 10);
+  }
+
+  private void renderBush(GraphicsContext gc, int x, int y, int width, int height){
+
+    gc.drawImage(BUSH_IMAGE, x, y, 100, 100);
   }
 }

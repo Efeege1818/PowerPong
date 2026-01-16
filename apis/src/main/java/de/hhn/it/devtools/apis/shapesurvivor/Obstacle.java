@@ -18,7 +18,8 @@ public record Obstacle(
     ROCK,
     TREE,
     WALL,
-    PILLAR
+    PILLAR,
+    BUSH,
   }
 
   /**
