@@ -23,6 +23,11 @@ public class ScreenManager extends Parent {
     return viewModel;
   }
 
+  /**
+   * Switches screen when needed.
+   *
+   * @param screenType of the screen we need to see.
+   */
   public void switchTo(ScreenType screenType) {
     this.getChildren().clear();
     Node newChild = screensNodeMap.get(screenType);
