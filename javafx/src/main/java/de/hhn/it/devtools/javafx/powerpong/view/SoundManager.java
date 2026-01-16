@@ -60,9 +60,20 @@ public class SoundManager {
         return muted;
     }
 
+    private java.util.Map<SoundType, Long> lastSoundTime = new java.util.concurrent.ConcurrentHashMap<>();
+
     public void playSound(SoundType type) {
         if (muted)
             return;
+
+        // Debounce: Prevent playing the same sound type too frequently (e.g. double
+        // collision triggers)
+        long now = System.currentTimeMillis();
+        long last = lastSoundTime.getOrDefault(type, 0L);
+        if (now - last < 50) { // 50ms cooldown
+            return;
+        }
+        lastSoundTime.put(type, now);
 
         // Play sound in background thread to avoid blocking
         new Thread(() -> {
