@@ -54,6 +54,8 @@ public class GameRenderer {
 
     private double lastBallX = -1;
     private double lastBallY = -1;
+    private double lastSecondaryBallX = -1;
+    private double lastSecondaryBallY = -1;
 
     // Screen shake effect
     private double shakeIntensity = 0;
@@ -65,8 +67,11 @@ public class GameRenderer {
     private double score2Scale = 1.0;
     private int lastPlayer1Score = -1; // Force init
     private int lastPlayer2Score = -1;
-    private String cachedScore1Str = "0";
-    private String cachedScore2Str = "0";
+
+    // Cached fonts and colors to avoid per-frame allocations
+    private static final Color SCORE_COLOR = Color.web("#333333");
+    private static final javafx.scene.text.Font SCORE_FONT_BASE = javafx.scene.text.Font.font("Arial",
+            javafx.scene.text.FontWeight.BOLD, 150);
 
     // Shield visual tracking (set externally when shield is active)
     private boolean player1ShieldActive = false;
@@ -171,11 +176,13 @@ public class GameRenderer {
                 gc.fillOval(cx, cy - s / 2, s, s);
             }
             case SHIELD -> {
+                // Shield shifted down slightly for visual centering
+                double offsetY = s * 0.2; // Shift down by 20% of size
                 gc.beginPath();
-                gc.moveTo(cx - s, cy - s);
-                gc.lineTo(cx + s, cy - s);
-                gc.lineTo(cx + s, cy);
-                gc.quadraticCurveTo(cx, cy + s * 1.5, cx - s, cy);
+                gc.moveTo(cx - s, cy - s + offsetY);
+                gc.lineTo(cx + s, cy - s + offsetY);
+                gc.lineTo(cx + s, cy + offsetY);
+                gc.quadraticCurveTo(cx, cy + s * 1.5 + offsetY, cx - s, cy + offsetY);
                 gc.closePath();
                 gc.stroke();
             }
@@ -219,6 +226,8 @@ public class GameRenderer {
         activeParticleCount = 0;
         lastBallX = -1;
         lastBallY = -1;
+        lastSecondaryBallX = -1;
+        lastSecondaryBallY = -1;
         shakeIntensity = 0;
         shakeOffsetX = 0;
         shakeOffsetY = 0;
@@ -230,6 +239,8 @@ public class GameRenderer {
         player2ShieldActive = false;
         leftPaddleHitHandled = false;
         rightPaddleHitHandled = false;
+        leftPaddleHitHandled2 = false;
+        rightPaddleHitHandled2 = false;
         collectionFlashAlpha = 0;
     }
 
@@ -361,11 +372,13 @@ public class GameRenderer {
 
         List<BallState> balls = state.balls();
         if (balls != null) {
+            currentBallIndex = 0; // Reset ball index for collision tracking
             for (BallState ball : balls) {
                 // Draw ball trail
                 drawBallTrail(gc, ball);
-                // Draw actual ball
+                // Draw actual ball (collision detection uses currentBallIndex)
                 drawNeonBall(gc, ball, state);
+                currentBallIndex++;
             }
         }
 
@@ -488,7 +501,7 @@ public class GameRenderer {
         double fontSize1 = 150 * score1Scale;
         double alpha1 = Math.min(1.0, 0.3 + (score1Scale - 1.0));
         gc.setGlobalAlpha(alpha1);
-        gc.setFill(Color.web("#333333"));
+        gc.setFill(SCORE_COLOR); // Use cached color
         gc.setFont(javafx.scene.text.Font.font("Arial", javafx.scene.text.FontWeight.BOLD, fontSize1));
         gc.fillText(String.valueOf(score1), LOGICAL_WIDTH / 4, LOGICAL_HEIGHT / 2);
 
@@ -504,7 +517,8 @@ public class GameRenderer {
 
     // Cached Effects to avoid Garbage Collection lag
     private static final Effect GLOW_BLUE = new javafx.scene.effect.DropShadow(20, NEON_BLUE);
-    private static final Effect GLOW_PINK = new javafx.scene.effect.DropShadow(20, NEON_PINK);
+    private static final Effect GLOW_PINK = new javafx.scene.effect.DropShadow(12, NEON_PINK); // Reduced for visual
+                                                                                               // balance
     private static final Effect GLOW_GREEN = new javafx.scene.effect.DropShadow(20, NEON_GREEN);
     private static final Effect GLOW_RED = new javafx.scene.effect.DropShadow(20, NEON_RED);
     private static final Effect GLOW_YELLOW = new javafx.scene.effect.DropShadow(20, NEON_YELLOW);
@@ -579,9 +593,14 @@ public class GameRenderer {
         gc.fillRoundRect(shieldX + 2, shieldY + 5, shieldW - 4, shieldH - 10, 3, 3);
     }
 
-    // Collision debounce flags
+    // Collision debounce flags (primary ball)
     private boolean leftPaddleHitHandled = false;
     private boolean rightPaddleHitHandled = false;
+    // Collision debounce flags (secondary ball)
+    private boolean leftPaddleHitHandled2 = false;
+    private boolean rightPaddleHitHandled2 = false;
+    // Track which ball index we're drawing
+    private int currentBallIndex = 0;
 
     private void drawNeonBall(GraphicsContext gc, BallState ball, GameState state) {
         double r = ball.radius();
@@ -589,35 +608,59 @@ public class GameRenderer {
         double x = ball.xPosition() - r;
         double y = ball.yPosition() - r;
 
+        // Get the correct last position and debounce flags based on ball index
+        boolean isSecondary = currentBallIndex > 0;
+        double prevX = isSecondary ? lastSecondaryBallX : lastBallX;
+
         // Detect paddle collision and spawn particles
-        if (lastBallX >= 0) {
-            // Check if ball direction changed (collision with paddle)
+        if (prevX >= 0) {
             double ballX = ball.xPosition();
             PaddleState leftPaddle = state.player1Paddle();
             PaddleState rightPaddle = state.player2Paddle();
 
-            // Left collision logic
-            if (ballX > 100) {
-                leftPaddleHitHandled = false; // Reset when out of zone
-            } else if (leftPaddle != null && ballX > lastBallX && !leftPaddleHitHandled) {
-                // Ball is in zone, moving right (bounced), and not handled yet
-                spawnCollisionParticles(ballX, ball.yPosition(), NEON_BLUE);
-                triggerShake(1.0);
-                leftPaddleHitHandled = true;
-            }
-
-            // Right collision logic
-            if (ballX < 700) {
-                rightPaddleHitHandled = false; // Reset when out of zone
-            } else if (rightPaddle != null && ballX < lastBallX && !rightPaddleHitHandled) {
-                // Ball is in zone, moving left (bounced), and not handled yet
-                spawnCollisionParticles(ballX, ball.yPosition(), NEON_PINK);
-                triggerShake(1.0);
-                rightPaddleHitHandled = true;
+            if (isSecondary) {
+                // Secondary ball collision logic
+                if (ballX > 100) {
+                    leftPaddleHitHandled2 = false;
+                } else if (leftPaddle != null && ballX > prevX && !leftPaddleHitHandled2) {
+                    spawnCollisionParticles(ballX, ball.yPosition(), NEON_BLUE);
+                    triggerShake(0.8); // Slightly weaker shake for secondary
+                    leftPaddleHitHandled2 = true;
+                }
+                if (ballX < 700) {
+                    rightPaddleHitHandled2 = false;
+                } else if (rightPaddle != null && ballX < prevX && !rightPaddleHitHandled2) {
+                    spawnCollisionParticles(ballX, ball.yPosition(), NEON_PINK);
+                    triggerShake(0.8);
+                    rightPaddleHitHandled2 = true;
+                }
+            } else {
+                // Primary ball collision logic (same as before)
+                if (ballX > 100) {
+                    leftPaddleHitHandled = false;
+                } else if (leftPaddle != null && ballX > prevX && !leftPaddleHitHandled) {
+                    spawnCollisionParticles(ballX, ball.yPosition(), NEON_BLUE);
+                    triggerShake(1.0);
+                    leftPaddleHitHandled = true;
+                }
+                if (ballX < 700) {
+                    rightPaddleHitHandled = false;
+                } else if (rightPaddle != null && ballX < prevX && !rightPaddleHitHandled) {
+                    spawnCollisionParticles(ballX, ball.yPosition(), NEON_PINK);
+                    triggerShake(1.0);
+                    rightPaddleHitHandled = true;
+                }
             }
         }
-        lastBallX = ball.xPosition();
-        lastBallY = ball.yPosition();
+
+        // Update the correct last position based on ball index
+        if (isSecondary) {
+            lastSecondaryBallX = ball.xPosition();
+            lastSecondaryBallY = ball.yPosition();
+        } else {
+            lastBallX = ball.xPosition();
+            lastBallY = ball.yPosition();
+        }
 
         // Optimized Drawing: Use Cached Image
         if (ballImageCache != null) {

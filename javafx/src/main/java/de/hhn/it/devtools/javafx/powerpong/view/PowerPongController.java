@@ -29,6 +29,7 @@ import javafx.stage.Stage;
 
 public class PowerPongController extends StackPane {
   private final PowerPongViewModel viewModel;
+  private final HighscoreManager highscoreManager = new HighscoreManager();
   private GameTimer gameTimer;
   private GameMode lastSelectedMode = GameMode.CLASSIC_DUEL;
   private Stage fullscreenStage;
@@ -240,13 +241,27 @@ public class PowerPongController extends StackPane {
             fullscreenWinnerLabel.setText("DU GEWINNST!");
             fullscreenWinnerLabel.setTextFill(Color.web("#00f3ff")); // Neon Blue
           } else {
-            // Check if we're in AI mode
-            if (lastSelectedMode == GameMode.PLAYER_VS_AI || lastSelectedMode == GameMode.SURVIVAL) {
+            // Check if we're in Survival mode - show score and highscore
+            if (lastSelectedMode == GameMode.SURVIVAL) {
+              int survivalScore = viewModel.getGameState().score().player1();
+              int bestScore = highscoreManager.getTopScore();
+              boolean isNewRecord = highscoreManager.addScore("Player", survivalScore);
+
+              if (isNewRecord && survivalScore > bestScore) {
+                fullscreenWinnerLabel.setText("🏆 NEUER REKORD! 🏆\nScore: " + survivalScore);
+                fullscreenWinnerLabel.setTextFill(Color.web("#ffdc00")); // Gold
+              } else {
+                fullscreenWinnerLabel
+                    .setText("GAME OVER\nScore: " + survivalScore + "\nBest: " + Math.max(bestScore, survivalScore));
+                fullscreenWinnerLabel.setTextFill(Color.web("#ff00ff")); // Neon Pink
+              }
+            } else if (lastSelectedMode == GameMode.PLAYER_VS_AI) {
               fullscreenWinnerLabel.setText("KI GEWINNT!");
+              fullscreenWinnerLabel.setTextFill(Color.web("#ff00ff")); // Neon Pink
             } else {
               fullscreenWinnerLabel.setText("SPIELER 2 GEWINNT!");
+              fullscreenWinnerLabel.setTextFill(Color.web("#ff00ff")); // Neon Pink
             }
-            fullscreenWinnerLabel.setTextFill(Color.web("#ff00ff")); // Neon Pink
           }
           fullscreenGameOverBox.setVisible(true);
         }
@@ -296,18 +311,34 @@ public class PowerPongController extends StackPane {
 
     countdownOverlay.setVisible(true);
     countdownLabel.setText("3");
+    countdownLabel.setStyle("-fx-font-size: 180; -fx-font-weight: bold; -fx-text-fill: #00f3ff;");
+    countdownLabel.setEffect(new javafx.scene.effect.DropShadow(50, Color.web("#00f3ff")));
 
     javafx.animation.Timeline countdown = new javafx.animation.Timeline(
-        new javafx.animation.KeyFrame(javafx.util.Duration.seconds(0), e -> countdownLabel.setText("3")),
-        new javafx.animation.KeyFrame(javafx.util.Duration.seconds(1), e -> countdownLabel.setText("2")),
-        new javafx.animation.KeyFrame(javafx.util.Duration.seconds(2), e -> countdownLabel.setText("1")),
+        new javafx.animation.KeyFrame(javafx.util.Duration.seconds(0), e -> {
+          countdownLabel.setText("3");
+          countdownLabel.setStyle("-fx-font-size: 180; -fx-font-weight: bold; -fx-text-fill: #00f3ff;");
+          countdownLabel.setEffect(new javafx.scene.effect.DropShadow(50, Color.web("#00f3ff")));
+        }),
+        new javafx.animation.KeyFrame(javafx.util.Duration.seconds(1), e -> {
+          countdownLabel.setText("2");
+          countdownLabel.setStyle("-fx-font-size: 180; -fx-font-weight: bold; -fx-text-fill: #ffdc00;");
+          countdownLabel.setEffect(new javafx.scene.effect.DropShadow(50, Color.web("#ffdc00")));
+        }),
+        new javafx.animation.KeyFrame(javafx.util.Duration.seconds(2), e -> {
+          countdownLabel.setText("1");
+          countdownLabel.setStyle("-fx-font-size: 180; -fx-font-weight: bold; -fx-text-fill: #ff3366;");
+          countdownLabel.setEffect(new javafx.scene.effect.DropShadow(50, Color.web("#ff3366")));
+        }),
         new javafx.animation.KeyFrame(javafx.util.Duration.seconds(3), e -> {
           countdownLabel.setText("GO!");
-          countdownLabel.setStyle("-fx-font-size: 120; -fx-font-weight: bold; -fx-text-fill: #00ff00;");
+          countdownLabel.setStyle("-fx-font-size: 150; -fx-font-weight: bold; -fx-text-fill: #00ff00;");
+          countdownLabel.setEffect(new javafx.scene.effect.DropShadow(60, Color.web("#00ff00")));
         }),
         new javafx.animation.KeyFrame(javafx.util.Duration.seconds(3.5), e -> {
           countdownOverlay.setVisible(false);
-          countdownLabel.setStyle("-fx-font-size: 150; -fx-font-weight: bold; -fx-text-fill: white;");
+          countdownLabel.setStyle("-fx-font-size: 180; -fx-font-weight: bold; -fx-text-fill: #00f3ff;");
+          countdownLabel.setEffect(new javafx.scene.effect.DropShadow(50, Color.web("#00f3ff")));
           gameTimer.start();
         }));
     countdown.play();

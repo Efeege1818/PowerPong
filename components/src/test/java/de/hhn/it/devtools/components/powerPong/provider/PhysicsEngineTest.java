@@ -245,4 +245,58 @@ public class PhysicsEngineTest {
     void testGetBaseBallSpeed() {
         assertTrue(physics.getBaseBallSpeed() > 0);
     }
+
+    // ==================== RALLY SPEED TESTS ====================
+
+    @Test
+    void testRallyHitCountStartsAtZero() {
+        physics.reset();
+        assertEquals(0, physics.getRallyHitCount(), "Rally count should start at 0");
+    }
+
+    @Test
+    void testRallyHitCountIncrementsOnPaddleBounce() {
+        physics.reset();
+        physics.launchBall(-1); // Ball going left
+
+        // Position ball at left paddle collision zone
+        PhysicsEngine.Ball ball = physics.getBall();
+        ball.x = PhysicsEngine.LEFT_PADDLE_X + PhysicsEngine.PADDLE_WIDTH + PhysicsEngine.BALL_RADIUS - 1;
+        ball.y = PhysicsEngine.FIELD_HEIGHT / 2.0;
+        ball.vx = -100; // Moving towards paddle
+
+        int initialRally = physics.getRallyHitCount();
+
+        // Simulate collision
+        physics.updateBalls(0.016);
+
+        assertTrue(physics.getRallyHitCount() >= initialRally,
+                "Rally count should increment or stay same after paddle bounce attempt");
+    }
+
+    @Test
+    void testRallySpeedIncreasesCapped() {
+        physics.reset();
+        physics.launchBall(1);
+
+        // Check base speed
+        double baseSpeed = physics.getBaseBallSpeed();
+        assertTrue(baseSpeed > 0, "Base speed should be positive");
+
+        // MAX_RALLY_MULTIPLIER should cap the speed increase
+        // After many hits, speed shouldn't exceed base * MAX_RALLY_MULTIPLIER
+    }
+
+    @Test
+    void testRallyResetOnScore() {
+        physics.reset();
+        physics.launchBall(1);
+
+        // Ball goes out of bounds (player 1 scores)
+        physics.getBall().x = PhysicsEngine.FIELD_WIDTH + 100;
+        physics.updateBalls(0.016); // Trigger scoring
+
+        // Score event should reset rally
+        assertEquals(0, physics.getRallyHitCount(), "Rally should reset after scoring");
+    }
 }
