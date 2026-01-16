@@ -5,9 +5,12 @@ module devtools.javafx {
   requires javafx.controls;
   requires javafx.media;
   requires javafx.fxml;
+  requires javafx.graphics;
   requires java.desktop;
+  requires java.naming;
   uses de.hhn.it.devtools.apis.examples.coffeemakerservice.CoffeeMakerService;
   uses de.hhn.it.devtools.apis.examples.coffeemakerservice.AdminCoffeeMakerService;
+  uses de.hhn.it.devtools.apis.towerdefense.TowerDefenseService;
   uses de.hhn.it.devtools.components.spaceinvaders.SimpleSpaceInvadersService;
   uses de.hhn.it.devtools.apis.spaceinvaders.SpaceInvadersService;
   uses de.hhn.it.devtools.apis.spaceinvaders.SpaceInvadersListener;
@@ -20,5 +23,6 @@ module devtools.javafx {
   exports de.hhn.it.devtools.javafx;
   exports de.hhn.it.devtools.javafx.controllers;
   exports de.hhn.it.devtools.javafx.coffeemaker.view;
+  exports de.hhn.it.devtools.javafx.towerdefense.controllers;
   exports de.hhn.it.devtools.javafx.spaceinvaders.view;
-        }
+}

@@ -1,4 +1,4 @@
-package de.hhn.it.devtools.apis.towerdefenseapi;
+package de.hhn.it.devtools.apis.towerdefense;
 
 import java.util.List;
 import java.util.Map;
@@ -8,7 +8,26 @@ import java.util.Map;
  */
 public interface TowerDefenseService {
 
+  /**
+   * Provides the current State of the Game.
+   *
+   * @return the current GameState
+   */
   GameState getCurrentGameState();
+
+  /**
+   * Provides the current instance of the Player record.
+   *
+   * @return the current Player
+   */
+  Player getPlayer();
+
+  /**
+   * Overwrites the existing configuration of the Game with a new one.
+   *
+   * @param configuration the new Configuration
+   */
+  void editConfiguration(Configuration configuration) throws IllegalStateException;
 
   /**
    * Adds a listener to the list.
@@ -56,9 +75,11 @@ public interface TowerDefenseService {
   void retry() throws IllegalStateException;
 
   /**
-   * Called when the player has failed the current round.
+   * Starts the next round.
+   *
+   * @throws IllegalStateException if the gameState doesn't allow the start of a new round
    */
-  void roundFailed();
+  void startNextRound() throws IllegalStateException;
 
   /**
    * Returns the current game map.
@@ -67,6 +88,13 @@ public interface TowerDefenseService {
    * @throws IllegalStateException if the game has not been initialized
    */
   Grid getMap() throws IllegalStateException;
+
+  /**
+   * Returns a Map with all Towers and their corresponding costs.
+   *
+   * @return the Map of all towers
+   */
+  Map<TowerType, Integer> getTowerTypes();
 
   /**
    * Returns the current tower configuration.
@@ -94,24 +122,15 @@ public interface TowerDefenseService {
   void placeTower(Tower tower) throws IllegalArgumentException;
 
   /**
-   * Updates the player's health when damaged.
-   *
-   * @param health the new health value
-   * @throws IllegalArgumentException if health is negative
-   */
-  void updateHealth(int health) throws IllegalArgumentException;
-
-  /**
-   * Updates the player's money when killing enemies or spending on towers.
-   *
-   * @param money the new money value
-   */
-  void updateMoney(int money);
-
-  /**
    * Provides the number of the last round that has been started.
    *
    * @return the last round number as a positive integer
    */
   int getCurrentRound();
+
+  /**
+   * Interrupts the GameLoop Thread and sets the GameState to "TERMINATED".
+   * After this Method has been called this Service should be used no longer.
+   */
+  void terminate();
 }

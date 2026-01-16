@@ -1,4 +1,6 @@
-package de.hhn.it.devtools.apis.towerdefenseapi;
+package de.hhn.it.devtools.apis.towerdefense;
+
+import java.util.UUID;
 
 /**
  * Represents a tower in the Tower Defense game.
@@ -9,7 +11,11 @@ package de.hhn.it.devtools.apis.towerdefenseapi;
  *
  * <p>This record is immutable – once created, the tower's properties cannot be changed.
  */
-public record Tower(int id,
+public record Tower(UUID id,
                     Coordinates coordinates,
-                    TowerType type
-){}
+                    TowerType type) {
+
+  public Tower(Coordinates coordinates, TowerType type) {
+    this(UUID.randomUUID(), coordinates, type);
+  }
+}

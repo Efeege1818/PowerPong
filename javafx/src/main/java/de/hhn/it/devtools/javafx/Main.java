@@ -16,7 +16,8 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 
-public class Main extends Application {
+public class
+Main extends Application {
 
   private static final org.slf4j.Logger logger =
           org.slf4j.LoggerFactory.getLogger(Main.class);
@@ -59,6 +60,7 @@ public class Main extends Application {
     addModule("Template");
     addModule("SpaceInvaders");
     addModule("ShapeSurvivor");
+    addModule("TowerDefense");
   }
 
   @Override

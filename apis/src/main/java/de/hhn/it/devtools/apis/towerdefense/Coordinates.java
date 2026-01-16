@@ -1,4 +1,4 @@
-package de.hhn.it.devtools.apis.towerdefenseapi;
+package de.hhn.it.devtools.apis.towerdefense;
 
 /**
  * Holds Coordinates for the positioning of Towers and Enemies.

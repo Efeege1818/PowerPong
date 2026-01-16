@@ -1,4 +1,4 @@
-package de.hhn.it.devtools.apis.towerdefenseapi;
+package de.hhn.it.devtools.apis.towerdefense;
 
 /**
  * This Enum represents the State of the game and
@@ -8,5 +8,6 @@ public enum GameState {
   READY,
   RUNNING,
   PAUSED, // This State is used between waves, while the player can build new Towers
-  GAME_OVER
+  GAME_OVER,
+  TERMINATED
 }

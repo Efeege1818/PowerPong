@@ -1,13 +1,14 @@
-package de.hhn.it.devtools.apis.towerdefense;
+package de.hhn.it.devtools.apis.towerdefense.junit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import de.hhn.it.devtools.apis.towerdefenseapi.Coordinates;
-import de.hhn.it.devtools.apis.towerdefenseapi.Enemy;
-import de.hhn.it.devtools.apis.towerdefenseapi.EnemyType;
-import de.hhn.it.devtools.apis.towerdefenseapi.Player;
-import de.hhn.it.devtools.apis.towerdefenseapi.Tower;
-import de.hhn.it.devtools.apis.towerdefenseapi.TowerType;
+import java.util.UUID;
+import de.hhn.it.devtools.apis.towerdefense.Coordinates;
+import de.hhn.it.devtools.apis.towerdefense.Enemy;
+import de.hhn.it.devtools.apis.towerdefense.EnemyType;
+import de.hhn.it.devtools.apis.towerdefense.Player;
+import de.hhn.it.devtools.apis.towerdefense.Tower;
+import de.hhn.it.devtools.apis.towerdefense.TowerType;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -26,9 +27,8 @@ public class ApiTest {
   @Test
   void checkEnemyAttributesWork() {
     Coordinates pos = new Coordinates(3, 4);
-    Enemy enemy = new Enemy(1, pos, EnemyType.SMALL, 50, 0);
+    Enemy enemy = new Enemy(UUID.randomUUID(), pos, EnemyType.SMALL, 50, 0);
 
-    assertEquals(1, enemy.id());
     assertEquals(pos, enemy.coordinates());
     assertEquals(EnemyType.SMALL, enemy.type());
     assertEquals(50, enemy.currentHealth());
@@ -38,9 +38,8 @@ public class ApiTest {
   @Test
   void checkTowerValues() {
     Coordinates pos = new Coordinates(3, 4);
-    Tower tower = new Tower(10, pos, TowerType.RANGED);
+    Tower tower = new Tower(pos, TowerType.RANGED);
 
-    assertEquals(10, tower.id());
     assertEquals(pos, tower.coordinates());
     assertEquals(TowerType.RANGED, tower.type());
   }

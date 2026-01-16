@@ -1,10 +1,15 @@
-package de.hhn.it.devtools.apis.towerdefenseapi;
+package de.hhn.it.devtools.apis.towerdefense;
 
 /**
  * Listener, that is given from the ViewModel to the Service.
  * The Service uses this Listener to notify the ViewModel, when Variables in the Service change.
  */
 public interface TowerDefenseListener {
+
+  /**
+   * Gets calles when the current gameState changes.
+   */
+  void updateGameState();
 
   /**
    * Gets called, when the player Health changes.
@@ -17,12 +22,18 @@ public interface TowerDefenseListener {
   void updateMoney();
 
   /**
-   * Gets called, when the players health are reduced to zero.
-   */
-  void gameEnded();
-
-  /**
    * Gets called, when the TowerMap changes.
    */
+  void updateTowerMap();
+
+  /**
+   * Gets called, then the Map Changes.
+   */
   void updateMap();
+
+  /**
+   * Gets called every tick while the Game is running.
+   */
+  void tick();
+
 }

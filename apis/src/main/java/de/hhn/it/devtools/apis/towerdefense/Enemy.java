@@ -1,6 +1,6 @@
-package de.hhn.it.devtools.apis.towerdefenseapi;
+package de.hhn.it.devtools.apis.towerdefense;
 
-import java.util.NoSuchElementException;
+import java.util.UUID;
 
 /**
  * Represents an enemy in the Tower Defense game.
@@ -17,9 +17,9 @@ import java.util.NoSuchElementException;
  * @param currentHealth the current Health of this enemy
  * @param index         the current index in the path progression
  */
-public record Enemy(int id,
+public record Enemy(UUID id,
                     Coordinates coordinates,
                     EnemyType type,
                     int currentHealth,
                     int index
-) {}
+){}
