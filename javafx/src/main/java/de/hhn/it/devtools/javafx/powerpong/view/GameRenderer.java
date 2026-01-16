@@ -8,7 +8,13 @@ import de.hhn.it.devtools.apis.powerPong.PowerUpType;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import javafx.scene.SnapshotParameters;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.effect.Effect;
@@ -35,12 +41,17 @@ public class GameRenderer {
     private static final Color NEON_YELLOW = Color.web("#ffff00");
     private static final Color BACKGROUND_COLOR = Color.web("#050510"); // Very dark blue/black
 
-    // Ball trail history
+    // Ball trail history (Ring Buffer - Zero Allocation)
     private static final int TRAIL_LENGTH = 8;
-    private final List<double[]> ballTrailHistory = new ArrayList<>();
+    private final double[][] ballTrailBuffer = new double[TRAIL_LENGTH][2];
+    private int trailHead = 0;
+    private int trailSize = 0;
 
-    // Particle system
-    private final List<Particle> particles = new ArrayList<>();
+    // Particle System (Object Pool) - Optimized for zero GC
+    private static final int MAX_PARTICLES = 100;
+    private final Particle[] particlePool = new Particle[MAX_PARTICLES];
+    private int activeParticleCount = 0;
+
     private double lastBallX = -1;
     private double lastBallY = -1;
 
@@ -52,8 +63,10 @@ public class GameRenderer {
     // Score animation (per player)
     private double score1Scale = 1.0;
     private double score2Scale = 1.0;
-    private int lastPlayer1Score = 0;
-    private int lastPlayer2Score = 0;
+    private int lastPlayer1Score = -1; // Force init
+    private int lastPlayer2Score = -1;
+    private String cachedScore1Str = "0";
+    private String cachedScore2Str = "0";
 
     // Shield visual tracking (set externally when shield is active)
     private boolean player1ShieldActive = false;
@@ -63,28 +76,147 @@ public class GameRenderer {
     private double collectionFlashAlpha = 0;
     private Color collectionFlashColor = Color.WHITE;
 
+    // Image Caches (Bit Blit Optimization)
+    private final Map<PowerUpType, Image> powerUpImageCache = new HashMap<>();
+    private Image ballImageCache;
+    private static final int CACHE_SIZE = 256; // High-Res Cache (256x256) for crisp scaling
+
+    public GameRenderer() {
+        preRenderResources();
+        // Initialize particle pool
+        for (int i = 0; i < MAX_PARTICLES; i++) {
+            particlePool[i] = new Particle();
+        }
+    }
+
+    private void preRenderResources() {
+        // 1. Pre-render Ball
+        Canvas ballCanvas = new Canvas(CACHE_SIZE, CACHE_SIZE);
+        GraphicsContext bgc = ballCanvas.getGraphicsContext2D();
+        double center = CACHE_SIZE / 2.0;
+        double radius = 60.0; // High-res radius for downscaling (crisp edges)
+
+        // Draw glow and ball on temp canvas
+        bgc.setEffect(GLOW_WHITE);
+        bgc.setFill(Color.WHITE);
+        bgc.fillOval(center - radius, center - radius, radius * 2, radius * 2);
+        bgc.setEffect(null);
+
+        SnapshotParameters params = new SnapshotParameters();
+        params.setFill(Color.TRANSPARENT);
+        ballImageCache = ballCanvas.snapshot(params, null);
+
+        // 2. Pre-render PowerUps
+        for (PowerUpType type : PowerUpType.values()) {
+            Canvas pCanvas = new Canvas(CACHE_SIZE, CACHE_SIZE);
+            GraphicsContext pgc = pCanvas.getGraphicsContext2D();
+
+            // Draw high-res neon icon
+            drawNeonPowerUpIconOnCanvas(pgc, type, center, center, radius);
+
+            powerUpImageCache.put(type, pCanvas.snapshot(params, null));
+        }
+    }
+
+    /**
+     * Helper to draw the vector icon onto a temporary canvas for caching.
+     */
+    private void drawNeonPowerUpIconOnCanvas(GraphicsContext gc, PowerUpType type, double cx, double cy, double r) {
+        Color color = getColorForPowerUp(type);
+        double d = r * 2;
+
+        // 1. Glow Ring
+        gc.setEffect(getCachedGlow(color));
+        gc.setStroke(color);
+        gc.setLineWidth(3);
+        gc.setFill(color.deriveColor(0, 1, 1, 0.15));
+        gc.strokeOval(cx - r, cy - r, d, d);
+        gc.fillOval(cx - r, cy - r, d, d);
+
+        // 2. Symbol
+        gc.setEffect(null);
+        gc.setFill(Color.WHITE);
+        gc.setStroke(Color.WHITE);
+        gc.setLineWidth(3);
+
+        double s = r * 0.5;
+
+        switch (type) {
+            case BIGGER_PADDLE -> {
+                // Two arrows pointing outwards (Vertical)
+                // Top Arrow
+                gc.strokeLine(cx, cy - s * 0.3, cx, cy - s); // Shaft
+                gc.strokeLine(cx - s * 0.4, cy - s * 0.6, cx, cy - s); // Left wing
+                gc.strokeLine(cx + s * 0.4, cy - s * 0.6, cx, cy - s); // Right wing
+
+                // Bottom Arrow
+                gc.strokeLine(cx, cy + s * 0.3, cx, cy + s); // Shaft
+                gc.strokeLine(cx - s * 0.4, cy + s * 0.6, cx, cy + s); // Left wing
+                gc.strokeLine(cx + s * 0.4, cy + s * 0.6, cx, cy + s); // Right wing
+            }
+            case SMALLER_ENEMY_PADDLE -> {
+                // Two arrows pointing inwards (Vertical)
+                // Top Arrow (pointing down)
+                gc.strokeLine(cx, cy - s, cx, cy - s * 0.2); // Shaft
+                gc.strokeLine(cx - s * 0.4, cy - s * 0.6, cx, cy - s * 0.2); // Left wing
+                gc.strokeLine(cx + s * 0.4, cy - s * 0.6, cx, cy - s * 0.2); // Right wing
+
+                // Bottom Arrow (pointing up)
+                gc.strokeLine(cx, cy + s, cx, cy + s * 0.2); // Shaft
+                gc.strokeLine(cx - s * 0.4, cy + s * 0.6, cx, cy + s * 0.2); // Left wing
+                gc.strokeLine(cx + s * 0.4, cy + s * 0.6, cx, cy + s * 0.2); // Right wing
+            }
+            case DOUBLE_BALL -> {
+                gc.fillOval(cx - s, cy - s / 2, s, s);
+                gc.fillOval(cx, cy - s / 2, s, s);
+            }
+            case SHIELD -> {
+                gc.beginPath();
+                gc.moveTo(cx - s, cy - s);
+                gc.lineTo(cx + s, cy - s);
+                gc.lineTo(cx + s, cy);
+                gc.quadraticCurveTo(cx, cy + s * 1.5, cx - s, cy);
+                gc.closePath();
+                gc.stroke();
+            }
+            case BARRIERLESS -> {
+                gc.strokeLine(cx - s, cy - s, cx + s, cy + s);
+                gc.strokeLine(cx + s, cy - s, cx - s, cy + s);
+            }
+            case SLOW_ENEMY_PADDLE -> {
+                gc.beginPath();
+                gc.moveTo(cx, cy);
+                gc.arc(cx, cy, s, s, 0, 270);
+                gc.stroke();
+            }
+            case FASTER_BALL_ENEMY_SIDE -> {
+                gc.beginPath();
+                gc.moveTo(cx + s * 0.6, cy - s);
+                gc.lineTo(cx - s * 0.2, cy + s * 0.1);
+                gc.lineTo(cx + s * 0.6, cy + s * 0.1);
+                gc.lineTo(cx - s * 0.6, cy + s);
+                gc.stroke();
+            }
+        }
+    }
+
     private static class Particle {
         double x, y, vx, vy;
         double life, maxLife;
         Color color;
-
-        Particle(double x, double y, double vx, double vy, double life, Color color) {
-            this.x = x;
-            this.y = y;
-            this.vx = vx;
-            this.vy = vy;
-            this.life = life;
-            this.maxLife = life;
-            this.color = color;
-        }
+        boolean active = false;
     }
 
     /**
      * Clears all visual effects (trail, particles) for a fresh game start.
      */
     public void reset() {
-        ballTrailHistory.clear();
-        particles.clear();
+        // Reset buffers
+        trailHead = 0;
+        trailSize = 0;
+        for (Particle p : particlePool)
+            p.active = false;
+        activeParticleCount = 0;
         lastBallX = -1;
         lastBallY = -1;
         shakeIntensity = 0;
@@ -92,10 +224,12 @@ public class GameRenderer {
         shakeOffsetY = 0;
         score1Scale = 1.0;
         score2Scale = 1.0;
-        lastPlayer1Score = 0;
-        lastPlayer2Score = 0;
+        lastPlayer1Score = -1;
+        lastPlayer2Score = -1;
         player1ShieldActive = false;
         player2ShieldActive = false;
+        leftPaddleHitHandled = false;
+        rightPaddleHitHandled = false;
         collectionFlashAlpha = 0;
     }
 
@@ -112,12 +246,27 @@ public class GameRenderer {
         collectionFlashAlpha = 0.4;
         collectionFlashColor = color;
         // Spawn particles at random location for collection
-        for (int i = 0; i < 15; i++) {
-            double angle = Math.random() * Math.PI * 2;
-            double speed = 3 + Math.random() * 5;
-            double vx = Math.cos(angle) * speed;
-            double vy = Math.sin(angle) * speed;
-            particles.add(new Particle(LOGICAL_WIDTH / 2, LOGICAL_HEIGHT / 2, vx, vy, 0.8, color));
+        spawnParticles(LOGICAL_WIDTH / 2, LOGICAL_HEIGHT / 2, color, 15, 0.8);
+    }
+
+    // Helper to spawn pooled particles
+    private void spawnParticles(double x, double y, Color color, int count, double life) {
+        int spawned = 0;
+        for (int i = 0; i < MAX_PARTICLES && spawned < count; i++) {
+            if (!particlePool[i].active) {
+                Particle p = particlePool[i];
+                p.active = true;
+                p.x = x;
+                p.y = y;
+                double angle = Math.random() * Math.PI * 2;
+                double speed = 3 + Math.random() * 5;
+                p.vx = Math.cos(angle) * speed;
+                p.vy = Math.sin(angle) * speed;
+                p.life = life;
+                p.maxLife = life;
+                p.color = color;
+                spawned++;
+            }
         }
     }
 
@@ -136,13 +285,8 @@ public class GameRenderer {
         double y = LOGICAL_HEIGHT / 2;
         Color color = (side == 1) ? NEON_BLUE : NEON_PINK;
 
-        for (int i = 0; i < 20; i++) {
-            double angle = Math.random() * Math.PI * 2;
-            double speed = 5 + Math.random() * 8;
-            double vx = Math.cos(angle) * speed;
-            double vy = Math.sin(angle) * speed;
-            particles.add(new Particle(x, y + (Math.random() - 0.5) * 200, vx, vy, 1.0, color));
-        }
+        // Use pooled spawner (20 particles)
+        spawnParticles(x, y, color, 20, 1.0);
     }
 
     public void render(GraphicsContext gc, GameState state) {
@@ -250,51 +394,66 @@ public class GameRenderer {
     }
 
     private void updateAndDrawParticles(GraphicsContext gc) {
-        Iterator<Particle> iterator = particles.iterator();
-        while (iterator.hasNext()) {
-            Particle p = iterator.next();
+        // Use Global Alpha to avoid Color.deriveColor() allocation per particle per
+        // frame
+        double originalAlpha = gc.getGlobalAlpha();
+
+        for (Particle p : particlePool) {
+            if (!p.active)
+                continue;
+
             p.x += p.vx;
             p.y += p.vy;
-            p.life -= 0.05; // Faster fade for fewer frames
+            p.life -= 0.05;
 
             if (p.life <= 0) {
-                iterator.remove();
+                p.active = false;
             } else {
-                double alpha = p.life / p.maxLife;
-                // No DropShadow effect - just simple colored circle for performance
-                gc.setFill(p.color.deriveColor(0, 1, 1, alpha));
+                double alpha = Math.max(0, p.life / p.maxLife);
+                gc.setGlobalAlpha(alpha);
+                gc.setFill(p.color);
                 double size = 6 * alpha;
                 gc.fillOval(p.x - size / 2, p.y - size / 2, size, size);
             }
         }
+
+        gc.setGlobalAlpha(originalAlpha); // Restore alpha
     }
 
     private void drawBallTrail(GraphicsContext gc, BallState ball) {
-        // Add current position to trail
-        ballTrailHistory.add(new double[] { ball.xPosition(), ball.yPosition() });
-        while (ballTrailHistory.size() > TRAIL_LENGTH) {
-            ballTrailHistory.remove(0);
+        // Add current position to ring buffer
+        ballTrailBuffer[trailHead][0] = ball.xPosition();
+        ballTrailBuffer[trailHead][1] = ball.yPosition();
+
+        trailHead = (trailHead + 1) % TRAIL_LENGTH;
+        if (trailSize < TRAIL_LENGTH) {
+            trailSize++;
         }
 
-        // Draw trail
-        for (int i = 0; i < ballTrailHistory.size() - 1; i++) {
-            double[] pos = ballTrailHistory.get(i);
-            double alpha = (double) (i + 1) / ballTrailHistory.size() * 0.5;
+        // Draw trail (Iterate from oldest to newest)
+        // Correct start index: (head - size + length) % length
+        int startIndex = (trailHead - trailSize + TRAIL_LENGTH) % TRAIL_LENGTH;
+
+        // Save alpha
+        double originalAlpha = gc.getGlobalAlpha();
+
+        for (int i = 0; i < trailSize - 1; i++) {
+            int idx = (startIndex + i) % TRAIL_LENGTH;
+            double[] pos = ballTrailBuffer[idx];
+
+            double alpha = (double) (i + 1) / trailSize * 0.5;
             double size = ball.radius() * 2 * alpha;
 
-            gc.setFill(Color.WHITE.deriveColor(0, 1, 1, alpha));
+            gc.setGlobalAlpha(alpha);
+            gc.setFill(Color.WHITE); // Use setGlobalAlpha instead of deriveColor
             gc.fillOval(pos[0] - size / 2, pos[1] - size / 2, size, size);
         }
+
+        gc.setGlobalAlpha(originalAlpha); // Restore
     }
 
     private void spawnCollisionParticles(double x, double y, Color color) {
-        for (int i = 0; i < 5; i++) { // Reduced from 8 for performance
-            double angle = Math.random() * Math.PI * 2;
-            double speed = 3 + Math.random() * 3;
-            double vx = Math.cos(angle) * speed;
-            double vy = Math.sin(angle) * speed;
-            particles.add(new Particle(x, y, vx, vy, 0.6, color)); // Shorter life
-        }
+        spawnParticles(x, y, color, 8, 0.6); // Use pooled spawner
     }
 
     private void drawFieldDecorations(GraphicsContext gc, GameState state) {
@@ -309,17 +468,72 @@ public class GameRenderer {
         gc.setTextAlign(javafx.scene.text.TextAlignment.CENTER);
         gc.setTextBaseline(javafx.geometry.VPos.CENTER);
 
-        // Player 1 Score (Left Center) - with individual animation
-        double fontSize1 = 150 * score1Scale;
-        gc.setFill(Color.web("#333333").deriveColor(0, 1, 1, Math.min(1.0, 0.3 + (score1Scale - 1.0))));
-        gc.setFont(javafx.scene.text.Font.font("Arial", javafx.scene.text.FontWeight.BOLD, fontSize1));
-        gc.fillText(String.valueOf(state.score().player1()), LOGICAL_WIDTH / 4, LOGICAL_HEIGHT / 2);
+        // Get current scores directly from state (no caching - simpler and reliable)
+        int score1 = state.score().player1();
+        int score2 = state.score().player2();
 
-        // Player 2 Score (Right Center) - with individual animation
+        // Trigger animation on score change
+        if (score1 != lastPlayer1Score) {
+            score1Scale = 1.5; // Pop effect
+            lastPlayer1Score = score1;
+        }
+        if (score2 != lastPlayer2Score) {
+            score2Scale = 1.5; // Pop effect
+            lastPlayer2Score = score2;
+        }
+
+        double originalAlpha = gc.getGlobalAlpha();
+
+        // Player 1 Score (Left Center)
+        double fontSize1 = 150 * score1Scale;
+        double alpha1 = Math.min(1.0, 0.3 + (score1Scale - 1.0));
+        gc.setGlobalAlpha(alpha1);
+        gc.setFill(Color.web("#333333"));
+        gc.setFont(javafx.scene.text.Font.font("Arial", javafx.scene.text.FontWeight.BOLD, fontSize1));
+        gc.fillText(String.valueOf(score1), LOGICAL_WIDTH / 4, LOGICAL_HEIGHT / 2);
+
+        // Player 2 Score (Right Center)
         double fontSize2 = 150 * score2Scale;
-        gc.setFill(Color.web("#333333").deriveColor(0, 1, 1, Math.min(1.0, 0.3 + (score2Scale - 1.0))));
+        double alpha2 = Math.min(1.0, 0.3 + (score2Scale - 1.0));
+        gc.setGlobalAlpha(alpha2);
         gc.setFont(javafx.scene.text.Font.font("Arial", javafx.scene.text.FontWeight.BOLD, fontSize2));
-        gc.fillText(String.valueOf(state.score().player2()), LOGICAL_WIDTH * 3 / 4, LOGICAL_HEIGHT / 2);
+        gc.fillText(String.valueOf(score2), LOGICAL_WIDTH * 3 / 4, LOGICAL_HEIGHT / 2);
+
+        gc.setGlobalAlpha(originalAlpha); // Restore
+    }
+
+    // Cached Effects to avoid Garbage Collection lag
+    private static final Effect GLOW_BLUE = new javafx.scene.effect.DropShadow(20, NEON_BLUE);
+    private static final Effect GLOW_PINK = new javafx.scene.effect.DropShadow(20, NEON_PINK);
+    private static final Effect GLOW_GREEN = new javafx.scene.effect.DropShadow(20, NEON_GREEN);
+    private static final Effect GLOW_RED = new javafx.scene.effect.DropShadow(20, NEON_RED);
+    private static final Effect GLOW_YELLOW = new javafx.scene.effect.DropShadow(20, NEON_YELLOW);
+    private static final Effect GLOW_WHITE = new javafx.scene.effect.DropShadow(15, Color.WHITE);
+    private static final Effect GLOW_CYAN = new javafx.scene.effect.DropShadow(20, Color.CYAN);
+    private static final Effect GLOW_ORANGE = new javafx.scene.effect.DropShadow(20, Color.ORANGE);
+    private static final Effect GLOW_MAGENTA = new javafx.scene.effect.DropShadow(20, Color.MAGENTA);
+
+    // Fallback for dynamic colors (still better to cache if possible, but minimal
+    // usage)
+
+    private Effect getCachedGlow(Color color) {
+        if (color == NEON_BLUE)
+            return GLOW_BLUE;
+        if (color == NEON_PINK)
+            return GLOW_PINK;
+        if (color == NEON_GREEN)
+            return GLOW_GREEN;
+        if (color == NEON_RED)
+            return GLOW_RED;
+        if (color == NEON_YELLOW)
+            return GLOW_YELLOW;
+        if (color == Color.WHITE)
+            return GLOW_WHITE;
+        if (color == Color.CYAN)
+            return GLOW_CYAN;
+        if (color == Color.ORANGE)
+            return GLOW_ORANGE;
+        return GLOW_MAGENTA;
     }
 
     private void drawNeonPaddle(GraphicsContext gc, PaddleState paddle, Color color) {
@@ -328,8 +542,8 @@ public class GameRenderer {
         double w = paddle.width();
         double h = paddle.height();
 
-        // Glow
-        gc.setEffect(new javafx.scene.effect.DropShadow(20, color));
+        // Glow - Use Cached Effect
+        gc.setEffect(getCachedGlow(color));
 
         gc.setFill(color);
         gc.fillRoundRect(x, y, w, h, 10, 10);
@@ -353,8 +567,9 @@ public class GameRenderer {
 
         Color shieldColor = Color.web("#00f3ff"); // Cyan glow
 
-        // Outer glow
-        gc.setEffect(new javafx.scene.effect.DropShadow(25, shieldColor));
+        // Outer glow - Use Cached Effect (Cyan is effectively Neon Blue here or close
+        // enough)
+        gc.setEffect(GLOW_BLUE);
         gc.setFill(shieldColor.deriveColor(0, 1, 1, 0.6));
         gc.fillRoundRect(shieldX, shieldY, shieldW, shieldH, 5, 5);
 
@@ -363,6 +578,10 @@ public class GameRenderer {
         gc.setFill(Color.WHITE.deriveColor(0, 1, 1, 0.9));
         gc.fillRoundRect(shieldX + 2, shieldY + 5, shieldW - 4, shieldH - 10, 3, 3);
     }
+
+    // Collision debounce flags
+    private boolean leftPaddleHitHandled = false;
+    private boolean rightPaddleHitHandled = false;
 
     private void drawNeonBall(GraphicsContext gc, BallState ball, GameState state) {
         double r = ball.radius();
@@ -377,67 +596,75 @@ public class GameRenderer {
             PaddleState leftPaddle = state.player1Paddle();
             PaddleState rightPaddle = state.player2Paddle();
 
-            // Left paddle collision (ball moving right after being on left side)
-            if (leftPaddle != null && lastBallX < 100 && ballX > lastBallX && ballX < 100) {
+            // Left collision logic
+            if (ballX > 100) {
+                leftPaddleHitHandled = false; // Reset when out of zone
+            } else if (leftPaddle != null && ballX > lastBallX && !leftPaddleHitHandled) {
+                // Ball is in zone, moving right (bounced), and not handled yet
                 spawnCollisionParticles(ballX, ball.yPosition(), NEON_BLUE);
-                triggerShake(1.0); // Screen shake on paddle hit
+                triggerShake(1.0);
+                leftPaddleHitHandled = true;
             }
-            // Right paddle collision (ball moving left after being on right side)
-            if (rightPaddle != null && lastBallX > 700 && ballX < lastBallX && ballX > 700) {
+
+            // Right collision logic
+            if (ballX < 700) {
+                rightPaddleHitHandled = false; // Reset when out of zone
+            } else if (rightPaddle != null && ballX < lastBallX && !rightPaddleHitHandled) {
+                // Ball is in zone, moving left (bounced), and not handled yet
                 spawnCollisionParticles(ballX, ball.yPosition(), NEON_PINK);
-                triggerShake(1.0); // Screen shake on paddle hit
+                triggerShake(1.0);
+                rightPaddleHitHandled = true;
             }
         }
         lastBallX = ball.xPosition();
         lastBallY = ball.yPosition();
 
-        // Glow trail or intense glow
-        gc.setEffect(new javafx.scene.effect.DropShadow(15, Color.WHITE));
-
-        gc.setFill(Color.WHITE);
-        gc.fillOval(x, y, d, d);
-
-        gc.setEffect(null);
+        // Optimized Drawing: Use Cached Image
+        if (ballImageCache != null) {
+            // Draw image slightly larger than physical radius to account for glow in image
+            double drawSize = d * 2.5; // Scale factor because cache includes glow margin
+            gc.drawImage(ballImageCache, ball.xPosition() - drawSize / 2, ball.yPosition() - drawSize / 2, drawSize,
+                    drawSize);
+        } else {
+            // Fallback (should not happen)
+            gc.setEffect(GLOW_WHITE);
+            gc.setFill(Color.WHITE);
+            gc.fillOval(x, y, d, d);
+            gc.setEffect(null);
+        }
     }
 
     private void drawNeonPowerUp(GraphicsContext gc, PowerUpState powerUp) {
-        Color color = getColorForPowerUp(powerUp.type());
-        double r = powerUp.radius();
-        double d = r * 2;
-        double x = powerUp.xPosition() - r;
-        double y = powerUp.yPosition() - r;
         double cx = powerUp.xPosition();
         double cy = powerUp.yPosition();
+        double r = powerUp.radius();
 
-        // NO DropShadow - simpler rendering for performance
-        gc.setEffect(null);
+        // 1. Pulse Animation
+        double time = System.currentTimeMillis() / 150.0;
+        double pulse = 1.0 + Math.sin(time) * 0.15; // +/- 15% pulsating size
 
-        // Filled background circle
-        gc.setFill(color.deriveColor(0, 1, 0.4, 0.9));
-        gc.fillOval(x, y, d, d);
+        // Optimized Drawing: Use Cached Image
+        Image img = powerUpImageCache.get(powerUp.type());
+        if (img != null) {
+            // Calculate draw size based on pulse
+            // Base radius in cache was 60.0 (visual radius), drawing size depends on actual
+            // powerUp radius
+            // Logic: Cache image is 256x256. Center is 128,128. Visual radius was 60.
+            // We want the visual radius (60 in cache) to match 'r' * 'pulse'.
 
-        // Bright colored border
-        gc.setStroke(color.brighter());
-        gc.setLineWidth(3);
-        gc.strokeOval(x, y, d, d);
+            double scaleFactor = (r * pulse) / 60.0;
+            double drawW = img.getWidth() * scaleFactor;
+            double drawH = img.getHeight() * scaleFactor;
 
-        // Symbol with nice font
-        gc.setFill(Color.WHITE);
-        gc.setFont(javafx.scene.text.Font.font("Segoe UI Symbol", javafx.scene.text.FontWeight.BOLD, r * 1.0));
-        gc.setTextAlign(javafx.scene.text.TextAlignment.CENTER);
-        gc.setTextBaseline(javafx.geometry.VPos.CENTER);
-
-        String symbol = switch (powerUp.type()) {
-            case BIGGER_PADDLE -> "↑";
-            case SMALLER_ENEMY_PADDLE -> "↓";
-            case DOUBLE_BALL -> "◆";
-            case SHIELD -> "■";
-            case BARRIERLESS -> "✕";
-            case SLOW_ENEMY_PADDLE -> "◎";
-            case FASTER_BALL_ENEMY_SIDE -> "»";
-        };
-
-        gc.fillText(symbol, cx, cy);
+            gc.drawImage(img, cx - drawW / 2, cy - drawH / 2, drawW, drawH);
+        } else {
+            // Fallback if cache fails (should not happen)
+            Color color = getColorForPowerUp(powerUp.type());
+            gc.setEffect(getCachedGlow(color));
+            gc.setFill(color);
+            gc.fillOval(cx - r, cy - r, r * 2, r * 2);
+            gc.setEffect(null);
+        }
     }
 
     public Color getColorForPowerUp(PowerUpType type) {

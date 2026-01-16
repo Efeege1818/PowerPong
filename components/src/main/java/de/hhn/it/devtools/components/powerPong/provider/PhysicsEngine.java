@@ -113,6 +113,10 @@ public class PhysicsEngine {
         return baseBallSpeed * difficultyMultiplier;
     }
 
+    public double getRallyMultiplier() {
+        return Math.min(MAX_RALLY_MULTIPLIER, 1.0 + (rallyHitCount * RALLY_SPEED_INCREASE));
+    }
+
     // Start ball & control double ball
     public void launchBall(int horizontalDirection) {
         double startX = FIELD_WIDTH / 2.0;

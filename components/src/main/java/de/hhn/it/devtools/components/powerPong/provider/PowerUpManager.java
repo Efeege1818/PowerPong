@@ -271,8 +271,13 @@ public class PowerUpManager {
         if (speed == 0)
             return;
 
-        double target = physics.getBaseBallSpeed() * multiplier;
-        // Only adjust if significantly different to avoid jitter
+        // FIX: Include rally multiplier in the target speed calculation
+        // Otherwise this logic constantly resets the speed boost from long rallies.
+        double baseTarget = physics.getBaseBallSpeed() * physics.getRallyMultiplier();
+
+        double target = baseTarget * multiplier;
+
+        // Only adjust if significantly different to avoid jitter (allow 1.0 diff)
         if (Math.abs(speed - target) > 1.0) {
             double factor = target / speed;
             ball.vx *= factor;

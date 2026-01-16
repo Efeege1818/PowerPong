@@ -222,20 +222,28 @@ public class PowerPongMatchEngine implements PowerPongService {
     double multiplier = 1.0 + (level * DIFFICULTY_INCREMENT);
     physics.setDifficultyMultiplier(multiplier);
 
-    // Invincible AI: Track ball perfectly
+    // Invincible AI: Track ball with very high speed (virtually perfect, but
+    // smooth)
     PhysicsEngine.Ball ball = physics.getBall();
     if (ball != null) {
-      // If ball is moving towards AI (right), align paddle perfectly center to ball Y
+      double currentY = physics.getPaddle2Y();
+      double targetY;
+
       if (ball.vx > 0) {
-        physics.setPaddle2Y(ball.y);
+        // Ball moving towards AI - track perfectly
+        targetY = ball.y;
       } else {
-        // Slowly reset to center when ball is away
-        double currentY = physics.getPaddle2Y();
-        double targetY = PhysicsEngine.FIELD_HEIGHT / 2.0;
-        double diff = targetY - currentY;
-        if (Math.abs(diff) > 2) {
-          physics.setPaddle2Y(currentY + Math.signum(diff) * 200 * deltaSeconds);
-        }
+        // Ball moving away - slowly return to center
+        targetY = PhysicsEngine.FIELD_HEIGHT / 2.0;
+      }
+
+      double diff = targetY - currentY;
+      if (Math.abs(diff) > 1) {
+        // Move at extremely high speed (1500 px/s) but still smooth
+        double moveSpeed = ball.vx > 0 ? 1500.0 : 200.0;
+        double maxMove = moveSpeed * deltaSeconds;
+        double actualMove = Math.signum(diff) * Math.min(Math.abs(diff), maxMove);
+        physics.setPaddle2Y(currentY + actualMove);
       }
     }
 
