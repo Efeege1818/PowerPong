@@ -2,6 +2,8 @@ package de.hhn.it.devtools.components.towerdefense;
 
 import de.hhn.it.devtools.apis.towerdefense.*;
 
+import java.security.Provider;
+
 public class TowerDefenseUsageDemo {
   public static void main(String[] args){
     SimpleTowerDefenseService service = new SimpleTowerDefenseService();
@@ -9,10 +11,21 @@ public class TowerDefenseUsageDemo {
     TowerDefenseListener listener = new TowerDefenseListener() {
       boolean tower2Placed = false;
       boolean triedAgain = false;
+      GameState lastGameState;
+      GameState currentGameState;
 
       @Override
       public void updateGameState() {
 
+        lastGameState = currentGameState;
+        currentGameState = service.getCurrentGameState();
+        System.out.println(service.getCurrentGameState());
+        if (service.getCurrentGameState() == GameState.PAUSED && lastGameState == GameState.RUNNING) {
+          waveCompleted();
+        }
+        if (service.getCurrentGameState() == GameState.GAME_OVER) {
+         gameEnded();
+        }
       }
 
       @Override
@@ -34,17 +47,17 @@ public class TowerDefenseUsageDemo {
             service.placeTower(new Tower(new Coordinates(2, 5), TowerType.RANGED));
             service.placeTower(new Tower(new Coordinates(1, 2), TowerType.RANGED));
             service.placeTower(new Tower(new Coordinates(4, 8), TowerType.RANGED));
-            service.placeTower(new Tower(new Coordinates(7, 7), TowerType.RANGED));
-            service.placeTower(new Tower(new Coordinates(4, 9), TowerType.RANGED));
             triedAgain = true;
           }
           if (!tower2Placed) {
             service.placeTower(new Tower(new Coordinates(6, 7), TowerType.RANGED));
             tower2Placed = true;
           }
-
+          service.abortGame();
           service.startGame();
           service.startNextRound();
+        } else {
+          service.abortGame();
         }
       }
 
@@ -65,8 +78,8 @@ public class TowerDefenseUsageDemo {
 
       @Override
       public void tick() {
-//        System.out.println(service.getCurrentEnemies().stream().map(enemy -> enemy.currentHealth() + "HP ").toList());
-        System.out.println(service.getCurrentEnemies());
+        System.out.println(service.getCurrentEnemies().stream().map(enemy ->
+            enemy.currentHealth() + "HP ").toList());
       }
     };
     service.addListener(listener);
