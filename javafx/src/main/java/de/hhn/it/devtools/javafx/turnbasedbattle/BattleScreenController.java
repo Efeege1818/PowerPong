@@ -18,7 +18,6 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
@@ -263,9 +262,14 @@ public class BattleScreenController {
     boolean isLocked = monster.isMoveLocked(moveIndex);
     int remaining = monster.getRemainingCooldown(moveIndex);
 
-    button.setDisable(onCd);
-    button.setDisable(isLocked);
-    button.setText(onCd ? (title + " (CD " + remaining + ")") : title);
+    button.setDisable(onCd || isLocked);
+    if (isLocked) {
+      button.setText(title + " (Locked)");
+    } else if (onCd) {
+      button.setText(title + " (Cooldown: " + remaining + ")");
+    } else {
+      button.setText(title);
+    }
 
     if (tooltip != null) {
       tooltip.setText(move.description());
