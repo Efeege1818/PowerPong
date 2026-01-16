@@ -226,9 +226,9 @@ public class SimpleBattleManager implements BattleManager {
     }
 
     if (isElementEffective(p1Monster, p2Monster)) {
-      return player1;
-    } else {
       return player2;
+   } else {
+      return player1;
     }
   }
 
