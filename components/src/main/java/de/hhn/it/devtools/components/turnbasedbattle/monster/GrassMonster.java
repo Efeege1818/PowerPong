@@ -21,7 +21,7 @@ public class GrassMonster extends SimpleMonster {
    */
   public GrassMonster(Monster monster) {
     this.maxHp = monster.maxHp();
-    this.currentHp = monster.maxHp() - 40;
+    this.currentHp = monster.maxHp();
     this.attack = monster.attack();
     this.defense = monster.defense();
     this.evasionChance = monster.evasionChance();
@@ -42,7 +42,6 @@ public class GrassMonster extends SimpleMonster {
 
   @Override
   protected void tickMonsterEffects() {
-    System.out.println((double) currentHp / maxHp);
     double currentPercentHp = (double) currentHp / maxHp;
     oldPassiveStacks = passiveStacks;
     if (currentPercentHp > 0.4) {
@@ -64,6 +63,11 @@ public class GrassMonster extends SimpleMonster {
     }
     logger.debug("{} has {} passive stacks!", name, passiveStacks);
 
+  }
+
+  @Override
+  public String getSpecialProgress() {
+    return (timesHitPoison + " charges");
   }
 
 }

@@ -36,6 +36,7 @@ public class SimpleMonster {
   protected String imagePathBack;
   protected Move takeDamageOnAttack = null;
   protected int timesHitByPoison = 0;
+  protected int timesHitPoison = 0;
   protected int attacksHit = 0;
 
   // ========== Internal Tracking (Buffs, DOTs, Cooldowns, Locked) ==========
@@ -431,6 +432,13 @@ public class SimpleMonster {
     logger.debug("Monster health reset to max: {}", maxHp);
   }
 
+  /**
+   * Sets times hit by poison
+   */
+  public void setTimesHitPoison(int amount) {
+    timesHitPoison = amount;
+  }
+
   @Override
   public String toString() {
     return String.format("SimpleMonster[HP: %d/%d, ATK: %d, DEF: %d, Element: %s,"
@@ -446,6 +454,10 @@ public class SimpleMonster {
    */
   public boolean hasMove(int index) {
     return moves.containsKey(index);
+  }
+
+  public int getTimesHitByPoison() {
+    return timesHitByPoison;
   }
 
   public int getAttack() {

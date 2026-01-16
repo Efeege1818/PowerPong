@@ -264,13 +264,17 @@ public class BattleScreenController {
     int remaining = monster.getRemainingCooldown(moveIndex);
 
     button.setDisable(onCd || isLocked);
+    String labelText = title;
     if (isLocked) {
-      button.setText(title + " (Locked) " + specialProgress);
+      labelText += " (Locked)";
     } else if (onCd) {
-      button.setText(title + " (Cooldown: " + remaining + ")");
-    } else {
-      button.setText(title);
+      labelText += " (Cooldown: " + remaining + ")";
     }
+    if (monster.getMove(moveIndex).isSpecial()) {
+      labelText += " " + specialProgress;
+    }
+
+    button.setText(labelText);
 
     if (tooltip != null) {
       tooltip.setText(move.description());

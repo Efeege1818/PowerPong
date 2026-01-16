@@ -62,7 +62,7 @@ public class Data {
   private final Move grassDebuff = new DebuffMove("Poison Absorb", Element.NORMAL,
       "attack", 1, 3, 3, false, "if this debuff is applied: doubles poison ticks", 1);
   private final Move grassSpecial = new AttackMove("Leaf Cannon", Element.GRASS,
-      5, false, 0, false, "Does more damage with higher charge\n" + "charge only increases when poison does DMG", 1);
+      5, false, 0, true, "Does more damage with higher charge\n" + "charge only increases when poison does DMG", 1);
 
   public Data() {
     this.monsters = createMonsters();
