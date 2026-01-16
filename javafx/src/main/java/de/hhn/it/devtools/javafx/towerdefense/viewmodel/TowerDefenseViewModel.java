@@ -162,9 +162,9 @@ public class TowerDefenseViewModel implements TowerDefenseListener {
    */
   public Color getTowerColors(TowerType type) {
     return switch (type) {
-      case MELEE -> Color.BLUE;
-      case RANGED -> Color.CYAN;
-      case MONEYMAKER -> Color.DARKBLUE;
+      case MELEE -> Color.YELLOW;
+      case RANGED -> Color.LIGHTSKYBLUE;
+      case MONEYMAKER -> Color.LIMEGREEN;
       default -> Color.HOTPINK; // Use Hotpink as default value to spot errors
     };
   }

@@ -143,7 +143,7 @@ public class GameScreen extends StackPane {
       towerIconRect.setFill(viewModel.getTowerColors(type));
       int towerCostNumber = viewModel.getTowerTypes().get(type);
       Label towerCost = new Label(String.valueOf(towerCostNumber));
-      towerCost.setTextFill(Color.GOLD);
+//      towerCost.setTextFill(Color.GOLD);
 
       towerIcon.getChildren().addAll(towerIconRect, towerCost);
 
@@ -280,7 +280,7 @@ public class GameScreen extends StackPane {
     towerIconRect1.setFill(viewModel.getTowerColors(TowerType.MONEYMAKER));
     int towerCostNumber1 = viewModel.getTowerTypes().get(TowerType.MONEYMAKER);
     Label towerCost1 = new Label(String.valueOf(towerCostNumber1));
-    towerCost1.setTextFill(Color.GOLD);
+//    towerCost1.setTextFill(Color.GOLD);
     towerIcon1.getChildren().addAll(towerIconRect1, towerCost1);
 
     Label descLabel1 = new Label("The Moneymaker Tower generates some money throughout \nthe round" +
@@ -295,7 +295,7 @@ public class GameScreen extends StackPane {
     towerIconRect2.setFill(viewModel.getTowerColors(TowerType.MELEE));
     int towerCostNumber2 = viewModel.getTowerTypes().get(TowerType.MELEE);
     Label towerCost2 = new Label(String.valueOf(towerCostNumber2));
-    towerCost2.setTextFill(Color.GOLD);
+//    towerCost2.setTextFill(Color.GOLD);
     towerIcon2.getChildren().addAll(towerIconRect2, towerCost2);
 
     Label descLabel2 = new Label("The Melee Tower does good damage, however has a small range.");
@@ -309,7 +309,7 @@ public class GameScreen extends StackPane {
     towerIconRect3.setFill(viewModel.getTowerColors(TowerType.RANGED));
     int towerCostNumber3 = viewModel.getTowerTypes().get(TowerType.RANGED);
     Label towerCost3 = new Label(String.valueOf(towerCostNumber3));
-    towerCost3.setTextFill(Color.GOLD);
+//    towerCost3.setTextFill(Color.GOLD);
     towerIcon3.getChildren().addAll(towerIconRect3, towerCost3);
 
     Label descLabel3 = new Label("The Ranged Tower does little damage within a wide range.");
