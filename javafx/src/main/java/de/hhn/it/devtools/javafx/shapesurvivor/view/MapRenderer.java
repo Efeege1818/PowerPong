@@ -22,6 +22,7 @@ public class MapRenderer {
                           )
                   )
           );
+
   public void renderMap(GraphicsContext gc, GameMap map, Position cameraPos) {
     if (map == null) return;
 
@@ -74,7 +75,7 @@ public class MapRenderer {
         case TREE -> renderTree(gc, screenX, screenY, obstacle.width(), obstacle.height());
         case WALL -> renderWall(gc, screenX, screenY, obstacle.width(), obstacle.height());
         case PILLAR -> renderPillar(gc, screenX, screenY, obstacle.width(), obstacle.height());
-        case BUSH -> renderBush(gc, screenX, screenY, obstacle.width(), obstacle.height());
+        case BUSH -> renderBush(gc, screenX, screenY);
       }
     }
   }
@@ -176,8 +177,7 @@ public class MapRenderer {
     gc.fillRect(x, y + 5, 3, height - 10);
   }
 
-  private void renderBush(GraphicsContext gc, int x, int y, int width, int height){
-
+  private void renderBush(GraphicsContext gc, int x, int y){
     gc.drawImage(BUSH_IMAGE, x, y, 100, 100);
   }
 }

@@ -19,7 +19,7 @@ public record Obstacle(
     TREE,
     WALL,
     PILLAR,
-    BUSH,
+    BUSH
   }
 
   /**

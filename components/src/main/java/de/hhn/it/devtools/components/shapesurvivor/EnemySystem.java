@@ -61,10 +61,12 @@ class EnemySystem {
     int hp = (int) (50 * ctx.getConfiguration().difficultyMultiplier());
     int statMultiplierTime = 1;
 
-    if (service.getElapsedTime() >= 300 && service.getElapsedTime() < 600) {
+    if (service.getElapsedTime() >= 240 && service.getElapsedTime() < 540) {
       statMultiplierTime = 2;
-    } else if (service.getElapsedTime() >= 600) {
+    } else if (service.getElapsedTime() >= 540 && service.getElapsedTime() < 720) {
       statMultiplierTime = 4;
+    } else if (service.getElapsedTime() >= 720) {
+      statMultiplierTime = 6;
     }
     Enemy enemy = new Enemy(
             ctx.getNextEnemyId(),
