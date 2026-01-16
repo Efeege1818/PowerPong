@@ -69,7 +69,7 @@ public class GameRenderer {
     private int lastPlayer2Score = -1;
 
     // Cached fonts and colors to avoid per-frame allocations
-    private static final Color SCORE_COLOR = Color.web("#333333");
+    private static final Color SCORE_COLOR = Color.web("#808080");
     private static final javafx.scene.text.Font SCORE_FONT_BASE = javafx.scene.text.Font.font("Arial",
             javafx.scene.text.FontWeight.BOLD, 150);
 
@@ -531,7 +531,7 @@ public class GameRenderer {
 
         // Player 1 Score (Left Center)
         double fontSize1 = 150 * score1Scale;
-        double alpha1 = Math.min(1.0, 0.3 + (score1Scale - 1.0));
+        double alpha1 = Math.min(1.0, 0.6 + (score1Scale - 1.0));
         gc.setGlobalAlpha(alpha1);
         gc.setFill(SCORE_COLOR); // Use cached color
         gc.setFont(javafx.scene.text.Font.font("Arial", javafx.scene.text.FontWeight.BOLD, fontSize1));
@@ -539,7 +539,7 @@ public class GameRenderer {
 
         // Player 2 Score (Right Center)
         double fontSize2 = 150 * score2Scale;
-        double alpha2 = Math.min(1.0, 0.3 + (score2Scale - 1.0));
+        double alpha2 = Math.min(1.0, 0.6 + (score2Scale - 1.0));
         gc.setGlobalAlpha(alpha2);
         gc.setFont(javafx.scene.text.Font.font("Arial", javafx.scene.text.FontWeight.BOLD, fontSize2));
         gc.fillText(String.valueOf(score2), LOGICAL_WIDTH * 3 / 4, LOGICAL_HEIGHT / 2);
