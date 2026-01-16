@@ -30,6 +30,7 @@ import javafx.stage.Stage;
 public class PowerPongController extends StackPane {
   private final PowerPongViewModel viewModel;
   private final HighscoreManager highscoreManager = new HighscoreManager();
+  private final SoundManager soundManager = new SoundManager();
   private GameTimer gameTimer;
   private GameMode lastSelectedMode = GameMode.CLASSIC_DUEL;
   private Stage fullscreenStage;
@@ -75,9 +76,24 @@ public class PowerPongController extends StackPane {
     winnerLabel.textProperty().bind(viewModel.winnerTextProperty());
 
     // Connect power-up collection events to visual effects
+    // Connect power-up collection events to visual effects and sound
     viewModel.setOnPowerUpCollected(type -> {
       renderer.triggerCollectionEffect(renderer.getColorForPowerUp(type));
+      soundManager.playSound(SoundManager.SoundType.POWERUP);
     });
+
+    // Play sound on score change
+    viewModel.scoreTextProperty().addListener((obs, oldVal, newVal) -> {
+      // Simple check to avoid playing on initial set if possible,
+      // but mostly we want "ding" on point.
+      if (newVal != null && !newVal.equals(oldVal) && !newVal.equals("P1: 0 - P2: 0")) {
+        soundManager.playSound(SoundManager.SoundType.SCORE);
+      }
+    });
+
+    // Start menu music removed from initialize - moved to resume()
+    // to play only when component is selected
+    // soundManager.startMusic(SoundManager.MusicState.MENU);
 
     // Game over handling is now done in the fullscreen window (see startGame
     // method)
@@ -131,6 +147,9 @@ public class PowerPongController extends StackPane {
     try {
       lastSelectedMode = mode;
       isPaused = false;
+
+      // Switch to game music
+      soundManager.startMusic(SoundManager.MusicState.GAME);
 
       // Create fullscreen stage
       fullscreenStage = new Stage();
@@ -239,8 +258,8 @@ public class PowerPongController extends StackPane {
         if (newStatus == GameStatus.PLAYER_1_WINS || newStatus == GameStatus.PLAYER_2_WINS) {
           gameTimer.stop();
           if (newStatus == GameStatus.PLAYER_1_WINS) {
-            // In Player vs Player mode, show "SPIELER 1 GEWINNT", otherwise "DU GEWINNST"
-            if (lastSelectedMode == GameMode.CLASSIC_DUEL) {
+            // In Player vs Player modes, show "SPIELER 1 GEWINNT", otherwise "DU GEWINNST"
+            if (lastSelectedMode == GameMode.CLASSIC_DUEL || lastSelectedMode == GameMode.POWERUP_DUEL) {
               fullscreenWinnerLabel.setText("SPIELER 1 GEWINNT!");
             } else {
               fullscreenWinnerLabel.setText("DU GEWINNST!");
@@ -273,6 +292,13 @@ public class PowerPongController extends StackPane {
           // Trigger confetti and start animation loop for rendering
           renderer.triggerConfetti();
           startConfettiAnimationLoop();
+
+          // Play win/lose sound
+          if (newStatus == GameStatus.PLAYER_1_WINS) {
+            soundManager.playSound(SoundManager.SoundType.WIN);
+          } else {
+            soundManager.playSound(SoundManager.SoundType.LOSE);
+          }
 
           fullscreenGameOverBox.setVisible(true);
         }
@@ -381,6 +407,7 @@ public class PowerPongController extends StackPane {
 
   private void closeFullscreenAndReturnToMenu() {
     gameTimer.stop();
+    soundManager.startMusic(SoundManager.MusicState.MENU);
     viewModel.endGame();
     if (fullscreenStage != null) {
       fullscreenStage.close();
@@ -396,6 +423,7 @@ public class PowerPongController extends StackPane {
   @FXML
   public void onBackToMenu(ActionEvent event) {
     gameTimer.stop();
+    soundManager.startMusic(SoundManager.MusicState.MENU);
     gameOverBox.setVisible(false);
     menuBox.setVisible(true);
     if (menuDecorations != null) {
@@ -406,6 +434,11 @@ public class PowerPongController extends StackPane {
   }
 
   public void resume() {
+    // Resume music when component is selected (if not in game)
+    if (fullscreenStage == null) {
+      soundManager.startMusic(SoundManager.MusicState.MENU);
+    }
+
     if (menuBox != null && menuBox.getScene() != null) {
       Scene scene = menuBox.getScene();
       scene.setOnKeyPressed(this::handleKeyPressed);
@@ -414,6 +447,9 @@ public class PowerPongController extends StackPane {
   }
 
   public void pause() {
+    // Stop music when component loses focus
+    soundManager.startMusic(SoundManager.MusicState.OFF);
+
     if (gameTimer != null) {
       gameTimer.stop();
     }
@@ -480,7 +516,13 @@ public class PowerPongController extends StackPane {
     confettiTimer.start();
   }
 
-  private final GameRenderer renderer = new GameRenderer();
+  private final GameRenderer renderer = createRenderer();
+
+  private GameRenderer createRenderer() {
+    GameRenderer r = new GameRenderer();
+    r.setSoundManager(soundManager);
+    return r;
+  }
 
   private class GameTimer extends AnimationTimer {
     private long lastTime = 0;
@@ -544,8 +586,23 @@ public class PowerPongController extends StackPane {
     if (viewModel != null) {
       renderer.setShieldActive(1, viewModel.hasShield(1));
       renderer.setShieldActive(2, viewModel.hasShield(2));
+
+      // Update effect timer bars for both players
+      updateEffectTimers(1);
+      updateEffectTimers(2);
     }
 
     renderer.render(gc, state);
+  }
+
+  private void updateEffectTimers(int player) {
+    java.util.List<Object[]> effects = viewModel.getActiveEffectsForPlayer(player);
+    java.util.List<GameRenderer.EffectTimerInfo> timers = new java.util.ArrayList<>();
+    for (Object[] effect : effects) {
+      PowerUpType type = (PowerUpType) effect[0];
+      double ratio = (double) effect[1];
+      timers.add(new GameRenderer.EffectTimerInfo(renderer.getColorForPowerUp(type), ratio));
+    }
+    renderer.setEffectTimers(player, timers);
   }
 }

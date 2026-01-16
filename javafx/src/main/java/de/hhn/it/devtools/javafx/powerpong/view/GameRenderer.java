@@ -93,6 +93,13 @@ public class GameRenderer {
     private int activeConfettiCount = 0;
     private boolean confettiActive = false;
 
+    // Sound manager for sound effects
+    private SoundManager soundManager;
+
+    public void setSoundManager(SoundManager soundManager) {
+        this.soundManager = soundManager;
+    }
+
     // Image Caches (Bit Blit Optimization)
     private final Map<PowerUpType, Image> powerUpImageCache = new HashMap<>();
     private Image ballImageCache;
@@ -382,9 +389,11 @@ public class GameRenderer {
 
         if (state.player1Paddle() != null) {
             drawNeonPaddle(gc, state.player1Paddle(), NEON_BLUE);
+            drawEffectTimerBars(gc, state.player1Paddle(), 1);
         }
         if (state.player2Paddle() != null) {
             drawNeonPaddle(gc, state.player2Paddle(), NEON_PINK);
+            drawEffectTimerBars(gc, state.player2Paddle(), 2);
         }
 
         // Update and draw particles
@@ -622,6 +631,9 @@ public class GameRenderer {
     // Collision debounce flags (secondary ball)
     private boolean leftPaddleHitHandled2 = false;
     private boolean rightPaddleHitHandled2 = false;
+    // Wall hit flags
+    private boolean wallHitHandled = false;
+    private boolean wallHitHandled2 = false;
     // Track which ball index we're drawing
     private int currentBallIndex = 0;
 
@@ -634,6 +646,28 @@ public class GameRenderer {
         // Get the correct last position and debounce flags based on ball index
         boolean isSecondary = currentBallIndex > 0;
         double prevX = isSecondary ? lastSecondaryBallX : lastBallX;
+
+        // Detect wall collision (top/bottom)
+        double ballY = ball.yPosition();
+        double fieldHeight = 600.0; // Fixed game height
+
+        if (isSecondary) {
+            if (ballY > 50 && ballY < fieldHeight - 50) {
+                wallHitHandled2 = false;
+            } else if ((ballY <= r + 5 || ballY >= fieldHeight - r - 5) && !wallHitHandled2) {
+                if (soundManager != null)
+                    soundManager.playSound(SoundManager.SoundType.WALL_HIT);
+                wallHitHandled2 = true;
+            }
+        } else {
+            if (ballY > 50 && ballY < fieldHeight - 50) {
+                wallHitHandled = false;
+            } else if ((ballY <= r + 5 || ballY >= fieldHeight - r - 5) && !wallHitHandled) {
+                if (soundManager != null)
+                    soundManager.playSound(SoundManager.SoundType.WALL_HIT);
+                wallHitHandled = true;
+            }
+        }
 
         // Detect paddle collision and spawn particles
         if (prevX >= 0) {
@@ -648,6 +682,8 @@ public class GameRenderer {
                 } else if (leftPaddle != null && ballX > prevX && !leftPaddleHitHandled2) {
                     spawnCollisionParticles(ballX, ball.yPosition(), NEON_BLUE);
                     triggerShake(0.8); // Slightly weaker shake for secondary
+                    if (soundManager != null)
+                        soundManager.playSound(SoundManager.SoundType.PADDLE_HIT);
                     leftPaddleHitHandled2 = true;
                 }
                 if (ballX < 700) {
@@ -655,6 +691,8 @@ public class GameRenderer {
                 } else if (rightPaddle != null && ballX < prevX && !rightPaddleHitHandled2) {
                     spawnCollisionParticles(ballX, ball.yPosition(), NEON_PINK);
                     triggerShake(0.8);
+                    if (soundManager != null)
+                        soundManager.playSound(SoundManager.SoundType.PADDLE_HIT);
                     rightPaddleHitHandled2 = true;
                 }
             } else {
@@ -664,6 +702,8 @@ public class GameRenderer {
                 } else if (leftPaddle != null && ballX > prevX && !leftPaddleHitHandled) {
                     spawnCollisionParticles(ballX, ball.yPosition(), NEON_BLUE);
                     triggerShake(1.0);
+                    if (soundManager != null)
+                        soundManager.playSound(SoundManager.SoundType.PADDLE_HIT);
                     leftPaddleHitHandled = true;
                 }
                 if (ballX < 700) {
@@ -671,6 +711,8 @@ public class GameRenderer {
                 } else if (rightPaddle != null && ballX < prevX && !rightPaddleHitHandled) {
                     spawnCollisionParticles(ballX, ball.yPosition(), NEON_PINK);
                     triggerShake(1.0);
+                    if (soundManager != null)
+                        soundManager.playSound(SoundManager.SoundType.PADDLE_HIT);
                     rightPaddleHitHandled = true;
                 }
             }
@@ -865,21 +907,42 @@ public class GameRenderer {
             return;
 
         double paddleX = paddle.xPosition();
-        double paddleY = paddle.yPosition() + paddle.height() / 2 + 8; // Below paddle
+        double paddleCenterY = paddle.yPosition();
+        double paddleHalfHeight = paddle.height() / 2;
         double barWidth = paddle.width();
-        double barHeight = 4;
-        double spacing = 6;
+        double barHeight = 3;
+        double spacing = 5;
+        double margin = 12;
+
+        // Calculate total height needed for bars
+        double totalBarsHeight = timers.size() * spacing + margin;
+
+        // The paddle's bottom edge position
+        double paddleBottomY = paddleCenterY + paddleHalfHeight;
+
+        // Check if bars would go off-screen if drawn below
+        boolean showAbove = (paddleBottomY + totalBarsHeight) > (LOGICAL_HEIGHT - 5);
+
+        double startY;
+        if (showAbove) {
+            // Draw above paddle (use top edge)
+            double paddleTopY = paddleCenterY - paddleHalfHeight;
+            startY = paddleTopY - margin - (timers.size() - 1) * spacing - barHeight;
+        } else {
+            // Draw below paddle
+            startY = paddleBottomY + margin;
+        }
 
         int index = 0;
         for (EffectTimerInfo timer : timers) {
-            double y = paddleY + index * spacing;
+            double y = startY + index * spacing;
 
-            // Background bar
-            gc.setFill(Color.gray(0.2, 0.5));
+            // Background bar (more transparent)
+            gc.setFill(Color.gray(0.2, 0.3));
             gc.fillRect(paddleX, y, barWidth, barHeight);
 
-            // Progress bar
-            gc.setFill(timer.color.deriveColor(0, 1, 1, 0.8));
+            // Progress bar (more transparent)
+            gc.setFill(timer.color.deriveColor(0, 1, 1, 0.5));
             gc.fillRect(paddleX, y, barWidth * timer.remainingRatio, barHeight);
 
             index++;

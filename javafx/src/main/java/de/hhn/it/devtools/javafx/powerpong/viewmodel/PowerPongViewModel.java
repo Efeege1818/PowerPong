@@ -67,6 +67,35 @@ public class PowerPongViewModel implements PowerPongListener {
     return service.hasShield(player);
   }
 
+  /**
+   * Get active effect timers for a player (for UI display).
+   * Returns list of [PowerUpType, remainingRatio] arrays.
+   */
+  @SuppressWarnings("unchecked")
+  public java.util.List<Object[]> getActiveEffectsForPlayer(int player) {
+    try {
+      // Use reflection to access getActiveEffectsForPlayer from service
+      // implementation
+      var method = service.getClass().getMethod("getActiveEffectsForPlayer", int.class);
+      var result = method.invoke(service, player);
+      if (result instanceof java.util.List<?> list) {
+        java.util.List<Object[]> timers = new java.util.ArrayList<>();
+        for (Object item : list) {
+          // ActiveEffectInfo record has type() and remainingRatio() methods
+          var typeMethod = item.getClass().getMethod("type");
+          var ratioMethod = item.getClass().getMethod("remainingRatio");
+          PowerUpType type = (PowerUpType) typeMethod.invoke(item);
+          double ratio = (double) ratioMethod.invoke(item);
+          timers.add(new Object[] { type, ratio });
+        }
+        return timers;
+      }
+    } catch (Exception e) {
+      // Ignore if method not available
+    }
+    return java.util.Collections.emptyList();
+  }
+
   public void pause() {
     service.setPaused(true);
     service.removeListener(this);

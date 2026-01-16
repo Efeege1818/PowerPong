@@ -4,6 +4,7 @@ module devtools.javafx {
   requires devtools.components;
   requires javafx.controls;
   requires javafx.fxml;
+  requires java.desktop; // For javax.sound.sampled (sound effects)
 
   uses de.hhn.it.devtools.apis.examples.coffeemakerservice.CoffeeMakerService;
   uses de.hhn.it.devtools.apis.examples.coffeemakerservice.AdminCoffeeMakerService;
@@ -18,4 +19,3 @@ module devtools.javafx {
   exports de.hhn.it.devtools.javafx.coffeemaker.view;
 
 }
-

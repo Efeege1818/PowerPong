@@ -516,6 +516,16 @@ public class PowerPongMatchEngine implements PowerPongService {
     return powerUpManager.hasShield(player);
   }
 
+  /**
+   * Get active effects for a player (for UI timer bar display).
+   */
+  public java.util.List<PowerUpManager.ActiveEffectInfo> getActiveEffectsForPlayer(int player) {
+    if (powerUpManager == null) {
+      return java.util.Collections.emptyList();
+    }
+    return powerUpManager.getActiveEffectsForPlayer(player);
+  }
+
   private void resetAfterShield() {
     physics.launchBall(random.nextBoolean() ? 1 : -1);
     status = GameStatus.RUNNING;
