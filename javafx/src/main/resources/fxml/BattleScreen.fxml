@@ -75,6 +75,16 @@
                             </HBox>
 
                         </VBox>
+                  <Label fx:id="battleMessageLabel" layoutX="1204.0" layoutY="450.0" text="Label" visible="false"
+                         style="-fx-background-color: rgba(0,0,0,0.75);
+                         -fx-text-fill: white;
+                         -fx-padding: 12;
+                         -fx-font-size: 20px;
+                         -fx-background-radius: 10;">
+                     <font>
+                        <Font size="36.0" />
+                     </font>
+                  </Label>
 
                     </AnchorPane>
                 </center>

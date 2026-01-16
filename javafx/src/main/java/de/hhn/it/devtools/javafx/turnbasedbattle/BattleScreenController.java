@@ -5,11 +5,13 @@ import de.hhn.it.devtools.apis.turnbasedbattle.GameState;
 import de.hhn.it.devtools.apis.turnbasedbattle.TurnBasedBattleService;
 import de.hhn.it.devtools.apis.turnbasedbattle.UnknownTransitionException;
 import de.hhn.it.devtools.apis.turnbasedbattle.move.Move;
+import de.hhn.it.devtools.components.turnbasedbattle.BattleLog;
 import de.hhn.it.devtools.components.turnbasedbattle.SimpleMonster;
 import de.hhn.it.devtools.components.turnbasedbattle.SimpleTurnBasedBattleService;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -50,6 +52,7 @@ public class BattleScreenController {
   @FXML private Label keyLabelBuff;
   @FXML private Label keyLabelDebuff;
   @FXML private Label keyLabelSpecial;
+  @FXML private Label battleMessageLabel;
 
   @FXML private ProgressBar player1HpBar;
   @FXML private ProgressBar player2HpBar;
@@ -83,6 +86,8 @@ public class BattleScreenController {
 
   @FXML
   public void initialize() {
+    BattleLog.addListener(this::showBattleMessage);
+
     slots = List.of(
         new SlotBinding(MoveSlot.S1, btnElementalAtk, keyLabelElemental),
         new SlotBinding(MoveSlot.S2, btnNormalAtk,    keyLabelNormal),
@@ -111,6 +116,28 @@ public class BattleScreenController {
     PauseScreenViewModel pauseViewModel = new PauseScreenViewModel(SimpleMonster.create(service.getPlayer1().monster()), SimpleMonster.create(service.getPlayer2().monster()));
     PauseScreenFx pauseScreen = new PauseScreenFx(screenManager, pauseViewModel);
     root.getChildren().add(pauseScreen);
+  }
+
+  private void showBattleMessage(String text) {
+    Platform.runLater(() -> {
+      battleMessageLabel.setText(text);
+      battleMessageLabel.setOpacity(0);
+      battleMessageLabel.setVisible(true);
+
+      Timeline timeline = new Timeline(
+          new KeyFrame(Duration.ZERO,
+              new KeyValue(battleMessageLabel.opacityProperty(), 0)),
+          new KeyFrame(Duration.millis(200),
+              new KeyValue(battleMessageLabel.opacityProperty(), 1)),
+          new KeyFrame(Duration.seconds(5),
+              new KeyValue(battleMessageLabel.opacityProperty(), 1)),
+          new KeyFrame(Duration.seconds(6),
+              new KeyValue(battleMessageLabel.opacityProperty(), 0))
+      );
+
+      timeline.setOnFinished(e -> battleMessageLabel.setVisible(false));
+      timeline.play();
+    });
   }
 
   public void setDependencies(SimpleScreenManager screenManager, TurnBasedBattleService service) {
