@@ -102,6 +102,11 @@ public class GameRenderer {
 
     // Image Caches (Bit Blit Optimization)
     private final Map<PowerUpType, Image> powerUpImageCache = new HashMap<>();
+
+    public Image getPowerUpImage(PowerUpType type) {
+        return powerUpImageCache.get(type);
+    }
+
     private Image ballImageCache;
     private static final int CACHE_SIZE = 256; // High-Res Cache (256x256) for crisp scaling
 

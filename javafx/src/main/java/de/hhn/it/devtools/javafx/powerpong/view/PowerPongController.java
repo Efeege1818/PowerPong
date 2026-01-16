@@ -25,6 +25,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
 public class PowerPongController extends StackPane {
@@ -58,6 +59,20 @@ public class PowerPongController extends StackPane {
   private VBox highscoreBox;
   @FXML
   private VBox highscoreListContainer;
+  @FXML
+  private ImageView iconBig;
+  @FXML
+  private ImageView iconSmallEn;
+  @FXML
+  private ImageView iconFast;
+  @FXML
+  private ImageView iconSlow;
+  @FXML
+  private ImageView iconShield;
+  @FXML
+  private ImageView iconBarrier;
+  @FXML
+  private ImageView iconMulti;
 
   private static final double GAME_WIDTH = 800.0;
   private static final double GAME_HEIGHT = 600.0;
@@ -80,6 +95,17 @@ public class PowerPongController extends StackPane {
     gameTimer = new GameTimer();
     scoreLabel.textProperty().bind(viewModel.scoreTextProperty());
     winnerLabel.textProperty().bind(viewModel.winnerTextProperty());
+
+    // Initialize Compendium Icons
+    if (renderer != null) {
+      iconBig.setImage(renderer.getPowerUpImage(PowerUpType.BIGGER_PADDLE));
+      iconSmallEn.setImage(renderer.getPowerUpImage(PowerUpType.SMALLER_ENEMY_PADDLE));
+      iconFast.setImage(renderer.getPowerUpImage(PowerUpType.FASTER_BALL_ENEMY_SIDE));
+      iconSlow.setImage(renderer.getPowerUpImage(PowerUpType.SLOW_ENEMY_PADDLE));
+      iconShield.setImage(renderer.getPowerUpImage(PowerUpType.SHIELD));
+      iconBarrier.setImage(renderer.getPowerUpImage(PowerUpType.BARRIERLESS));
+      iconMulti.setImage(renderer.getPowerUpImage(PowerUpType.DOUBLE_BALL));
+    }
 
     // Connect power-up collection events to visual effects
     // Connect power-up collection events to visual effects and sound
