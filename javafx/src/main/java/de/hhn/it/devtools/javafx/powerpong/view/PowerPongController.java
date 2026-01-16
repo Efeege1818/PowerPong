@@ -26,6 +26,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.image.ImageView;
+import javafx.beans.value.ChangeListener;
 import javafx.stage.Stage;
 
 public class PowerPongController extends StackPane {
@@ -73,6 +74,8 @@ public class PowerPongController extends StackPane {
   private ImageView iconBarrier;
   @FXML
   private ImageView iconMulti;
+
+  private ChangeListener<GameStatus> activeGameListener;
 
   private static final double GAME_WIDTH = 800.0;
   private static final double GAME_HEIGHT = 600.0;
@@ -356,7 +359,10 @@ public class PowerPongController extends StackPane {
       fullscreenScene.setOnKeyReleased(this::handleKeyReleased);
 
       // Handle game over in fullscreen
-      viewModel.gameStatusProperty().addListener((observable, oldStatus, newStatus) -> {
+      if (activeGameListener != null) {
+        viewModel.gameStatusProperty().removeListener(activeGameListener);
+      }
+      activeGameListener = (observable, oldStatus, newStatus) -> {
         if (newStatus == GameStatus.PLAYER_1_WINS || newStatus == GameStatus.PLAYER_2_WINS) {
           gameTimer.stop();
           if (newStatus == GameStatus.PLAYER_1_WINS) {
@@ -404,7 +410,8 @@ public class PowerPongController extends StackPane {
 
           fullscreenGameOverBox.setVisible(true);
         }
-      });
+      };
+      viewModel.gameStatusProperty().addListener(activeGameListener);
 
       // Handle ESC / fullscreen exit
       fullscreenStage.fullScreenProperty().addListener((obs, wasFullScreen, isFullScreen) -> {
@@ -508,6 +515,10 @@ public class PowerPongController extends StackPane {
   }
 
   private void closeFullscreenAndReturnToMenu() {
+    if (activeGameListener != null) {
+      viewModel.gameStatusProperty().removeListener(activeGameListener);
+      activeGameListener = null;
+    }
     gameTimer.stop();
     soundManager.startMusic(SoundManager.MusicState.MENU);
     viewModel.endGame();
