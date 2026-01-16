@@ -2,6 +2,7 @@ package de.hhn.it.devtools.javafx.shapesurvivor.viewmodel;
 
 import de.hhn.it.devtools.apis.shapesurvivor.*;
 import de.hhn.it.devtools.apis.exceptions.IllegalParameterException;
+import de.hhn.it.devtools.components.shapesurvivor.GameMap;
 import de.hhn.it.devtools.components.shapesurvivor.helper.GameConfigurationBuilder;
 import de.hhn.it.devtools.components.shapesurvivor.SimpleShapeSurvivorService;
 import de.hhn.it.devtools.components.shapesurvivor.WeaponAnimationState;
@@ -26,6 +27,10 @@ public class ShapeSurvivorViewModel implements ShapeSurvivorListener {
     private final BooleanProperty levelUpAvailableProperty;
     private final ObjectProperty<UpgradeOption[]> availableUpgradesProperty;
     private final IntegerProperty remainingTimeProperty = new SimpleIntegerProperty(0);
+    private final IntegerProperty experienceProperty = new SimpleIntegerProperty(0);
+    private final IntegerProperty experienceToNextLevelProperty = new SimpleIntegerProperty(100);
+    private final DoubleProperty experienceProgressProperty = new SimpleDoubleProperty(0);
+    private final BooleanProperty victoryProperty = new SimpleBooleanProperty(false);
     private static final org.slf4j.Logger logger =
             org.slf4j.LoggerFactory.getLogger(ShapeSurvivorViewModel.class);
 
@@ -167,14 +172,32 @@ public class ShapeSurvivorViewModel implements ShapeSurvivorListener {
 
     @Override
     public void gameEnded(boolean victory) {
-        if (!victory) {
-            Platform.runLater(() -> gameOverProperty.set(true));
-        }
+        Platform.runLater(() -> {
+            if (victory) {
+                victoryProperty.set(true);
+            } else {
+                gameOverProperty.set(true);
+            }
+        });
+    }
+
+    public void resetVictory() {
+        victoryProperty.set(false);
     }
 
     @Override
     public void updateExperience(int experience, int experienceToNextLevel) {
-        Platform.runLater(() -> scoreProperty.set(experience));
+        Platform.runLater(() -> {
+            experienceProperty.set(experience);
+            experienceToNextLevelProperty.set(experienceToNextLevel);
+
+            double progress = experienceToNextLevel == 0
+                ? 0
+                : (double) experience / experienceToNextLevel;
+
+            experienceProgressProperty.set(progress);
+            scoreProperty.set(experience);
+        });
     }
 
     @Override
@@ -196,6 +219,10 @@ public class ShapeSurvivorViewModel implements ShapeSurvivorListener {
         }
     }
 
+    public BooleanProperty victoryProperty() {
+        return victoryProperty;
+    }
+
     public void resetGame() {
         gameService.reset();
         Platform.runLater(() -> {
@@ -206,6 +233,18 @@ public class ShapeSurvivorViewModel implements ShapeSurvivorListener {
         });
     }
 
+    public IntegerProperty experienceProperty() {
+        return experienceProperty;
+    }
+
+    public IntegerProperty experienceToNextLevelProperty() {
+        return experienceToNextLevelProperty;
+    }
+
+    public DoubleProperty experienceProgressProperty() {
+        return experienceProgressProperty;
+    }
+
     public void resetAndStartDefault() {
         gameService.reset();
         gameService.start();
@@ -213,6 +252,13 @@ public class ShapeSurvivorViewModel implements ShapeSurvivorListener {
 
     public void resetGameOver() {
         gameOverProperty.set(false);
+    }
+
+    public GameMap getGameMap() {
+        if (gameService instanceof SimpleShapeSurvivorService service) {
+            return service.getGameMap();
+        }
+        return null;
     }
 
     public void exitGame() {

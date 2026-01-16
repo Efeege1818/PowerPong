@@ -67,7 +67,7 @@ Main extends Application {
   public void stop() {
     logger.info("stop: Shutting down");
     // This is automatically called then you terminate the application using the window controls
-    // ("x it out", "quit it", ...). It does not get called when you terminate the application
+    // ("xpos it out", "quit it", ...). It does not get called when you terminate the application
     // using control-C or an OS command like "kill".
 
     rootController.shutdown();

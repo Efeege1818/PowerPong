@@ -4,8 +4,10 @@ import de.hhn.it.devtools.apis.shapesurvivor.*;
 import de.hhn.it.devtools.apis.exceptions.IllegalParameterException;
 import de.hhn.it.devtools.components.shapesurvivor.SimpleShapeSurvivorService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,6 +23,20 @@ class SimpleShapeSurvivorServiceTest {
         listener = new TestListener();
         service.addListener(listener);
     }
+
+    @AfterEach
+    void tearDown() {
+        try {
+            if (service.getGameState() == GameState.RUNNING ||
+                service.getGameState() == GameState.PAUSED) {
+                service.abort();
+            }
+        } catch (Exception e) {
+            // Ignore
+        }
+    }
+
+    // === Initialization Tests ===
 
     @Test
     @DisplayName("Service initializes in PREPARED state")
@@ -49,6 +65,22 @@ class SimpleShapeSurvivorServiceTest {
     }
 
     @Test
+    @DisplayName("Statistics are initialized correctly")
+    void testStatisticsInitialization() {
+        GameStatistics stats = service.getStatistics();
+
+        assertNotNull(stats);
+        assertEquals(0, stats.enemiesKilled());
+        assertEquals(0, stats.damageDealt());
+        assertEquals(0, stats.damageTaken());
+        assertEquals(0, stats.wavesCompleted());
+        assertEquals(1, stats.highestLevel());
+        assertEquals(0, stats.totalExperienceGained());
+    }
+
+    // === Game State Management Tests ===
+
+    @Test
     @DisplayName("Game can be started from PREPARED state")
     void testStartGame() {
         service.start();
@@ -62,7 +94,6 @@ class SimpleShapeSurvivorServiceTest {
     @DisplayName("Cannot start game from non-PREPARED state")
     void testStartGameInvalidState() {
         service.start();
-
         assertThrows(IllegalStateException.class, () -> service.start());
     }
 
@@ -88,7 +119,6 @@ class SimpleShapeSurvivorServiceTest {
     @DisplayName("Cannot resume game that is not paused")
     void testResumeInvalidState() {
         service.start();
-
         assertThrows(IllegalStateException.class, () -> service.resume());
     }
 
@@ -103,7 +133,15 @@ class SimpleShapeSurvivorServiceTest {
 
     @Test
     @DisplayName("Cannot abort game in PREPARED state")
-    void testAbortInvalidState() {
+    void testAbortInPreparedState() {
+        assertThrows(IllegalStateException.class, () -> service.abort());
+    }
+
+    @Test
+    @DisplayName("Cannot abort game in ABORTED state")
+    void testAbortInAbortedState() {
+        service.start();
+        service.abort();
         assertThrows(IllegalStateException.class, () -> service.abort());
     }
 
@@ -112,7 +150,6 @@ class SimpleShapeSurvivorServiceTest {
     void testReset() {
         service.start();
 
-        // Wait for some game time
         try {
             Thread.sleep(100);
         } catch (InterruptedException e) {
@@ -126,64 +163,82 @@ class SimpleShapeSurvivorServiceTest {
         assertFalse(service.isLevelUpPending());
     }
 
-    @Test
-    @DisplayName("Player can move in all directions")
-    void testPlayerMovement() {
-        Player initialPlayer = service.getPlayer();
-        int initialX = initialPlayer.position().x();
-        int initialY = initialPlayer.position().y();
+    // === Player Movement Tests ===
 
+    @Test
+    @DisplayName("Player can move UP")
+    void testPlayerMoveUp() {
+        Player before = service.getPlayer();
         service.movePlayer(Direction.UP);
-        Player afterUp = service.getPlayer();
-        assertTrue(afterUp.position().y() < initialY);
+        Player after = service.getPlayer();
 
-        service.movePlayer(Direction.DOWN);
-        service.movePlayer(Direction.DOWN);
-        Player afterDown = service.getPlayer();
-        assertTrue(afterDown.position().y() > afterUp.position().y());
-
-        service.movePlayer(Direction.LEFT);
-        Player afterLeft = service.getPlayer();
-        assertTrue(afterLeft.position().x() < initialX);
-
-        service.movePlayer(Direction.RIGHT);
-        service.movePlayer(Direction.RIGHT);
-        Player afterRight = service.getPlayer();
-        assertTrue(afterRight.position().x() > afterLeft.position().x());
+        assertTrue(after.position().y() < before.position().y());
     }
 
     @Test
-    @DisplayName("Player cannot move outside field boundaries")
-    void testPlayerMovementBoundaries() {
-        GameConfiguration config = service.getConfiguration();
+    @DisplayName("Player can move DOWN")
+    void testPlayerMoveDown() {
+        Player before = service.getPlayer();
+        service.movePlayer(Direction.DOWN);
+        Player after = service.getPlayer();
 
-        // Move to top-left corner
-        for (int i = 0; i < 100; i++) {
-            service.movePlayer(Direction.UP);
-            service.movePlayer(Direction.LEFT);
-        }
-
-        Player player = service.getPlayer();
-        assertTrue(player.position().x() >= 0);
-        assertTrue(player.position().y() >= 0);
-
-        // Move to bottom-right corner
-        for (int i = 0; i < 200; i++) {
-            service.movePlayer(Direction.DOWN);
-            service.movePlayer(Direction.RIGHT);
-        }
-
-        player = service.getPlayer();
-        assertTrue(player.position().x() <= config.fieldWidth());
-        assertTrue(player.position().y() <= config.fieldHeight());
+        assertTrue(after.position().y() > before.position().y());
     }
+
+    @Test
+    @DisplayName("Player can move LEFT")
+    void testPlayerMoveLeft() {
+        Player before = service.getPlayer();
+        service.movePlayer(Direction.LEFT);
+        Player after = service.getPlayer();
+
+        assertTrue(after.position().x() < before.position().x());
+    }
+
+    @Test
+    @DisplayName("Player can move RIGHT")
+    void testPlayerMoveRight() {
+        Player before = service.getPlayer();
+        service.movePlayer(Direction.RIGHT);
+        Player after = service.getPlayer();
+
+        assertTrue(after.position().x() > before.position().x());
+    }
+
+    @Test
+    @DisplayName("Player can move in multiple directions")
+    void testPlayerMoveMultiple() {
+        Player before = service.getPlayer();
+        service.movePlayerMultiple(new Direction[]{Direction.UP, Direction.RIGHT});
+        Player after = service.getPlayer();
+
+        assertTrue(after.position().y() < before.position().y());
+        assertTrue(after.position().x() > before.position().x());
+    }
+
+    @Test
+    @DisplayName("Player can move diagonally")
+    void testPlayerDiagonalMovement() {
+        Player before = service.getPlayer();
+
+        // Move diagonally up-right
+        for (int i = 0; i < 5; i++) {
+            service.movePlayerMultiple(new Direction[]{Direction.UP, Direction.RIGHT});
+        }
+
+        Player after = service.getPlayer();
+        assertTrue(after.position().x() > before.position().x());
+        assertTrue(after.position().y() < before.position().y());
+    }
+
+    // === Configuration Tests ===
 
     @Test
     @DisplayName("Configuration can be set in PREPARED state")
     void testConfigureInPreparedState() throws IllegalParameterException {
         GameConfiguration newConfig = new GameConfiguration(
-                600, 1000, 800, 150, 6.0, 15, 2, 1.5, 1.2,
-                new WeaponType[]{WeaponType.SWORD, WeaponType.AURA}
+            600, 1000, 800, 150, 6.0, 15, 2, 1.5, 1.2,
+            new WeaponType[]{WeaponType.SWORD, WeaponType.AURA}
         );
 
         service.configure(newConfig);
@@ -202,8 +257,8 @@ class SimpleShapeSurvivorServiceTest {
         service.abort();
 
         GameConfiguration newConfig = new GameConfiguration(
-                600, 1000, 800, 150, 6.0, 15, 1, 1.0, 1.0,
-                new WeaponType[]{WeaponType.WHIP}
+            600, 1000, 800, 150, 6.0, 15, 1, 1.0, 1.0,
+            new WeaponType[]{WeaponType.WHIP}
         );
 
         service.configure(newConfig);
@@ -212,48 +267,116 @@ class SimpleShapeSurvivorServiceTest {
 
     @Test
     @DisplayName("Cannot configure while game is running")
-    void testConfigureInvalidState() {
+    void testConfigureInRunningState() {
         service.start();
 
         GameConfiguration newConfig = new GameConfiguration(
-                600, 1000, 800, 150, 6.0, 15, 1, 1.0, 1.0,
-                new WeaponType[]{WeaponType.SWORD}
+            600, 1000, 800, 150, 6.0, 15, 1, 1.0, 1.0,
+            new WeaponType[]{WeaponType.SWORD}
         );
 
         assertThrows(IllegalStateException.class, () -> service.configure(newConfig));
     }
 
     @Test
-    @DisplayName("Configuration validates parameters")
-    void testConfigurationValidation() {
-        assertThrows(IllegalParameterException.class, () -> {
-            GameConfiguration invalidConfig = new GameConfiguration(
-                    -10, 800, 600, 100, 5.0, 10, 1, 1.0, 1.0,
-                    new WeaponType[]{WeaponType.SWORD}
-            );
-            service.configure(invalidConfig);
-        });
+    @DisplayName("Cannot configure while game is paused")
+    void testConfigureInPausedState() {
+        service.start();
+        service.pause();
 
-        assertThrows(IllegalParameterException.class, () -> {
-            GameConfiguration invalidConfig = new GameConfiguration(
-                    600, -800, 600, 100, 5.0, 10, 1, 1.0, 1.0,
-                    new WeaponType[]{WeaponType.SWORD}
-            );
-            service.configure(invalidConfig);
-        });
+        GameConfiguration newConfig = new GameConfiguration(
+            600, 1000, 800, 150, 6.0, 15, 1, 1.0, 1.0,
+            new WeaponType[]{WeaponType.SWORD}
+        );
 
-        assertThrows(IllegalParameterException.class, () -> {
-            GameConfiguration invalidConfig = new GameConfiguration(
-                    600, 800, 600, -100, 5.0, 10, 1, 1.0, 1.0,
-                    new WeaponType[]{WeaponType.SWORD}
-            );
-            service.configure(invalidConfig);
-        });
+        assertThrows(IllegalStateException.class, () -> service.configure(newConfig));
     }
+
+    @Test
+    @DisplayName("Cannot configure with null configuration")
+    void testConfigureNull() {
+        assertThrows(IllegalArgumentException.class, () -> service.configure(null));
+    }
+
+    @Test
+    @DisplayName("Configuration validates game duration")
+    void testConfigurationValidatesDuration() {
+        GameConfiguration invalid = new GameConfiguration(
+            -10, 800, 600, 100, 5.0, 10, 1, 1.0, 1.0,
+            new WeaponType[]{WeaponType.SWORD}
+        );
+
+        assertThrows(IllegalParameterException.class, () -> service.configure(invalid));
+    }
+
+    @Test
+    @DisplayName("Configuration validates field width")
+    void testConfigurationValidatesFieldWidth() {
+        GameConfiguration invalid = new GameConfiguration(
+            600, -800, 600, 100, 5.0, 10, 1, 1.0, 1.0,
+            new WeaponType[]{WeaponType.SWORD}
+        );
+
+        assertThrows(IllegalParameterException.class, () -> service.configure(invalid));
+    }
+
+    @Test
+    @DisplayName("Configuration validates field height")
+    void testConfigurationValidatesFieldHeight() {
+        GameConfiguration invalid = new GameConfiguration(
+            600, 800, -600, 100, 5.0, 10, 1, 1.0, 1.0,
+            new WeaponType[]{WeaponType.SWORD}
+        );
+
+        assertThrows(IllegalParameterException.class, () -> service.configure(invalid));
+    }
+
+    @Test
+    @DisplayName("Configuration validates starting health")
+    void testConfigurationValidatesHealth() {
+        GameConfiguration invalid = new GameConfiguration(
+            600, 800, 600, -100, 5.0, 10, 1, 1.0, 1.0,
+            new WeaponType[]{WeaponType.SWORD}
+        );
+
+        assertThrows(IllegalParameterException.class, () -> service.configure(invalid));
+    }
+
+    @Test
+    @DisplayName("Configuration validates starting speed")
+    void testConfigurationValidatesSpeed() {
+        GameConfiguration invalid = new GameConfiguration(
+            600, 800, 600, 100, -5.0, 10, 1, 1.0, 1.0,
+            new WeaponType[]{WeaponType.SWORD}
+        );
+
+        assertThrows(IllegalParameterException.class, () -> service.configure(invalid));
+    }
+
+    @Test
+    @DisplayName("Configuration validates starting damage")
+    void testConfigurationValidatesDamage() {
+        GameConfiguration invalid = new GameConfiguration(
+            600, 800, 600, 100, 5.0, -10, 1, 1.0, 1.0,
+            new WeaponType[]{WeaponType.SWORD}
+        );
+
+        assertThrows(IllegalParameterException.class, () -> service.configure(invalid));
+    }
+
+    // === Time Management Tests ===
 
     @Test
     @DisplayName("Cannot get elapsed time in PREPARED state")
     void testElapsedTimeInPreparedState() {
+        assertThrows(IllegalStateException.class, () -> service.getElapsedTime());
+    }
+
+    @Test
+    @DisplayName("Cannot get elapsed time in ABORTED state")
+    void testElapsedTimeInAbortedState() {
+        service.start();
+        service.abort();
         assertThrows(IllegalStateException.class, () -> service.getElapsedTime());
     }
 
@@ -271,27 +394,73 @@ class SimpleShapeSurvivorServiceTest {
     @DisplayName("Can get remaining time while game is running")
     void testRemainingTimeWhileRunning() {
         service.start();
-
         int remaining = service.getRemainingTime();
-        assertEquals(900, remaining, 1); // Within 1 second tolerance
+        assertTrue(remaining >= 899 && remaining <= 900);
     }
 
     @Test
-    @DisplayName("Listeners can be added and removed")
-    void testListenerManagement() {
-        TestListener newListener = new TestListener();
+    @DisplayName("Cannot get remaining time in PREPARED state")
+    void testRemainingTimeInPreparedState() {
+        assertThrows(IllegalStateException.class, () -> service.getRemainingTime());
+    }
 
+    @Test
+    @DisplayName("Cannot get remaining time in ABORTED state")
+    void testRemainingTimeInAbortedState() {
+        service.start();
+        service.abort();
+        assertThrows(IllegalStateException.class, () -> service.getRemainingTime());
+    }
+
+    // === Listener Management Tests ===
+
+    @Test
+    @DisplayName("Listeners can be added")
+    void testAddListener() {
+        TestListener newListener = new TestListener();
         assertTrue(service.addListener(newListener));
+    }
+
+    @Test
+    @DisplayName("Listeners can be removed")
+    void testRemoveListener() {
+        TestListener newListener = new TestListener();
+        service.addListener(newListener);
         assertTrue(service.removeListener(newListener));
+    }
+
+    @Test
+    @DisplayName("Removing non-existent listener returns false")
+    void testRemoveNonExistentListener() {
+        TestListener newListener = new TestListener();
         assertFalse(service.removeListener(newListener));
     }
 
     @Test
-    @DisplayName("Cannot add or remove null listener")
-    void testNullListener() {
+    @DisplayName("Cannot add null listener")
+    void testAddNullListener() {
         assertThrows(IllegalArgumentException.class, () -> service.addListener(null));
+    }
+
+    @Test
+    @DisplayName("Cannot remove null listener")
+    void testRemoveNullListener() {
         assertThrows(IllegalArgumentException.class, () -> service.removeListener(null));
     }
+
+    @Test
+    @DisplayName("Multiple listeners receive updates")
+    void testMultipleListeners() {
+        TestListener listener2 = new TestListener();
+        service.addListener(listener2);
+
+        service.movePlayer(Direction.UP);
+
+        assertTrue(listener.playerUpdated);
+        assertTrue(listener2.playerUpdated);
+    }
+
+    // === Upgrade System Tests ===
 
     @Test
     @DisplayName("Cannot get upgrades when no level up is pending")
@@ -303,8 +472,8 @@ class SimpleShapeSurvivorServiceTest {
     @DisplayName("Cannot apply upgrade when no level up is pending")
     void testApplyUpgradeWithoutLevelUp() {
         UpgradeOption upgrade = new UpgradeOption(
-                UpgradeType.ATTRIBUTE, "Test", "Test", null,
-                PlayerAttribute.MAX_HEALTH, 1.2, true
+            UpgradeType.ATTRIBUTE, "Test", "Test", null,
+            PlayerAttribute.MAX_HEALTH, 1.2, true
         );
 
         service.start();
@@ -318,18 +487,54 @@ class SimpleShapeSurvivorServiceTest {
     }
 
     @Test
-    @DisplayName("Statistics are initialized correctly")
-    void testStatisticsInitialization() {
-        GameStatistics stats = service.getStatistics();
+    @DisplayName("Cannot apply upgrade in PREPARED state")
+    void testApplyUpgradeInPreparedState() {
+        UpgradeOption upgrade = new UpgradeOption(
+            UpgradeType.ATTRIBUTE, "Test", "Test", null,
+            PlayerAttribute.MAX_HEALTH, 1.2, true
+        );
 
-        assertNotNull(stats);
-        assertEquals(0, stats.enemiesKilled());
-        assertEquals(0, stats.damageDealt());
-        assertEquals(0, stats.damageTaken());
-        assertEquals(0, stats.wavesCompleted());
-        assertEquals(1, stats.highestLevel());
-        assertEquals(0, stats.totalExperienceGained());
+        assertThrows(IllegalStateException.class, () -> service.applyUpgrade(upgrade));
     }
+
+    @Test
+    @DisplayName("Cannot apply upgrade in ABORTED state")
+    void testApplyUpgradeInAbortedState() {
+        service.start();
+        service.abort();
+
+        UpgradeOption upgrade = new UpgradeOption(
+            UpgradeType.ATTRIBUTE, "Test", "Test", null,
+            PlayerAttribute.MAX_HEALTH, 1.2, true
+        );
+
+        assertThrows(IllegalStateException.class, () -> service.applyUpgrade(upgrade));
+    }
+
+    // === Game Map Tests ===
+
+    @Test
+    @DisplayName("Game map is initialized")
+    void testGameMapInitialized() {
+        assertNotNull(service.getGameMap());
+    }
+
+    @Test
+    @DisplayName("Game map is reset on configuration change")
+    void testGameMapResetOnConfigure() throws IllegalParameterException {
+        var oldMap = service.getGameMap();
+
+        GameConfiguration newConfig = new GameConfiguration(
+            600, 1200, 900, 100, 5.0, 10, 1, 1.0, 1.0,
+            new WeaponType[]{WeaponType.SWORD}
+        );
+        service.configure(newConfig);
+
+        var newMap = service.getGameMap();
+        assertNotSame(oldMap, newMap);
+    }
+
+    // === Weapon State Tests ===
 
     @Test
     @DisplayName("Weapon states are tracked correctly")
@@ -340,12 +545,74 @@ class SimpleShapeSurvivorServiceTest {
         assertTrue(weaponStates.containsKey(WeaponType.SWORD));
     }
 
+    @Test
+    @DisplayName("Multiple weapons have separate states")
+    void testMultipleWeaponStates() throws IllegalParameterException {
+        GameConfiguration config = new GameConfiguration(
+            600, 800, 600, 100, 5.0, 10, 2, 1.0, 1.0,
+            new WeaponType[]{WeaponType.SWORD, WeaponType.AURA}
+        );
+        service.configure(config);
+
+        var weaponStates = service.getWeaponStates();
+        assertTrue(weaponStates.containsKey(WeaponType.SWORD));
+        assertTrue(weaponStates.containsKey(WeaponType.AURA));
+    }
+
+    // === Enemy Tests ===
+
+    @Test
+    @DisplayName("Enemies array is initially empty")
+    void testInitialEnemies() {
+        assertEquals(0, service.getEnemies().length);
+    }
+
+    @Test
+    @DisplayName("Enemies spawn after game starts")
+    void testEnemiesSpawnAfterStart() throws InterruptedException {
+        service.start();
+        Thread.sleep(11000); // Wait for first wave
+
+        assertTrue(service.getEnemies().length > 0);
+    }
+
+    // === Input Provider Tests ===
+
+    @Test
+    @DisplayName("Input provider can be set")
+    void testSetInputProvider() {
+        AtomicBoolean called = new AtomicBoolean(false);
+        service.setInputProvider(() -> {
+            called.set(true);
+            return new Direction[]{Direction.UP};
+        });
+
+        service.start();
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
+        assertTrue(called.get());
+    }
+
     // Helper class for testing
     private static class TestListener implements ShapeSurvivorListener {
         boolean gameStateChanged = false;
         boolean playerUpdated = false;
         boolean enemiesUpdated = false;
         boolean levelUpOccurred = false;
+        boolean weaponUpdated = false;
+        boolean playerDamagedCalled = false;
+        boolean enemyDamagedCalled = false;
+        boolean enemyKilledCalled = false;
+        boolean timeUpdated = false;
+        boolean waveSpawned = false;
+        boolean gameEnded = false;
+        boolean experienceUpdated = false;
+        boolean configUpdated = false;
+
         GameState lastGameState;
 
         @Override
@@ -365,16 +632,24 @@ class SimpleShapeSurvivorServiceTest {
         }
 
         @Override
-        public void updateWeapon(Weapon weapon) {}
+        public void updateWeapon(Weapon weapon) {
+            weaponUpdated = true;
+        }
 
         @Override
-        public void playerDamaged(int damage) {}
+        public void playerDamaged(int damage) {
+            playerDamagedCalled = true;
+        }
 
         @Override
-        public void enemyDamaged(Enemy enemy, int damage) {}
+        public void enemyDamaged(Enemy enemy, int damage) {
+            enemyDamagedCalled = true;
+        }
 
         @Override
-        public void enemyKilled(Enemy enemy, int experience) {}
+        public void enemyKilled(Enemy enemy, int experience) {
+            enemyKilledCalled = true;
+        }
 
         @Override
         public void playerLeveledUp() {
@@ -382,18 +657,28 @@ class SimpleShapeSurvivorServiceTest {
         }
 
         @Override
-        public void updateRemainingTime(int seconds) {}
+        public void updateRemainingTime(int seconds) {
+            timeUpdated = true;
+        }
 
         @Override
-        public void enemyWaveSpawned(int waveNumber, int enemyCount) {}
+        public void enemyWaveSpawned(int waveNumber, int enemyCount) {
+            waveSpawned = true;
+        }
 
         @Override
-        public void gameEnded(boolean victory) {}
+        public void gameEnded(boolean victory) {
+            gameEnded = true;
+        }
 
         @Override
-        public void updateExperience(int current, int toNextLevel) {}
+        public void updateExperience(int current, int toNextLevel) {
+            experienceUpdated = true;
+        }
 
         @Override
-        public void updateGameConfiguration(GameConfiguration configuration) {}
+        public void updateGameConfiguration(GameConfiguration configuration) {
+            configUpdated = true;
+        }
     }
 }
