@@ -804,6 +804,11 @@ public class GameRenderer {
         }
     }
 
+    /** Check if confetti animation is still running */
+    public boolean isConfettiActive() {
+        return confettiActive;
+    }
+
     private void updateAndDrawConfetti(GraphicsContext gc) {
         if (!confettiActive)
             return;

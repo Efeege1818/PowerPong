@@ -386,4 +386,62 @@ public class PowerUpManager {
             this.remaining = duration;
         }
     }
+
+    /**
+     * Information about an active effect for UI display.
+     * 
+     * @param type           The power-up type
+     * @param remainingRatio Remaining time as ratio (0.0 to 1.0)
+     */
+    public record ActiveEffectInfo(PowerUpType type, double remainingRatio) {
+    }
+
+    /**
+     * Get all active effects for a player (for timer bar display).
+     * 
+     * @param player Player number (1 or 2)
+     * @return List of active effects with remaining time ratios
+     */
+    public List<ActiveEffectInfo> getActiveEffectsForPlayer(int player) {
+        List<ActiveEffectInfo> result = new ArrayList<>();
+        for (ActiveEffect effect : activeEffects) {
+            // Check if this effect is affecting this player
+            boolean affectsPlayer = false;
+            double maxDuration = switch (effect.type) {
+                case BIGGER_PADDLE -> {
+                    affectsPlayer = (effect.owner == player);
+                    yield DURATION_PADDLE_SIZE;
+                }
+                case SMALLER_ENEMY_PADDLE -> {
+                    affectsPlayer = (effect.owner != player);
+                    yield DURATION_PADDLE_SIZE;
+                }
+                case SLOW_ENEMY_PADDLE -> {
+                    affectsPlayer = (effect.owner != player);
+                    yield DURATION_SLOW_PADDLE;
+                }
+                case DOUBLE_BALL -> {
+                    affectsPlayer = (effect.owner == player);
+                    yield DURATION_DOUBLE_BALL;
+                }
+                case FASTER_BALL_ENEMY_SIDE -> {
+                    affectsPlayer = (effect.owner != player);
+                    yield DURATION_FAST_BALL;
+                }
+                case BARRIERLESS -> {
+                    affectsPlayer = true;
+                    yield DURATION_BARRIERLESS;
+                } // Affects both
+                default -> {
+                    affectsPlayer = false;
+                    yield 5.0;
+                }
+            };
+
+            if (affectsPlayer && maxDuration > 0) {
+                result.add(new ActiveEffectInfo(effect.type, effect.remaining / maxDuration));
+            }
+        }
+        return result;
+    }
 }

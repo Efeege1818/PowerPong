@@ -139,11 +139,12 @@ public class PowerPongController extends StackPane {
       // Create a new canvas for the fullscreen window
       Canvas fullscreenCanvas = new Canvas();
 
-      // Create game over overlay for fullscreen (neon styled)
+      // Create game over overlay for fullscreen (semi-transparent for confetti to
+      // show through)
       VBox fullscreenGameOverBox = new VBox(25);
       fullscreenGameOverBox.setAlignment(javafx.geometry.Pos.CENTER);
       fullscreenGameOverBox.setStyle(
-          "-fx-background-color: rgba(5, 5, 20, 0.9); -fx-padding: 60; -fx-background-radius: 30; -fx-border-radius: 30; -fx-border-color: rgba(255,255,255,0.2); -fx-border-width: 2;");
+          "-fx-background-color: rgba(5, 5, 20, 0.6); -fx-padding: 60; -fx-background-radius: 30; -fx-border-radius: 30; -fx-border-color: rgba(255,255,255,0.3); -fx-border-width: 2;");
       fullscreenGameOverBox.setMaxWidth(800);
       fullscreenGameOverBox.setMaxHeight(350);
       fullscreenGameOverBox.setVisible(false);
@@ -238,7 +239,12 @@ public class PowerPongController extends StackPane {
         if (newStatus == GameStatus.PLAYER_1_WINS || newStatus == GameStatus.PLAYER_2_WINS) {
           gameTimer.stop();
           if (newStatus == GameStatus.PLAYER_1_WINS) {
-            fullscreenWinnerLabel.setText("DU GEWINNST!");
+            // In Player vs Player mode, show "SPIELER 1 GEWINNT", otherwise "DU GEWINNST"
+            if (lastSelectedMode == GameMode.CLASSIC_DUEL) {
+              fullscreenWinnerLabel.setText("SPIELER 1 GEWINNT!");
+            } else {
+              fullscreenWinnerLabel.setText("DU GEWINNST!");
+            }
             fullscreenWinnerLabel.setTextFill(Color.web("#00f3ff")); // Neon Blue
           } else {
             // Check if we're in Survival mode - show score and highscore
@@ -263,8 +269,11 @@ public class PowerPongController extends StackPane {
               fullscreenWinnerLabel.setTextFill(Color.web("#ff00ff")); // Neon Pink
             }
           }
-          // Trigger confetti celebration!
+
+          // Trigger confetti and start animation loop for rendering
           renderer.triggerConfetti();
+          startConfettiAnimationLoop();
+
           fullscreenGameOverBox.setVisible(true);
         }
       });
@@ -442,6 +451,33 @@ public class PowerPongController extends StackPane {
       case DOWN -> InputAction.RIGHT_DOWN;
       default -> null;
     };
+  }
+
+  private javafx.animation.AnimationTimer confettiTimer;
+
+  /**
+   * Start a temporary animation loop just for confetti rendering after game ends
+   */
+  private void startConfettiAnimationLoop() {
+    if (confettiTimer != null) {
+      confettiTimer.stop();
+    }
+    confettiTimer = new javafx.animation.AnimationTimer() {
+      @Override
+      public void handle(long now) {
+        // Keep rendering while confetti is active
+        GameState state = viewModel.getGameState();
+        if (state != null) {
+          render(state);
+        }
+        // Stop when confetti finishes
+        if (!renderer.isConfettiActive()) {
+          this.stop();
+          confettiTimer = null;
+        }
+      }
+    };
+    confettiTimer.start();
   }
 
   private final GameRenderer renderer = new GameRenderer();
