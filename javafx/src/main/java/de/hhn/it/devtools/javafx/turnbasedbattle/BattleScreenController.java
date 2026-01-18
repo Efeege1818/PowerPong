@@ -113,7 +113,17 @@ public class BattleScreenController {
   @FXML
   public void onActionPause() {
     StackPane root = (StackPane) turnLabel.getScene().getRoot();
-    PauseScreenViewModel pauseViewModel = new PauseScreenViewModel(SimpleMonster.create(service.getPlayer1().monster()), SimpleMonster.create(service.getPlayer2().monster()));
+
+    if (!(service instanceof SimpleTurnBasedBattleService concrete)) {
+      return;
+    }
+
+    SimpleMonster current = concrete.getCurrentMonster();
+    SimpleMonster opponent = concrete.getOpponentMonster();
+
+    PauseScreenViewModel pauseViewModel =
+            new PauseScreenViewModel(current, opponent);
+
     PauseScreenFx pauseScreen = new PauseScreenFx(screenManager, pauseViewModel);
     root.getChildren().add(pauseScreen);
   }

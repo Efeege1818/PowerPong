@@ -228,6 +228,9 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
   public SimpleMonster getCurrentMonster() {
     return battleManager.getCurrentMonster();
   }
+  public SimpleMonster getOpponentMonster() {
+    return battleManager.getOpponentMonster();
+  }
 
   public SimpleMonster getPlayer1SimpleMonster() {
     return battleManager.getPlayer1Monster();
@@ -236,5 +239,6 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
   public SimpleMonster getPlayer2SimpleMonster() {
     return battleManager.getPlayer2Monster();
   }
+
 
 }
