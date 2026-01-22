@@ -65,6 +65,8 @@ public class SimpleMonster {
    */
   private Map<Integer, Boolean> lockedMoves = new HashMap<>();
 
+  // =========================================================================
+
 
   /**
    * Factory method to create the appropriate monster type based on the element.
@@ -74,7 +76,6 @@ public class SimpleMonster {
    *        (FireMonster, WaterMonster, or GrassMonster).
    */
   public static SimpleMonster create(Monster monster) {
-    logger.debug("Constructor - {}", monster);
     switch (monster.element()) {
       case FIRE:
         return new FireMonster(monster);
@@ -134,8 +135,10 @@ public class SimpleMonster {
     }
 
     logger.debug("{} took {} damage and has {} hp left.", name, actualDamage, currentHp);
-    BattleLog.post(name + " took " + actualDamage + " damage and has " + currentHp + " hp left");
+    BattleLog.post(name + " took " + actualDamage + " damage");
 
+    // If the Grass Monster attacks with "Posion Sting" and the enemy monster currently
+    // has "Posion" as an active DOT, then "Poison" should deal damage twice.
     if (move.name().equals("Poison Sting")) {
       for (Map.Entry<Integer, Move> entry : activeDots.entrySet()) {
         Move poisonMove = entry.getValue();
@@ -144,22 +147,6 @@ public class SimpleMonster {
         }
       }
     }
-  }
-
-  /**
-   * Takes true damage, ignoring evasion, critical hits, elemental effectiveness,
-   * attack, and defense.
-   *
-   * @param amount the amount of damage to take.
-   */
-  public void takeTrueDamage(double amount) {
-    if (amount > currentHp) {
-      currentHp = 0;
-    } else {
-      currentHp -= (int) amount;
-    }
-    logger.debug("{} took {} true damage and has {} hp left.", name, amount, currentHp);
-    BattleLog.post(name + " took " + amount + " true damage and has " + currentHp + " hp left");
   }
 
   /**
@@ -198,7 +185,7 @@ public class SimpleMonster {
       currentHp = maxHp;
     }
     logger.debug("{} health increased by {} to {}", name, amount, currentHp);
-    BattleLog.post(name + " health increased by " + amount + " to " + currentHp);
+    BattleLog.post(name + " health increased by " + amount);
   }
 
   /**
@@ -216,7 +203,7 @@ public class SimpleMonster {
       currentHp = 0;
     }
     logger.debug("{} took {} DOT damage, current HP: {}", name, amount, currentHp);
-    BattleLog.post(name + " took " + amount + " DOT damage, current HP: " + currentHp);
+    BattleLog.post(name + " took " + amount + " DOT damage");
   }
 
   /**
@@ -227,6 +214,7 @@ public class SimpleMonster {
   public void buffMonster(Move move) {
     String stat = move.stat();
     double amount = move.amount();
+    String amountString = String.valueOf(amount);
     switch (stat) {
       case "health":
         addHealth((int) amount);
@@ -236,21 +224,24 @@ public class SimpleMonster {
         break;
       case "evasionChance":
         evasionChance = Math.max(0.0, Math.min(1.0, evasionChance + amount));
+        amountString = amount * 100 + "%";
         break;
       case "critChance":
         critChance = Math.max(0.0, Math.min(1.0, critChance + amount));
+        amountString = amount * 100 + "%";
         break;
       case "defense":
         defense += (int) amount;
         break;
       case "damageReduction":
         damageReduction += amount;
+        amountString = amount * 100 + "%";
         break;
       default:
         logger.warn("{} Invalid stat for buff: {}", name, stat);
     }
-    logger.debug("{} buffed: {} {} and now has {}", name, amount, stat, getStat(stat));
-    BattleLog.post(name + " buffed " + stat + " by " + amount + " and now has " + getStat(stat));
+    logger.debug("{} buffed: {} {} and now has {}", name, amountString, stat, getStat(stat));
+    BattleLog.post(name + " buffed " + stat + " by " + amountString);
   }
 
   /**
@@ -260,6 +251,7 @@ public class SimpleMonster {
    * @param amount amount for stat to be changed by
    */
   public void changeStat(String stat, double amount) {
+    String amountString = String.valueOf(Math.abs(amount));
     switch (stat) {
       case "health":
         addHealth((int) amount);
@@ -269,21 +261,30 @@ public class SimpleMonster {
         break;
       case "evasionChance":
         evasionChance = evasionChance + amount;
+        amountString = amount * 100 + "%";
         break;
       case "critChance":
         critChance = critChance + amount;
+        amountString = amount * 100 + "%";
         break;
       case "defense":
         defense += (int) amount;
         break;
       case "damageReduction":
         damageReduction += amount;
+        amountString = amount * 100 + "%";
         break;
       default:
         logger.warn("{} Invalid stat for changing: {}", name, stat);
     }
-    logger.debug("{} changed: {} {} and has now {}", name, amount, stat, getStat(stat));
-    BattleLog.post(name + " changed " + stat + " by " + amount + " and now has " + getStat(stat));
+    if (amount >= 0) {
+      logger.debug("{} increased {} by {} and has now {}", name, stat, amountString, getStat(stat));
+      BattleLog.post(name + " increased " + stat + " by " + amountString);
+    } else {
+      logger.debug("{} decreased {} by {} and has now {}", name, stat, amountString, getStat(stat));
+      BattleLog.post(name + " decreased " + stat + " by " + amountString);
+    }
+
   }
 
   /**
@@ -294,6 +295,7 @@ public class SimpleMonster {
   public void debuffMonster(Move move) {
     String stat = move.stat();
     double amount = move.amount();
+    String amountString = String.valueOf(amount);
     switch (stat) {
       case "attack":
         attack -= (int) amount;
@@ -303,18 +305,21 @@ public class SimpleMonster {
         break;
       case "evasionChance":
         evasionChance = Math.max(0.0, Math.min(1.0, evasionChance - amount));
+        amountString = amount * 100 + "%";
         break;
       case "critChance":
         critChance = Math.max(0.0, Math.min(1.0, critChance - amount));
+        amountString = amount * 100 + "%";
         break;
       case "damageReduction":
         damageReduction -= amount;
+        amountString = amount * 100 + "%";
         break;
       default:
         logger.warn("{} Invalid stat for debuff: {}", name, stat);
     }
-    logger.debug("{} debuffed: {} {} and has now {}", name, amount, stat, getStat(stat));
-    BattleLog.post(name + " debuffed " + stat + " by " + amount + " and now has " + getStat(stat));
+    logger.debug("{} debuffed: {} {} and has now {}", name, amountString, stat, getStat(stat));
+    BattleLog.post(name + " debuffed " + stat + " by " + amountString);
   }
 
   /**
@@ -345,7 +350,7 @@ public class SimpleMonster {
         logger.warn("{} Invalid stat for removing buff: {}", name, stat);
     }
     logger.debug("{} buff removed: {} and has now {}", name, stat, getStat(stat));
-    BattleLog.post(name + " buff removed: " + stat + ", now has " + getStat(stat));
+    BattleLog.post(name + " buff removed: " + stat);
   }
 
   /**
@@ -376,7 +381,7 @@ public class SimpleMonster {
         logger.warn("{} Invalid stat for removing debuff: {}", name, stat);
     }
     logger.debug("{} debuff removed: {} and has now {}", name, stat, getStat(stat));
-    BattleLog.post(name + " debuff removed: " + stat + ", now has " + getStat(stat));
+    BattleLog.post(name + " debuff removed: " + stat);
   }
 
   /**
@@ -535,11 +540,11 @@ public class SimpleMonster {
       case "defense":
         return String.valueOf(defense);
       case "evasionChance":
-        return String.valueOf(evasionChance);
+        return String.format("%.2f", evasionChance * 100) + "%";
       case "critChance":
-        return String.valueOf(critChance);
+        return String.format("%.2f", critChance * 100) + "%";
       case "damageReduction":
-        return String.valueOf(damageReduction);
+        return String.format("%.2f", damageReduction * 100) + "%";
       default:
         throw new IllegalArgumentException("Invalid stat: " + stat);
     }
@@ -630,14 +635,14 @@ public class SimpleMonster {
       case BUFF:
         buffMonster(move);
         logger.debug("Added buff '{}' to {} for {} turns",
-                move.description(), name, move.duration());
-        BattleLog.post("Added buff " + move.description() + " to " + name + " for " + move.duration() + " turns");
+                move.name(), name, move.duration());
+        BattleLog.post("Added buff " + move.name() + " to " + name);
         break;
       case DEBUFF:
         debuffMonster(move);
         logger.debug("Added debuff '{}' to {} for {} turns",
-                move.description(), name, move.duration());
-        BattleLog.post("Added debuff " + move.description() + " to " + name + " for " + move.duration() + " turns");
+                move.name(), name, move.duration());
+        BattleLog.post("Added debuff " + move.name() + " to " + name);
         break;
       default:
         logger.warn("Attempted to add non-buff/debuff move as buff: {}", move.type());
@@ -663,22 +668,21 @@ public class SimpleMonster {
       if (newDuration > 0) {
         updatedBuffs.put(newDuration, move);
         logger.debug("Buff/Debuff '{}' for {} ticked: {} turns remaining",
-                move.description(), name, newDuration);
-        BattleLog.post("Buff/Debuff " + move.description() + " for " + name + " ticked: " + newDuration + " turns remaining");
+                move.name(), name, newDuration);
       } else {
         // Buff/Debuff expired - remove its effects
         switch (move.type()) {
           case BUFF:
             removeBuff(move);
             logger.debug("Buff '{}' for {} expired and was removed",
-                    name, move.description());
-            BattleLog.post("Buff " + move.description() + " for " + name + " expired and was removed");
+                    name, move.name());
+            BattleLog.post("Buff " + move.name() + " expired");
             break;
           case DEBUFF:
             removeDebuff(move);
             logger.debug("Debuff '{}' for {} expired and was removed",
-                    name, move.description());
-            BattleLog.post("Debuff " + move.description() + " for " + name + " expired and was removed");
+                    name, move.name());
+            BattleLog.post("Debuff " + move.name() + " expired");
             break;
           default:
             break;
@@ -707,8 +711,8 @@ public class SimpleMonster {
    */
   public void addDot(Move move) {
     activeDots.put(move.duration(), move);
-    logger.debug("Added DOT '{}' to {} for {} turns", move.description(), name, move.duration());
-    BattleLog.post("Added DOT " + move.description() + " to " + name + " for " + move.duration() + " turns");
+    logger.debug("Added DOT '{}' to {} for {} turns", move.name(), name, move.duration());
+    BattleLog.post("Added DOT " + move.name() + " to " + name);
   }
 
   /**
@@ -732,19 +736,16 @@ public class SimpleMonster {
         if (damage > 0) {
           takeDotDamage(damage);
           logger.debug("DOT '{}' dealt {} damage to {} ({} turns left after this)",
-              move.description(), damage, name, duration - 1);
-          BattleLog.post("DOT " + move.description() + " dealt " + damage + " damage to " + name + " (" + (duration - 1) + " turns left after this)");
+              move.name(), damage, name, duration - 1);
           if (move.name().equals("Poison")) {
             timesHitByPoison++;
             logger.debug("{} was {} times hit by poison", name, timesHitByPoison);
-            BattleLog.post(name + " was hit " + timesHitByPoison + " by poison");
             for (Map.Entry<Integer, Move> entry2 : activeBuffs.entrySet()) {
               Move leechMove = entry2.getValue();
               if (leechMove.name().equals("Poison Absorb")) {
                 takeDotDamage(damage);
                 timesHitByPoison++;
                 logger.debug("{} was {} times hit by poison", name, timesHitByPoison);
-                BattleLog.post(name + "was hit " + timesHitByPoison + " by poison");
               }
             }
           }
@@ -755,8 +756,8 @@ public class SimpleMonster {
         if (newDuration > 0) {
           updatedDots.put(newDuration, move);
         } else {
-          logger.debug("DOT '{}' for {} expired", move.description(), name);
-          BattleLog.post("Dot " + move.description() + " for " + name + " expired");
+          logger.debug("DOT '{}' for {} expired", move.name(), name);
+          BattleLog.post("Dot " + move.name() + " expired");
         }
       }
     }
