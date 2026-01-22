@@ -74,6 +74,7 @@ public class SimpleMonster {
    *        (FireMonster, WaterMonster, or GrassMonster).
    */
   public static SimpleMonster create(Monster monster) {
+    logger.debug("Constructor - {}", monster);
     switch (monster.element()) {
       case FIRE:
         return new FireMonster(monster);
@@ -117,7 +118,7 @@ public class SimpleMonster {
       actualDamage = calculateDamage(move, this, attackingMonster, isCritical, isEffective,
           timesHitByPoison);
     } else {
-      actualDamage = calculateDamage(move, this, attackingMonster, isCritical, isEffective);
+      actualDamage = calculateDamage(move, this, attackingMonster, isCritical, isEffective, 1);
     }
 
     attackingMonster.attacksHit++;

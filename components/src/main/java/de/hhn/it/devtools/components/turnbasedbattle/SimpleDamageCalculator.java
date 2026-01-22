@@ -9,41 +9,8 @@ public class SimpleDamageCalculator {
   private static final org.slf4j.Logger logger =
           org.slf4j.LoggerFactory.getLogger(SimpleDamageCalculator.class);
 
-  /**
-   * Calculates the actual damage based on the move, critical hit, and elemental effectiveness.
-   *
-   * @param move the move being executed.
-   * @param target the monster being targeted.
-   * @param attacker the monster executing the move.
-   * @param isCritical whether the attack is a critical hit.
-   * @param isEffective whether the attack is effective against the target's element.
-   * @return the actual damage done.
-   */
-  public static int calculateDamage(Move move, SimpleMonster target, SimpleMonster attacker,
-                                    boolean isCritical, boolean isEffective) {
-    double damage = move.amount() + attacker.getAttack();
-    logger.debug("Monster attacks with {} attack and {}% critical chance",
-        attacker.getAttack(), attacker.getCritChance() * 100);
-
-    if (isCritical) {
-      damage *= 1.5; // TODO: hardcoded critical multiplier
-      logger.debug("Critical hit! Damage increased by 50%");
-    }
-    if (isEffective) {
-      damage *= 1.5; // TODO: hardcoded effective multiplier
-      logger.debug("Effective attack! Damage increased by 50%");
-    }
-
-    if (!move.isTrueDamage()) {
-      damage -= target.getDefense();
-    }
-
-    if (damage < 0) {
-      return 0;
-    }
-
-    return (int) Math.floor(damage * (1 - target.getDamageReduction()));
-  }
+  private static final double critMultiplier = 1.5;
+  private static final double effectiveMultiplier = 1.5;
 
   /**
    * Calculates the actual damage based on the move, critical hit, and elemental effectiveness.
@@ -59,18 +26,19 @@ public class SimpleDamageCalculator {
   public static int calculateDamage(Move move, SimpleMonster target, SimpleMonster attacker,
                                     boolean isCritical, boolean isEffective, int multiplier) {
     double damage = move.amount() * multiplier + attacker.getAttack();
-    logger.debug("Monster attacks with {} attack and {}% critical chance",
-            attacker.getAttack(), attacker.getCritChance() * 100);
 
-    if (isCritical) {
-      damage *= 1.5; // TODO: hardcoded critical multiplier
-      logger.debug("Critical hit! Damage increased by 50%");
-      BattleLog.post("Critical hit! Damage increased by 50%");
-    }
-    if (isEffective) {
-      damage *= 1.5; // TODO: hardcoded effective multiplier
-      logger.debug("Effective attack! Damage increased by 50%");
-      BattleLog.post("Effective attack! Damage increased by 50%");
+    if(isCritical && isEffective){
+      damage *= (critMultiplier + effectiveMultiplier - 1);
+      logger.debug("Critical and effective hit!");
+      BattleLog.post("Critical and effective hit!");
+    } else if (isCritical){
+      damage *= critMultiplier;
+      logger.debug("Critical hit!");
+      BattleLog.post("Critical hit!");
+    } else if (isEffective){
+      damage *= effectiveMultiplier;
+      logger.debug("Effective hit!");
+      BattleLog.post("Effective hit!");
     }
 
     if (!move.isTrueDamage()) {
@@ -78,9 +46,10 @@ public class SimpleDamageCalculator {
     }
 
     if (damage < 0) {
-      return 0;
+      damage = 0;
+    } else {
+      damage = Math.floor(damage * (1 - target.getDamageReduction()));
     }
-
-    return (int) Math.floor(damage * (1 - target.getDamageReduction()));
+    return (int) damage;
   }
 }
