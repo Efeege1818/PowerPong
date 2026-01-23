@@ -79,8 +79,6 @@ public class TowerToolbox {
 
   /**
    * Attacks the enemy in range, that has advanced the furthest on the path.
-   *
-   * @throws IllegalArgumentException if towers or enemies do not exist.
    */
   public void attack() {
     int pathLength = service.getMapToolbox().getExtendedPath().size();
@@ -113,7 +111,6 @@ public class TowerToolbox {
       }
     }
   }
-
 
   /**
    * Attacks the enemy in range, that has advanced the furthest on the path.
