@@ -1,8 +1,9 @@
 /**
  * Module descriptor for the apis module.
  */
-module devtools.apis{
+module devtools.apis {
         requires org.slf4j;
+
         exports de.hhn.it.devtools.apis.examples.coffeemakerservice;
         exports de.hhn.it.devtools.apis.exceptions;
         exports de.hhn.it.devtools.apis.spaceinvaders;
@@ -11,4 +12,5 @@ module devtools.apis{
         exports de.hhn.it.devtools.apis.turnbasedbattle;
         exports de.hhn.it.devtools.apis.towerdefense;
         exports de.hhn.it.devtools.apis.shapesurvivor;
-        }
+        exports de.hhn.it.devtools.apis.powerPong;
+}
