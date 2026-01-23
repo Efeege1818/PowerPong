@@ -449,7 +449,7 @@ public class SimpleMonster {
   }
 
   /**
-   * Sets times hit by poison
+   * Sets times hit by poison.
    */
   public void setTimesHitPoison(int amount) {
     timesHitPoison = amount;
@@ -851,6 +851,11 @@ public class SimpleMonster {
 
   // =========== Handles Counterattack ===========
 
+  /**
+   * Monster will take damage if it attacks.
+   *
+   * @param move is checked whether it is an attackMove
+   */
   public void takeDamageOnAttack(Move move) {
     takeDamageOnAttack = move.attackMove();
     logger.debug("{} gets attacked if it attacks.", name);

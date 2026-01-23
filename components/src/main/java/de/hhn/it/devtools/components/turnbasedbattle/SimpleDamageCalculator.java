@@ -27,15 +27,15 @@ public class SimpleDamageCalculator {
                                     boolean isCritical, boolean isEffective, int multiplier) {
     double damage = move.amount() * multiplier + attacker.getAttack();
 
-    if(isCritical && isEffective){
+    if (isCritical && isEffective) {
       damage *= (critMultiplier + effectiveMultiplier - 1);
       logger.debug("Critical and effective hit!");
       BattleLog.post("Critical and effective hit!");
-    } else if (isCritical){
+    } else if (isCritical) {
       damage *= critMultiplier;
       logger.debug("Critical hit!");
       BattleLog.post("Critical hit!");
-    } else if (isEffective){
+    } else if (isEffective) {
       damage *= effectiveMultiplier;
       logger.debug("Effective hit!");
       BattleLog.post("Effective hit!");
