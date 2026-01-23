@@ -1,4 +1,4 @@
-package de.hhn.it.devtools.components.powerpong.provider;
+package de.hhn.it.devtools.components.powerPong.provider;
 
 import de.hhn.it.devtools.apis.powerPong.BallState;
 import de.hhn.it.devtools.apis.powerPong.PaddleState;

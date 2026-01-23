@@ -1,8 +1,8 @@
-package de.hhn.it.devtools.components.powerpong.provider;
+package de.hhn.it.devtools.components.powerPong.provider;
 
 import de.hhn.it.devtools.apis.powerPong.PowerUpState;
 import de.hhn.it.devtools.apis.powerPong.PowerUpType;
-import de.hhn.it.devtools.components.powerpong.provider.PhysicsEngine.Ball;
+import de.hhn.it.devtools.components.powerPong.provider.PhysicsEngine.Ball;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
