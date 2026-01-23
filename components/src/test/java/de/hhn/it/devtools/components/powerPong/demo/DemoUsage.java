@@ -1,4 +1,4 @@
-package de.hhn.it.devtools.components.powerPong.demo;
+package de.hhn.it.devtools.components.powerpong.demo;
 
 import de.hhn.it.devtools.apis.exceptions.GameLogicException;
 import de.hhn.it.devtools.apis.powerPong.BallState;
@@ -8,7 +8,7 @@ import de.hhn.it.devtools.apis.powerPong.GameStatus;
 import de.hhn.it.devtools.apis.powerPong.InputAction;
 import de.hhn.it.devtools.apis.powerPong.PlayerInput;
 import de.hhn.it.devtools.apis.powerPong.PowerPongService;
-import de.hhn.it.devtools.components.powerPong.provider.PowerPongMatchEngine;
+import de.hhn.it.devtools.components.powerpong.provider.PowerPongMatchEngine;
 
 /**
  * This class demonstrates the intended use of the PowerPongService interface.
