@@ -1,7 +1,7 @@
 package de.hhn.it.devtools.components.powerpong.provider;
 
-import de.hhn.it.devtools.apis.powerPong.BallState;
-import de.hhn.it.devtools.apis.powerPong.PaddleState;
+import de.hhn.it.devtools.apis.powerpong.BallState;
+import de.hhn.it.devtools.apis.powerpong.PaddleState;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
