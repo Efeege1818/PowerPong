@@ -1,11 +1,11 @@
-package de.hhn.it.devtools.components.powerPong.provider;
+package de.hhn.it.devtools.components.powerpong.provider;
 
 import de.hhn.it.devtools.apis.exceptions.GameLogicException;
 import de.hhn.it.devtools.apis.powerPong.GameMode;
 import de.hhn.it.devtools.apis.powerPong.GameState;
 import de.hhn.it.devtools.apis.powerPong.GameStatus;
-import de.hhn.it.devtools.apis.powerPong.PlayerInput;
 import de.hhn.it.devtools.apis.powerPong.InputAction;
+import de.hhn.it.devtools.apis.powerPong.PlayerInput;
 import de.hhn.it.devtools.apis.powerPong.PowerPongListener;
 import de.hhn.it.devtools.apis.powerPong.PowerPongService;
 import de.hhn.it.devtools.apis.powerPong.Score;
@@ -13,12 +13,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of PowerPongService using the Facade pattern.
  * Orchestrates the game flow by delegating to PhysicsEngine
  * and PowerUpManager.
- *
+ * <p>
  * This class serves as the main entry point for the PowerPong game logic
  * and is responsible for:
  * - Game lifecycle management (start, pause, end)
@@ -27,11 +29,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * - Managing game state and scoring
  * - Notifying listeners of game events
  *
+ * <p>
  * The engine supports two game modes:
  * - GameMode.CLASSIC_DUEL - Traditional Pong gameplay
  * - GameMode.POWERUP_DUEL - Pong with power-ups and special effects
  */
 public class PowerPongMatchEngine implements PowerPongService {
+
+  private static final Logger logger = LoggerFactory.getLogger(PowerPongMatchEngine.class);
 
   private static final double FRAME_TIME_SECONDS = 1.0 / 60.0;
   private static final int TARGET_SCORE = 5;
@@ -68,6 +73,11 @@ public class PowerPongMatchEngine implements PowerPongService {
     this(new Random());
   }
 
+  /**
+   * Constructs a new PowerPongMatchEngine.
+   *
+   * @param randomGenerator the Random instance to use
+   */
   PowerPongMatchEngine(Random randomGenerator) {
     this.random = Objects.requireNonNull(randomGenerator, "randomGenerator must not be null");
     this.physics = new PhysicsEngine(this.random);
@@ -82,6 +92,8 @@ public class PowerPongMatchEngine implements PowerPongService {
    * AI also makes random "mistakes" (freezes, wrong direction) based on
    * difficulty.
    * 
+   * // difficulty.
+   *
    * @param difficulty 0.0 = Easy, 0.5 = Medium, 1.0 = Hard
    */
   public void setAiDifficulty(double difficulty) {
@@ -116,12 +128,14 @@ public class PowerPongMatchEngine implements PowerPongService {
   private int survivalLives = 3;
   private int survivalScore = 0;
   private int lastRallyCount = 0;
-  private static final double SURVIVAL_DIFFICULTY_INTERVAL = 10.0; // Increase difficulty every 10 seconds (or hits)
+  private static final double SURVIVAL_DIFFICULTY_INTERVAL = 10.0;
+  // Increase difficulty every 10 seconds (or hits)
 
   private static final double DIFFICULTY_INCREMENT = 0.1; // +10% speed
 
   @Override
   public void startGame(GameMode mode) throws GameLogicException {
+    logger.info("startGame() called with mode: {}", mode);
     if (mode == null) {
       throw new GameLogicException("Game mode must not be null.");
     }
@@ -153,8 +167,9 @@ public class PowerPongMatchEngine implements PowerPongService {
 
     powerUpManager.reset();
 
-    physics.launchBall(-1); // Always launch towards player in Survival initially? Or random? Random is
-                            // fine.
+    physics.launchBall(-1);
+    // Always launch towards player in Survival initially? Or random? Random is
+    // fine.
 
     rebuildSnapshot();
   }
@@ -166,11 +181,13 @@ public class PowerPongMatchEngine implements PowerPongService {
 
   @Override
   public void updateGame(PlayerInput input) throws GameLogicException {
+    logger.debug("updateGame(PlayerInput) called");
     updateGame(input, FRAME_TIME_SECONDS);
   }
 
   @Override
   public void updateGame(PlayerInput input, double deltaSeconds) throws GameLogicException {
+    logger.debug("updateGame() called with deltaSeconds: {}", deltaSeconds);
     ensureGameRunning();
     if (paused || physics.getBall() == null) {
       return;
@@ -241,7 +258,7 @@ public class PowerPongMatchEngine implements PowerPongService {
 
       if (ball.vx > 0) {
         // Ball moving towards AI - track perfectly
-        targetY = ball.y;
+        targetY = ball.posY;
       } else {
         // Ball moving away - slowly return to center
         targetY = PhysicsEngine.FIELD_HEIGHT / 2.0;
@@ -321,7 +338,7 @@ public class PowerPongMatchEngine implements PowerPongService {
     double rightDir = 0;
 
     if (currentMode == GameMode.PLAYER_VS_AI || currentMode == GameMode.SURVIVAL) {
-      rightDir = calculateAIMovement(deltaSeconds);
+      rightDir = calculateAiMovement(deltaSeconds);
     } else {
       rightDir = directionFromInput(input, InputAction.RIGHT_UP, InputAction.RIGHT_DOWN);
     }
@@ -330,7 +347,7 @@ public class PowerPongMatchEngine implements PowerPongService {
     physics.movePaddle(false, rightDir, deltaSeconds);
   }
 
-  private double calculateAIMovement(double deltaSeconds) {
+  private double calculateAiMovement(double deltaSeconds) {
     PhysicsEngine.Ball ball = physics.getBall();
     if (ball == null) {
       return 0;
@@ -344,11 +361,12 @@ public class PowerPongMatchEngine implements PowerPongService {
           return 0;
         case 2: // Wrong direction - AI moves away from ball
           double paddleY = physics.getPaddle2Y();
-          return ball.y > paddleY ? -1 : 1; // Opposite of correct direction
+          return ball.posY > paddleY ? -1 : 1; // Opposite of correct direction
         case 3: // Hesitate - AI moves slowly
-          return calculateNormalAIMovement(ball) * 0.3;
+          return calculateNormalAiMovement(ball) * 0.3;
         default:
           break;
+
       }
     }
 
@@ -370,9 +388,12 @@ public class PowerPongMatchEngine implements PowerPongService {
             return 0; // Freeze
           case 2: // Wrong direction
             double py = physics.getPaddle2Y();
-            return ball.y > py ? -1 : 1;
+            return ball.posY > py ? -1 : 1;
           case 3:
-            return calculateNormalAIMovement(ball) * 0.3; // Hesitate
+
+            return calculateNormalAiMovement(ball) * 0.3; // Hesitate
+          default:
+            break;
         }
       }
 
@@ -404,21 +425,24 @@ public class PowerPongMatchEngine implements PowerPongService {
     return targetY > paddleY ? 1 : -1;
   }
 
-  private double calculateNormalAIMovement(PhysicsEngine.Ball ball) {
+  private double calculateNormalAiMovement(PhysicsEngine.Ball ball) {
     double targetY = physics.predictBallY(PhysicsEngine.RIGHT_PADDLE_X, ball);
     double paddleY = physics.getPaddle2Y();
-    if (Math.abs(paddleY - targetY) < 10.0)
+    if (Math.abs(paddleY - targetY) < 10.0) {
       return 0;
+    }
     return targetY > paddleY ? 1 : -1;
   }
 
   @Override
   public GameState getGameState() {
+    logger.debug("getGameState() called");
     return snapshot;
   }
 
   @Override
   public void setPaused(boolean isPaused) {
+    logger.info("setPaused() called with isPaused: {}", isPaused);
     if (!running) {
       return;
     }
@@ -429,6 +453,7 @@ public class PowerPongMatchEngine implements PowerPongService {
 
   @Override
   public void endGame() {
+    logger.info("endGame() called");
     running = false;
     paused = false;
     status = GameStatus.MENU;
@@ -439,6 +464,7 @@ public class PowerPongMatchEngine implements PowerPongService {
 
   @Override
   public void addListener(PowerPongListener listener) {
+    logger.debug("addListener() called with listener: {}", listener);
     if (listener != null && !listeners.contains(listener)) {
       listeners.add(listener);
     }
@@ -446,6 +472,7 @@ public class PowerPongMatchEngine implements PowerPongService {
 
   @Override
   public void removeListener(PowerPongListener listener) {
+    logger.debug("removeListener() called with listener: {}", listener);
     listeners.remove(listener);
   }
 
@@ -472,13 +499,13 @@ public class PowerPongMatchEngine implements PowerPongService {
 
   private void handleScoring(int scoringPlayer) {
     // Check shields
-    if (scoringPlayer == 1 && powerUpManager.hasShield(2)) { // Player 1 scored means ball went out RIGHT (Player 2
-      // side)
+    if (scoringPlayer == 1 && powerUpManager.hasShield(2)) {
+      // Player 1 scored means ball went out RIGHT (Player 2 side)
       powerUpManager.consumeShield(2);
       resetAfterShield();
       return;
-    } else if (scoringPlayer == 2 && powerUpManager.hasShield(1)) { // Player 2 scored means ball went out LEFT
-      // (Player 1 side)
+    } else if (scoringPlayer == 2 && powerUpManager.hasShield(1)) {
+      // Player 2 scored means ball went out LEFT (Player 1 side)
       powerUpManager.consumeShield(1);
       resetAfterShield();
       return;
@@ -520,6 +547,7 @@ public class PowerPongMatchEngine implements PowerPongService {
 
   @Override
   public boolean hasShield(int player) {
+    logger.debug("hasShield() called for player: {}", player);
     if (powerUpManager == null) {
       return false;
     }
@@ -530,6 +558,7 @@ public class PowerPongMatchEngine implements PowerPongService {
    * Get active effects for a player (for UI timer bar display).
    */
   public java.util.List<PowerUpManager.ActiveEffectInfo> getActiveEffectsForPlayer(int player) {
+    logger.debug("getActiveEffectsForPlayer() called with player: {}", player);
     if (powerUpManager == null) {
       return java.util.Collections.emptyList();
     }

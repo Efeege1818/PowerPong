@@ -1,6 +1,6 @@
 package de.hhn.it.devtools.javafx.controllers;
 
-import de.hhn.it.devtools.components.powerPong.provider.PowerPongMatchEngine;
+import de.hhn.it.devtools.components.powerpong.provider.PowerPongMatchEngine;
 import de.hhn.it.devtools.javafx.powerpong.view.PowerPongController;
 import de.hhn.it.devtools.javafx.powerpong.viewmodel.PowerPongViewModel;
 import java.net.URL;

@@ -1,4 +1,4 @@
-package de.hhn.it.devtools.components.powerPong.provider;
+package de.hhn.it.devtools.components.powerpong.provider;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -14,6 +14,7 @@ import de.hhn.it.devtools.apis.powerPong.PlayerInput;
 import de.hhn.it.devtools.apis.powerPong.PowerPongListener;
 import de.hhn.it.devtools.apis.powerPong.Score;
 import de.hhn.it.devtools.apis.powerPong.PowerUpType;
+import java.lang.reflect.Field;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -197,6 +198,16 @@ public class PowerPongMatchEngineTest {
         // Initial state
         PlayerInput input = new PlayerInput();
         engine.updateGame(input);
+
+        // Hack: Increase lives via reflection to prevent game over due to AFK
+        try {
+            Field livesField = PowerPongMatchEngine.class.getDeclaredField("survivalLives");
+            livesField.setAccessible(true);
+            livesField.setInt(engine, 50);
+        } catch (Exception e) {
+            // If reflection fails, test might fail naturally
+            e.printStackTrace();
+        }
 
         // Simulate 11 seconds passing (difficulty increases every 10s)
         // We can't easily mock time without refactoring engine to take a Clock,

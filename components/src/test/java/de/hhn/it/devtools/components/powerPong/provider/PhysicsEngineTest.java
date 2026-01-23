@@ -1,4 +1,4 @@
-package de.hhn.it.devtools.components.powerPong.provider;
+package de.hhn.it.devtools.components.powerpong.provider;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -40,7 +40,7 @@ public class PhysicsEngineTest {
     void testLaunchBall() {
         physics.launchBall(1);
         assertNotNull(physics.getBall());
-        assertEquals(PhysicsEngine.FIELD_WIDTH / 2.0, physics.getBall().x, 0.001);
+        assertEquals(PhysicsEngine.FIELD_WIDTH / 2.0, physics.getBall().posX, 0.001);
         assertTrue(physics.getBall().vx > 0);
         assertEquals(PhysicsEngine.BALL_RADIUS, physics.getBallStates().get(0).radius(), 0.001);
     }
@@ -50,9 +50,9 @@ public class PhysicsEngineTest {
         physics.launchBall(1);
         PhysicsEngine.Ball ball = physics.getBall();
 
-        // Place ball past right edge and out of paddle range
-        ball.x = PhysicsEngine.FIELD_WIDTH + PhysicsEngine.BALL_RADIUS + 1;
-        ball.y = 0;
+        // Place ball past right edge and out of paddle range (beyond SCORING_MARGIN=50)
+        ball.posX = PhysicsEngine.FIELD_WIDTH + 60;
+        ball.posY = 0;
         ball.vx = 100; // Moving right
 
         int result = physics.updateBalls(0.016);
@@ -61,8 +61,8 @@ public class PhysicsEngineTest {
         // Place ball past left edge
         physics.launchBall(1);
         ball = physics.getBall();
-        ball.x = -PhysicsEngine.BALL_RADIUS - 1;
-        ball.y = 0;
+        ball.posX = -60;
+        ball.posY = 0;
         ball.vx = -100; // Moving left
 
         result = physics.updateBalls(0.016);
@@ -87,13 +87,13 @@ public class PhysicsEngineTest {
         PhysicsEngine.Ball ball = physics.getBall();
 
         // Move ball above top
-        ball.y = -10;
+        ball.posY = -10;
         ball.vy = -100;
 
         physics.updateBalls(0.016);
 
         // Should wrap to bottom
-        assertTrue(ball.y > PhysicsEngine.FIELD_HEIGHT - 50);
+        assertTrue(ball.posY > PhysicsEngine.FIELD_HEIGHT - 50);
     }
 
     @Test
@@ -164,9 +164,10 @@ public class PhysicsEngineTest {
         PhysicsEngine.Ball ball = physics.getBall();
 
         // Position ball to collide with left paddle
+        // Position ball to collide with left paddle (collision edge is ~19.0)
         double paddleY = physics.getLeftPaddleState().yPosition();
-        ball.x = 50; // Near left side
-        ball.y = paddleY; // At paddle height
+        ball.posX = 25; // Close enough (25 - 8 = 17 <= 19)
+        ball.posY = paddleY; // At paddle height
         ball.vx = -100; // Moving towards paddle
 
         // Update should detect collision
@@ -182,9 +183,10 @@ public class PhysicsEngineTest {
         PhysicsEngine.Ball ball = physics.getBall();
 
         // Position ball to collide with right paddle
+        // Position ball to collide with right paddle (collision edge is ~781.0)
         double paddleY = physics.getRightPaddleState().yPosition();
-        ball.x = PhysicsEngine.FIELD_WIDTH - 50; // Near right side
-        ball.y = paddleY; // At paddle height
+        ball.posX = PhysicsEngine.FIELD_WIDTH - 25; // Close enough (775 + 8 = 783 >= 781)
+        ball.posY = paddleY; // At paddle height
         ball.vx = 100; // Moving towards right paddle
 
         // Update should detect collision
@@ -261,8 +263,8 @@ public class PhysicsEngineTest {
 
         // Position ball at left paddle collision zone
         PhysicsEngine.Ball ball = physics.getBall();
-        ball.x = PhysicsEngine.LEFT_PADDLE_X + PhysicsEngine.PADDLE_WIDTH + PhysicsEngine.BALL_RADIUS - 1;
-        ball.y = PhysicsEngine.FIELD_HEIGHT / 2.0;
+        ball.posX = PhysicsEngine.LEFT_PADDLE_X + PhysicsEngine.PADDLE_WIDTH + PhysicsEngine.BALL_RADIUS - 1;
+        ball.posY = PhysicsEngine.FIELD_HEIGHT / 2.0;
         ball.vx = -100; // Moving towards paddle
 
         int initialRally = physics.getRallyHitCount();
@@ -293,7 +295,8 @@ public class PhysicsEngineTest {
         physics.launchBall(1);
 
         // Ball goes out of bounds (player 1 scores)
-        physics.getBall().x = PhysicsEngine.FIELD_WIDTH + 100;
+        physics.getBall().posX = PhysicsEngine.FIELD_WIDTH + 100;
+        physics.getBall().posY = 0; // Avoid paddle collision!
         physics.updateBalls(0.016); // Trigger scoring
 
         // Score event should reset rally
