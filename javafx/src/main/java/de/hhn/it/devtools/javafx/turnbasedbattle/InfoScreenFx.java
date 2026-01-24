@@ -43,6 +43,9 @@ public class InfoScreenFx extends VBox {
     public InfoScreenFx(SimpleScreenManager screenManager, InfoScreenViewModel viewModel) {
         this.viewModel = viewModel;
         this.screenManager = screenManager;
+        this.setFillWidth(true);
+        this.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+
 
         String monsterName = viewModel.getMonsterName();
         int maxHp = viewModel.getMaxHp();
@@ -59,12 +62,18 @@ public class InfoScreenFx extends VBox {
 
         // Main content area: left text column + right image column
         HBox content = new HBox(20);
+        content.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        VBox.setVgrow(content, Priority.ALWAYS);
         content.setPadding(new Insets(12));
         content.setAlignment(Pos.TOP_LEFT);
 
         // LEFT COLUMN (text)
         VBox leftCol = new VBox(10);
-        leftCol.setPrefWidth(520);
+        leftCol.setMaxWidth(Double.MAX_VALUE);
+        leftCol.setMaxHeight(Double.MAX_VALUE);
+        HBox.setHgrow(leftCol, Priority.ALWAYS);
+        VBox.setVgrow(leftCol, Priority.ALWAYS);
+       // leftCol.setPrefWidth(520);
         leftCol.setAlignment(Pos.TOP_LEFT);
 
         Label title = new Label(monsterName);
@@ -133,7 +142,11 @@ public class InfoScreenFx extends VBox {
         VBox rightCol = new VBox();
         rightCol.setAlignment(Pos.TOP_CENTER);
         rightCol.setPadding(new Insets(12));
-        rightCol.setPrefWidth(300);
+        rightCol.setMaxWidth(Double.MAX_VALUE);
+        rightCol.setMaxHeight(Double.MAX_VALUE);
+        HBox.setHgrow(rightCol, Priority.ALWAYS);
+        VBox.setVgrow(rightCol, Priority.ALWAYS);
+        //rightCol.setPrefWidth(300);
 
         // close Button
         HBox forCloseButton = new HBox();
@@ -148,8 +161,11 @@ public class InfoScreenFx extends VBox {
         // Monster image
         ImageView MonsterView = viewModel.getImageView();
         if (MonsterView != null) {
-            MonsterView.setFitWidth(260);
-            MonsterView.setFitHeight(260);
+            MonsterView.fitWidthProperty().bind(rightCol.widthProperty().multiply(0.85));
+            MonsterView.fitHeightProperty().bind(rightCol.heightProperty().multiply(0.85));
+            MonsterView.setPreserveRatio(true);
+//            MonsterView.setFitWidth(260);
+//            MonsterView.setFitHeight(260);
             MonsterView.setPreserveRatio(true);
             rightCol.getChildren().add(MonsterView);
         } else {
@@ -224,7 +240,9 @@ public class InfoScreenFx extends VBox {
 
 
             InfoScreenFx screen = new InfoScreenFx(simpleScreenManagerForTest,vm);
-            Scene scene = new Scene(screen, 880, 560);
+           // Scene scene = new Scene(screen, 880, 560);
+            Scene scene = new Scene(screen);
+            stage.setMaximized(true);
             stage.setTitle("Info Screen Preview");
             stage.setScene(scene);
             stage.show();

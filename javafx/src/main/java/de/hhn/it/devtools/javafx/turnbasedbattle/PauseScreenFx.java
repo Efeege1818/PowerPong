@@ -46,6 +46,9 @@ public class PauseScreenFx extends VBox {
 		public PauseScreenFx(SimpleScreenManager screenManager, PauseScreenViewModel viewModel) {
 				this.viewModel = viewModel;
 				this.screenManager = screenManager;
+				this.setFillWidth(true);
+				this.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+
 
 				// create updatable UI controls
 				titleLabel = new Label();
@@ -63,7 +66,8 @@ public class PauseScreenFx extends VBox {
 				passiveTextLabel.setStyle("-fx-font-size: 12px;");
 
 				attacksList = new TextFlow();
-				attacksList.setMaxWidth(420);
+				//attacksList.setMaxWidth(420);
+				attacksList.setMaxWidth(Double.MAX_VALUE);
 				attacksList.setStyle("-fx-font-size: 12px; -fx-line-spacing: 6px;");
 
 				// Outer frame
@@ -71,13 +75,20 @@ public class PauseScreenFx extends VBox {
 				this.setPadding(new Insets(6));
 
 				// Main content area: left text column + right image column
+				//HBox content = new HBox(20);
 				HBox content = new HBox(20);
+				content.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+				VBox.setVgrow(content, Priority.ALWAYS);
 				content.setPadding(new Insets(12));
 				content.setAlignment(Pos.TOP_LEFT);
 
 				// LEFT COLUMN (text)
 				VBox leftCol = new VBox(10);
-				leftCol.setPrefWidth(520);
+				leftCol.setMaxWidth(Double.MAX_VALUE);
+				leftCol.setMaxHeight(Double.MAX_VALUE);
+				HBox.setHgrow(leftCol, Priority.ALWAYS);
+				VBox.setVgrow(leftCol, Priority.ALWAYS);
+				//leftCol.setPrefWidth(520);
 				leftCol.setAlignment(Pos.TOP_LEFT);
 
 				Label attacksTitle = new Label("Attacks:");
@@ -93,7 +104,11 @@ public class PauseScreenFx extends VBox {
 				rightCol = new VBox();
 				rightCol.setAlignment(Pos.TOP_CENTER);
 				rightCol.setPadding(new Insets(12));
-				rightCol.setPrefWidth(300);
+				rightCol.setMaxWidth(Double.MAX_VALUE);
+				rightCol.setMaxHeight(Double.MAX_VALUE);
+				HBox.setHgrow(rightCol, Priority.ALWAYS);
+				VBox.setVgrow(rightCol, Priority.ALWAYS);
+				//rightCol.setPrefWidth(300);
 
 				HBox forCloseButton = new HBox();
 				forCloseButton.setAlignment(Pos.TOP_RIGHT);
@@ -110,7 +125,12 @@ public class PauseScreenFx extends VBox {
 				// STATUS BOX below the image: active buffs, debuffs and DOTs
 				statusBox = new VBox(6);
 				statusBox.setPadding(new Insets(10, 0, 0, 0));
-				statusBox.setPrefWidth(280);
+				imageHolder.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+				VBox.setVgrow(imageHolder, Priority.ALWAYS);
+
+				statusBox.setMaxWidth(Double.MAX_VALUE);
+
+				//statusBox.setPrefWidth(280);
 				statusBox.setStyle("-fx-border-color: transparent;");
 
 				// button for monster switch
@@ -184,8 +204,11 @@ public class PauseScreenFx extends VBox {
 				imageHolder.getChildren().clear();
 				ImageView iv = viewModel.getImageView();
 				if (iv != null) {
-						iv.setFitWidth(260);
-						iv.setFitHeight(260);
+//						iv.setFitWidth(260);
+//						iv.setFitHeight(260);
+						iv.fitWidthProperty().bind(rightCol.widthProperty().multiply(0.8));
+						iv.fitHeightProperty().bind(rightCol.heightProperty().multiply(0.45));
+						iv.setPreserveRatio(true);
 						iv.setPreserveRatio(true);
 						imageHolder.getChildren().add(iv);
 				} else {
@@ -206,7 +229,12 @@ public class PauseScreenFx extends VBox {
 										break;
 						}
 
-						Circle fallback = new Circle(130);
+						//Circle fallback = new Circle(130);
+						Circle fallback = new Circle();
+						fallback.radiusProperty().bind(
+										rightCol.widthProperty().multiply(0.25)
+						);
+
 						fallback.setFill(Color.TRANSPARENT);
 						fallback.setStroke(Color.web(fallbackColore));
 						fallback.setStrokeWidth(3.0);
@@ -309,7 +337,9 @@ public class PauseScreenFx extends VBox {
 						);
 
 						PauseScreenFx screen = new PauseScreenFx(screenManagerForTest, vm);
-						Scene scene = new Scene(screen, 880, 560);
+						//Scene scene = new Scene(screen, 880, 560);
+						Scene scene = new Scene(screen);
+						stage.setMaximized(true);
 						stage.setTitle("Pause Screen Preview");
 						stage.setScene(scene);
 						stage.show();
