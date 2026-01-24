@@ -15,6 +15,17 @@ public record Tower(UUID id,
                     Coordinates coordinates,
                     TowerType type) {
 
+  private static final org.slf4j.Logger logger =
+      org.slf4j.LoggerFactory.getLogger(Tower.class);
+
+  /**
+   * Constructor.
+   */
+  public Tower {
+    logger.debug("creating Tower with id - {} | coordinates - {} | type - {}",
+        id, coordinates, type);
+  }
+
   public Tower(Coordinates coordinates, TowerType type) {
     this(UUID.randomUUID(), coordinates, type);
   }
