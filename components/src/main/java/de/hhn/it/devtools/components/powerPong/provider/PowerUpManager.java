@@ -14,24 +14,30 @@ import java.util.Random;
  * balls,
  * applying effects, and reverting effects after duration.
  *
+ * <p>
  * This class is responsible for:
- * - Spawning power-ups at regular intervals
- * - Detecting collisions between balls and power-ups
- * - Applying power-up effects to the physics engine
- * - Managing timed effects and reverting them after expiration
- * - Handling shield power-ups that block scoring
+ * <ul>
+ * <li>Spawning power-ups at regular intervals</li>
+ * <li>Detecting collisions between balls and power-ups</li>
+ * <li>Applying power-up effects to the physics engine</li>
+ * <li>Managing timed effects and reverting them after expiration</li>
+ * <li>Handling shield power-ups that block scoring</li>
+ * </ul>
  */
 public class PowerUpManager {
 
-  private static final double POWERUP_SPAWN_INTERVAL = 6.0; // seconds (base, randomized in maybeSpawnPowerUp)
+  // Base spawn interval in seconds (randomized in maybeSpawnPowerUp)
+  private static final double POWERUP_SPAWN_INTERVAL = 6.0;
   private static final double POWERUP_RADIUS = 20.0;
 
   // Per-PowerUp effect durations (in seconds)
-  private static final double DURATION_PADDLE_SIZE = 10.0; // Bigger/Smaller paddle lasts even longer
-  private static final double DURATION_SLOW_PADDLE = 5.0; // Slow enemy paddle
-  private static final double DURATION_BARRIERLESS = 4.0; // No walls (shorter - very impactful)
-  private static final double DURATION_DOUBLE_BALL = 8.0; // Double ball lasts longer
-  private static final double DURATION_FAST_BALL = 5.0; // Fast ball on enemy side
+  // Bigger/Smaller paddle lasts longer
+  private static final double DURATION_PADDLE_SIZE = 10.0;
+  private static final double DURATION_SLOW_PADDLE = 5.0;
+  // No walls (shorter - very impactful)
+  private static final double DURATION_BARRIERLESS = 4.0;
+  private static final double DURATION_DOUBLE_BALL = 8.0;
+  private static final double DURATION_FAST_BALL = 5.0;
 
   private static final double ENLARGE_FACTOR = 1.4;
   private static final double SHRINK_FACTOR = 0.65;
@@ -53,6 +59,9 @@ public class PowerUpManager {
     this.random = random;
   }
 
+  /**
+   * Resets the power-up manager to its initial state.
+   */
   public void reset() {
     powerUps.clear();
     activeEffects.clear();
@@ -61,9 +70,21 @@ public class PowerUpManager {
     rightShield = false;
   }
 
+  /**
+   * Event record representing a power-up collection.
+   *
+   * @param owner the player who collected the power-up
+   * @param type  the type of power-up collected
+   */
   public record CollectionEvent(int owner, PowerUpType type) {
   }
 
+  /**
+   * Updates power-up system state.
+   *
+   * @param deltaSeconds time elapsed since last update
+   * @return list of power-up collection events
+   */
   public java.util.List<CollectionEvent> update(double deltaSeconds) {
     spawnTimer += deltaSeconds;
     maybeSpawnPowerUp();
@@ -354,6 +375,11 @@ public class PowerUpManager {
     return player == 1 ? leftShield : rightShield;
   }
 
+  /**
+   * Consumes the shield for a player when a ball scores.
+   *
+   * @param player the player whose shield to consume (1 or 2)
+   */
   public void consumeShield(int player) {
     if (player == 1) {
       leftShield = false;
@@ -368,6 +394,11 @@ public class PowerUpManager {
     physics.removeSecondaryBall();
   }
 
+  /**
+   * Returns the current state of all power-ups on the field.
+   *
+   * @return list of power-up states
+   */
   public List<PowerUpState> getPowerUpStates() {
     List<PowerUpState> states = new ArrayList<>();
     for (FieldPowerUp p : powerUps) {
@@ -402,7 +433,7 @@ public class PowerUpManager {
 
   /**
    * Information about an active effect for UI display.
-   * 
+   *
    * @param type           The power-up type
    * @param remainingRatio Remaining time as ratio (0.0 to 1.0)
    */
@@ -411,7 +442,7 @@ public class PowerUpManager {
 
   /**
    * Get all active effects for a player (for timer bar display).
-   * 
+   *
    * @param player Player number (1 or 2)
    * @return List of active effects with remaining time ratios
    */

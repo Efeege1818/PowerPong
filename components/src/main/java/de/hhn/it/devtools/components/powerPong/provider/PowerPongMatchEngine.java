@@ -20,19 +20,24 @@ import org.slf4j.LoggerFactory;
  * Implementation of PowerPongService using the Facade pattern.
  * Orchestrates the game flow by delegating to PhysicsEngine
  * and PowerUpManager.
+ *
  * <p>
  * This class serves as the main entry point for the PowerPong game logic
  * and is responsible for:
- * - Game lifecycle management (start, pause, end)
- * - Coordinating physics and power-up systems
- * - Processing player input
- * - Managing game state and scoring
- * - Notifying listeners of game events
+ * <ul>
+ * <li>Game lifecycle management (start, pause, end)</li>
+ * <li>Coordinating physics and power-up systems</li>
+ * <li>Processing player input</li>
+ * <li>Managing game state and scoring</li>
+ * <li>Notifying listeners of game events</li>
+ * </ul>
  *
  * <p>
  * The engine supports two game modes:
- * - GameMode.CLASSIC_DUEL - Traditional Pong gameplay
- * - GameMode.POWERUP_DUEL - Pong with power-ups and special effects
+ * <ul>
+ * <li>GameMode.CLASSIC_DUEL - Traditional Pong gameplay</li>
+ * <li>GameMode.POWERUP_DUEL - Pong with power-ups and special effects</li>
+ * </ul>
  */
 public class PowerPongMatchEngine implements PowerPongService {
 
@@ -91,8 +96,6 @@ public class PowerPongMatchEngine implements PowerPongService {
    * AI is always beatable, even on hard (has minimum reaction time & error).
    * AI also makes random "mistakes" (freezes, wrong direction) based on
    * difficulty.
-   * 
-   * // difficulty.
    *
    * @param difficulty 0.0 = Easy, 0.5 = Medium, 1.0 = Hard
    */
@@ -187,7 +190,6 @@ public class PowerPongMatchEngine implements PowerPongService {
 
   @Override
   public void updateGame(PlayerInput input, double deltaSeconds) throws GameLogicException {
-    logger.debug("updateGame() called with deltaSeconds: {}", deltaSeconds);
     ensureGameRunning();
     if (paused || physics.getBall() == null) {
       return;
@@ -215,10 +217,19 @@ public class PowerPongMatchEngine implements PowerPongService {
       }
       remainingSteps -= step;
     }
-
+    // Check for ball collision and notify listeners
+    if (physics.wasCollisionDetected()) {
+      logger.info("Notifying listeners: onBallCollision()");
+      for (PowerPongListener listener : listeners) {
+        listener.onBallCollision(getGameState());
+      }
+      physics.resetCollisionFlag();
+    }
     if (currentMode == GameMode.POWERUP_DUEL) {
       java.util.List<PowerUpManager.CollectionEvent> events = powerUpManager.update(deltaSeconds);
       for (PowerUpManager.CollectionEvent event : events) {
+        logger.info("Notifying listeners: onPowerUpCollected(player={}, type={})",
+            event.owner(), event.type());
         for (PowerPongListener listener : listeners) {
           listener.onPowerUpCollected(event.owner(), event.type());
         }
@@ -306,6 +317,7 @@ public class PowerPongMatchEngine implements PowerPongService {
         running = false;
         paused = false;
         rebuildSnapshot();
+        logger.info("Notifying listeners: onGameEnd(status={})", status);
         for (PowerPongListener listener : listeners) {
           listener.onGameEnd(status, snapshot);
         }
@@ -317,6 +329,8 @@ public class PowerPongMatchEngine implements PowerPongService {
         // survivalTime = 0; // REMOVED: Keep difficulty timer
 
         rebuildSnapshot();
+        logger.info("Notifying listeners: onPlayerScored(player={}, score={})",
+            2, score);
         for (PowerPongListener listener : listeners) {
           listener.onPlayerScored(2, score);
         }
@@ -436,7 +450,6 @@ public class PowerPongMatchEngine implements PowerPongService {
 
   @Override
   public GameState getGameState() {
-    logger.debug("getGameState() called");
     return snapshot;
   }
 
@@ -524,6 +537,8 @@ public class PowerPongMatchEngine implements PowerPongService {
     score = new Score(left, right);
     rebuildSnapshot();
 
+    logger.info("Notifying listeners: onPlayerScored(player={}, score={})",
+        scoringPlayer, score);
     for (PowerPongListener listener : listeners) {
       listener.onPlayerScored(scoringPlayer, score);
     }
@@ -533,6 +548,7 @@ public class PowerPongMatchEngine implements PowerPongService {
       running = false;
       paused = false;
       rebuildSnapshot();
+      logger.info("Notifying listeners: onGameEnd(status={})", status);
       for (PowerPongListener listener : listeners) {
         listener.onGameEnd(status, snapshot);
       }

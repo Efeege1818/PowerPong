@@ -10,12 +10,15 @@ import java.util.Random;
  * Physics engine for PowerPong game simulation.
  * Handles ball movement, paddle movement, collision detection, and scoring.
  *
+ * <p>
  * This class encapsulates all physics-related calculations including:
- * - Ball trajectory and velocity management
- * - Paddle movement with bounds checking
- * - Ball-paddle and ball-wall collision detection
- * - Score detection when balls go out of bounds
- * - Power-up effects on physics parameters
+ * <ul>
+ * <li>Ball trajectory and velocity management</li>
+ * <li>Paddle movement with bounds checking</li>
+ * <li>Ball-paddle and ball-wall collision detection</li>
+ * <li>Score detection when balls go out of bounds</li>
+ * <li>Power-up effects on physics parameters</li>
+ * </ul>
  */
 public class PhysicsEngine {
 
@@ -55,6 +58,9 @@ public class PhysicsEngine {
   private double rallySpeedIncrease = 0.02; // 2% faster per hit
   private double maxRallyMultiplier = 1.5; // Max 50% faster
 
+  // Collision tracking for listener callbacks
+  private boolean collisionOccurred = false;
+
   public void setRallySpeedIncrease(double increase) {
     this.rallySpeedIncrease = increase;
   }
@@ -67,11 +73,30 @@ public class PhysicsEngine {
     this.random = random;
   }
 
+  /**
+   * Returns whether a collision occurred during the last update.
+   *
+   * @return true if ball collided with paddle or wall
+   */
+  public boolean wasCollisionDetected() {
+    return collisionOccurred;
+  }
+
+  /**
+   * Resets the collision flag. Should be called after processing collision
+   * callback.
+   */
+  public void resetCollisionFlag() {
+    collisionOccurred = false;
+  }
+
   public double getRallyMultiplier() {
     return Math.min(maxRallyMultiplier, 1.0 + (rallyHitCount * rallySpeedIncrease));
   }
 
-  // reset methods
+  /**
+   * Resets the physics engine to its initial state.
+   */
   public void reset() {
     paddle1CenterY = FIELD_HEIGHT / 2.0;
     paddle2CenterY = FIELD_HEIGHT / 2.0;
@@ -82,6 +107,9 @@ public class PhysicsEngine {
     rallyHitCount = 0;
   }
 
+  /**
+   * Resets all paddle modifiers to default values.
+   */
   public void resetModifiers() {
     leftHeightFactor = 1.0;
     rightHeightFactor = 1.0;
@@ -90,7 +118,11 @@ public class PhysicsEngine {
     noWalls = false;
   }
 
-  // difficulty level
+  /**
+   * Sets the difficulty multiplier for ball speed.
+   *
+   * @param multiplier the difficulty multiplier
+   */
   public void setDifficultyMultiplier(double multiplier) {
     this.difficultyMultiplier = multiplier;
     // Update current ball velocities if they exist
@@ -125,7 +157,11 @@ public class PhysicsEngine {
     return baseBallSpeed * difficultyMultiplier;
   }
 
-  // Start ball & control double ball
+  /**
+   * Launches the ball in the specified horizontal direction.
+   *
+   * @param horizontalDirection 1 for right, -1 for left
+   */
   public void launchBall(int horizontalDirection) {
     double startX = FIELD_WIDTH / 2.0;
     double startY = FIELD_HEIGHT / 2.0;
@@ -135,6 +171,9 @@ public class PhysicsEngine {
     ball = new Ball(startX, startY, vx, vy);
   }
 
+  /**
+   * Spawns a secondary ball traveling in the opposite direction.
+   */
   public void spawnSecondaryBall() {
     if (ball != null && secondaryBall == null) {
       secondaryBall = new Ball(ball.posX, ball.posY, -ball.vx, -ball.vy);
@@ -145,16 +184,23 @@ public class PhysicsEngine {
     secondaryBall = null;
   }
 
-  // move paddle
+  /**
+   * Moves the specified paddle in the given direction.
+   *
+   * @param left         true for left paddle, false for right paddle
+   * @param direction    movement direction (positive = down, negative = up)
+   * @param deltaSeconds time elapsed in seconds
+   */
   public void movePaddle(boolean left, double direction, double deltaSeconds) {
     if (direction == 0 || deltaSeconds <= 0) {
       return;
     }
     double modifier = left ? leftSpeedFactor : rightSpeedFactor;
-    double speed = basePaddleSpeed * modifier * deltaSeconds; // Paddle speed doesnt necessarily need to scale with
-    // difficulty, but could.
+    // Paddle speed doesnt necessarily need to scale with difficulty, but could.
+    double speed = basePaddleSpeed * modifier * deltaSeconds;
     double delta = direction * speed;
-    double currentHeight = left ? PADDLE_HEIGHT * leftHeightFactor : PADDLE_HEIGHT * rightHeightFactor;
+    double heightFactor = left ? leftHeightFactor : rightHeightFactor;
+    double currentHeight = PADDLE_HEIGHT * heightFactor;
     double minY = currentHeight / 2.0;
     double maxY = FIELD_HEIGHT - currentHeight / 2.0;
 
@@ -215,9 +261,11 @@ public class PhysicsEngine {
     if (current.posY <= top && current.vy < 0) {
       current.posY = top;
       current.vy = -current.vy;
+      collisionOccurred = true;
     } else if (current.posY >= bottom && current.vy > 0) {
       current.posY = bottom;
       current.vy = -current.vy;
+      collisionOccurred = true;
     }
   }
 
@@ -236,28 +284,35 @@ public class PhysicsEngine {
       current.posX = leftPaddleRight + BALL_RADIUS;
       bounceFromPaddle(current, +1, paddle1CenterY, PADDLE_HEIGHT * leftHeightFactor);
       bounced = true;
-    } else if (current.vx > 0 && current.posX + BALL_RADIUS >= rightPaddleLeft && current.posY >= rightTop
-        && current.posY <= rightBottom) {
+      collisionOccurred = true;
+    } else if (current.vx > 0 && current.posX + BALL_RADIUS >= rightPaddleLeft
+        && current.posY >= rightTop && current.posY <= rightBottom) {
       current.posX = rightPaddleLeft - BALL_RADIUS;
       bounceFromPaddle(current, -1, paddle2CenterY, PADDLE_HEIGHT * rightHeightFactor);
       bounced = true;
+      collisionOccurred = true;
     }
     return bounced;
   }
 
-  private void bounceFromPaddle(Ball current, int horizontalDirection, double paddleCenterY, double paddleHeight) {
+  private void bounceFromPaddle(Ball current, int horizontalDirection,
+      double paddleCenterY, double paddleHeight) {
     double relativeIntersect = (current.posY - paddleCenterY) / (paddleHeight / 2.0);
 
     // Increase rally hit count and apply speed boost
     rallyHitCount++;
-    double rallyMultiplier = Math.min(maxRallyMultiplier, 1.0 + (rallyHitCount * rallySpeedIncrease));
+    double currentRallyMultiplier = Math.min(maxRallyMultiplier, 1.0 + (rallyHitCount * rallySpeedIncrease));
 
-    double speed = getBaseBallSpeed() * rallyMultiplier;
+    double speed = getBaseBallSpeed() * currentRallyMultiplier;
     current.vx = horizontalDirection * speed;
     current.vy = relativeIntersect * speed;
   }
 
-  // Change ballspeed
+  /**
+   * Scales the velocity of all active balls by the given factor.
+   *
+   * @param factor the scaling factor to apply
+   */
   public void scaleBallVelocity(double factor) {
     if (ball != null) {
       ball.vx *= factor;
@@ -269,6 +324,13 @@ public class PhysicsEngine {
     }
   }
 
+  /**
+   * Sets the velocity of a specific ball.
+   *
+   * @param ballToSet the ball to modify
+   * @param vx        the horizontal velocity
+   * @param vy        the vertical velocity
+   */
   public void setBallVelocity(Ball ballToSet, double vx, double vy) {
     if (ballToSet != null) {
       ballToSet.vx = vx;
@@ -296,11 +358,13 @@ public class PhysicsEngine {
 
   // Getters and Setters for state
   public PaddleState getLeftPaddleState() {
-    return new PaddleState(LEFT_PADDLE_X, paddle1CenterY, PADDLE_WIDTH, PADDLE_HEIGHT * leftHeightFactor);
+    double leftHeight = PADDLE_HEIGHT * leftHeightFactor;
+    return new PaddleState(LEFT_PADDLE_X, paddle1CenterY, PADDLE_WIDTH, leftHeight);
   }
 
   public PaddleState getRightPaddleState() {
-    return new PaddleState(RIGHT_PADDLE_X, paddle2CenterY, PADDLE_WIDTH, PADDLE_HEIGHT * rightHeightFactor);
+    double rightHeight = PADDLE_HEIGHT * rightHeightFactor;
+    return new PaddleState(RIGHT_PADDLE_X, paddle2CenterY, PADDLE_WIDTH, rightHeight);
   }
 
   // Helper for AI
@@ -308,6 +372,11 @@ public class PhysicsEngine {
     return paddle2CenterY;
   }
 
+  /**
+   * Sets the Y position of the right paddle (for AI control).
+   *
+   * @param y the new Y position
+   */
   public void setPaddle2Y(double y) {
     double currentHeight = PADDLE_HEIGHT * rightHeightFactor;
     double minY = currentHeight / 2.0;
@@ -319,6 +388,11 @@ public class PhysicsEngine {
     return rallyHitCount;
   }
 
+  /**
+   * Returns the states of all active balls.
+   *
+   * @return list of ball states
+   */
   public List<BallState> getBallStates() {
     List<BallState> balls = new ArrayList<>();
     if (ball != null) {
@@ -358,12 +432,27 @@ public class PhysicsEngine {
     this.noWalls = noWalls;
   }
 
+  /**
+   * Represents a ball in the physics simulation.
+   */
   public static class Ball {
+    /** The ball's X position. */
     public double posX;
+    /** The ball's Y position. */
     public double posY;
+    /** The ball's horizontal velocity. */
     public double vx;
+    /** The ball's vertical velocity. */
     public double vy;
 
+    /**
+     * Creates a new ball with the given position and velocity.
+     *
+     * @param posX initial X position
+     * @param posY initial Y position
+     * @param vx   initial horizontal velocity
+     * @param vy   initial vertical velocity
+     */
     public Ball(double posX, double posY, double vx, double vy) {
       this.posX = posX;
       this.posY = posY;
@@ -426,3 +515,4 @@ public class PhysicsEngine {
     return predictedY;
   }
 }
+
