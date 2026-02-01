@@ -21,8 +21,7 @@ import org.slf4j.LoggerFactory;
  * Orchestrates the game flow by delegating to PhysicsEngine
  * and PowerUpManager.
  *
- * <p>
- * This class serves as the main entry point for the PowerPong game logic
+ * <p>This class serves as the main entry point for the PowerPong game logic
  * and is responsible for:
  * <ul>
  * <li>Game lifecycle management (start, pause, end)</li>
@@ -32,8 +31,7 @@ import org.slf4j.LoggerFactory;
  * <li>Notifying listeners of game events</li>
  * </ul>
  *
- * <p>
- * The engine supports two game modes:
+ * <p>The engine supports two game modes:
  * <ul>
  * <li>GameMode.CLASSIC_DUEL - Traditional Pong gameplay</li>
  * <li>GameMode.POWERUP_DUEL - Pong with power-ups and special effects</li>
@@ -74,6 +72,9 @@ public class PowerPongMatchEngine implements PowerPongService {
   private double aiCurrentMistakeTimer = 0.0; // countdown for current mistake
   private int aiMistakeType = 0; // 0=none, 1=freeze, 2=wrong direction, 3=hesitate
 
+  /**
+   * Constructs a new PowerPongMatchEngine with a default random generator.
+   */
   public PowerPongMatchEngine() {
     this(new Random());
   }

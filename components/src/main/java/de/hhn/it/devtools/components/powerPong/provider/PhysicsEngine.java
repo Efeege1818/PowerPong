@@ -10,8 +10,7 @@ import java.util.Random;
  * Physics engine for PowerPong game simulation.
  * Handles ball movement, paddle movement, collision detection, and scoring.
  *
- * <p>
- * This class encapsulates all physics-related calculations including:
+ * <p>This class encapsulates all physics-related calculations including:
  * <ul>
  * <li>Ball trajectory and velocity management</li>
  * <li>Paddle movement with bounds checking</li>
@@ -61,14 +60,29 @@ public class PhysicsEngine {
   // Collision tracking for listener callbacks
   private boolean collisionOccurred = false;
 
+  /**
+   * Sets the speed increase per rally hit.
+   *
+   * @param increase the percentage to increase speed (e.g. 0.02 for 2%)
+   */
   public void setRallySpeedIncrease(double increase) {
     this.rallySpeedIncrease = increase;
   }
 
+  /**
+   * Sets the maximum speed multiplier for rallies.
+   *
+   * @param max the maximum multiplier (e.g. 1.5 for 50% faster)
+   */
   public void setMaxRallyMultiplier(double max) {
     this.maxRallyMultiplier = max;
   }
 
+  /**
+   * Constructs a new PhysicsEngine.
+   *
+   * @param random the Random instance to use for variability
+   */
   public PhysicsEngine(Random random) {
     this.random = random;
   }
@@ -90,6 +104,11 @@ public class PhysicsEngine {
     collisionOccurred = false;
   }
 
+  /**
+   * Gets the current rally speed multiplier based on hit count.
+   *
+   * @return the current speed multiplier
+   */
   public double getRallyMultiplier() {
     return Math.min(maxRallyMultiplier, 1.0 + (rallyHitCount * rallySpeedIncrease));
   }
@@ -301,7 +320,8 @@ public class PhysicsEngine {
 
     // Increase rally hit count and apply speed boost
     rallyHitCount++;
-    double currentRallyMultiplier = Math.min(maxRallyMultiplier, 1.0 + (rallyHitCount * rallySpeedIncrease));
+    double currentRallyMultiplier = Math.min(maxRallyMultiplier,
+            1.0 + (rallyHitCount * rallySpeedIncrease));
 
     double speed = getBaseBallSpeed() * currentRallyMultiplier;
     current.vx = horizontalDirection * speed;
@@ -515,4 +535,3 @@ public class PhysicsEngine {
     return predictedY;
   }
 }
-

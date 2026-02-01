@@ -14,8 +14,7 @@ import java.util.Random;
  * balls,
  * applying effects, and reverting effects after duration.
  *
- * <p>
- * This class is responsible for:
+ * <p>This class is responsible for:
  * <ul>
  * <li>Spawning power-ups at regular intervals</li>
  * <li>Detecting collisions between balls and power-ups</li>
