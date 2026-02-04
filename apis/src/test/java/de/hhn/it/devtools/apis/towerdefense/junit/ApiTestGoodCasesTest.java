@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Test class that test the api.
  */
-public class ApiTest {
+public class ApiTestGoodCasesTest {
 
   @Test
   void checkPlayerHealthAndMoney() {
