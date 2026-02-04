@@ -15,6 +15,6 @@ public record Coordinates(float x, float y) {
    * Constructor.
    */
   public Coordinates {
-    logger.debug("creating Coordinates ({}|{})", x, y);
+    logger.trace("creating Coordinates ({}|{})", x, y);
   }
 }

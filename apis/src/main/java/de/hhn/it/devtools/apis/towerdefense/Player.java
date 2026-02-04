@@ -15,7 +15,7 @@ public record Player(int health, int money) {
    * Constructor.
    */
   public Player {
-    logger.debug("creating Tower with health - {} | money - {}",
+    logger.debug("creating Player with health - {} | money - {}",
         health, money);
   }
 
