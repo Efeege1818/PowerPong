@@ -17,7 +17,7 @@ public class TowerToolbox {
   private List<Tower> towers = new ArrayList<>();
   private List<Tower> savedTowers = new ArrayList<>();
   private final SimpleTowerDefenseService service;
-  private final int TICKS_UNTIL_MONEY = 2;
+  private final int ticksUntilMoney = 2;
   private int remainingTicks = 0;
 
   /**
@@ -123,7 +123,7 @@ public class TowerToolbox {
     int money = 0;
     for (Tower tower : towers) {
       remainingTicks++;
-      remainingTicks %= TICKS_UNTIL_MONEY;
+      remainingTicks %= ticksUntilMoney;
       if (remainingTicks == 0 && tower.type().equals(TowerType.MONEYMAKER)) {
         money += 1;
       }
