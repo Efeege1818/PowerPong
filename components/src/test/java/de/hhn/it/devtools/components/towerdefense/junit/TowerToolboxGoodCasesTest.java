@@ -75,6 +75,7 @@ public class TowerToolboxGoodCasesTest {
     Tower moneyTower2 = new Tower(new UUID(2, 0), new Coordinates(1, 1), TowerType.MONEYMAKER);
     towerToolbox.addTower(moneyTower1);
     towerToolbox.addTower(moneyTower2);
+    towerToolbox.moneyMade();
     int money = towerToolbox.moneyMade();
     assertEquals(2, money);
   }
