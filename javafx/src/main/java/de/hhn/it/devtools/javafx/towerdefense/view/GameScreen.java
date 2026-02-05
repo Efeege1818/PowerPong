@@ -322,7 +322,7 @@ public class GameScreen extends StackPane {
     Label towerCost2 = new Label(String.valueOf(towerCostNumber2));
     towerIcon2.getChildren().addAll(towerIconRect2, towerCost2);
 
-    Label descLabel2 = new Label("The Melee Tower does good damage, however only has a 1-Tile range.");
+    Label descLabel2 = new Label("The Melee Tower does good damage, however only has a 2-Tile range.");
     descLabel2.setWrapText(true);
 
     tutorialDisplay.add(towerIcon2, 0, ++rowIndex);
@@ -335,7 +335,7 @@ public class GameScreen extends StackPane {
     Label towerCost3 = new Label(String.valueOf(towerCostNumber3));
     towerIcon3.getChildren().addAll(towerIconRect3, towerCost3);
 
-    Label descLabel3 = new Label("The Ranged Tower does little damage within a 2-Tile range.");
+    Label descLabel3 = new Label("The Ranged Tower does little damage within a 3-Tile range.");
     descLabel3.setWrapText(true);
 
     tutorialDisplay.add(towerIcon3, 0, ++rowIndex);
