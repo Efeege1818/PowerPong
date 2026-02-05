@@ -1,5 +1,7 @@
 package de.hhn.it.devtools.apis.towerdefense;
 
+import java.util.Objects;
+
 /**
  * Holds Coordinates for the positioning of Towers and Enemies.
  *

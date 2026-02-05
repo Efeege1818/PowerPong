@@ -1,6 +1,7 @@
 package de.hhn.it.devtools.apis.towerdefense;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Data Structure that stores the positions on the Board.
@@ -17,5 +18,6 @@ public record Grid(Direction[][] grid) {
    */
   public Grid {
     logger.debug("creating Grid {}", Arrays.deepToString(grid));
+    Objects.requireNonNull(grid);
   }
 }
