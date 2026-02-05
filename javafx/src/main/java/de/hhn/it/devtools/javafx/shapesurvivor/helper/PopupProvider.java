@@ -30,7 +30,21 @@ public class PopupProvider {
         return this;
     }
 
+    /**
+     * Adds a button that closes the popup after executing the event handler.
+     */
     public void addButton(EventHandler<ActionEvent> buttonEvent, String buttonText) {
+        addButton(buttonEvent, buttonText, true);
+    }
+
+    /**
+     * Adds a button with option to control whether it closes the popup.
+     *
+     * @param buttonEvent The event handler to execute
+     * @param buttonText The text to display on the button
+     * @param closeOnClick Whether to close the popup when this button is clicked
+     */
+    public void addButton(EventHandler<ActionEvent> buttonEvent, String buttonText, boolean closeOnClick) {
         Button button = new Button(buttonText);
         button.setPrefWidth(200);
         button.setPrefHeight(50);
@@ -41,9 +55,11 @@ public class PopupProvider {
                     buttonEvent.handle(e);
                 }
             } finally {
-                Stage stage = (Stage) button.getScene().getWindow();
-                if (stage != null) {
-                    stage.close();
+                if (closeOnClick) {
+                    Stage stage = (Stage) button.getScene().getWindow();
+                    if (stage != null) {
+                        stage.close();
+                    }
                 }
             }
         });
@@ -53,11 +69,11 @@ public class PopupProvider {
     public PopupProvider addLabel(String labelText) {
         Label label = new Label(labelText);
         label.setStyle(
-                "-fx-text-fill: #FFFFFF; "
-                        + "-fx-font-weight: bold; "
-                        + "-fx-font-size: 20px; "
-                        + "-fx-effect: dropshadow(one-pass-box, black, 3, 0.0, 1, 1); "
-                        + "-fx-padding: 0 0 10 0;"
+            "-fx-text-fill: #FFFFFF; "
+                + "-fx-font-weight: bold; "
+                + "-fx-font-size: 20px; "
+                + "-fx-effect: dropshadow(one-pass-box, black, 3, 0.0, 1, 1); "
+                + "-fx-padding: 0 0 10 0;"
         );
         elements.add(label);
         return this;
@@ -69,10 +85,9 @@ public class PopupProvider {
 
         Label label = new Label(labelText);
         label.setStyle(
-                "-fx-text-fill: #FFFFFF; "
-                        + "-fx-font-weight: bold; "
-                        + "-fx-font-size: 16px; "
-                        + "-fx-effect: dropshadow(one-pass-box, black, 2, 0.0, 1, 1);"
+            "-fx-text-fill: #FFFFFF; "
+                + "-fx-font-weight: bold; "
+                + "-fx-font-size: 16px; "
         );
 
         ComboBox<T> comboBox = new ComboBox<>();
@@ -80,13 +95,10 @@ public class PopupProvider {
         comboBox.getSelectionModel().select(defaultIndex);
         comboBox.setPrefWidth(250);
         comboBox.setStyle(
-                "-fx-background-color: #2a2a3e; "
-                        + "-fx-text-fill: #FFFFFF; "
-                        + "-fx-font-size: 14px; "
-                        + "-fx-border-color: #FFD700; "
-                        + "-fx-border-width: 2; "
-                        + "-fx-border-radius: 5; "
-                        + "-fx-background-radius: 5;"
+            "-fx-background-color: #cdcdcd; "
+                + "-fx-text-fill: #FFFFFF; "
+                + "-fx-font-size: 14px; "
+                + "-fx-background-radius: 5;"
         );
 
         container.getChildren().addAll(label, comboBox);
@@ -122,9 +134,9 @@ public class PopupProvider {
         }
 
         vbox.setStyle("-fx-background-color: linear-gradient(to bottom, rgba(20,20,30,0.95),"
-                + " rgba(40,40,60,0.95)); "
-                + "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 25, 0.8, 0, 10); "
-                + "-fx-padding: 40;");
+            + " rgba(40,94,46,0.95)); "
+            + "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 25, 0.8, 0, 10); "
+            + "-fx-padding: 40;");
 
         Scene scene = new Scene(vbox, 450, 450);
         this.popup.setScene(scene);

@@ -54,15 +54,30 @@ class SimpleServiceEdgeCaseTest {
     // Constructing EntityProvider will create aliens but that's OK
     epSetEntityProviderToReal(svc);
 
-    // calling move should not throw
-    svc.move(Direction.LEFT);
+    try {
+      // calling move should not throw
+      svc.move(Direction.LEFT);
+    } finally {
+      // ensure loop stopped
+      Field loop = svc.getClass().getDeclaredField("simpleGameLoop");
+      loop.setAccessible(true);
+      Object simpleGameLoop = loop.get(svc);
+      if (simpleGameLoop != null) simpleGameLoop.getClass().getMethod("stopGame").invoke(simpleGameLoop);
+    }
   }
 
   @Test
   void testShootDelegatesToEntityProviderWhenPresent() throws Exception {
     SimpleSpaceInvadersService svc = new SimpleSpaceInvadersService();
     epSetEntityProviderToReal(svc);
-    svc.shoot();
+    try {
+      svc.shoot();
+    } finally {
+      Field loop = svc.getClass().getDeclaredField("simpleGameLoop");
+      loop.setAccessible(true);
+      Object simpleGameLoop = loop.get(svc);
+      if (simpleGameLoop != null) simpleGameLoop.getClass().getMethod("stopGame").invoke(simpleGameLoop);
+    }
   }
 
   private void epSetEntityProviderToReal(SimpleSpaceInvadersService svc) throws Exception {
