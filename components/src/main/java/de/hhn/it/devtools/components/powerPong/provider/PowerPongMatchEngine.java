@@ -21,7 +21,8 @@ import org.slf4j.LoggerFactory;
  * Orchestrates the game flow by delegating to PhysicsEngine
  * and PowerUpManager.
  *
- * <p>This class serves as the main entry point for the PowerPong game logic
+ * <p>
+ * This class serves as the main entry point for the PowerPong game logic
  * and is responsible for:
  * <ul>
  * <li>Game lifecycle management (start, pause, end)</li>
@@ -31,7 +32,8 @@ import org.slf4j.LoggerFactory;
  * <li>Notifying listeners of game events</li>
  * </ul>
  *
- * <p>The engine supports two game modes:
+ * <p>
+ * The engine supports two game modes:
  * <ul>
  * <li>GameMode.CLASSIC_DUEL - Traditional Pong gameplay</li>
  * <li>GameMode.POWERUP_DUEL - Pong with power-ups and special effects</li>
@@ -185,7 +187,6 @@ public class PowerPongMatchEngine implements PowerPongService {
 
   @Override
   public void updateGame(PlayerInput input) throws GameLogicException {
-    logger.debug("updateGame(PlayerInput) called");
     updateGame(input, FRAME_TIME_SECONDS);
   }
 
@@ -220,7 +221,6 @@ public class PowerPongMatchEngine implements PowerPongService {
     }
     // Check for ball collision and notify listeners
     if (physics.wasCollisionDetected()) {
-      logger.info("Notifying listeners: onBallCollision()");
       for (PowerPongListener listener : listeners) {
         listener.onBallCollision(getGameState());
       }
@@ -229,7 +229,7 @@ public class PowerPongMatchEngine implements PowerPongService {
     if (currentMode == GameMode.POWERUP_DUEL) {
       java.util.List<PowerUpManager.CollectionEvent> events = powerUpManager.update(deltaSeconds);
       for (PowerUpManager.CollectionEvent event : events) {
-        logger.info("Notifying listeners: onPowerUpCollected(player={}, type={})",
+        logger.debug("Power-up collected: player={}, type={}",
             event.owner(), event.type());
         for (PowerPongListener listener : listeners) {
           listener.onPowerUpCollected(event.owner(), event.type());
@@ -564,7 +564,6 @@ public class PowerPongMatchEngine implements PowerPongService {
 
   @Override
   public boolean hasShield(int player) {
-    logger.debug("hasShield() called for player: {}", player);
     if (powerUpManager == null) {
       return false;
     }
@@ -575,7 +574,6 @@ public class PowerPongMatchEngine implements PowerPongService {
    * Get active effects for a player (for UI timer bar display).
    */
   public java.util.List<PowerUpManager.ActiveEffectInfo> getActiveEffectsForPlayer(int player) {
-    logger.debug("getActiveEffectsForPlayer() called with player: {}", player);
     if (powerUpManager == null) {
       return java.util.Collections.emptyList();
     }
