@@ -5,8 +5,6 @@ package de.hhn.it.devtools.apis.towerdefense.junit;
 import de.hhn.it.devtools.apis.towerdefense.*;
 import org.junit.jupiter.api.Test;
 
-import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ApiTestBadCasesTest {
