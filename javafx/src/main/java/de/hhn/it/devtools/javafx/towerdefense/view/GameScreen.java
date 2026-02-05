@@ -120,7 +120,7 @@ public class GameScreen extends StackPane {
       });
     });
 
-    double scale = 4.5;
+    double scale = 3;
 
     setScaleX(scale);
     setScaleY(scale);
