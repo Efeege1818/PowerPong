@@ -1,15 +1,17 @@
 package de.hhn.it.devtools.components.fourconnect.console;
 
-import java.util.Scanner;
-
 import de.hhn.it.devtools.apis.exceptions.OperationNotSupportedException;
 import de.hhn.it.devtools.apis.fourconnect.ConnectFourService;
 import de.hhn.it.devtools.apis.fourconnect.Field;
 import de.hhn.it.devtools.apis.fourconnect.GameBoard;
 import de.hhn.it.devtools.apis.fourconnect.Player;
 import de.hhn.it.devtools.apis.fourconnect.PlayerColor;
+import java.util.Scanner;
 
-public class ConsoleConnectFourUI {
+/**
+ * Simple console UI for playing Connect Four via {@link ConnectFourService}.
+ */
+public class ConsoleConnectFourUi {
 
   // === UI Zeichen (Snake-Style) ===
   private static final char EMPTY = '.';
@@ -21,7 +23,11 @@ public class ConsoleConnectFourUI {
 
   private static final boolean SHOW_DECAY_TIME = false;
 
-  // === Board Rendering ===
+  /**
+   * Renders the given board to the console.
+   *
+   * @param board current game board
+   */
   public void render(GameBoard board) {
     clearScreen();
 
@@ -60,13 +66,15 @@ public class ConsoleConnectFourUI {
       Player p = f.getOccupyingPlayer();
       boolean red = p != null && p.color() == PlayerColor.RED;
 
-      if (toxic)
+      if (toxic) {
         return red ? RED_TOXIC : YELLOW_TOXIC;
+      }
       return red ? RED : YELLOW;
     }
 
-    if (toxic)
+    if (toxic) {
       return TOXIC;
+    }
     return EMPTY;
   }
 
@@ -76,38 +84,56 @@ public class ConsoleConnectFourUI {
     }
   }
 
+  /**
+   * Checks whether an input string is a valid column input or quit command.
+   *
+   * @param input input string
+   * @param cols  number of columns
+   * @return true if valid
+   */
   public boolean isValidColumnInput(String input, int cols) {
-    if (input == null)
+    if (input == null) {
       return false;
-    input = input.trim();
-    if (input.isEmpty())
+    }
+    String trimmed = input.trim();
+    if (trimmed.isEmpty()) {
       return false;
-    if (input.equalsIgnoreCase("q"))
+    }
+    if (trimmed.equalsIgnoreCase("q")) {
       return true;
+    }
 
     try {
-      int col = Integer.parseInt(input);
+      int col = Integer.parseInt(trimmed);
       return col >= 1 && col <= cols;
     } catch (NumberFormatException e) {
       return false;
     }
   }
 
-  // ✅ HIER muss die Methode rein (innerhalb der Klasse!)
+  /**
+   * Starts a console game loop for the provided service.
+   *
+   * @param service connect four service
+   */
   public void start(ConnectFourService service) {
-    Scanner sc = new Scanner(System.in);
+    final Scanner sc = new Scanner(System.in);
 
     while (true) {
       render(service.getBoard());
 
       try {
-        System.out.println("Turn: " + service.getCurrentPlayer().name()
-            + " (" + service.getCurrentPlayer().color() + ")");
+        System.out.println(
+            "Turn: " + service.getCurrentPlayer().name()
+                + " (" + service.getCurrentPlayer().color() + ")"
+        );
       } catch (OperationNotSupportedException e) {
         System.out.println("Game not started: " + e.getMessage());
       }
 
-      System.out.print("Choose column (1-" + service.getBoard().getColumns() + ") or q to quit: ");
+      System.out.print(
+          "Choose column (1-" + service.getBoard().getColumns() + ") or q to quit: "
+      );
       String input = sc.nextLine();
 
       if (input != null && input.trim().equalsIgnoreCase("q")) {

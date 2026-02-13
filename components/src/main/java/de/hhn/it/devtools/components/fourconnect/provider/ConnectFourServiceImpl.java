@@ -1,287 +1,359 @@
 package de.hhn.it.devtools.components.fourconnect.provider;
 
-import de.hhn.it.devtools.apis.fourconnect.ConnectFourService;
-import de.hhn.it.devtools.apis.fourconnect.GameConfiguration;
-import de.hhn.it.devtools.apis.fourconnect.GameListener;
-import de.hhn.it.devtools.apis.fourconnect.GameBoard;
-import de.hhn.it.devtools.apis.fourconnect.Player;
-import de.hhn.it.devtools.apis.fourconnect.PlayerColor;
-
 import de.hhn.it.devtools.apis.exceptions.IllegalParameterException;
 import de.hhn.it.devtools.apis.exceptions.OperationNotSupportedException;
-
+import de.hhn.it.devtools.apis.fourconnect.ConnectFourService;
+import de.hhn.it.devtools.apis.fourconnect.GameBoard;
+import de.hhn.it.devtools.apis.fourconnect.GameConfiguration;
+import de.hhn.it.devtools.apis.fourconnect.GameListener;
+import de.hhn.it.devtools.apis.fourconnect.Player;
+import de.hhn.it.devtools.apis.fourconnect.PlayerColor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
 /**
- * Concrete implementation of the {@link ConnectFourService} facade.
- * <p>
- * This class serves as the main entry point for controlling and managing a game
- * of Four-Connect. It holds the current game state, manages the
- * {@link GameBoardImpl},
- * tracks the current player, and implements core game logic like starting a
- * game
- * and dropping chips.
- * </p>
+ * Concrete implementation of the {@link ConnectFourService}.
+ *
+ * <p>This class manages the game lifecycle, chip placement, win/draw detection,
+ * and toxic field decay/explosion behavior.
  */
 public class ConnectFourServiceImpl implements ConnectFourService {
 
-    private static final Logger logger = Logger.getLogger(ConnectFourServiceImpl.class.getName());
+  private static final Logger LOGGER =
+      Logger.getLogger(ConnectFourServiceImpl.class.getName());
 
-    private final GameBoardImpl board;
-    private final List<GameListener> listeners;
+  private final GameBoardImpl board;
+  private final List<GameListener> listeners;
 
-    private final Player player1;
-    private final Player player2;
+  private final Player player1;
+  private final Player player2;
 
-    private Player currentPlayer;
-    private GameConfiguration configuration;
-    private boolean gameActive = false;
+  private Player currentPlayer;
+  private GameConfiguration configuration;
+  private boolean gameActive;
 
-    public ConnectFourServiceImpl() {
-        this.board = new GameBoardImpl();
-        this.listeners = new ArrayList<>();
-        this.player1 = new Player("Player Red", PlayerColor.RED);
-        this.player2 = new Player("Player Yellow", PlayerColor.YELLOW);
+  /**
+   * Creates a new {@code ConnectFourServiceImpl} with a fresh board and two default players.
+   */
+  public ConnectFourServiceImpl() {
+    this.board = new GameBoardImpl();
+    this.listeners = new ArrayList<>();
+    this.player1 = new Player("Player Red", PlayerColor.RED);
+    this.player2 = new Player("Player Yellow", PlayerColor.YELLOW);
+    this.gameActive = false;
+  }
 
-        // Log in the constructor
-        logger.info("ConnectFourServiceImpl created via Constructor.");
+  /**
+   * Starts a new game with the given configuration.
+   *
+   * <p>The board is cleared, up to 3 toxic fields are placed, and Player 1 (red) starts.
+   *
+   * @param configuration the game configuration
+   */
+  @Override
+  public void startGame(GameConfiguration configuration) {
+    this.configuration = configuration;
+
+    board.clearBoard();
+
+    int requested = configuration != null ? configuration.getToxicFieldCount() : 3;
+    board.placeRandomToxicZones(Math.min(3, requested));
+
+    currentPlayer = player1;
+    gameActive = true;
+
+    notifyBoardChanged();
+    notifyTurnChanged();
+  }
+
+  /**
+   * Drops a chip into the given column for the current player.
+   *
+   * <p>Note: Toxic decay is intentionally NOT executed here. It is triggered separately via
+   * {@link #applyToxicDecay()} (this matches the component tests).
+   *
+   * @param column the column index (0-based)
+   * @return the row index where the chip landed
+   * @throws IllegalParameterException if the column is invalid
+   * @throws OperationNotSupportedException if the game is not active
+   */
+  @Override
+  public int dropChip(int column) throws IllegalParameterException, OperationNotSupportedException {
+    if (!gameActive) {
+      throw new OperationNotSupportedException("Game not active");
     }
 
-    /**
-     * Initializes and starts a new game of Four-Connect.
-     * <p>
-     * This method saves the provided configuration, clears the board, sets the
-     * current player to Player 1 (Red), and sets the game state to active.
-     * </p>
-     *
-     * @param configuration The configuration to be used for the new game.
-     */
-    @Override
-    public void startGame(GameConfiguration configuration) {
-        logger.info("startGame called. Configuration received.");
-
-        this.configuration = configuration;
-
-        // Board reset
-        this.board.clearBoard();
-
-        // ✅ NEW: place toxic fields according to configuration
-        this.board.placeRandomToxicZones(configuration.getToxicFieldCount());
-
-        this.currentPlayer = player1;
-        this.gameActive = true;
-
-        notifyBoardChanged();
-        notifyTurnChanged();
-
-        logger.info("Game started successfully. Current player: " + currentPlayer.name());
+    if (column < 0 || column >= GameBoardImpl.COLUMNS) {
+      throw new IllegalParameterException("Column out of bounds");
     }
 
-    /**
-     * Attempts to drop a chip for the {@link #currentPlayer} into the specified
-     * column.
-     */
-    @Override
-    public int dropChip(int column) throws IllegalParameterException, OperationNotSupportedException {
+    int row = board.placeChip(column, currentPlayer);
 
-        logger.info("dropChip called for column: " + column);
+    notifyBoardChanged();
 
-        if (!gameActive) {
-            throw new OperationNotSupportedException("Game is not active. Call startGame() first.");
+    if (checkForWin()) {
+      gameActive = false;
+      notifyGameEnded(currentPlayer, false);
+    } else if (checkForDraw()) {
+      gameActive = false;
+      notifyGameEnded(null, true);
+    } else {
+      currentPlayer = (currentPlayer == player1) ? player2 : player1;
+      notifyTurnChanged();
+    }
+
+    return row;
+  }
+
+  /**
+   * Applies toxic decay to all toxic fields that are currently occupied.
+   *
+   * <p>Each occupied toxic field decrements its decay counter. If the counter reaches 0,
+   * the chip explodes and gravity is applied to the column.
+   *
+   * @throws OperationNotSupportedException if the game is not active
+   */
+  @Override
+  public void applyToxicDecay() throws OperationNotSupportedException {
+    if (!gameActive) {
+      throw new OperationNotSupportedException(
+          "Toxic decay cannot be applied because the game is not active.");
+    }
+
+    for (int r = 0; r < GameBoardImpl.ROWS; r++) {
+      for (int c = 0; c < GameBoardImpl.COLUMNS; c++) {
+        FieldImpl f = (FieldImpl) board.getField(r, c);
+
+        if (f.isToxicZone() && f.isOccupied()) {
+          f.decrementDecayTime();
+
+          if (f.getDecayTime() <= 0) {
+            explodeColumnAt(r, c);
+          }
         }
+      }
+    }
 
-        if (column < 0 || column >= GameBoardImpl.COLUMNS) {
-            throw new IllegalParameterException("Column index " + column + " out of bounds.");
+    notifyBoardChanged();
+  }
+
+  /**
+   * Handles an explosion at a toxic field and applies gravity in that column.
+   *
+   * @param row the row index of the toxic field
+   * @param col the column index of the toxic field
+   */
+  private void explodeColumnAt(int row, int col) {
+    LOGGER.info("Toxic Meltdown at row " + row + ", column " + col);
+
+    FieldImpl target = (FieldImpl) board.getField(row, col);
+    target.setOccupyingPlayer(null);
+    target.setDecayTime(0);
+
+    for (int r = row; r > 0; r--) {
+      FieldImpl cur = (FieldImpl) board.getField(r, col);
+      FieldImpl above = (FieldImpl) board.getField(r - 1, col);
+      cur.setOccupyingPlayer(above.getOccupyingPlayer());
+    }
+
+    ((FieldImpl) board.getField(0, col)).setOccupyingPlayer(null);
+
+    // After gravity: if a stone lands on a toxic field, decay restarts at 3.
+    for (int r = 0; r < GameBoardImpl.ROWS; r++) {
+      FieldImpl f = (FieldImpl) board.getField(r, col);
+      if (f.isToxicZone() && f.isOccupied()) {
+        f.setDecayTime(3);
+      } else if (f.isToxicZone() && !f.isOccupied()) {
+        f.setDecayTime(0);
+      }
+    }
+  }
+
+  /**
+   * Checks if any win condition is met.
+   *
+   * @return true if a player has four in a row
+   */
+  public boolean checkForWin() {
+    return checkHorizontal() || checkVertical() || checkDiagonal();
+  }
+
+  /**
+   * Checks horizontal win condition.
+   *
+   * @return true if found
+   */
+  public boolean checkHorizontal() {
+    for (int r = 0; r < GameBoardImpl.ROWS; r++) {
+      for (int c = 0; c < GameBoardImpl.COLUMNS - 3; c++) {
+        Player p = board.getField(r, c).getOccupyingPlayer();
+        if (p != null
+            && p == board.getField(r, c + 1).getOccupyingPlayer()
+            && p == board.getField(r, c + 2).getOccupyingPlayer()
+            && p == board.getField(r, c + 3).getOccupyingPlayer()) {
+          return true;
         }
+      }
+    }
+    return false;
+  }
 
-        int row = board.placeChip(column, currentPlayer);
-        logger.info("Chip placed at row " + row + ", column " + column);
-
-        notifyBoardChanged();
-
-        if (checkForWin()) {
-            logger.info("Winning condition detected!");
-            gameActive = false;
-            notifyGameEnded(currentPlayer, false);
-        } else if (checkForDraw()) {
-            logger.info("Draw condition detected!");
-            gameActive = false;
-            notifyGameEnded(null, true);
-        } else {
-            currentPlayer = (currentPlayer == player1) ? player2 : player1;
-            notifyTurnChanged();
+  /**
+   * Checks vertical win condition.
+   *
+   * @return true if found
+   */
+  public boolean checkVertical() {
+    for (int r = 0; r < GameBoardImpl.ROWS - 3; r++) {
+      for (int c = 0; c < GameBoardImpl.COLUMNS; c++) {
+        Player p = board.getField(r, c).getOccupyingPlayer();
+        if (p != null
+            && p == board.getField(r + 1, c).getOccupyingPlayer()
+            && p == board.getField(r + 2, c).getOccupyingPlayer()
+            && p == board.getField(r + 3, c).getOccupyingPlayer()) {
+          return true;
         }
-
-        return row;
+      }
     }
+    return false;
+  }
 
-    @Override
-    public GameBoard getBoard() {
-        return this.board;
-    }
-
-    @Override
-    public Player getCurrentPlayer() throws OperationNotSupportedException {
-        if (currentPlayer == null) {
-            throw new OperationNotSupportedException("Game not initialized.");
+  /**
+   * Checks diagonal win condition.
+   *
+   * @return true if found
+   */
+  public boolean checkDiagonal() {
+    for (int r = 0; r < GameBoardImpl.ROWS - 3; r++) {
+      for (int c = 0; c < GameBoardImpl.COLUMNS - 3; c++) {
+        Player p = board.getField(r, c).getOccupyingPlayer();
+        if (p != null
+            && p == board.getField(r + 1, c + 1).getOccupyingPlayer()
+            && p == board.getField(r + 2, c + 2).getOccupyingPlayer()
+            && p == board.getField(r + 3, c + 3).getOccupyingPlayer()) {
+          return true;
         }
-        return currentPlayer;
+      }
     }
 
-    /**
-     * Checks if the last move resulted in a win condition.
-     */
-    public boolean checkForWin() {
-        return checkHorizontal() || checkVertical() || checkDiagonal();
-    }
-
-    public boolean checkHorizontal() {
-        for (int r = 0; r < GameBoardImpl.ROWS; r++) {
-            for (int c = 0; c < GameBoardImpl.COLUMNS - 3; c++) {
-                Player p = board.getField(r, c).getOccupyingPlayer();
-                if (p != null &&
-                        p == board.getField(r, c + 1).getOccupyingPlayer() &&
-                        p == board.getField(r, c + 2).getOccupyingPlayer() &&
-                        p == board.getField(r, c + 3).getOccupyingPlayer()) {
-                    return true;
-                }
-            }
+    for (int r = 0; r < GameBoardImpl.ROWS - 3; r++) {
+      for (int c = 3; c < GameBoardImpl.COLUMNS; c++) {
+        Player p = board.getField(r, c).getOccupyingPlayer();
+        if (p != null
+            && p == board.getField(r + 1, c - 1).getOccupyingPlayer()
+            && p == board.getField(r + 2, c - 2).getOccupyingPlayer()
+            && p == board.getField(r + 3, c - 3).getOccupyingPlayer()) {
+          return true;
         }
-        return false;
+      }
     }
 
-    public boolean checkVertical() {
-        for (int r = 0; r < GameBoardImpl.ROWS - 3; r++) {
-            for (int c = 0; c < GameBoardImpl.COLUMNS; c++) {
-                Player p = board.getField(r, c).getOccupyingPlayer();
-                if (p != null &&
-                        p == board.getField(r + 1, c).getOccupyingPlayer() &&
-                        p == board.getField(r + 2, c).getOccupyingPlayer() &&
-                        p == board.getField(r + 3, c).getOccupyingPlayer()) {
-                    return true;
-                }
-            }
+    return false;
+  }
+
+  /**
+   * Checks if the game is a draw (board full and no winner).
+   *
+   * @return true if draw
+   */
+  public boolean checkForDraw() {
+    for (int r = 0; r < GameBoardImpl.ROWS; r++) {
+      for (int c = 0; c < GameBoardImpl.COLUMNS; c++) {
+        if (board.getField(r, c).getOccupyingPlayer() == null) {
+          return false;
         }
-        return false;
+      }
     }
+    return true;
+  }
 
-    public boolean checkDiagonal() {
-        for (int r = 0; r < GameBoardImpl.ROWS - 3; r++) {
-            for (int c = 0; c < GameBoardImpl.COLUMNS - 3; c++) {
-                Player p = board.getField(r, c).getOccupyingPlayer();
-                if (p != null &&
-                        p == board.getField(r + 1, c + 1).getOccupyingPlayer() &&
-                        p == board.getField(r, c + 2).getOccupyingPlayer() &&
-                        p == board.getField(r + 3, c + 3).getOccupyingPlayer()) {
-                    return true;
-                }
-            }
-        }
+  /**
+   * Legacy listener registration method (kept for compatibility).
+   *
+   * @param listener the listener to register
+   * @throws OperationNotSupportedException never thrown here, kept for interface compatibility
+   * @deprecated use {@link #addGameListener(GameListener)} instead
+   */
+  @Override
+  @Deprecated
+  public void registerListener(GameListener listener) throws OperationNotSupportedException {
+    addGameListener(listener);
+  }
 
-        for (int r = 0; r < GameBoardImpl.ROWS - 3; r++) {
-            for (int c = 3; c < GameBoardImpl.COLUMNS; c++) {
-                Player p = board.getField(r, c).getOccupyingPlayer();
-                if (p != null &&
-                        p == board.getField(r + 1, c - 1).getOccupyingPlayer() &&
-                        p == board.getField(r + 2, c - 2).getOccupyingPlayer() &&
-                        p == board.getField(r + 3, c - 3).getOccupyingPlayer()) {
-                    return true;
-                }
-            }
-        }
-        return false;
+  /**
+   * Adds a game listener.
+   *
+   * @param l the listener
+   */
+  @Override
+  public void addGameListener(GameListener l) {
+    if (l != null && !listeners.contains(l)) {
+      listeners.add(l);
     }
+  }
 
-    /**
-     * Checks if the game has ended in a draw.
-     */
-    public boolean checkForDraw() {
-        for (int r = 0; r < GameBoardImpl.ROWS; r++) {
-            for (int c = 0; c < GameBoardImpl.COLUMNS; c++) {
-                if (board.getField(r, c).getOccupyingPlayer() == null) {
-                    return false;
-                }
-            }
-        }
-        return true;
+  /**
+   * Removes a game listener.
+   *
+   * @param l the listener
+   */
+  @Override
+  public void removeGameListener(GameListener l) {
+    listeners.remove(l);
+  }
+
+  /**
+   * Notifies listeners that the current turn has changed.
+   */
+  private void notifyTurnChanged() {
+    for (GameListener l : listeners) {
+      l.onTurnChanged(currentPlayer);
     }
+  }
 
-    /**
-     * Registers a game listener to receive updates about the game state.
-     *
-     * @param listener The listener to register.
-     * @throws OperationNotSupportedException This method is currently not
-     *                                        implemented.
-     * @deprecated Use {@link #addGameListener(GameListener)} instead.
-     */
-    @Override
-    @Deprecated
-    public void registerListener(GameListener listener) throws OperationNotSupportedException {
-        // Delegate to the new method
-        addGameListener(listener);
+  /**
+   * Notifies listeners that the board has changed.
+   */
+  private void notifyBoardChanged() {
+    for (GameListener l : listeners) {
+      l.onBoardChanged(board);
     }
+  }
 
-    @Override
-    public void addGameListener(GameListener listener) {
-        if (listener != null && !listeners.contains(listener)) {
-            listeners.add(listener);
-        }
+  /**
+   * Notifies listeners that the game ended.
+   *
+   * @param winner the winner or null
+   * @param draw true if draw
+   */
+  private void notifyGameEnded(Player winner, boolean draw) {
+    for (GameListener l : listeners) {
+      l.onGameEnded(winner, draw);
     }
+  }
 
-    @Override
-    public void removeGameListener(GameListener listener) {
-        listeners.remove(listener);
+  /**
+   * Returns the current game board.
+   *
+   * @return the board
+   */
+  @Override
+  public GameBoard getBoard() {
+    return board;
+  }
+
+  /**
+   * Returns the current player.
+   *
+   * @return the current player
+   * @throws OperationNotSupportedException if the game has not been started
+   */
+  @Override
+  public Player getCurrentPlayer() throws OperationNotSupportedException {
+    if (currentPlayer == null) {
+      throw new OperationNotSupportedException("Game not initialized");
     }
-
-    /**
-     * Applies the toxic decay effect across the board.
-     */
-    public void applyToxicDecay() throws OperationNotSupportedException {
-
-        if (!gameActive) {
-            throw new OperationNotSupportedException("Toxic decay cannot be applied because the game is not active.");
-        }
-
-        for (int r = 0; r < GameBoardImpl.ROWS; r++) {
-            for (int c = 0; c < GameBoardImpl.COLUMNS; c++) {
-                FieldImpl f = (FieldImpl) board.getField(r, c);
-
-                if (f.isToxicZone() && f.isOccupied()) {
-                    f.decrementDecayTime();
-
-                    if (f.getDecayTime() <= 0) {
-                        logger.info("Toxic Meltdown at column " + c);
-
-                        for (int i = r; i > 0; i--) {
-                            FieldImpl current = (FieldImpl) board.getField(i, c);
-                            FieldImpl above = (FieldImpl) board.getField(i - 1, c);
-                            current.setOccupyingPlayer(above.getOccupyingPlayer());
-                        }
-
-                        ((FieldImpl) board.getField(0, c)).setOccupyingPlayer(null);
-                    }
-                }
-            }
-        }
-    }
-
-    private void notifyTurnChanged() {
-        for (GameListener listener : listeners) {
-            listener.onTurnChanged(currentPlayer);
-        }
-    }
-
-    private void notifyBoardChanged() {
-        for (GameListener listener : listeners) {
-            listener.onBoardChanged(board);
-        }
-    }
-
-    private void notifyGameEnded(Player winner, boolean isDraw) {
-        for (GameListener listener : listeners) {
-            listener.onGameEnded(winner, isDraw);
-        }
-    }
+    return currentPlayer;
+  }
 }

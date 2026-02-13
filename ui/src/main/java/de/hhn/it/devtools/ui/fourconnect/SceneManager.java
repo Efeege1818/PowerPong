@@ -1,11 +1,10 @@
 package de.hhn.it.devtools.ui.fourconnect;
 
-import java.io.IOException;
-
 import de.hhn.it.devtools.ui.fourconnect.controller.GameController;
 import de.hhn.it.devtools.ui.fourconnect.controller.MainController;
 import de.hhn.it.devtools.ui.fourconnect.controller.MainMenuController;
 import de.hhn.it.devtools.ui.fourconnect.controller.SelectController;
+import java.io.IOException;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;

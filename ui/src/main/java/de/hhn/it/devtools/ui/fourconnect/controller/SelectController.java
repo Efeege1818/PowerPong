@@ -9,62 +9,39 @@ import javafx.stage.Stage;
 
 public class SelectController {
 
-  @FXML private Label titleLabel;
-  @FXML private Label subtitleLabel;
+  @FXML private Label titleLabel; // optional (falls du im FXML eine Label fx:id="titleLabel" hast)
 
   private final SceneManager sceneManager;
-
-  private boolean player1Selected = false;
 
   public SelectController(SceneManager sceneManager) {
     this.sceneManager = sceneManager;
   }
 
   @FXML
-  public void initialize() {
-    UIState.reset();
-    titleLabel.setText("Player 1: Select your Character");
-    subtitleLabel.setText("");
-  }
-
-  @FXML
   private void selectRed() {
-    if (!player1Selected) {
-      // Player 1 wählt RED -> Player 2 automatisch YELLOW
-      UIState.setPlayer1Color(PlayerColor.RED);
-      UIState.setPlayer2Color(PlayerColor.YELLOW);
-
-      player1Selected = true;
-      titleLabel.setText("Player 1 selected RED.");
-      subtitleLabel.setText("Player 2: your character is YELLOW.\nClick any color to continue.");
-      return;
-    }
+    UIState.setPlayer1Color(PlayerColor.RED);
     sceneManager.showGame();
   }
 
   @FXML
   private void selectYellow() {
-    if (!player1Selected) {
-      // Player 1 wählt YELLOW -> Player 2 automatisch RED
-      UIState.setPlayer1Color(PlayerColor.YELLOW);
-      UIState.setPlayer2Color(PlayerColor.RED);
-
-      player1Selected = true;
-      titleLabel.setText("Player 1 selected YELLOW.");
-      subtitleLabel.setText("Player 2: your character is RED.\nClick any color to continue.");
-      return;
-    }
+    UIState.setPlayer1Color(PlayerColor.YELLOW);
     sceneManager.showGame();
   }
 
   @FXML
   private void back() {
-    sceneManager.showMain();
+    // Wenn du ein Main-Menü hast: sceneManager.showMain();
+    // Wenn nicht: einfach im Select bleiben oder Fenster schließen
+    sceneManager.showMain(); // <- NUR falls du showMain() hast. Sonst: auskommentieren und unten close nutzen.
   }
 
   @FXML
   private void onExit() {
-    Stage stage = (Stage) titleLabel.getScene().getWindow();
-    stage.close();
+    // Fenster schließen (nur wenn titleLabel existiert)
+    if (titleLabel != null && titleLabel.getScene() != null) {
+      Stage stage = (Stage) titleLabel.getScene().getWindow();
+      stage.close();
+    }
   }
 }

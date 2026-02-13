@@ -4,14 +4,26 @@ import de.hhn.it.devtools.apis.fourconnect.ConnectFourService;
 import de.hhn.it.devtools.apis.fourconnect.GameConfiguration;
 import de.hhn.it.devtools.components.fourconnect.provider.ConnectFourServiceImpl;
 
-public class ConsoleMain {
+/**
+ * Console entry point for a simple Connect Four demo.
+ */
+public final class ConsoleMain {
 
+  private ConsoleMain() {
+    // utility class
+  }
+
+  /**
+   * Starts a small demo game in the console.
+   *
+   * @param args command line arguments
+   */
   public static void main(String[] args) {
 
     ConnectFourService service = new ConnectFourServiceImpl();
     service.startGame(new GameConfiguration(5, 3));
 
-    // 🎯 Demo-Moves (fest, kein Input nötig)
+    // Demo moves
     try {
       service.dropChip(0); // Red
       service.dropChip(0); // Yellow
@@ -20,10 +32,10 @@ public class ConsoleMain {
       System.out.println("Demo move failed: " + e.getMessage());
     }
 
-    // Board anzeigen
-    ConsoleConnectFourUI ui = new ConsoleConnectFourUI();
+    // Render board
+    ConsoleConnectFourUi ui = new ConsoleConnectFourUi();
     ui.render(service.getBoard());
 
-    System.out.println("✅ Demo OK: Game started + 3 moves executed + board rendered");
+    System.out.println("Demo OK: Game started, 3 moves executed, board rendered.");
   }
 }

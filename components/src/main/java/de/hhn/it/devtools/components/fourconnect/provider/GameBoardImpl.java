@@ -1,9 +1,9 @@
 package de.hhn.it.devtools.components.fourconnect.provider;
 
-import java.util.Random;
 import de.hhn.it.devtools.apis.fourconnect.Field;
 import de.hhn.it.devtools.apis.fourconnect.GameBoard;
 import de.hhn.it.devtools.apis.fourconnect.Player;
+import java.util.Random;
 
 /**
  * Concrete implementation of the {@link GameBoard} interface for the
@@ -20,9 +20,13 @@ import de.hhn.it.devtools.apis.fourconnect.Player;
  */
 public class GameBoardImpl implements GameBoard {
 
-  /** The standard number of rows on the Four-Connect board. */
+  /**
+   * The standard number of rows on the Four-Connect board.
+   */
   public static final int ROWS = 6;
-  /** The standard number of columns on the Four-Connect board. */
+  /**
+   * The standard number of columns on the Four-Connect board.
+   */
   public static final int COLUMNS = 7;
 
   private final FieldImpl[][] fields;
@@ -91,7 +95,8 @@ public class GameBoardImpl implements GameBoard {
   void clearBoard() {
     for (int r = 0; r < ROWS; r++) {
       for (int c = 0; c < COLUMNS; c++) {
-        fields[r][c] = new FieldImpl(false); // Assuming 'false' means it's not a toxic zone by default
+        fields[r][c] =
+            new FieldImpl(false); // Assuming 'false' means it's not a toxic zone by default
       }
     }
   }
@@ -107,7 +112,7 @@ public class GameBoardImpl implements GameBoard {
    * @param column The column index (0-based) where the chip should be placed.
    * @param player The {@link Player} whose chip is being placed.
    * @return The row index (0-based) where the chip landed, or -1 if the column is
-   *         full.
+   *     full.
    */
   int placeChip(int column, Player player) {
     if (column < 0 || column >= COLUMNS) {
@@ -130,8 +135,9 @@ public class GameBoardImpl implements GameBoard {
   }
 
   void placeRandomToxicZones(int toxicCount) {
-    if (toxicCount <= 0)
+    if (toxicCount <= 0) {
       return;
+    }
 
     int max = ROWS * COLUMNS;
     toxicCount = Math.min(toxicCount, max);
