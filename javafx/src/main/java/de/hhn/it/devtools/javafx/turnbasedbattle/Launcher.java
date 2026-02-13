@@ -1,16 +1,13 @@
 package de.hhn.it.devtools.javafx.turnbasedbattle;
 
 import de.hhn.it.devtools.apis.turnbasedbattle.UnknownTransitionException;
-import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
-public class Launcher extends Application {
+public final class Launcher {
 
-  @Override
-  public void start(Stage stage) {
+  public static void openNewWindow() {
     // Root container that screens will be swapped into
     StackPane rootPane = new StackPane();
 
@@ -25,15 +22,12 @@ public class Launcher extends Application {
     }
 
     // Scene & Stage
+    Stage stage = new Stage();
     Scene scene = new Scene(rootPane, 600, 400);
     stage.setTitle("Turn Based Battle");
     stage.setFullScreen(true);
     stage.setFullScreenExitHint("");
     stage.setScene(scene);
     stage.show();
-  }
-
-  public static void main(String[] args) {
-    launch(args);
   }
 }
