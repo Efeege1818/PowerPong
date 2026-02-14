@@ -157,6 +157,7 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
 
   @Override
   public GameConfiguration getConfiguration() {
+    logger.debug("Service Get Configuration");
     return gameConfiguration;
   }
 
@@ -168,6 +169,7 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
   public void notifyListeners(Consumer<SpaceInvadersListener> listener) {
     for (SpaceInvadersListener l : listeners) {
       listener.accept(l);
+      logger.trace("Listener {} triggered with callback {}", l, listener);
     }
   }
 
