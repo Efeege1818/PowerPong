@@ -76,6 +76,7 @@ public class SimpleMonster {
    *        (FireMonster, WaterMonster, or GrassMonster).
    */
   public static SimpleMonster create(Monster monster) {
+   logger.info("create: monster = {},", monster.element());
     switch (monster.element()) {
       case FIRE:
         return new FireMonster(monster);
@@ -102,6 +103,9 @@ public class SimpleMonster {
    * @param attackingMonster the monster that executed the move.
    */
   public void takeDamage(Move move, SimpleMonster attackingMonster) {
+    logger.info("takeDamage: move = {}, attackingMonster = {}, defender = {}",
+            move.name(), attackingMonster.name, name);
+
     int actualDamage = 0;
 
     // Check if the attack is evaded
@@ -117,7 +121,7 @@ public class SimpleMonster {
 
     if (move.name().equals("Leaf Cannon")) {
       actualDamage = calculateDamage(move, this, attackingMonster, isCritical, isEffective,
-          timesHitByPoison);
+              timesHitByPoison);
     } else {
       actualDamage = calculateDamage(move, this, attackingMonster, isCritical, isEffective, 1);
     }
@@ -156,6 +160,9 @@ public class SimpleMonster {
    * @return true if the move is effective, false otherwise.
    */
   public boolean isElementEffective(SimpleMonster target, Element moveElement) {
+    logger.debug("isElementEffective: target = {}, targetElement = {}, moveElement = {}",
+            target.name, target.getElement(), moveElement);
+
     //Fire
     if (target.getElement() == Element.FIRE) {
       return moveElement == Element.WATER;
@@ -180,6 +187,8 @@ public class SimpleMonster {
    * @param amount the amount of health to add.
    */
   public void addHealth(int amount) {
+    logger.info("addHealth: monster = {}, amount = {}", name, amount);
+
     currentHp += amount;
     if (currentHp > maxHp) {
       currentHp = maxHp;
@@ -195,6 +204,8 @@ public class SimpleMonster {
    * @param amount the amount of health to subtract
    */
   public void takeDotDamage(double amount) {
+    logger.info("takeDotDamage: monster = {}, amount = {}", name, amount);
+
     if (amount <= 0) {
       return;
     }
@@ -212,6 +223,8 @@ public class SimpleMonster {
    * @param move the move that contains the buff information.
    */
   public void buffMonster(Move move) {
+    logger.info("buffMonster: monster = {}, move = {}", name, move.name());
+
     String stat = move.stat();
     double amount = move.amount();
     String amountString = String.valueOf(amount);
@@ -251,6 +264,8 @@ public class SimpleMonster {
    * @param amount amount for stat to be changed by
    */
   public void changeStat(String stat, double amount) {
+    logger.info("changeStat: monster = {}, stat = {}, amount = {}", name, stat, amount);
+
     String amountString = String.valueOf(Math.abs(amount));
     switch (stat) {
       case "health":
@@ -293,6 +308,8 @@ public class SimpleMonster {
    * @param move the Move that causes the debuff.
    */
   public void debuffMonster(Move move) {
+    logger.info("debuffMonster: monster = {}, move = {}", name, move.name());
+
     String stat = move.stat();
     double amount = move.amount();
     String amountString = String.valueOf(amount);
@@ -328,6 +345,8 @@ public class SimpleMonster {
    * @param move that was applied as a buff.
    */
   public void removeBuff(Move move) {
+    logger.info("removeBuff: monster = {}, move = {}", name, move.name());
+
     String stat = move.stat();
     double amount = move.amount();
     switch (stat) {
@@ -359,6 +378,8 @@ public class SimpleMonster {
    * @param move that was applied as a debuff.
    */
   public void removeDebuff(Move move) {
+    logger.info("removeDebuff: monster = {}, move = {}", name, move.name());
+
     String stat = move.stat();
     double amount = move.amount();
     switch (stat) {
@@ -444,6 +465,7 @@ public class SimpleMonster {
    * Resets the monster's health to maximum HP.
    */
   public void resetToFullHealth() {
+    logger.info("resetToFullHealth: monster = {}, maxHp = {}", name, maxHp);
     currentHp = maxHp;
     logger.debug("Monster health reset to max: {}", maxHp);
   }
@@ -452,10 +474,12 @@ public class SimpleMonster {
    * Sets times hit by poison.
    */
   public void setTimesHitPoison(int amount) {
+    logger.info("setTimesHitPoison: monster = {}, amount = {}", name, amount);
     timesHitPoison = amount;
   }
 
   public void resetTimesHitPoison() {
+    logger.info("resetTimesHitPoison: monster = {}", name);
     timesHitPoison = 0;
     timesHitByPoison = 0;
   }
@@ -463,8 +487,8 @@ public class SimpleMonster {
   @Override
   public String toString() {
     return String.format("SimpleMonster[HP: %d/%d, ATK: %d, DEF: %d, Element: %s,"
-            + " Evasion: %.2f, Critical: %.2f]",
-      currentHp, maxHp, attack, defense, element, evasionChance, critChance);
+                    + " Evasion: %.2f, Critical: %.2f]",
+            currentHp, maxHp, attack, defense, element, evasionChance, critChance);
   }
 
   /**
@@ -583,6 +607,7 @@ public class SimpleMonster {
    * @param moveIndex the index of the move.
    */
   public void lockMove(int moveIndex) {
+    logger.info("lockMove: monster = {}, moveIndex = {}", name, moveIndex);
     lockedMoves.put(moveIndex, true);
     logger.debug("Move {} is now locked", moves.get(moveIndex).name());
   }
@@ -593,6 +618,7 @@ public class SimpleMonster {
    * @param moveIndex the index of the move.
    */
   public void unlockMove(int moveIndex) {
+    logger.info("unlockMove: monster = {}, moveIndex = {}", name, moveIndex);
     lockedMoves.put(moveIndex, false);
     logger.debug("Move {} is now unlocked", moves.get(moveIndex).name());
   }
@@ -614,6 +640,7 @@ public class SimpleMonster {
    * Ticks all active effects (buffs, DOTs, cooldowns).
    */
   public void tickAllEffects() {
+    logger.debug("tickAllEffects: monster = {}", name);
     tickBuffs();
     applyAndTickDots();
     tickCooldowns();
@@ -628,6 +655,9 @@ public class SimpleMonster {
    * @param move the buff/debuff move to add.
    */
   public void addBuffOrDebuff(Move move) {
+    logger.info("addBuffOrDebuff: monster = {}, move = {}, duration = {}",
+            name, move.name(), move.duration());
+
     activeBuffs.put(move.duration(), move);
 
     // Apply the buff/debuff immediately
@@ -710,6 +740,8 @@ public class SimpleMonster {
    * @param move the DOT move to add.
    */
   public void addDot(Move move) {
+    logger.info("addDot: monster = {}, move = {}, duration = {}",
+            name, move.name(), move.duration());
     activeDots.put(move.duration(), move);
     logger.debug("Added DOT '{}' to {} for {} turns", move.name(), name, move.duration());
     BattleLog.post("Added DOT " + move.name() + " to " + name);
@@ -736,7 +768,7 @@ public class SimpleMonster {
         if (damage > 0) {
           takeDotDamage(damage);
           logger.debug("DOT '{}' dealt {} damage to {} ({} turns left after this)",
-              move.name(), damage, name, duration - 1);
+                  move.name(), damage, name, duration - 1);
           if (move.name().equals("Poison")) {
             timesHitByPoison++;
             logger.debug("{} was {} times hit by poison", name, timesHitByPoison);
@@ -804,6 +836,9 @@ public class SimpleMonster {
    * @param move the move that was used.
    */
   public void applyCooldown(int moveIndex, Move move) {
+    logger.info("applyCooldown: monster = {}, moveIndex = {}, move = {}, cooldown = {}",
+            name, moveIndex, move.name(), move.cooldown());
+
     int cooldown = move.cooldown();
     if (cooldown > 0) {
       moveCooldowns.put(moveIndex, cooldown);
@@ -857,6 +892,7 @@ public class SimpleMonster {
    * @param move is checked whether it is an attackMove
    */
   public void takeDamageOnAttack(Move move) {
+    logger.info("takeDamageOnAttack: monster = {}, move = {}", name, move.name());
     takeDamageOnAttack = move.attackMove();
     logger.debug("{} gets attacked if it attacks.", name);
     BattleLog.post(name + " gets attacked if it attacks");
@@ -870,6 +906,7 @@ public class SimpleMonster {
    * Removes the takeDamageOnAttack property.
    */
   public void removeTakeDamageOnAttack() {
+    logger.info("removeTakeDamageOnAttack: monster = {}", name);
     if (takeDamageOnAttack != null) {
       logger.debug("{} won't get attacked anymore if it attacks.", name);
       BattleLog.post(name + " won't get attacked anymore if it attacks");

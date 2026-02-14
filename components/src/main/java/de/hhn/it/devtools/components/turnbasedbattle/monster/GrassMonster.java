@@ -20,6 +20,8 @@ public class GrassMonster extends SimpleMonster {
    * @param monster Monster
    */
   public GrassMonster(Monster monster) {
+    logger.info("GrassMonster: creating {} from monster", name);
+
     this.maxHp = monster.maxHp();
     this.currentHp = monster.maxHp();
     this.attack = monster.attack();
@@ -42,6 +44,9 @@ public class GrassMonster extends SimpleMonster {
 
   @Override
   protected void tickMonsterEffects() {
+    logger.info("tickMonsterEffects: {}, currentHp = {}, maxHp = {}, oldPassiveStacks = {}",
+            name, currentHp, maxHp, oldPassiveStacks);
+
     double currentPercentHp = (double) currentHp / maxHp;
     oldPassiveStacks = passiveStacks;
     if (currentPercentHp > 0.4) {
@@ -67,6 +72,9 @@ public class GrassMonster extends SimpleMonster {
 
   @Override
   public String getSpecialProgress() {
+    logger.debug("getSpecialProgress: {}, charges = {}",
+            name,timesHitPoison);
+
     return (timesHitPoison + " charges");
   }
 

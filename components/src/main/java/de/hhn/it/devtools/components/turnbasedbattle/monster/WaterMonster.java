@@ -26,6 +26,8 @@ public class WaterMonster extends SimpleMonster {
    * @param monster Monster
    */
   public WaterMonster(Monster monster) {
+    logger.info("WaterMonster: creating {} from monster", name);
+
     this.maxHp = monster.maxHp();
     this.currentHp = monster.maxHp();
     this.attack = monster.attack();
@@ -53,6 +55,9 @@ public class WaterMonster extends SimpleMonster {
    * Switches between defense and attack stance.
    */
   public void switchStance() {
+    logger.info("switchStance: {}, currentDefenseStance = {}, currentAttackStance = {}",
+            name, defenseStance, attackStance);
+
     defenseStance = !defenseStance;
     attackStance = !attackStance;
     if (passiveStacksDef > 0) {
@@ -90,6 +95,9 @@ public class WaterMonster extends SimpleMonster {
    * Increments the passive stacks for the attacking stance by 1.
    */
   private void increaseCritPassive() {
+    logger.info("increaseCritPassive: {}, currentCritStacks = {}",
+            name, passiveStacksCrit);
+
     if (passiveStacksCrit >= 20) {
       return;
     }
@@ -102,6 +110,9 @@ public class WaterMonster extends SimpleMonster {
    * Increments the passive stacks for the defense stance by 1.
    */
   private void increaseDefPassive() {
+    logger.info("increaseDefPassive: {}, currentDefStacks = {}",
+            name, passiveStacksDef);
+
     if (passiveStacksDef >= 20) {
       return;
     }
@@ -112,6 +123,9 @@ public class WaterMonster extends SimpleMonster {
 
   @Override
   public void handleCriticalHit() {
+    logger.info("handleCriticalHit: {}, attackStance = {}",
+            name, attackStance);
+
     if (attackStance) {
       increaseCritPassive();
       increaseSpecialConditionStacks();
@@ -120,6 +134,9 @@ public class WaterMonster extends SimpleMonster {
 
   @Override
   public void handleDodge() {
+    logger.info("handleDodge: {}, defenseStance = {}",
+            name, defenseStance);
+
     if (defenseStance) {
       increaseDefPassive();
       increaseSpecialConditionStacks();
@@ -128,10 +145,16 @@ public class WaterMonster extends SimpleMonster {
 
   @Override
   public String getSpecialProgress() {
+    logger.debug("getSpecialProgress: {}, progress = {}/{}",
+            name,specialConditionStacks, specialConditionStacksThreshold);
+
     return (specialConditionStacks + "/" + specialConditionStacksThreshold);
   }
 
   private void increaseSpecialConditionStacks() {
+    logger.info("increaseSpecialConditionStacks: {}, currentStacks = {}",
+            name, specialConditionStacks);
+
     if (!isMoveLocked(5)) {
       return;
     } else if (specialConditionStacks >= specialConditionStacksThreshold) {

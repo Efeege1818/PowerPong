@@ -26,12 +26,14 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
   private final SimpleBattleManager battleManager = new SimpleBattleManager();
 
   public SimpleTurnBasedBattleService() {
+    logger.info("SimpleTurnBasedBattleService: initializing service");
     this.gameState = GameState.READY;
     this.listeners = new ArrayList<>();
   }
 
   @Override
   public void reset() {
+    logger.info("reset: resetting game state");
     this.gameState = GameState.READY;
     this.player1 = null;
     this.player2 = null;
@@ -42,6 +44,10 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
 
   @Override
   public void start() {
+    logger.info("start: starting game with player1 = {}, player2 = {}",
+            player1 != null ? player1.playerId() : "null",
+            player2 != null ? player2.playerId() : "null");
+
     if (gameState != GameState.READY) {
       throw new IllegalStateException("Game must be READY to start.");
     }
@@ -59,6 +65,7 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
 
   @Override
   public void pause() {
+    logger.info("pause: pausing game");
     if (gameState != GameState.RUNNING) {
       throw new IllegalStateException("Game must be RUNNING to pause.");
     }
@@ -68,6 +75,7 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
 
   @Override
   public void abort() {
+    logger.info("abort: aborting game");
     if (gameState != GameState.RUNNING) {
       throw new IllegalStateException("Game must be RUNNING to abort.");
     }
@@ -77,6 +85,7 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
 
   @Override
   public void end() {
+    logger.info("end: ending game");
     if (gameState != GameState.RUNNING) {
       throw new IllegalStateException("Game must be RUNNING to end.");
     }
@@ -86,8 +95,10 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
     Player winner = battleManager.getWinner();
     if (winner != null) {
       if (winner == player1) {
+        logger.info("end: player1 is the winner");
         notifyGameEnded(1);
       } else if (winner == player2) {
+        logger.info("end: player2 is the winner");
         notifyGameEnded(2);
       }
     }
@@ -95,6 +106,7 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
 
   @Override
   public boolean addListener(TurnBasedBattleListener listener) {
+    logger.info("addListener: adding listener = {}", listener);
     if (listener == null) {
       throw new IllegalArgumentException("Listener cannot be null.");
     }
@@ -107,22 +119,26 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
 
   @Override
   public boolean removeListener(TurnBasedBattleListener listener) {
+    logger.info("removeListener: removing listener = {}", listener);
     return listeners.remove(listener);
   }
 
   private void notifyGameStateChanged(GameState newState) {
+    logger.debug("notifyGameStateChanged: notifying listeners of new state = {}", newState);
     for (TurnBasedBattleListener l : listeners) {
       l.newGameState(newState);
     }
   }
 
   private void updatePlayersState() {
+    logger.debug("updatePlayersState: updating players state for listeners");
     for (TurnBasedBattleListener l : listeners) {
       l.updateState(player1, player2);
     }
   }
 
   private void notifyGameEnded(int winnerNumber) {
+    logger.debug("notifyGameEnded: notifying listeners that player {} won", winnerNumber);
     for (TurnBasedBattleListener l : listeners) {
       l.gameEnded(winnerNumber);
     }
@@ -130,11 +146,14 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
 
   @Override
   public void notifyListenersTurnChanged() {
+    logger.debug("notifyListenersTurnChanged: turn has changed");
     updatePlayersState();
   }
 
   @Override
-  public void notifyListenersBattleEnded() { }
+  public void notifyListenersBattleEnded() {
+    logger.debug("notifyListenersBattleEnded: battle has ended");
+  }
 
   @Override
   public GameState getGameState() {
@@ -143,6 +162,9 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
 
   @Override
   public void setupPlayers(Player player1, Player player2, Monster monster1, Monster monster2) {
+    logger.info("setupPlayers: setting up players - player1 = {}, player2 = {}, monster1 = {}, monster2 = {}",
+            player1.playerId(), player2.playerId(), monster1.element(), monster2.element());
+
     if (gameState != GameState.READY) {
       throw new IllegalStateException("Game must be READY to setup players.");
     }
@@ -155,18 +177,22 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
 
   @Override
   public void executeTurn(int moveIndex) {
+    logger.info("executeTurn: player {} executing turn with move index = {}",
+            getCurrentPlayer().playerId(), moveIndex);
+
     if (gameState != GameState.RUNNING) {
       throw new IllegalStateException("Game must be RUNNING to execute turn.");
     }
 
     logger.debug("Player {} executing turn with move index {}",
-        getCurrentPlayer().playerId(), moveIndex);
+            getCurrentPlayer().playerId(), moveIndex);
 
     int winner = battleManager.executeTurn(moveIndex);
 
     updatePlayersState();
 
     if (winner != 0) {
+      logger.info("executeTurn: battle ended with winner = {}", winner);
       gameState = GameState.END;
       notifyGameStateChanged(GameState.END);
       notifyGameEnded(winner);
@@ -179,6 +205,7 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
 
   @Override
   public void nextTurn() {
+    logger.info("nextTurn: advancing to next turn");
     if (gameState != GameState.RUNNING) {
       throw new IllegalStateException("Game must be RUNNING to change turns.");
     }
@@ -218,10 +245,13 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
 
   @Override
   public Player determineStartingPlayer() {
+    logger.debug("determineStartingPlayer: determining starting player");
     return battleManager.determineStartingPlayer();
   }
 
   public boolean isElementEffective(SimpleMonster current, SimpleMonster opponent) {
+    logger.debug("isElementEffective: checking if {} is effective against {}",
+            current.getName(), opponent.getName());
     return battleManager.isElementEffective(current, opponent);
   }
 

@@ -25,6 +25,10 @@ public class SimpleDamageCalculator {
    */
   public static int calculateDamage(Move move, SimpleMonster target, SimpleMonster attacker,
                                     boolean isCritical, boolean isEffective, int multiplier) {
+
+    logger.info("calculateDamage: move = {}, target = {}, attacker = {}, isCritical = {}, isEffective = {}, multiplier = {}",
+            move, target, attacker, isCritical, isEffective, multiplier);
+
     double damage = move.amount() * multiplier + attacker.getAttack();
 
     if (isCritical && isEffective) {

@@ -22,6 +22,8 @@ public class FireMonster extends SimpleMonster {
    * @param monster Monster
    */
   public FireMonster(Monster monster) {
+    logger.info("FireMonster: creating {}, from monster",name);
+
     this.maxHp = monster.maxHp();
     this.currentHp = monster.maxHp();
     this.attack = monster.attack() + fireMonsterPassiveStacks * atkPassiveAmount;
@@ -45,6 +47,9 @@ public class FireMonster extends SimpleMonster {
 
   @Override
   protected void tickMonsterEffects() {
+    logger.info("tickMonsterEffects: {}, passiveStacks = {}, attacksHit = {}",
+            name, fireMonsterPassiveStacks, attacksHit);
+
     if (fireMonsterPassiveStacks > 0) {
       fireMonsterPassiveStacks--;
       logger.debug("FireMonster passive stacks decreased to {}", fireMonsterPassiveStacks);
@@ -61,6 +66,9 @@ public class FireMonster extends SimpleMonster {
 
   @Override
   public String getSpecialProgress() {
+    logger.debug("getSpecialProgress: {}, progress = {}/{}",
+            name, attacksHit, attacksHitThreshold);
+
     return (attacksHit + "/" + attacksHitThreshold);
   }
 }
