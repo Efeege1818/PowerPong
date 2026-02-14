@@ -169,7 +169,6 @@ public class SimpleSpaceInvadersService implements SpaceInvadersService {
   public void notifyListeners(Consumer<SpaceInvadersListener> listener) {
     for (SpaceInvadersListener l : listeners) {
       listener.accept(l);
-      logger.trace("Listener {} triggered with callback {}", l, listener);
     }
   }
 

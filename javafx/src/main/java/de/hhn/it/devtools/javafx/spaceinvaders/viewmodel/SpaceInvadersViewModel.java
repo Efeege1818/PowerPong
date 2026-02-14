@@ -9,6 +9,8 @@ import de.hhn.it.devtools.apis.spaceinvaders.entities.Barrier;
 import de.hhn.it.devtools.apis.spaceinvaders.entities.Projectile;
 import de.hhn.it.devtools.apis.spaceinvaders.entities.Ship;
 import java.beans.PropertyChangeSupport;
+
+import de.hhn.it.devtools.javafx.spaceinvaders.view.SpaceInvadersScreen;
 import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
@@ -16,11 +18,14 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * ViewModel for SpaceInvadersScreen.
  */
 public class SpaceInvadersViewModel implements SpaceInvadersListener {
+  private static final Logger logger = LoggerFactory.getLogger(SpaceInvadersViewModel.class);
   private final IntegerProperty currentRound;
   private final ObservableMap<Integer, Barrier> barriers;
   private final ObservableMap<Integer, Alien> aliens;
@@ -46,6 +51,7 @@ public class SpaceInvadersViewModel implements SpaceInvadersListener {
 
   @Override
   public void updateBarrier(Barrier barrier) {
+    logger.trace("Updating barrier with id {}", barrier.barrierId());
     Platform.runLater(() -> {
       if (barriers.containsKey(barrier.barrierId())) {
         this.barriers.remove(barrier.barrierId());
@@ -57,6 +63,7 @@ public class SpaceInvadersViewModel implements SpaceInvadersListener {
 
   @Override
   public void updateAliens(Alien[] aliens) {
+    logger.trace("Updating aliens.");
     Platform.runLater(() -> {
       for (int i = aliens.length - 1; i >= 0; i--) {
         this.aliens.put(aliens[i].alienId(), aliens[i]);
@@ -66,11 +73,13 @@ public class SpaceInvadersViewModel implements SpaceInvadersListener {
 
   @Override
   public void updateShip(Ship ship) {
+    logger.trace("Updating ship.");
     Platform.runLater((() -> this.shipObjectProperty.setValue(ship)));
   }
 
   @Override
   public void updateProjectiles(Projectile[] projectiles) {
+    logger.trace("Updating projectiles.");
     Platform.runLater(() -> {
       for (Projectile projectile : projectiles) {
         if (projectile.projectileId() < 0) {
@@ -84,6 +93,7 @@ public class SpaceInvadersViewModel implements SpaceInvadersListener {
 
   @Override
   public void damageAlien(Alien alien) {
+    logger.trace("Damaging alien with id {}", alien.alienId());
     Platform.runLater(() -> {
       if (alien.hitPoints() == 0) {
         this.aliens.remove(alien.alienId());
@@ -95,30 +105,36 @@ public class SpaceInvadersViewModel implements SpaceInvadersListener {
 
   @Override
   public void updateSound(Sound sound) {
+    logger.trace("Updating sound to {}", sound);
     Platform.runLater(() -> this.propertyChangeSupport.firePropertyChange("SOUND", null, sound));
   }
 
   @Override
   public void changedGameState(GameState gameState) {
+    logger.trace("Changing game state to {}", gameState);
     Platform.runLater(() -> this.gameStateObjectProperty.setValue(gameState));
   }
 
   @Override
   public void updateRound(int round) {
+    logger.trace("Updating round to {}", round);
     Platform.runLater(() -> this.currentRound.set(round));
   }
 
   @Override
   public void updateScore(int score) {
+    logger.trace("Updating score to {}", score);
     Platform.runLater(() -> this.score.set(score));
   }
 
   @Override
   public void updateGameConfiguration(GameConfiguration configuration) {
+    logger.trace("Updating game configuration.");
   }
 
   @Override
   public void gameEnded() {
+    logger.trace("Game ended.");
   }
 
   public IntegerProperty getCurrentRoundProperty() {
