@@ -54,20 +54,8 @@ class SimpleServiceBadCaseTest {
     gs.setAccessible(true);
     gs.set(svc, GameState.RUNNING);
 
-    java.util.concurrent.atomic.AtomicBoolean nextRoundCalled = new java.util.concurrent.atomic.AtomicBoolean(false);
-    svc.addListener(new de.hhn.it.devtools.apis.spaceinvaders.SpaceInvadersListener() {
-      @Override public void updateBarrier(de.hhn.it.devtools.apis.spaceinvaders.entities.Barrier barrier) {}
-      @Override public void updateAliens(de.hhn.it.devtools.apis.spaceinvaders.entities.Alien[] aliens) {}
-      @Override public void updateShip(de.hhn.it.devtools.apis.spaceinvaders.entities.Ship ship) {}
-      @Override public void updateProjectiles(de.hhn.it.devtools.apis.spaceinvaders.entities.Projectile[] projectile) {}
-      @Override public void damageAlien(de.hhn.it.devtools.apis.spaceinvaders.entities.Alien alien) {}
-      @Override public void updateSound(de.hhn.it.devtools.apis.spaceinvaders.Sound sound) {}
-      @Override public void changedGameState(de.hhn.it.devtools.apis.spaceinvaders.GameState gameState) {}
-      @Override public void updateRound(int round) { nextRoundCalled.set(true); }
-      @Override public void gameEnded() {}
-      @Override public void updateScore(int score) {}
-      @Override public void updateGameConfiguration(de.hhn.it.devtools.apis.spaceinvaders.GameConfiguration configuration) {}
-    });
+    TestSpaceInvadersListener listener = new TestSpaceInvadersListener();
+    svc.addListener(listener);
 
     // stub EntityProvider with at least one alien so getAliens() is non-empty
     de.hhn.it.devtools.components.spaceinvaders.utils.EntityProvider stub =
@@ -94,7 +82,7 @@ class SimpleServiceBadCaseTest {
     // call the game loop trigger
     svc.triggeredByGameLoop();
 
-    assertFalse(nextRoundCalled.get(), "nextRound should NOT be invoked when aliens are present at start");
+    assertFalse(listener.lastRound.get() > -1, "nextRound should NOT be invoked when aliens are present at start");
   }
 
   @Test

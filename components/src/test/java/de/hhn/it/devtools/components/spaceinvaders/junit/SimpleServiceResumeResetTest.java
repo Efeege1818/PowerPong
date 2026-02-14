@@ -1,15 +1,12 @@
 package de.hhn.it.devtools.components.spaceinvaders.junit;
 
 import de.hhn.it.devtools.apis.spaceinvaders.GameState;
-import de.hhn.it.devtools.apis.spaceinvaders.SpaceInvadersListener;
 import de.hhn.it.devtools.components.spaceinvaders.SimpleGameLoop;
 import de.hhn.it.devtools.components.spaceinvaders.SimpleSpaceInvadersService;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -84,20 +81,8 @@ class SimpleServiceResumeResetTest {
     // small pause to ensure waiter is waiting
     Thread.sleep(50);
 
-    AtomicReference<GameState> seenState = new AtomicReference<>();
-    svc.addListener(new SpaceInvadersListener() {
-      @Override public void updateBarrier(de.hhn.it.devtools.apis.spaceinvaders.entities.Barrier barrier) {}
-      @Override public void updateAliens(de.hhn.it.devtools.apis.spaceinvaders.entities.Alien[] aliens) {}
-      @Override public void updateShip(de.hhn.it.devtools.apis.spaceinvaders.entities.Ship ship) {}
-      @Override public void updateProjectiles(de.hhn.it.devtools.apis.spaceinvaders.entities.Projectile[] projectile) {}
-      @Override public void damageAlien(de.hhn.it.devtools.apis.spaceinvaders.entities.Alien alien) {}
-      @Override public void updateSound(de.hhn.it.devtools.apis.spaceinvaders.Sound sound) {}
-      @Override public void changedGameState(GameState gameState) { seenState.set(gameState); }
-      @Override public void updateRound(int round) {}
-      @Override public void gameEnded() {}
-      @Override public void updateScore(int score) {}
-      @Override public void updateGameConfiguration(de.hhn.it.devtools.apis.spaceinvaders.GameConfiguration configuration) {}
-    });
+    TestSpaceInvadersListener listener = new TestSpaceInvadersListener();
+    svc.addListener(listener);
 
     // call resume; this should notify the waiting thread and set gameState to RUNNING
     svc.resume();
@@ -106,7 +91,7 @@ class SimpleServiceResumeResetTest {
     waiter.join(1000);
 
     assertEquals(GameState.RUNNING, gs.get(svc));
-    assertEquals(GameState.RUNNING, seenState.get());
+    assertEquals(GameState.RUNNING, listener.lastState.get());
     assertTrue(awakened.get(), "resume() should wake up a thread waiting on the game loop object");
   }
 
@@ -120,4 +105,3 @@ class SimpleServiceResumeResetTest {
     assertThrows(IllegalStateException.class, svc::resume);
   }
 }
-
