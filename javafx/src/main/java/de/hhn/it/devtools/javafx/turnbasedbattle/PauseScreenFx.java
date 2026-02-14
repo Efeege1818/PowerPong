@@ -2,12 +2,11 @@ package de.hhn.it.devtools.javafx.turnbasedbattle;
 
 import de.hhn.it.devtools.apis.turnbasedbattle.Element;
 import de.hhn.it.devtools.apis.turnbasedbattle.move.Move;
-import de.hhn.it.devtools.components.turnbasedbattle.Data;
+import de.hhn.it.devtools.components.turnbasedbattle.SimpleData;
 import de.hhn.it.devtools.components.turnbasedbattle.SimpleMonster;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -304,7 +303,7 @@ public class PauseScreenFx extends VBox {
 		public static void main(String[] args) {
 				// --- Prepare test data BEFORE launching JavaFX ---
 				// Monster record requires at least 5 moves according to your record validation.
-				Data data = new Data();
+				SimpleData data = new SimpleData();
 
 				// Create runtime monster and view model
 				SimpleMonster runtimeMonster = SimpleMonster.create(data.getMonsters()[2]);
@@ -324,7 +323,7 @@ public class PauseScreenFx extends VBox {
 				// Static holder used only for quick preview/testing
 				public static PauseScreenViewModel viewModelForTest;
 				public static SimpleScreenManager screenManagerForTest;
-				Data data = new Data();
+				SimpleData data = new SimpleData();
 
 				@Override
 				public void start(Stage stage) {

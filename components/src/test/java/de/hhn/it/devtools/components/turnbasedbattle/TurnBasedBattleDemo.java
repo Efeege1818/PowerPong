@@ -17,7 +17,7 @@ public class TurnBasedBattleDemo {
         SimpleTurnBasedBattleService service = new SimpleTurnBasedBattleService();
         System.out.println(service.getGameState());
 
-        Data data = new Data();
+        SimpleData data = new SimpleData();
 
         Monster monster1 = data.getMonsters()[1];
         Monster monster2 = data.getMonsters()[2];

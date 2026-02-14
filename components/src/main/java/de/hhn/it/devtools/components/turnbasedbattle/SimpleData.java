@@ -1,5 +1,6 @@
 package de.hhn.it.devtools.components.turnbasedbattle;
 
+import de.hhn.it.devtools.apis.turnbasedbattle.Data;
 import de.hhn.it.devtools.apis.turnbasedbattle.Element;
 import de.hhn.it.devtools.apis.turnbasedbattle.Monster;
 import de.hhn.it.devtools.apis.turnbasedbattle.move.AttackMove;
@@ -10,12 +11,11 @@ import de.hhn.it.devtools.apis.turnbasedbattle.move.DotMove;
 import de.hhn.it.devtools.apis.turnbasedbattle.move.Move;
 import de.hhn.it.devtools.apis.turnbasedbattle.move.StanceMove;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Provides data game.
  */
-public class Data {
+public class SimpleData implements Data {
 
   private final Monster[] monsters;
 
@@ -65,16 +65,12 @@ public class Data {
       5, false, 0, true, "Does more damage with higher charge\n"
       + "charge only increases when poison does DMG", 1);
 
-  public Data() {
+  public SimpleData() {
     this.monsters = createMonsters();
   }
 
-  /**
-   * Creates an array of Monster objects.
-   *
-   * @return an array of Monster objects.
-   */
-  private Monster[] createMonsters() {
+  @Override
+  public Monster[] createMonsters() {
     return new Monster[] {
       new Monster(450, 10, 3, 0.1, 0.1, Element.FIRE, getFireMonsterMoves()),
       new Monster(400, 8, 8, 0.1, 0.1, Element.GRASS, getGrassMonsterMoves()),
@@ -82,15 +78,12 @@ public class Data {
     };
   }
 
+  @Override
   public Monster[] getMonsters() {
     return monsters;
   }
 
-  /**
-   * Returns all moves for FireMonster.
-   *
-   * @return Map with moves.
-   */
+  @Override
   public HashMap<Integer, Move> getFireMonsterMoves() {
     HashMap<Integer, Move> movesMap = new HashMap<>();
     movesMap.put(1, fireNormAtk);
@@ -101,11 +94,7 @@ public class Data {
     return movesMap;
   }
 
-  /**
-   * Returns all moves for GrassMonster.
-   *
-   * @return Map with moves.
-   */
+  @Override
   public HashMap<Integer, Move> getGrassMonsterMoves() {
     HashMap<Integer, Move> movesMap = new HashMap<>();
     movesMap.put(1, grassNormAtk);
@@ -116,11 +105,7 @@ public class Data {
     return movesMap;
   }
 
-  /**
-   * Returns all moves for GrassMonster.
-   *
-   * @return Map with moves.
-   */
+  @Override
   public HashMap<Integer, Move> getWaterMonsterMoves() {
     HashMap<Integer, Move> movesMap = new HashMap<>();
     movesMap.put(1, waterNormAtk);
