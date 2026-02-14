@@ -74,7 +74,7 @@ public class SimpleMonster {
    *        (FireMonster, WaterMonster, or GrassMonster).
    */
   public static SimpleMonster create(Monster monster) {
-   logger.info("create: monster = {},", monster.element());
+    logger.info("create: monster = {},", monster.element());
     switch (monster.element()) {
       case FIRE:
         return new FireMonster(monster);
@@ -476,6 +476,9 @@ public class SimpleMonster {
     timesHitPoison = amount;
   }
 
+  /**
+   * Resets times hit by poison.
+   */
   public void resetTimesHitPoison() {
     logger.info("resetTimesHitPoison: monster = {}", name);
     timesHitPoison = 0;

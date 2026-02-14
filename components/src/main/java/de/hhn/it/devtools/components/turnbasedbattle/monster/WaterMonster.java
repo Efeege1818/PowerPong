@@ -146,7 +146,7 @@ public class WaterMonster extends SimpleMonster {
   @Override
   public String getSpecialProgress() {
     logger.debug("getSpecialProgress: {}, progress = {}/{}",
-            name,specialConditionStacks, specialConditionStacksThreshold);
+            name, specialConditionStacks, specialConditionStacksThreshold);
 
     return (specialConditionStacks + "/" + specialConditionStacksThreshold);
   }

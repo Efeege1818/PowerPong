@@ -25,6 +25,9 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
 
   private final SimpleBattleManager battleManager = new SimpleBattleManager();
 
+  /**
+   * Simple constructor, initializes gameState and creates listeners array.
+   */
   public SimpleTurnBasedBattleService() {
     logger.info("SimpleTurnBasedBattleService: initializing service");
     this.gameState = GameState.READY;
@@ -162,7 +165,8 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
 
   @Override
   public void setupPlayers(Player player1, Player player2, Monster monster1, Monster monster2) {
-    logger.info("setupPlayers: setting up players - player1 = {}, player2 = {}, monster1 = {}, monster2 = {}",
+    logger.info("setupPlayers: setting up players - player1 = {}, player2 = {}, monster1 = {},"
+            + " monster2 = {}",
             player1.playerId(), player2.playerId(), monster1.element(), monster2.element());
 
     if (gameState != GameState.READY) {
@@ -249,6 +253,13 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
     return battleManager.determineStartingPlayer();
   }
 
+  /**
+   * Checks if the element of one monster is effective against the other.
+   *
+   * @param current currently selected Monster
+   * @param opponent opponent's monster
+   * @return whether element is effective or not
+   */
   public boolean isElementEffective(SimpleMonster current, SimpleMonster opponent) {
     logger.debug("isElementEffective: checking if {} is effective against {}",
             current.getName(), opponent.getName());

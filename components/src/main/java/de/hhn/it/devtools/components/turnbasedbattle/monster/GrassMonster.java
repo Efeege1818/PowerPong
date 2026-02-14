@@ -73,7 +73,7 @@ public class GrassMonster extends SimpleMonster {
   @Override
   public String getSpecialProgress() {
     logger.debug("getSpecialProgress: {}, charges = {}",
-            name,timesHitPoison);
+            name, timesHitPoison);
 
     return (timesHitPoison + " charges");
   }

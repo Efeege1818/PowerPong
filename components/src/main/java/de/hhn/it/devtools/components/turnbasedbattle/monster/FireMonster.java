@@ -22,7 +22,7 @@ public class FireMonster extends SimpleMonster {
    * @param monster Monster
    */
   public FireMonster(Monster monster) {
-    logger.info("FireMonster: creating {}, from monster",name);
+    logger.info("FireMonster: creating {}, from monster", name);
 
     this.maxHp = monster.maxHp();
     this.currentHp = monster.maxHp();

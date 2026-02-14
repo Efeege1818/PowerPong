@@ -29,8 +29,8 @@ public class SimpleBattleManager implements BattleManager {
 
   @Override
   public void initializeBattle(Player p1, Player p2, Monster m1, Monster m2) {
-    logger.info("SimpleBattleManager: initializeBattle, player1 = {}, player2 = {}, monster1 = {}, monster2 = {}",
-            p1.playerId(), p2.playerId(), m1.element(), m2.element());
+    logger.info("SimpleBattleManager: initializeBattle, player1 = {}, player2 = {}, monster1 = {},"
+        + " monster2 = {}", p1.playerId(), p2.playerId(), m1.element(), m2.element());
     // used element for monsters because name didn't work
 
     this.player1 = p1;
@@ -260,8 +260,8 @@ public class SimpleBattleManager implements BattleManager {
    * @return true if currentMonster's element is effective
    */
   public boolean isElementEffective(SimpleMonster currentMonster, SimpleMonster opponentMonster) {
-    logger.debug("SimpleBattleManager: isElementEffective, currentElement = {}, opponentElement = {}",
-            currentMonster.getElement(), opponentMonster.getElement());
+    logger.debug("SimpleBattleManager: isElementEffective, currentElement = {}, "
+            + "opponentElement = {}", currentMonster.getElement(), opponentMonster.getElement());
 
     Element currentElement = currentMonster.getElement();
     Element opponentElement = opponentMonster.getElement();
