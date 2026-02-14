@@ -29,6 +29,10 @@ public class SimpleBattleManager implements BattleManager {
 
   @Override
   public void initializeBattle(Player p1, Player p2, Monster m1, Monster m2) {
+    logger.info("SimpleBattleManager: initializeBattle, player1 = {}, player2 = {}, monster1 = {}, monster2 = {}",
+            p1.playerId(), p2.playerId(), m1.element(), m2.element());
+    // used element for monsters because name didn't work
+
     this.player1 = p1;
     this.player2 = p2;
 
@@ -75,6 +79,8 @@ public class SimpleBattleManager implements BattleManager {
 
   @Override
   public Player getWinner() {
+    logger.debug("SimpleBattleManager: getWinner, battleOver = {}", battleOver);
+
     if (!battleOver) {
       return null;
     }
@@ -91,6 +97,9 @@ public class SimpleBattleManager implements BattleManager {
 
   @Override
   public int executeTurn(int moveNumber) {
+    logger.info("SimpleBattleManager: executeTurn, player = {}, moveNumber = {}",
+            currentPlayer.playerId(), moveNumber);
+
     if (!currentMonster.hasMove(moveNumber)) {
       throw new IllegalArgumentException("Invalid move number.");
     }
@@ -149,6 +158,9 @@ public class SimpleBattleManager implements BattleManager {
   }
 
   private void executeMove(Move move, MoveType moveType) {
+    logger.info("SimpleBattleManager: executeMove, move = {}, moveType = {}",
+            move.name(), moveType);
+
     switch (moveType) {
       case MoveType.ATTACK -> {
         // Applies counterattack
@@ -196,6 +208,9 @@ public class SimpleBattleManager implements BattleManager {
 
   @Override
   public void nextTurn() {
+    logger.info("SimpleBattleManager: nextTurn, currentPlayer = {}, turnCount = {}",
+            currentPlayer.playerId(), turnCount);
+
     if (battleOver) {
       throw new IllegalStateException("Battle is already over.");
     }
@@ -216,6 +231,8 @@ public class SimpleBattleManager implements BattleManager {
 
   @Override
   public Player determineStartingPlayer() {
+    logger.info("SimpleBattleManager: determineStartingPlayer");
+
     // if same element → random
     if (p1Monster.getElement() == p2Monster.getElement()) {
       if (Math.random() < 0.50) {
@@ -243,6 +260,9 @@ public class SimpleBattleManager implements BattleManager {
    * @return true if currentMonster's element is effective
    */
   public boolean isElementEffective(SimpleMonster currentMonster, SimpleMonster opponentMonster) {
+    logger.debug("SimpleBattleManager: isElementEffective, currentElement = {}, opponentElement = {}",
+            currentMonster.getElement(), opponentMonster.getElement());
+
     Element currentElement = currentMonster.getElement();
     Element opponentElement = opponentMonster.getElement();
 
