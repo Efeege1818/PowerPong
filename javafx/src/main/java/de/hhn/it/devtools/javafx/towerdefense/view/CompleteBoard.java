@@ -54,6 +54,9 @@ public class CompleteBoard extends StackPane {
     getChildren().addAll(mapGrid, towerContainer, enemyContainer);
   }
 
+  /**
+   * Renders the generated board.
+   */
   void boardDisplay() {
     mapGrid.getChildren().clear();
     mapGrid.widthProperty().divide(2);
@@ -72,6 +75,9 @@ public class CompleteBoard extends StackPane {
     }
   }
 
+  /**
+   * Update towers when once is placed or updated.
+   */
   private void updateTowers() {
     towerContainer.getChildren().clear();
 
@@ -89,6 +95,9 @@ public class CompleteBoard extends StackPane {
     }
   }
 
+  /**
+   * Update all rendered enemies when a wave starts or an enemy is killed.
+   */
   private void updateEnemies() {
     enemyContainer.getChildren().clear();
 

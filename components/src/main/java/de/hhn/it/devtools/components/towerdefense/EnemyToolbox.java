@@ -82,7 +82,6 @@ public class EnemyToolbox {
    * @throws NoSuchElementException if the given EnemyType isn't supported
    */
   public static int getWeight(EnemyType type) throws NoSuchElementException {
-    // TODO: replace these dummy values with balanced ones
     return switch (type) {
       case SMALL -> 10;
       case MEDIUM -> 5;
@@ -113,7 +112,6 @@ public class EnemyToolbox {
    *
    * @param amount the amount of damage to apply (must be non-negative)
    * @param enemy  this is the object which damageEnemy is called on
-   * @throws IllegalArgumentException if the damage amount is negative
    */
   public static Enemy damageEnemy(int amount, Enemy enemy) {
     if (enemy.currentHealth() - amount <= 0) {

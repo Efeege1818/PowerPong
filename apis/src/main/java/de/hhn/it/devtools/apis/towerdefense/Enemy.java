@@ -1,5 +1,6 @@
 package de.hhn.it.devtools.apis.towerdefense;
 
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -22,4 +23,18 @@ public record Enemy(UUID id,
                     EnemyType type,
                     int currentHealth,
                     int index
-){}
+) {
+  private static final org.slf4j.Logger logger =
+      org.slf4j.LoggerFactory.getLogger(Enemy.class);
+
+  /**
+   * Constructor.
+   */
+  public Enemy {
+    logger.debug("creating Enemy with - id {} - Coordinates {} - Type {} - health {} - index {}",
+        id, coordinates, type, currentHealth, index);
+    Objects.requireNonNull(id);
+    Objects.requireNonNull(coordinates);
+    Objects.requireNonNull(type);
+  }
+}

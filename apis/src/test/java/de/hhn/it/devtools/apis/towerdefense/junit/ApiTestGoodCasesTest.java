@@ -2,19 +2,16 @@ package de.hhn.it.devtools.apis.towerdefense.junit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.ArrayList;
 import java.util.UUID;
-import de.hhn.it.devtools.apis.towerdefense.Coordinates;
-import de.hhn.it.devtools.apis.towerdefense.Enemy;
-import de.hhn.it.devtools.apis.towerdefense.EnemyType;
-import de.hhn.it.devtools.apis.towerdefense.Player;
-import de.hhn.it.devtools.apis.towerdefense.Tower;
-import de.hhn.it.devtools.apis.towerdefense.TowerType;
+
+import de.hhn.it.devtools.apis.towerdefense.*;
 import org.junit.jupiter.api.Test;
 
 /**
  * Test class that test the api.
  */
-public class ApiTest {
+public class ApiTestGoodCasesTest {
 
   @Test
   void checkPlayerHealthAndMoney() {
@@ -43,5 +40,17 @@ public class ApiTest {
     assertEquals(pos, tower.coordinates());
     assertEquals(TowerType.RANGED, tower.type());
   }
+
+  @Test
+  void checkGridValues() {
+    Direction[][] directions = new  Direction[][]{{Direction.NONE},{Direction.EAST}};
+    Grid grid = new Grid(directions);
+
+    assertEquals(Direction.EAST, grid.grid()[1][0]);
+    assertEquals(Direction.NONE, grid.grid()[0][0]);
+    assertEquals(2, grid.grid().length);
+  }
+
+
 
 }

@@ -12,10 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.UUID;
 
-public class EnemyToolboxTest {
-
-  private static final org.slf4j.Logger logger =
-          org.slf4j.LoggerFactory.getLogger(EnemyToolboxTest.class);
+public class EnemyToolboxGoodCasesTest {
 
   private SimpleTowerDefenseService service;
   private EnemyToolbox toolbox;
@@ -28,7 +25,6 @@ public class EnemyToolboxTest {
 
   @AfterEach
   public void tearDown() {
-
   }
 
   @Test
@@ -69,9 +65,7 @@ public class EnemyToolboxTest {
   @Test
   void testDamageEnemySurvives() {
     Enemy enemy = new Enemy(new UUID(0, 0), new Coordinates(0, 0), EnemyType.SMALL, 10, 0);
-
     Enemy damaged = EnemyToolbox.damageEnemy(3, enemy);
-
     assertEquals(7, damaged.currentHealth());
     assertEquals(enemy.id(), damaged.id());
     assertEquals(enemy.type(), damaged.type());
@@ -80,9 +74,7 @@ public class EnemyToolboxTest {
   @Test
   void testDamageEnemyDies() {
     Enemy enemy = new Enemy(new UUID(0, 0), new Coordinates(0, 0), EnemyType.SMALL, 3, 0);
-
     Enemy damaged = EnemyToolbox.damageEnemy(3, enemy);
-
     assertEquals(0, damaged.currentHealth());
   }
 
@@ -92,28 +84,20 @@ public class EnemyToolboxTest {
 
     Enemy enemy = new Enemy(new UUID(0, 0), service.getMapToolbox().getExtendedPath().getLast(), EnemyType.SMALL, 3,
             pathLength);
-
     toolbox.addEnemy(enemy);
     int damageToPlayer = toolbox.damagePlayer();
-
     assertEquals(1, damageToPlayer);
 
     Enemy enemy1 = new Enemy(new UUID(0, 0), service.getMapToolbox().getExtendedPath().getLast(), EnemyType.MEDIUM, 3,
             pathLength);
-
     toolbox.addEnemy(enemy1);
     int damageToPlayer1 = toolbox.damagePlayer();
-
-    // cumulative damage not single-damage, all in total
     assertEquals(3, damageToPlayer1);
 
     Enemy enemy2 = new Enemy(new UUID(0, 0), service.getMapToolbox().getExtendedPath().getLast(), EnemyType.LARGE, 3,
             pathLength);
-
     toolbox.addEnemy(enemy2);
     int damageToPlayer2 = toolbox.damagePlayer();
-
-    // cumulative damage not single-damage, all in total
     assertEquals(6, damageToPlayer2);
   }
 
@@ -121,15 +105,11 @@ public class EnemyToolboxTest {
   void testMoneyPerEnemyOnlyDeadEnemiesCount() {
     Enemy deadEnemy = new Enemy(new UUID(0, 0), service.getMapToolbox().getExtendedPath().getFirst(), EnemyType.LARGE,
             0, 1);
-
     Enemy aliveEnemy = new Enemy(new UUID(0, 0), service.getMapToolbox().getExtendedPath().getFirst(), EnemyType.SMALL,
             10, 1);
-
     toolbox.addEnemy(deadEnemy);
     toolbox.addEnemy(aliveEnemy);
-
     int money = toolbox.moneyPerEnemy();
-
     assertEquals(15, money);
   }
 
@@ -137,14 +117,9 @@ public class EnemyToolboxTest {
   void testProgressMovesEnemyForward() {
     Enemy enemy = new Enemy(new UUID(0, 0), service.getMapToolbox().getExtendedPath().getFirst(), EnemyType.SMALL, 10,
             0);
-
     toolbox.addEnemy(enemy);
-
     toolbox.progress();
-
     Enemy moved = toolbox.getEnemies().getFirst();
-
-    // SMALL enemy speed test here
     assertEquals(3, moved.index());
   }
 
@@ -152,11 +127,8 @@ public class EnemyToolboxTest {
   void testProgressRemovesDeadEnemy() {
     Enemy deadEnemy = new Enemy(new UUID(0, 0), service.getMapToolbox().getExtendedPath().getFirst(), EnemyType.SMALL,
             0, 0);
-
     toolbox.addEnemy(deadEnemy);
-
     toolbox.progress();
-
     assertTrue(toolbox.getEnemies().isEmpty());
   }
 }

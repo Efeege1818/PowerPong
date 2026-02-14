@@ -1,5 +1,7 @@
 package de.hhn.it.devtools.apis.towerdefense;
 
+import de.hhn.it.devtools.apis.examples.coffeemakerservice.Recipe;
+
 /**
  * Record to save general Setting about the game.
  *
@@ -17,6 +19,9 @@ public record Configuration(int mapSize,
                             float enemyPowerMultiplier,
                             float enemyHealthMultiplier,
                             float escalation) {
+
+  private static final org.slf4j.Logger logger =
+      org.slf4j.LoggerFactory.getLogger(Configuration.class);
 
   /**
    * Constructor.
@@ -41,7 +46,6 @@ public record Configuration(int mapSize,
   }
 
   public Configuration(Difficulty difficulty) {
-
     this(DEFAULT_MAP_SIZE,
 
         // Starting Health
@@ -77,6 +81,7 @@ public record Configuration(int mapSize,
           case HARD, IMPOSSIBLE -> 1.2f;
         }
     );
+    logger.debug("creating Recipe on Difficulty {}", difficulty);
   }
 
   public static int DEFAULT_MAP_SIZE = 10;

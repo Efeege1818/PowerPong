@@ -7,7 +7,7 @@ package de.hhn.it.devtools.apis.towerdefense;
 public interface TowerDefenseListener {
 
   /**
-   * Gets calles when the current gameState changes.
+   * Gets called, when the current gameState changes.
    */
   void updateGameState();
 
@@ -32,7 +32,7 @@ public interface TowerDefenseListener {
   void updateMap();
 
   /**
-   * Gets called every tick while the Game is running.
+   * Gets called every tick, while the Game is running.
    */
   void tick();
 

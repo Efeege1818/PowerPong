@@ -5,7 +5,6 @@ import de.hhn.it.devtools.javafx.towerdefense.controllers.ScreenManager;
 import de.hhn.it.devtools.javafx.towerdefense.controllers.ScreenType;
 import de.hhn.it.devtools.javafx.towerdefense.viewmodel.TowerDefenseViewModel;
 import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -33,6 +32,9 @@ public class TitleScreen extends StackPane {
     createScreen();
   }
 
+  /**
+   * Creates part of the title screen with all the features, scaling it for viewing purposes.
+   */
   public void createScreen() {
     double scale = 5;
 
@@ -64,10 +66,16 @@ public class TitleScreen extends StackPane {
     getChildren().addAll(box);
   }
 
+  /**
+   * Starts game.
+   */
   public void startGame() {
     viewModel.startGame();
   }
 
+  /**
+   * Exits game, and closes application.
+   */
   public void exitGame() {
     ((Stage) (getScene().getWindow())).close();
   }

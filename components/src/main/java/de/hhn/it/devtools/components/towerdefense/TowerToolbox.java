@@ -2,6 +2,7 @@ package de.hhn.it.devtools.components.towerdefense;
 
 import de.hhn.it.devtools.apis.towerdefense.Coordinates;
 import de.hhn.it.devtools.apis.towerdefense.Enemy;
+import de.hhn.it.devtools.apis.towerdefense.Grid;
 import de.hhn.it.devtools.apis.towerdefense.Tower;
 import de.hhn.it.devtools.apis.towerdefense.TowerType;
 import java.util.ArrayList;
@@ -14,9 +15,15 @@ import java.util.NoSuchElementException;
  * A class that provides general functionality for the management of towers.
  */
 public class TowerToolbox {
+
+  private static final org.slf4j.Logger logger =
+      org.slf4j.LoggerFactory.getLogger(TowerToolbox.class);
+
   private List<Tower> towers = new ArrayList<>();
   private List<Tower> savedTowers = new ArrayList<>();
   private final SimpleTowerDefenseService service;
+  private final int ticksUntilMoney = 2;
+  private int remainingTicks = 0;
 
   /**
    * Creates a new TowerToolbox.
@@ -77,8 +84,6 @@ public class TowerToolbox {
 
   /**
    * Attacks the enemy in range, that has advanced the furthest on the path.
-   *
-   * @throws IllegalArgumentException if towers or enemies do not exist.
    */
   public void attack() {
     int pathLength = service.getMapToolbox().getExtendedPath().size();
@@ -112,7 +117,6 @@ public class TowerToolbox {
     }
   }
 
-
   /**
    * Attacks the enemy in range, that has advanced the furthest on the path.
    *
@@ -122,11 +126,14 @@ public class TowerToolbox {
           throws IllegalArgumentException {
 
     int money = 0;
+    remainingTicks++;
+    remainingTicks %= ticksUntilMoney;
     for (Tower tower : towers) {
-      if (tower.type().equals(TowerType.MONEYMAKER)) {
+      if (remainingTicks == 0 && tower.type().equals(TowerType.MONEYMAKER)) {
         money += 1;
       }
     }
+    // logger.debug("Money made: {} with remaining ticks {}", money, remainingTicks);
     return money;
   }
 

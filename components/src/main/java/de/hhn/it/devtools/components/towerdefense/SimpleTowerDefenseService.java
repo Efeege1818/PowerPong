@@ -67,15 +67,18 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
 
     updateGameState(GameState.READY);
 
+    logger.info("Creating new Service for TowerDefense");
   }
 
   @Override
   public GameState getCurrentGameState() {
+    logger.debug("getCurrentGameState: gameState = {}", currentGameState);
     return currentGameState;
   }
 
   @Override
   public Player getPlayer() {
+    logger.debug("getPlayer: player = {}", player);
     return player;
   }
 
@@ -87,15 +90,18 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
     this.configuration = configuration;
     mapToolbox.generateMap(configuration.mapSize());
     waveGenerator = new WaveGenerator(mapToolbox.getPath().getFirst(), seed, configuration);
+    logger.info("editConfiguration: configuration = {}", configuration);
   }
 
   @Override
   public boolean addListener(TowerDefenseListener listener) throws IllegalArgumentException {
+    logger.info("addListener: Listener = {}", listener);
     return listeners.add(listener);
   }
 
   @Override
   public boolean removeListener(TowerDefenseListener listener) throws IllegalArgumentException {
+    logger.info("removeListener: Listener = {}", listener);
     return listeners.remove(listener);
   }
 
@@ -109,6 +115,7 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
     notifyListeners(TowerDefenseListener::updateHealth);
     notifyListeners(TowerDefenseListener::updateMoney);
     notifyListeners(TowerDefenseListener::updateMap);
+    logger.info("startGame: starting");
   }
 
   @Override
@@ -122,6 +129,7 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
     resetGame();
 
     updateGameState(GameState.READY);
+    logger.info("abortGame: aborting");
   }
 
   @Override
@@ -142,6 +150,7 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
     currentRound = 0;
 
     updateGameState(GameState.PAUSED);
+    logger.info("resetGame: resetting");
 
   }
 
@@ -155,6 +164,7 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
     towerToolbox.loadData();
     enemyToolbox = new EnemyToolbox(this);
     updateGameState(GameState.PAUSED);
+    logger.info("retry: restarting from last round");
   }
 
   @Override
@@ -163,16 +173,20 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
       throw new IllegalStateException(
               "Operation startNextRound is only allowed for GameState PAUSED");
     }
+    logger.info("startNextRound: starting next Round");
     currentRound += 1;
     enemyQueue = waveGenerator.generateWave(currentRound);
 
-    updateGameState(GameState.RUNNING);
     gameLoop.startGame();
+    updateGameState(GameState.RUNNING);
+
   }
 
   @Override
   public Grid getMap() throws IllegalStateException {
-    return mapToolbox.getGrid();
+    Grid map = mapToolbox.getGrid();
+    logger.debug("getMap: map = {}", map);
+    return map;
   }
 
   @Override
@@ -181,16 +195,21 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
     for (TowerType type : TowerType.values()) {
       towerMap.put(type, TowerToolbox.getCost(type));
     }
+    logger.debug("getMap: towerMap = {}", towerMap);
     return towerMap;
   }
 
   @Override
   public Map<Coordinates, Tower> getTowerBoard() throws IllegalStateException {
+    Map<Coordinates, Tower> towerBoard = towerToolbox.getTowers();
+    logger.debug("getTowerBoard: towerBoard = {}", towerBoard);
     return towerToolbox.getTowers();
   }
 
   @Override
   public List<Enemy> getCurrentEnemies() throws IllegalStateException {
+    List<Enemy> currentEnemies = enemyToolbox.getEnemies();
+    logger.info("getCurrentEnemies: currentEnemies = {}", currentEnemies);
     return enemyToolbox.getEnemies();
   }
 
@@ -209,6 +228,7 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
     if (player.money() < TowerToolbox.getCost(tower.type())) {
       throw new IllegalArgumentException("Not enough money");
     }
+    logger.info("placeTower: Tower = {}", tower);
     updateMoney(-TowerToolbox.getCost(tower.type()));
     towerToolbox.addTower(tower);
     notifyListeners(TowerDefenseListener::updateTowerMap);
@@ -225,6 +245,7 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
       throw new IllegalArgumentException("Health modifier can't be positive");
     }
     player = new Player(player.health() + health, player.money());
+    logger.info("updateHealth: currentHealth = {}", player.health());
     notifyListeners(TowerDefenseListener::updateHealth);
   }
 
@@ -238,16 +259,19 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
       throw new IllegalArgumentException("Money can't be negative");
     }
     player = new Player(player.health(), player.money() + money);
+    logger.info("updateMoney: currentMoney = {}", player.money());
     notifyListeners(TowerDefenseListener::updateMoney);
   }
 
   @Override
   public int getCurrentRound() {
+    logger.debug("getCurrentRound: currentRound = {}", currentRound);
     return currentRound;
   }
 
   @Override
   public void terminate() {
+    logger.info("terminate: terminating GameLoop");
     gameLoop.interrupt();
     updateGameState(GameState.TERMINATED);
   }
@@ -256,6 +280,7 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
    * Logic that gets called by the GameLoop one per Game-Tick.
    */
   public void tick() {
+    logger.trace("tick: Performing Game Tick");
     if (!enemyQueue.isEmpty()) {
       enemyToolbox.addEnemy(enemyQueue.poll());
     }
@@ -280,6 +305,7 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
 
   private void updateGameState(GameState newGameState) {
     currentGameState = newGameState;
+    logger.debug("updateGameState: newGameState = {}", newGameState);
     notifyListeners(TowerDefenseListener::updateGameState);
   }
 
@@ -296,8 +322,8 @@ public class SimpleTowerDefenseService implements TowerDefenseService {
 
   private void roundCompleted() {
     logger.info("Round {} completed", currentRound);
-    updateGameState(GameState.PAUSED);
     gameLoop.stopGame();
+    updateGameState(GameState.PAUSED);
     savedPlayerData = player;
     towerToolbox.saveData();
   }

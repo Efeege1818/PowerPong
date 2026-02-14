@@ -1,5 +1,6 @@
 package de.hhn.it.devtools.apis.towerdefense;
 
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -14,6 +15,20 @@ import java.util.UUID;
 public record Tower(UUID id,
                     Coordinates coordinates,
                     TowerType type) {
+
+  private static final org.slf4j.Logger logger =
+      org.slf4j.LoggerFactory.getLogger(Tower.class);
+
+  /**
+   * Constructor.
+   */
+  public Tower {
+    logger.debug("creating Tower with id - {} | coordinates - {} | type - {}",
+        id, coordinates, type);
+    Objects.requireNonNull(id);
+    Objects.requireNonNull(coordinates);
+    Objects.requireNonNull(type);
+  }
 
   public Tower(Coordinates coordinates, TowerType type) {
     this(UUID.randomUUID(), coordinates, type);
