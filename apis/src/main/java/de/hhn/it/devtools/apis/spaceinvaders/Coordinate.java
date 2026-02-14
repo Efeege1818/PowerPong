@@ -4,6 +4,9 @@ import java.util.Objects;
 
 /**
  * Used for 2D coordinates. Coordinates are immutable.
+ *
+ * @param x The x coordinate.
+ * @param y The y coordinate.
  */
 
 public record Coordinate(int x, int y) {

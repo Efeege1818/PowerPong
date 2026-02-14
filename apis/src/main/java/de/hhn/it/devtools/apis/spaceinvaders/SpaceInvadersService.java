@@ -50,6 +50,7 @@ public interface SpaceInvadersService {
   /**
    * Change the Spaceship direction by turning left if the GameState is RUNNING.
    *
+   * @param direction the direction to turn the spaceship to
    * @throws IllegalStateException is the GameState is not appropriate
    */
   void move(Direction direction) throws IllegalStateException;
