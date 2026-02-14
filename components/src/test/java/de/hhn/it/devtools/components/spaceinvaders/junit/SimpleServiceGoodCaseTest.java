@@ -3,15 +3,13 @@ package de.hhn.it.devtools.components.spaceinvaders.junit;
 import de.hhn.it.devtools.apis.spaceinvaders.Difficulty;
 import de.hhn.it.devtools.apis.spaceinvaders.GameConfiguration;
 import de.hhn.it.devtools.apis.spaceinvaders.GameState;
-import de.hhn.it.devtools.apis.spaceinvaders.SpaceInvadersListener;
 import de.hhn.it.devtools.components.spaceinvaders.SimpleGameLoop;
 import de.hhn.it.devtools.components.spaceinvaders.SimpleSpaceInvadersService;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
+
 
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,20 +33,8 @@ class SimpleServiceGoodCaseTest {
     gs.setAccessible(true);
     gs.set(svc, GameState.PREPARED);
 
-    AtomicBoolean seen = new AtomicBoolean(false);
-    svc.addListener(new SpaceInvadersListener() {
-      @Override public void updateBarrier(de.hhn.it.devtools.apis.spaceinvaders.entities.Barrier barrier) {}
-      @Override public void updateAliens(de.hhn.it.devtools.apis.spaceinvaders.entities.Alien[] aliens) {}
-      @Override public void updateShip(de.hhn.it.devtools.apis.spaceinvaders.entities.Ship ship) {}
-      @Override public void updateProjectiles(de.hhn.it.devtools.apis.spaceinvaders.entities.Projectile[] projectile) {}
-      @Override public void damageAlien(de.hhn.it.devtools.apis.spaceinvaders.entities.Alien alien) {}
-      @Override public void updateSound(de.hhn.it.devtools.apis.spaceinvaders.Sound sound) {}
-      @Override public void changedGameState(GameState gameState) { seen.set(true); }
-      @Override public void updateRound(int round) {}
-      @Override public void gameEnded() {}
-      @Override public void updateScore(int score) {}
-      @Override public void updateGameConfiguration(de.hhn.it.devtools.apis.spaceinvaders.GameConfiguration configuration) {}
-    });
+    TestSpaceInvadersListener listener = new TestSpaceInvadersListener();
+    svc.addListener(listener);
 
     try {
       svc.start();
@@ -56,7 +42,7 @@ class SimpleServiceGoodCaseTest {
       // after start the gameState field should be RUNNING
       assertEquals(GameState.RUNNING, gs.get(svc));
       // listener should have seen the change
-      assertTrue(seen.get());
+      assertEquals(GameState.RUNNING, listener.lastState.get());
     } finally {
       // stop the started game loop to avoid background threads
       Field loop = svc.getClass().getDeclaredField("simpleGameLoop");
@@ -77,20 +63,8 @@ class SimpleServiceGoodCaseTest {
     gs.setAccessible(true);
     gs.set(svc, GameState.RUNNING);
 
-    AtomicBoolean nextRoundCalled = new AtomicBoolean(false);
-    svc.addListener(new SpaceInvadersListener() {
-      @Override public void updateBarrier(de.hhn.it.devtools.apis.spaceinvaders.entities.Barrier barrier) {}
-      @Override public void updateAliens(de.hhn.it.devtools.apis.spaceinvaders.entities.Alien[] aliens) {}
-      @Override public void updateShip(de.hhn.it.devtools.apis.spaceinvaders.entities.Ship ship) {}
-      @Override public void updateProjectiles(de.hhn.it.devtools.apis.spaceinvaders.entities.Projectile[] projectile) {}
-      @Override public void damageAlien(de.hhn.it.devtools.apis.spaceinvaders.entities.Alien alien) {}
-      @Override public void updateSound(de.hhn.it.devtools.apis.spaceinvaders.Sound sound) {}
-      @Override public void changedGameState(GameState gameState) {if (gameState == GameState.PAUSED) nextRoundCalled.set(true); }
-      @Override public void updateRound(int round) {}
-      @Override public void gameEnded() {}
-      @Override public void updateScore(int score) {}
-      @Override public void updateGameConfiguration(de.hhn.it.devtools.apis.spaceinvaders.GameConfiguration configuration) {}
-    });
+    TestSpaceInvadersListener listener = new TestSpaceInvadersListener();
+    svc.addListener(listener);
 
     // inject an EntityProvider stub whose getAliens returns empty map
     de.hhn.it.devtools.components.spaceinvaders.utils.EntityProvider stub =
@@ -109,7 +83,7 @@ class SimpleServiceGoodCaseTest {
       // call the game loop trigger
       svc.triggeredByGameLoop();
 
-      assertTrue(nextRoundCalled.get(), "nextRound should be invoked when alien map is empty");
+      assertEquals(GameState.PAUSED, listener.lastState.get(), "nextRound should be invoked when alien map is empty (PAUSED expected)");
     } finally {
       // cleanup: stop game loop if created
       Field loop = svc.getClass().getDeclaredField("simpleGameLoop");
@@ -128,21 +102,8 @@ class SimpleServiceGoodCaseTest {
     gs.setAccessible(true);
     gs.set(svc, GameState.RUNNING);
 
-    AtomicReference<GameState> seenState = new AtomicReference<>();
-    AtomicBoolean ended = new AtomicBoolean(false);
-    svc.addListener(new SpaceInvadersListener() {
-      @Override public void updateBarrier(de.hhn.it.devtools.apis.spaceinvaders.entities.Barrier barrier) {}
-      @Override public void updateAliens(de.hhn.it.devtools.apis.spaceinvaders.entities.Alien[] aliens) {}
-      @Override public void updateShip(de.hhn.it.devtools.apis.spaceinvaders.entities.Ship ship) {}
-      @Override public void updateProjectiles(de.hhn.it.devtools.apis.spaceinvaders.entities.Projectile[] projectile) {}
-      @Override public void damageAlien(de.hhn.it.devtools.apis.spaceinvaders.entities.Alien alien) {}
-      @Override public void updateSound(de.hhn.it.devtools.apis.spaceinvaders.Sound sound) {}
-      @Override public void changedGameState(GameState gameState) { seenState.set(gameState); }
-      @Override public void updateRound(int round) {}
-      @Override public void gameEnded() { ended.set(true); }
-      @Override public void updateScore(int score) {}
-      @Override public void updateGameConfiguration(de.hhn.it.devtools.apis.spaceinvaders.GameConfiguration configuration) {}
-    });
+    TestSpaceInvadersListener listener = new TestSpaceInvadersListener();
+    svc.addListener(listener);
 
     // stub EntityProvider with at least one alien and player with 0 HP
     de.hhn.it.devtools.components.spaceinvaders.utils.EntityProvider stub =
@@ -178,8 +139,8 @@ class SimpleServiceGoodCaseTest {
       // assertions: state, provider cleared, listeners notified
       assertEquals(GameState.ABORTED, gs.get(svc));
       assertNull(ep.get(svc));
-      assertEquals(GameState.ABORTED, seenState.get());
-      assertTrue(ended.get());
+      assertEquals(GameState.ABORTED, listener.lastState.get());
+      assertTrue(listener.gameEnded.get());
     } finally {
       // cleanup: stop any game loop
       Field loop = svc.getClass().getDeclaredField("simpleGameLoop");
@@ -226,22 +187,8 @@ class SimpleServiceGoodCaseTest {
     ep.set(svc, stub);
 
     // listener to capture state change and round number
-    AtomicInteger receivedRound = new AtomicInteger(-1);
-    AtomicBoolean stateChanged = new AtomicBoolean(false);
-
-    svc.addListener(new SpaceInvadersListener() {
-      @Override public void updateBarrier(de.hhn.it.devtools.apis.spaceinvaders.entities.Barrier barrier) {}
-      @Override public void updateAliens(de.hhn.it.devtools.apis.spaceinvaders.entities.Alien[] aliens) {}
-      @Override public void updateShip(de.hhn.it.devtools.apis.spaceinvaders.entities.Ship ship) {}
-      @Override public void updateProjectiles(de.hhn.it.devtools.apis.spaceinvaders.entities.Projectile[] projectile) {}
-      @Override public void damageAlien(de.hhn.it.devtools.apis.spaceinvaders.entities.Alien alien) {}
-      @Override public void updateSound(de.hhn.it.devtools.apis.spaceinvaders.Sound sound) {}
-      @Override public void changedGameState(GameState gameState) { stateChanged.set(true); }
-      @Override public void updateRound(int round) { receivedRound.set(round); }
-      @Override public void gameEnded() {}
-      @Override public void updateScore(int score) {}
-      @Override public void updateGameConfiguration(de.hhn.it.devtools.apis.spaceinvaders.GameConfiguration configuration) {}
-    });
+    TestSpaceInvadersListener listener = new TestSpaceInvadersListener();
+    svc.addListener(listener);
 
     // read initial round
     Field roundField = svc.getClass().getDeclaredField("round");
@@ -254,10 +201,30 @@ class SimpleServiceGoodCaseTest {
     // assertions: gameState -> RUNNING, round incremented, listener called and entityProvider methods invoked
     assertEquals(GameState.RUNNING, gs.get(svc));
     assertEquals(initialRound + 1, (int) roundField.get(svc));
-    assertTrue(stateChanged.get(), "changedGameState should have been called");
-    assertEquals(initialRound + 1, receivedRound.get(), "updateRound should be called with incremented round");
+    assertEquals(GameState.RUNNING, listener.lastState.get(), "changedGameState should have been called");
+    assertEquals(initialRound + 1, listener.lastRound.get(), "updateRound should be called with incremented round");
     assertTrue(generateAliensCalled.get(), "generateAliens() should be called");
     assertTrue(clearProjectilesCalled.get(), "clearProjectiles() should be called");
+  }
+
+  @Test
+  void testRemoveListenerStopsNotifications() {
+    SimpleSpaceInvadersService svc = new SimpleSpaceInvadersService();
+
+    TestSpaceInvadersListener listenerA = new TestSpaceInvadersListener();
+    TestSpaceInvadersListener listenerB = new TestSpaceInvadersListener();
+
+    svc.addListener(listenerA);
+    svc.addListener(listenerB);
+
+    // remove listenerA and trigger a sound event
+    assertTrue(svc.removeListener(listenerA), "removeListener should return true when removing an existing listener");
+
+    svc.playSound(de.hhn.it.devtools.apis.spaceinvaders.Sound.SHOOT);
+
+    // listenerA should NOT be notified, listenerB should
+    assertFalse(listenerA.soundUpdated.get(), "Removed listener should not receive notifications");
+    assertTrue(listenerB.soundUpdated.get(), "Remaining listener should receive notifications");
   }
 
 }
