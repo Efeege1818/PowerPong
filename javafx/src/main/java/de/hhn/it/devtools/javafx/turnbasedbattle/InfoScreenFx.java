@@ -1,9 +1,8 @@
 package de.hhn.it.devtools.javafx.turnbasedbattle;
 
 import de.hhn.it.devtools.apis.turnbasedbattle.Element;
-import de.hhn.it.devtools.apis.turnbasedbattle.Monster;
 import de.hhn.it.devtools.apis.turnbasedbattle.move.Move;
-import de.hhn.it.devtools.components.turnbasedbattle.Data;
+import de.hhn.it.devtools.components.turnbasedbattle.SimpleData;
 import de.hhn.it.devtools.components.turnbasedbattle.SimpleMonster;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -11,7 +10,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -22,9 +20,6 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static javafx.application.Application.launch;
@@ -210,7 +205,7 @@ public class InfoScreenFx extends VBox {
     public static void main(String[] args) {
         // --- Prepare test data BEFORE launching JavaFX ---
         // Monster record requires at least 5 moves according to your record validation.
-        Data data = new Data();
+        SimpleData data = new SimpleData();
 
         // Create runtime monster and view model
         SimpleMonster runtimeMonster = SimpleMonster.create(data.getMonsters()[2]);
@@ -229,7 +224,7 @@ public class InfoScreenFx extends VBox {
         // Static holder used only for quick preview/testing
         public static InfoScreenViewModel viewModelForTest;
         public static SimpleScreenManager simpleScreenManagerForTest;
-        Data data = new Data();
+        SimpleData data = new SimpleData();
 
         @Override
         public void start(Stage stage) {

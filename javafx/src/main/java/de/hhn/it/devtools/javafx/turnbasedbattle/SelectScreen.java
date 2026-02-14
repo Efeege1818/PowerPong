@@ -2,7 +2,7 @@ package de.hhn.it.devtools.javafx.turnbasedbattle;
 
 import de.hhn.it.devtools.apis.turnbasedbattle.Monster;
 import de.hhn.it.devtools.apis.turnbasedbattle.Player;
-import de.hhn.it.devtools.components.turnbasedbattle.Data;
+import de.hhn.it.devtools.components.turnbasedbattle.SimpleData;
 import de.hhn.it.devtools.components.turnbasedbattle.SimpleMonster;
 import de.hhn.it.devtools.components.turnbasedbattle.SimpleTurnBasedBattleService;
 import javafx.fxml.FXML;
@@ -23,7 +23,7 @@ public class SelectScreen extends AnchorPane {
   private boolean selected2 = false;
   private Monster p1Monster;
   private Monster p2Monster;
-  Data data = new Data();
+  SimpleData data = new SimpleData();
   @FXML private Circle p1SelectedCircle;
   @FXML private Circle p2SelectedCircle;
 

@@ -1,7 +1,7 @@
 package de.hhn.it.devtools.components.turnbasedbattle.junit;
 
 import de.hhn.it.devtools.apis.turnbasedbattle.*;
-import de.hhn.it.devtools.components.turnbasedbattle.Data;
+import de.hhn.it.devtools.components.turnbasedbattle.SimpleData;
 import de.hhn.it.devtools.components.turnbasedbattle.SimpleTurnBasedBattleService;
 import de.hhn.it.devtools.components.turnbasedbattle.TestTurnBasedBattleListener;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,7 +22,7 @@ public class TestTurnBasedBattleServiceGoodCases {
     private SimpleTurnBasedBattleService service;
     private TestTurnBasedBattleListener listener;
 
-    private Data data;
+    private SimpleData data;
     private Player p1;
     private Player p2;
     private Monster m1;
@@ -34,7 +34,7 @@ public class TestTurnBasedBattleServiceGoodCases {
         listener = new TestTurnBasedBattleListener();
         service.addListener(listener);
 
-        data = new Data();
+        data = new SimpleData();
 
         m1 = data.getMonsters()[0]; // FIRE
         m2 = data.getMonsters()[1]; // GRASS

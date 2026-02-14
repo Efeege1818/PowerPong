@@ -3,7 +3,7 @@ package de.hhn.it.devtools.components.turnbasedbattle.junit;
 import de.hhn.it.devtools.apis.turnbasedbattle.Element;
 import de.hhn.it.devtools.apis.turnbasedbattle.Monster;
 import de.hhn.it.devtools.apis.turnbasedbattle.move.*;
-import de.hhn.it.devtools.components.turnbasedbattle.Data;
+import de.hhn.it.devtools.components.turnbasedbattle.SimpleData;
 import de.hhn.it.devtools.components.turnbasedbattle.SimpleMonster;
 import de.hhn.it.devtools.components.turnbasedbattle.SimpleTurnBasedBattleService;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +21,7 @@ public class TestSimpleMonster {
 
     private SimpleTurnBasedBattleService service;
     private HashMap<Integer, Move> moves;
-    private Data data = new Data();
+    private SimpleData data = new SimpleData();
     private SimpleMonster testMonster;
     private SimpleMonster targetMonster;
 

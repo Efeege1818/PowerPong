@@ -1,7 +1,7 @@
 package de.hhn.it.devtools.components.turnbasedbattle.junit;
 
 import de.hhn.it.devtools.apis.turnbasedbattle.*;
-import de.hhn.it.devtools.components.turnbasedbattle.Data;
+import de.hhn.it.devtools.components.turnbasedbattle.SimpleData;
 import de.hhn.it.devtools.components.turnbasedbattle.SimpleTurnBasedBattleService;
 import de.hhn.it.devtools.components.turnbasedbattle.TestTurnBasedBattleListener;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +21,7 @@ public class TestTurnBasedBattleServiceBadCases {
 
     private SimpleTurnBasedBattleService service;
     private TestTurnBasedBattleListener listener;
-    private Data data;
+    private SimpleData data;
 
     @BeforeEach
     void setup() {
@@ -29,7 +29,7 @@ public class TestTurnBasedBattleServiceBadCases {
         listener = new TestTurnBasedBattleListener();
         service.addListener(listener);
 
-        data = new Data();
+        data = new SimpleData();
     }
 
     @Test
