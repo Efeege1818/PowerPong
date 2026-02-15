@@ -9,6 +9,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 
 public class SimpleScreenManager implements ScreenManager {
+  private static final org.slf4j.Logger logger =
+          org.slf4j.LoggerFactory.getLogger(SimpleScreenManager.class);
 
   private final StackPane pane;
   private SelectScreen selectScreen;
@@ -25,10 +27,14 @@ public class SimpleScreenManager implements ScreenManager {
 
 
   public SimpleScreenManager(final StackPane pane) {
+    logger.info("SimpleScreenManager: initializing SimpleScreenManager");
+
     this.pane = pane;
   }
 
   private SelectScreen getSelectScreen() {
+    logger.debug("SimpleScreenManager: getSelectScreen");
+
     if(selectScreen == null) {
       selectScreen = new SelectScreen(this);
     }
@@ -37,6 +43,8 @@ public class SimpleScreenManager implements ScreenManager {
   }
 
   private BattleScreen getBattleScreen() {
+    logger.debug("SimpleScreenManager: getBattleScreen");
+
     if (pendingBattleService == null) {
       throw new IllegalStateException("No pending battle service. Call setPendingBattleService(service) before switching to BattleScreen.");
     }
@@ -47,6 +55,9 @@ public class SimpleScreenManager implements ScreenManager {
 
 
   private EndScreen getEndScreen() {
+    logger.debug("SimpleScreenManager: getEndScreen, winnerPlayerId = {}, winnerElement = {}",
+            pendingWinnerPlayerId, pendingWinnerElement);
+
     EndScreen end = new EndScreen(this);
     if (pendingWinnerPlayerId != null) {
       end.setWinner(pendingWinnerPlayerId, pendingWinnerElement);
@@ -55,10 +66,14 @@ public class SimpleScreenManager implements ScreenManager {
   }
 
   private InfoScreenFx getInfoScreen() {
+    logger.debug("SimpleScreenManager: getInfoScreen");
+
     return new InfoScreenFx(this, infoViewModel);
   }
 
   private PauseScreenFx getPauseScreen() {
+    logger.debug("SimpleScreenManager: getPauseScreen");
+
     if(pauseScreen == null) {
       pauseScreen = new PauseScreenFx(this, pauseViewModel);
     }
@@ -67,6 +82,9 @@ public class SimpleScreenManager implements ScreenManager {
 
   @Override
   public void switchTo(String fromScreen, String toScreen) throws UnknownTransitionException {
+    logger.info("SimpleScreenManager: switchTo, fromScreen = {}, toScreen = {}",
+            fromScreen, toScreen);
+
     switch (toScreen) {
       case SelectScreen.SCREEN_NAME:
         pane.getChildren().clear();
@@ -94,22 +112,33 @@ public class SimpleScreenManager implements ScreenManager {
   }
 
   public void switchToInfo(SimpleMonster monster) {
+    logger.info("SimpleScreenManager: switchToInfo, monster = {}",
+            monster.getName());
+
     infoViewModel = new InfoScreenViewModel(monster);
     pane.getChildren().clear();
     pane.getChildren().add(getInfoScreen());
   }
 
   public void switchToPause(SimpleMonster monster1, SimpleMonster monster2) {
+    logger.info("SimpleScreenManager: switchToPause, monster1 = {}, monster2 = {}",
+            monster1.getName(), monster2.getName());
+
     pauseViewModel = new PauseScreenViewModel(monster1, monster2);
     pane.getChildren().clear();
     pane.getChildren().add(getPauseScreen());
   }
 
   public void setPendingBattleService(SimpleTurnBasedBattleService service) {
+    logger.info("SimpleScreenManager: setPendingBattleService");
+
     this.pendingBattleService = service;
   }
   // NEU: wird vom BattleScreenController aufgerufen
   public void setPendingWinner(int playerId, Element element) {
+    logger.info("SimpleScreenManager: setPendingWinner, playerId = {}, element = {}",
+            playerId, element);
+
     this.pendingWinnerPlayerId = playerId;
     this.pendingWinnerElement = element;
   }
