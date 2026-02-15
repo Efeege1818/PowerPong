@@ -11,6 +11,8 @@ import de.hhn.it.devtools.apis.turnbasedbattle.TurnBasedBattleListener;
  * observe changes in game state, player health and the winner.
  */
 public class TestTurnBasedBattleListener implements TurnBasedBattleListener {
+    private static final org.slf4j.Logger logger =
+            org.slf4j.LoggerFactory.getLogger(TestTurnBasedBattleListener.class);
 
     private volatile GameState currentState = GameState.READY;
     private volatile int player1Health;
@@ -30,6 +32,8 @@ public class TestTurnBasedBattleListener implements TurnBasedBattleListener {
      */
     @Override
     public void newGameState(final GameState gameState) {
+        logger.info("TestTurnBasedBattleListener: newGameState, gameState = {}", gameState);
+
         if (gameState == null) {
             throw new IllegalArgumentException("gameState must not be null");
         }
@@ -47,6 +51,9 @@ public class TestTurnBasedBattleListener implements TurnBasedBattleListener {
     @Override
     public void updateState(final Player player1, final Player player2)
             throws IllegalArgumentException {
+        logger.info("TestTurnBasedBattleListener: updateState, player1 = {}, player2 = {}",
+                player1 != null ? player1.playerId() : "null",
+                player2 != null ? player2.playerId() : "null");
 
         if (player1 == null || player2 == null) {
             throw new IllegalArgumentException("player1 and player2 must not be null");
@@ -69,6 +76,8 @@ public class TestTurnBasedBattleListener implements TurnBasedBattleListener {
      */
     @Override
     public void gameEnded(final int winnerPlayerNumber) {
+        logger.info("TestTurnBasedBattleListener: gameEnded, winnerPlayerNumber = {}", winnerPlayerNumber);
+
         if (winnerPlayerNumber != 1 && winnerPlayerNumber != 2) {
             throw new IllegalArgumentException("winnerPlayerNumber must be 1 or 2");
         }
@@ -78,30 +87,39 @@ public class TestTurnBasedBattleListener implements TurnBasedBattleListener {
 
 
     public GameState getCurrentState() {
+        logger.debug("TestTurnBasedBattleListener: getCurrentState, currentState = {}", currentState);
         return currentState;
     }
 
     public int getPlayer1Health() {
+        logger.debug("TestTurnBasedBattleListener: getPlayer1Health, player1Health = {}", player1Health);
         return player1Health;
     }
 
     public int getPlayer2Health() {
+        logger.debug("TestTurnBasedBattleListener: getPlayer2Health, player2Health = {}", player2Health);
         return player2Health;
     }
 
     public Integer getWinnerPlayerNumber() {
+        logger.debug("TestTurnBasedBattleListener: getWinnerPlayerNumber, winnerPlayerNumber = {}", winnerPlayerNumber);
         return winnerPlayerNumber;
     }
 
     public int getNewGameStateCallCount() {
+        logger.debug("TestTurnBasedBattleListener: getNewGameStateCallCount, count = {}", newGameStateCallCount);
         return newGameStateCallCount;
     }
 
     public int getUpdateStateCallCount() {
+        logger.debug("TestTurnBasedBattleListener: getUpdateStateCallCount, count = {}", updateStateCallCount);
+
         return updateStateCallCount;
     }
 
     public int getGameEndedCallCount() {
+        logger.debug("TestTurnBasedBattleListener: getGameEndedCallCount, count = {}", gameEndedCallCount);
+
         return gameEndedCallCount;
     }
 
@@ -109,6 +127,8 @@ public class TestTurnBasedBattleListener implements TurnBasedBattleListener {
      * Helper to reuse the same listener instance across multiple test cases.
      */
     public void reset() {
+        logger.info("TestTurnBasedBattleListener: reset");
+
         currentState = GameState.READY;
         player1Health = 0;
         player2Health = 0;

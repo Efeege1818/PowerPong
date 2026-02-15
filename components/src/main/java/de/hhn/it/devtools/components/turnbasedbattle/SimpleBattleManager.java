@@ -56,24 +56,31 @@ public class SimpleBattleManager implements BattleManager {
 
   @Override
   public boolean isBattleOver() {
+    logger.debug("SimpleBattleManager: isBattleOver, battleOver = {}", battleOver);
+
     return battleOver;
   }
 
   @Override
   public int getTurnCount() {
+    logger.debug("SimpleBattleManager: getTurnCount, turnCount = {}", turnCount);
     return turnCount;
   }
 
   @Override
   public Player getCurrentPlayer() {
+    logger.debug("SimpleBattleManager: getCurrentPlayer, currentPlayer = {}", currentPlayer.playerId());
     return currentPlayer;
   }
 
   public SimpleMonster getCurrentMonster() {
+    logger.debug("SimpleBattleManager: getCurrentMonster, monster = {}", currentMonster.getName());
     return currentMonster;
   }
 
   public SimpleMonster getOpponentMonster() {
+    logger.debug("SimpleBattleManager: getOpponentMonster, monster = {}", opponentMonster.getName());
+
     return opponentMonster;
   }
 
