@@ -1,9 +1,8 @@
 package de.hhn.it.devtools.javafx.turnbasedbattle;
 
 import de.hhn.it.devtools.apis.turnbasedbattle.Element;
-import de.hhn.it.devtools.apis.turnbasedbattle.Monster;
+import de.hhn.it.devtools.apis.turnbasedbattle.MonsterBattleState;
 import de.hhn.it.devtools.apis.turnbasedbattle.move.Move;
-import de.hhn.it.devtools.components.turnbasedbattle.SimpleMonster;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.StringProperty;
@@ -23,7 +22,7 @@ public class InfoScreenViewModel {
     private static final Logger logger =
             LoggerFactory.getLogger(InfoScreenViewModel.class);
 
-    private SimpleMonster monster;
+    private final MonsterBattleState monster;
     private ImageView imageView;
     private String imagePath;
     private String monsterName;
@@ -40,7 +39,7 @@ public class InfoScreenViewModel {
     String specialMove;
 
 
-    public InfoScreenViewModel(SimpleMonster monster) {
+    public InfoScreenViewModel(MonsterBattleState monster) {
         this.monster = monster;
         this.monsterName = monster.getName();
         this.maxHp=monster.getMaxHp();

@@ -146,4 +146,36 @@ public interface TurnBasedBattleService {
     Player getWinner();
 
     Player determineStartingPlayer();
+
+    /**
+     * Gets the current monster of the active player.
+     * This is a convenience method to get the monster of the current player without casting.
+     *
+     * @return a MonsterBattleState view of the current player's monster
+     */
+    MonsterBattleState getCurrentMonster();
+
+    /**
+     * Gets the opponent's monster (the monster of the player who is NOT currently active).
+     * This is a convenience method to get the opponent's monster without casting.
+     *
+     * @return a MonsterBattleState view of the opponent's monster
+     */
+    MonsterBattleState getOpponentMonster();
+
+    /**
+     * Gets Player 1's monster.
+     * This is a convenience method to access Player 1's monster in battle state.
+     *
+     * @return a MonsterBattleState view of Player 1's monster
+     */
+    MonsterBattleState getPlayer1Monster();
+
+    /**
+     * Gets Player 2's monster.
+     * This is a convenience method to access Player 2's monster in battle state.
+     *
+     * @return a MonsterBattleState view of Player 2's monster
+     */
+    MonsterBattleState getPlayer2Monster();
 }

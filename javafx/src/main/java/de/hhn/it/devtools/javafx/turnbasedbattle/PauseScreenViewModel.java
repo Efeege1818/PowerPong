@@ -1,9 +1,8 @@
 package de.hhn.it.devtools.javafx.turnbasedbattle;
 
 import de.hhn.it.devtools.apis.turnbasedbattle.Element;
+import de.hhn.it.devtools.apis.turnbasedbattle.MonsterBattleState;
 import de.hhn.it.devtools.apis.turnbasedbattle.move.Move;
-import de.hhn.it.devtools.components.turnbasedbattle.SimpleBattleManager;
-import de.hhn.it.devtools.components.turnbasedbattle.SimpleMonster;
 import javafx.scene.image.ImageView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,9 +17,9 @@ public class PauseScreenViewModel {
 		private static final Logger logger =
 						LoggerFactory.getLogger(PauseScreenViewModel.class);
 
-		private SimpleMonster monster1;
-		private SimpleMonster monster2;
-		private SimpleMonster shownMonster;
+		private final MonsterBattleState monster1;
+		private final MonsterBattleState monster2;
+		private MonsterBattleState shownMonster;
 		private ImageView imageView;
 		private String imagePath;
 		private String monsterName;
@@ -36,11 +35,8 @@ public class PauseScreenViewModel {
 		//should have an name and descriptions like the other moves
 		String specialMove;
 
-		// Optional battle manager reference — if provided we can query current/opponent from it.
-		private SimpleBattleManager battleManager;
 
-
-		public PauseScreenViewModel(SimpleMonster monster, SimpleMonster monster2) {
+		public PauseScreenViewModel(MonsterBattleState monster, MonsterBattleState monster2) {
 				this.monster1 = monster;
 				this.monsterName = monster.getName();
 				this.maxHp=monster.getMaxHp();
@@ -101,7 +97,7 @@ public class PauseScreenViewModel {
 				return moves;
 		}
 
-		private void updateShownMonster(SimpleMonster monster) {
+		private void updateShownMonster(MonsterBattleState monster) {
 				if (monster == null) {
 						logger.warn("updateShownMonster called with null — ignoring");
 						return;
@@ -128,7 +124,7 @@ public class PauseScreenViewModel {
 				}
 		}
 
-		public SimpleMonster getShownMonster() {
+		public MonsterBattleState getShownMonster() {
 				return shownMonster;
 		}
 
@@ -136,120 +132,5 @@ public class PauseScreenViewModel {
 				System.out.println("Submit button clicked");
 				// business logic here
 				switchShownMonster();
-		}
-
-		/**
-		 * Expose active buffs from the currently shown monster (defensive copy).
-		 */
-		public Map<Integer, Move> getActiveBuffs() {
-				if (shownMonster != null) {
-						return shownMonster.getActiveBuffs();
-				}
-				if (monster1 != null) {
-						return monster1.getActiveBuffs();
-				}
-				return new HashMap<>();
-		}
-
-		/**
-		 * Expose active DOTs from the currently shown monster (defensive copy).
-		 */
-		public Map<Integer, Move> getActiveDots() {
-				if (shownMonster != null) {
-						return shownMonster.getActiveDots();
-				}
-				if (monster1 != null) {
-						return monster1.getActiveDots();
-				}
-				return new HashMap<>();
-		}
-
-		/**
-		 * Try to heuristically split active buffs into "buffs" and "debuffs".
-		 * Simple heuristic based on text in name/description; this is defensive
-		 * so the UI can show separate sections even if the model stores both
-		 * types in a single map. Adjust or replace with explicit debuff support
-		 * when the model exposes it.
-		 */
-		public Map<Integer, Move> getActiveDebuffs() {
-				Map<Integer, Move> result = new HashMap<>();
-				Map<Integer, Move> allBuffs = getActiveBuffs();
-				for (Map.Entry<Integer, Move> e : allBuffs.entrySet()) {
-						Move m = e.getValue();
-						String combined = (m.name() + " " + m.description()).toLowerCase();
-						// simple heuristics for common negative keywords
-						if (combined.contains("debuff")
-										|| combined.contains("reduce")
-										|| combined.contains("lower")
-										|| combined.contains("weaken")
-										|| combined.contains("slow")
-										|| combined.contains("poison")
-										|| combined.contains("burn")) {
-								result.put(e.getKey(), m);
-						}
-				}
-				return result;
-		}
-
-		/**
-		 * Get purely positive buffs by filtering out heuristically detected debuffs.
-		 */
-		public Map<Integer, Move> getActivePositiveBuffs() {
-				Map<Integer, Move> positives = new HashMap<>();
-				Map<Integer, Move> allBuffs = getActiveBuffs();
-				Map<Integer, Move> debuffs = getActiveDebuffs();
-				for (Map.Entry<Integer, Move> e : allBuffs.entrySet()) {
-						if (!debuffs.containsKey(e.getKey())) {
-								positives.put(e.getKey(), e.getValue());
-						}
-				}
-				return positives;
-		}
-
-		/**
-		 * Attach a SimpleBattleManager so the view model can query the current/opponent monsters.
-		 * This is optional — if not set the UI will fallback to the local switchShownMonster() logic.
-		 */
-		public void setBattleManager(SimpleBattleManager manager) {
-				this.battleManager = manager;
-		}
-
-		public SimpleBattleManager getBattleManager() {
-				return this.battleManager;
-		}
-
-		/**
-		 * Show the opponent monster from the attached SimpleBattleManager. If no manager is attached,
-		 * fallback to toggling between the two known monsters.
-		 */
-		public void showOpponentFromBattleManager() {
-				if (battleManager != null) {
-						SimpleMonster opp = battleManager.getOpponentMonster();
-						if (opp != null) {
-								updateShownMonster(opp);
-								return;
-						}
-						logger.warn("Battle manager returned null opponent monster, falling back to switch");
-				}
-				// fallback:
-				switchShownMonster();
-		}
-
-		/**
-		 * Show the current monster from the attached SimpleBattleManager. If no manager is attached,
-		 * fallback to first monster (monster1).
-		 */
-		public void showCurrentFromBattleManager() {
-				if (battleManager != null) {
-						SimpleMonster cur = battleManager.getCurrentMonster();
-						if (cur != null) {
-								updateShownMonster(cur);
-								return;
-						}
-						logger.warn("Battle manager returned null current monster, falling back to monster1");
-				}
-				if (monster1 != null) {
-						updateShownMonster(monster1);
-				}
 		}
 }

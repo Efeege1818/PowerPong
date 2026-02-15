@@ -2,6 +2,7 @@ package de.hhn.it.devtools.components.turnbasedbattle;
 
 import de.hhn.it.devtools.apis.turnbasedbattle.GameState;
 import de.hhn.it.devtools.apis.turnbasedbattle.Monster;
+import de.hhn.it.devtools.apis.turnbasedbattle.MonsterBattleState;
 import de.hhn.it.devtools.apis.turnbasedbattle.Player;
 import de.hhn.it.devtools.apis.turnbasedbattle.TurnBasedBattleListener;
 import de.hhn.it.devtools.apis.turnbasedbattle.TurnBasedBattleService;
@@ -273,11 +274,12 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
     return battleManager.isElementEffective(current, opponent);
   }
 
-  public SimpleMonster getCurrentMonster() {
+  // Legacy methods for backward compatibility (internal use only)
+  public SimpleMonster getCurrentMonsterAsSimpleMonster() {
     return battleManager.getCurrentMonster();
   }
 
-  public SimpleMonster getOpponentMonster() {
+  public SimpleMonster getOpponentMonsterAsSimpleMonster() {
     return battleManager.getOpponentMonster();
   }
 
@@ -289,5 +291,23 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
     return battleManager.getPlayer2Monster();
   }
 
+  @Override
+  public MonsterBattleState getCurrentMonster() {
+    return battleManager.getCurrentMonster();
+  }
 
+  @Override
+  public MonsterBattleState getOpponentMonster() {
+    return battleManager.getOpponentMonster();
+  }
+
+  @Override
+  public MonsterBattleState getPlayer1Monster() {
+    return battleManager.getPlayer1Monster();
+  }
+
+  @Override
+  public MonsterBattleState getPlayer2Monster() {
+    return battleManager.getPlayer2Monster();
+  }
 }

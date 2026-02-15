@@ -2,12 +2,11 @@ package de.hhn.it.devtools.javafx.turnbasedbattle;
 
 import de.hhn.it.devtools.apis.turnbasedbattle.Element;
 import de.hhn.it.devtools.apis.turnbasedbattle.GameState;
+import de.hhn.it.devtools.apis.turnbasedbattle.MonsterBattleState;
 import de.hhn.it.devtools.apis.turnbasedbattle.TurnBasedBattleService;
 import de.hhn.it.devtools.apis.turnbasedbattle.UnknownTransitionException;
 import de.hhn.it.devtools.apis.turnbasedbattle.move.Move;
 import de.hhn.it.devtools.components.turnbasedbattle.BattleLog;
-import de.hhn.it.devtools.components.turnbasedbattle.SimpleMonster;
-import de.hhn.it.devtools.components.turnbasedbattle.SimpleTurnBasedBattleService;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -114,12 +113,8 @@ public class BattleScreenController {
   public void onActionPause() {
     StackPane root = (StackPane) turnLabel.getScene().getRoot();
 
-    if (!(service instanceof SimpleTurnBasedBattleService concrete)) {
-      return;
-    }
-
-    SimpleMonster current = concrete.getCurrentMonster();
-    SimpleMonster opponent = concrete.getOpponentMonster();
+    MonsterBattleState current = service.getCurrentMonster();
+    MonsterBattleState opponent = service.getOpponentMonster();
 
     PauseScreenViewModel pauseViewModel =
             new PauseScreenViewModel(current, opponent);
@@ -189,14 +184,13 @@ public class BattleScreenController {
     fullMessage = "";
     if (service.getGameState() != GameState.RUNNING) return;
 
-    if (service instanceof SimpleTurnBasedBattleService concrete) {
-      boolean p1Turn = service.getCurrentPlayer() == service.getPlayer1();
-      SimpleMonster current = p1Turn ? concrete.getPlayer1SimpleMonster() : concrete.getPlayer2SimpleMonster();
-      if (current.isMoveOnCooldown(moveIndex)) {
-        refreshFromGameState();
-        render();
-        return;
-      }
+    // Check if move is on cooldown using the API
+    boolean p1Turn = service.getCurrentPlayer() == service.getPlayer1();
+    MonsterBattleState current = p1Turn ? service.getPlayer1Monster() : service.getPlayer2Monster();
+    if (current.isMoveOnCooldown(moveIndex)) {
+      refreshFromGameState();
+      render();
+      return;
     }
 
     try {
@@ -223,7 +217,7 @@ public class BattleScreenController {
     }
   }
 
-  private void updateHpBars(SimpleMonster monster1, SimpleMonster monster2) {
+  private void updateHpBars(MonsterBattleState monster1, MonsterBattleState monster2) {
     if (player1HpBar != null) {
       double p1Progress = (double) monster1.getCurrentHp() / monster1.getMaxHp();
       Timeline tl = new Timeline(
@@ -244,10 +238,8 @@ public class BattleScreenController {
   }
 
   private void refreshFromGameState() {
-    if (!(service instanceof SimpleTurnBasedBattleService concrete)) return;
-
-    SimpleMonster m1 = concrete.getPlayer1SimpleMonster();
-    SimpleMonster m2 = concrete.getPlayer2SimpleMonster();
+    MonsterBattleState m1 = service.getPlayer1Monster();
+    MonsterBattleState m2 = service.getPlayer2Monster();
 
     boolean p1Turn = service.getCurrentPlayer() == service.getPlayer1();
     int currentId = p1Turn ? 1 : 2;
@@ -278,14 +270,14 @@ public class BattleScreenController {
     }
   }
 
-  private void updateMoveButtons(SimpleMonster current) {
+  private void updateMoveButtons(MonsterBattleState current) {
     boolean p1Turn = service.getCurrentPlayer() == service.getPlayer1();
     for (SlotBinding s : slots) {
       configureMoveButton(s.button(), current, s.slot().moveIndex, p1Turn);
     }
   }
 
-  private void configureMoveButton(Button button, SimpleMonster monster, int moveIndex, boolean p1Turn) {
+  private void configureMoveButton(Button button, MonsterBattleState monster, int moveIndex, boolean p1Turn) {
     if (button == null) return;
 
     Tooltip tooltip = button.getTooltip();
@@ -388,7 +380,7 @@ public class BattleScreenController {
     AnchorPane.setTopAnchor(box, STATUS_RIGHT_TOP);
   }
 
-  private void updateMonsterImages(boolean p1Turn, SimpleMonster m1, SimpleMonster m2) {
+  private void updateMonsterImages(boolean p1Turn, MonsterBattleState m1, MonsterBattleState m2) {
     if (p1Turn) {
       setMonsterImage(player1MonsterImage, spritePath(m1.getElement(), true));
       setMonsterImage(player2MonsterImage, spritePath(m2.getElement(), false));

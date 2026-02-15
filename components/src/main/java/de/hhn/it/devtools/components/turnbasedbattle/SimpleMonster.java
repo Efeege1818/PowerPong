@@ -4,6 +4,7 @@ import static de.hhn.it.devtools.components.turnbasedbattle.SimpleDamageCalculat
 
 import de.hhn.it.devtools.apis.turnbasedbattle.Element;
 import de.hhn.it.devtools.apis.turnbasedbattle.Monster;
+import de.hhn.it.devtools.apis.turnbasedbattle.MonsterBattleState;
 import de.hhn.it.devtools.apis.turnbasedbattle.move.Move;
 import de.hhn.it.devtools.components.turnbasedbattle.monster.FireMonster;
 import de.hhn.it.devtools.components.turnbasedbattle.monster.GrassMonster;
@@ -12,9 +13,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A simple implementation of the Monster interface.
+ * A simple implementation of the Monster interface and MonsterBattleState.
  */
-public class SimpleMonster {
+public class SimpleMonster implements MonsterBattleState {
   private static final org.slf4j.Logger logger =
           org.slf4j.LoggerFactory.getLogger(SimpleMonster.class);
 

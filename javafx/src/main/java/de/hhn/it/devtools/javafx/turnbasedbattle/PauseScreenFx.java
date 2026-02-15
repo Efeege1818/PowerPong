@@ -240,6 +240,10 @@ public class PauseScreenFx extends VBox {
 						imageHolder.getChildren().add(fallback);
 				}
 
+				// NOTE: Buff/Debuff/DOT information is not available through the MonsterBattleState API
+				// This would require extending the API or accessing internal component state
+				// For now, we skip rendering these sections
+				/*
 				// Rebuild status box (buffs, debuffs, dots)
 				statusBox.getChildren().clear();
 
@@ -293,6 +297,7 @@ public class PauseScreenFx extends VBox {
 								statusBox.getChildren().add(l);
 						}
 				}
+				*/
 		}
 
 

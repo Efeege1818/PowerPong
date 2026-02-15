@@ -1,10 +1,10 @@
 package de.hhn.it.devtools.javafx.turnbasedbattle;
 
 import de.hhn.it.devtools.apis.turnbasedbattle.Element;
+import de.hhn.it.devtools.apis.turnbasedbattle.MonsterBattleState;
 import de.hhn.it.devtools.apis.turnbasedbattle.ScreenManager;
+import de.hhn.it.devtools.apis.turnbasedbattle.TurnBasedBattleService;
 import de.hhn.it.devtools.apis.turnbasedbattle.UnknownTransitionException;
-import de.hhn.it.devtools.components.turnbasedbattle.SimpleMonster;
-import de.hhn.it.devtools.components.turnbasedbattle.SimpleTurnBasedBattleService;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 
@@ -19,7 +19,7 @@ public class SimpleScreenManager implements ScreenManager {
   private PauseScreenFx pauseScreen;
   private InfoScreenFx infoScreen;
 
-  private SimpleTurnBasedBattleService pendingBattleService;
+  private TurnBasedBattleService pendingBattleService;
   private Integer pendingWinnerPlayerId;
   private Element pendingWinnerElement;
   private InfoScreenViewModel infoViewModel;
@@ -48,7 +48,7 @@ public class SimpleScreenManager implements ScreenManager {
     if (pendingBattleService == null) {
       throw new IllegalStateException("No pending battle service. Call setPendingBattleService(service) before switching to BattleScreen.");
     }
-    SimpleTurnBasedBattleService service = pendingBattleService;
+    TurnBasedBattleService service = pendingBattleService;
     pendingBattleService = null; // consume
     return new BattleScreen(this, service);
   }
@@ -110,7 +110,7 @@ public class SimpleScreenManager implements ScreenManager {
     }
   }
 
-  public void switchToInfo(SimpleMonster monster) {
+  public void switchToInfo(MonsterBattleState monster) {
     logger.info("SimpleScreenManager: switchToInfo, monster = {}",
             monster.getName());
 
@@ -119,7 +119,7 @@ public class SimpleScreenManager implements ScreenManager {
     pane.getChildren().add(getInfoScreen());
   }
 
-  public void switchToPause(SimpleMonster monster1, SimpleMonster monster2) {
+  public void switchToPause(MonsterBattleState monster1, MonsterBattleState monster2) {
     logger.info("SimpleScreenManager: switchToPause, monster1 = {}, monster2 = {}",
             monster1.getName(), monster2.getName());
 
@@ -128,7 +128,7 @@ public class SimpleScreenManager implements ScreenManager {
     pane.getChildren().add(getPauseScreen());
   }
 
-  public void setPendingBattleService(SimpleTurnBasedBattleService service) {
+  public void setPendingBattleService(TurnBasedBattleService service) {
     logger.info("SimpleScreenManager: setPendingBattleService");
 
     this.pendingBattleService = service;

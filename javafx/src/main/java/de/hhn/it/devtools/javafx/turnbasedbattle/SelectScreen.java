@@ -2,8 +2,8 @@ package de.hhn.it.devtools.javafx.turnbasedbattle;
 
 import de.hhn.it.devtools.apis.turnbasedbattle.Monster;
 import de.hhn.it.devtools.apis.turnbasedbattle.Player;
+import de.hhn.it.devtools.apis.turnbasedbattle.TurnBasedBattleService;
 import de.hhn.it.devtools.components.turnbasedbattle.SimpleData;
-import de.hhn.it.devtools.components.turnbasedbattle.SimpleMonster;
 import de.hhn.it.devtools.components.turnbasedbattle.SimpleTurnBasedBattleService;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -79,17 +79,17 @@ public class SelectScreen extends AnchorPane {
 
   @FXML
   public void openFireInfo() {
-    screenManager.switchToInfo(SimpleMonster.create(data.getMonsters()[0]));
+    screenManager.switchToInfo(new SelectScreenMonsterAdapter(data.getMonsters()[0]));
   }
 
   @FXML
   public void openWaterInfo() {
-    screenManager.switchToInfo(SimpleMonster.create(data.getMonsters()[2]));
+    screenManager.switchToInfo(new SelectScreenMonsterAdapter(data.getMonsters()[2]));
   }
 
   @FXML
   public void openGrassInfo() {
-    screenManager.switchToInfo(SimpleMonster.create(data.getMonsters()[1]));
+    screenManager.switchToInfo(new SelectScreenMonsterAdapter(data.getMonsters()[1]));
   }
 
   private void monsterForP1(Monster monster) {
@@ -119,12 +119,17 @@ public class SelectScreen extends AnchorPane {
       p1SelectedCircle.setVisible(false);
       p2SelectedCircle.setVisible(false);
 
-      SimpleTurnBasedBattleService service = new SimpleTurnBasedBattleService();
+      // Create service (using SimpleTurnBasedBattleService internally, but exposed as TurnBasedBattleService API)
+      TurnBasedBattleService service = new SimpleTurnBasedBattleService();
       Player player1 = new Player(1, p1Monster, 0);
       Player player2 = new Player(2, p2Monster, 0);
 
-      service.setupPlayers(player1, player2, p1Monster, p2Monster);
-      service.start();
+      // Cast is necessary here because SimpleTurnBasedBattleService has setupPlayers method
+      // The method is not exposed in the interface but is needed for initialization
+      if (service instanceof SimpleTurnBasedBattleService simpleService) {
+        simpleService.setupPlayers(player1, player2, p1Monster, p2Monster);
+        simpleService.start();
+      }
 
       // an ScreenManager übergeben (damit BattleScreen ihn bekommt)
       screenManager.setPendingBattleService(service);
