@@ -221,7 +221,7 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
 
   @Override
   public Player getCurrentPlayer() {
-    logger.debug("Current player is " + battleManager.getCurrentPlayer());
+    logger.debug("Current player is " + battleManager.getCurrentPlayer().toString());
     return battleManager.getCurrentPlayer();
   }
 
