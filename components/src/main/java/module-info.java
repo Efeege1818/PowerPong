@@ -7,6 +7,7 @@ module devtools.components {
         exports de.hhn.it.devtools.components.spaceinvaders;
         exports de.hhn.it.devtools.components.towerdefense;
         exports de.hhn.it.devtools.components.powerpong.provider;
+        exports de.hhn.it.devtools.components.turnbasedbattle;
 
         requires org.slf4j;
         requires devtools.apis;
@@ -20,4 +21,6 @@ module devtools.components {
                         with de.hhn.it.devtools.components.towerdefense.SimpleTowerDefenseService;
         provides de.hhn.it.devtools.apis.powerPong.PowerPongService
                         with PowerPongMatchEngine;
+        provides de.hhn.it.devtools.apis.turnbasedbattle.TurnBasedBattleService
+                        with de.hhn.it.devtools.components.turnbasedbattle.SimpleTurnBasedBattleService;
 }

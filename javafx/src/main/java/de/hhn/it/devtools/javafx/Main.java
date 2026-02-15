@@ -17,7 +17,8 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
-  private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Main.class);
+  private static final org.slf4j.Logger logger =
+          org.slf4j.LoggerFactory.getLogger(Main.class);
   private final int WIDTH = 1280;
 
   private final int HEIGHT = 720;
@@ -59,6 +60,7 @@ public class Main extends Application {
     addModule("ShapeSurvivor");
     addModule("TowerDefense");
     addModule("PowerPong");
+    addModule("TurnBasedBattle");
   }
 
   @Override

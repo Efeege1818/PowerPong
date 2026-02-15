@@ -10,4 +10,12 @@ package de.hhn.it.devtools.apis.turnbasedbattle;
 public record Player(int playerId, Monster monster, int score) {
     private static final org.slf4j.Logger logger =
             org.slf4j.LoggerFactory.getLogger(Player.class);
+
+    public String toString() {
+        return "Player{" +
+                "playerId=" + playerId +
+                ", monster=" + monster.element() +
+                ", score=" + score +
+                '}';
+    }
 }

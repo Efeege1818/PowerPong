@@ -1,5 +1,6 @@
 package de.hhn.it.devtools.apis.turnbasedbattle;
 
+import de.hhn.it.devtools.apis.turnbasedbattle.move.Move;
 import java.util.HashMap;
 
 /**

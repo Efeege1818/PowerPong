@@ -9,8 +9,9 @@ module devtools.apis {
         exports de.hhn.it.devtools.apis.spaceinvaders;
         exports de.hhn.it.devtools.apis.spaceinvaders.entities;
         exports de.hhn.it.devtools.apis.spaceinvaders.exceptions;
-        exports de.hhn.it.devtools.apis.turnbasedbattle;
         exports de.hhn.it.devtools.apis.towerdefense;
         exports de.hhn.it.devtools.apis.shapesurvivor;
         exports de.hhn.it.devtools.apis.powerPong;
+        exports de.hhn.it.devtools.apis.turnbasedbattle;
+        exports de.hhn.it.devtools.apis.turnbasedbattle.move;
 }

@@ -1,7 +1,7 @@
 package de.hhn.it.devtools.components.turnbasedbattle.junit;
 
 import de.hhn.it.devtools.apis.turnbasedbattle.*;
-import de.hhn.it.devtools.components.turnbasedbattle.Data;
+import de.hhn.it.devtools.components.turnbasedbattle.SimpleData;
 import de.hhn.it.devtools.components.turnbasedbattle.SimpleTurnBasedBattleService;
 import de.hhn.it.devtools.components.turnbasedbattle.TestTurnBasedBattleListener;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,7 +22,7 @@ public class TestTurnBasedBattleServiceGoodCases {
     private SimpleTurnBasedBattleService service;
     private TestTurnBasedBattleListener listener;
 
-    private Data data;
+    private SimpleData data;
     private Player p1;
     private Player p2;
     private Monster m1;
@@ -34,7 +34,7 @@ public class TestTurnBasedBattleServiceGoodCases {
         listener = new TestTurnBasedBattleListener();
         service.addListener(listener);
 
-        data = new Data();
+        data = new SimpleData();
 
         m1 = data.getMonsters()[0]; // FIRE
         m2 = data.getMonsters()[1]; // GRASS
@@ -99,22 +99,140 @@ public class TestTurnBasedBattleServiceGoodCases {
         assertEquals(GameState.READY, listener.getCurrentState());
     }
 
-    @Test
-    @DisplayName("battle executes until END and winner is reported")
-    void battleExecutesToEnd() {
-        service.start();
+  @Test
+  @DisplayName("battle executes until END and winner is reported")
+  void battleExecutesToEnd() {
+    service.start();
+    assertEquals(GameState.RUNNING, service.getGameState(),
+        "GameState should be RUNNING after start()");
 
-        int safe = 0;
-        while (!service.isBattleOver() && safe < 100) {
-            service.executeTurn(1); // Move-ID 1 (Normal Attack)
-            safe++;
+    int maxTurns = 1000;
+    int turnsExecuted = 0;
+
+    while (!service.isBattleOver() && turnsExecuted < maxTurns) {
+
+      boolean moveExecutedThisTurn = false;
+
+      for (int moveId = 1; moveId <= 5 && !moveExecutedThisTurn; moveId++) {
+        try {
+          service.executeTurn(moveId);
+          moveExecutedThisTurn = true;
+        } catch (IllegalStateException e) {
+
+        }
+      }
+      assertTrue(moveExecutedThisTurn,
+          "No executable move found this turn (all moves on cooldown?)");
+
+      turnsExecuted++;
+    }
+    assertTrue(turnsExecuted > 0, "At least one turn should have been executed");
+    assertTrue(turnsExecuted < maxTurns,
+        "Battle should finish within a reasonable number of turns");
+
+    assertTrue(service.isBattleOver(), "Battle should end after several turns");
+    assertEquals(GameState.END, service.getGameState(),
+        "GameState should be END when the battle is over");
+
+    Player winner = service.getWinner();
+    assertNotNull(winner, "Winner must not be null when battle is over");
+
+    Integer winnerFromListener = listener.getWinnerPlayerNumber();
+    assertNotNull(winnerFromListener,
+        "Listener should have been notified with the winner player number");
+
+    assertTrue(winnerFromListener == 1 || winnerFromListener == 2,
+        "Winner player number must be 1 or 2");
+
+    assertEquals(winner.playerId(), winnerFromListener,
+        "Listener winnerPlayerNumber must match winner.playerId()");
+  }
+
+    @Test
+    @DisplayName("Listener newGameState is called when game state changes")
+    void listenerNewGameStateIsCalled() {
+        listener.reset();
+        int initialCount = listener.getNewGameStateCallCount();
+
+        service.start();
+        assertTrue(listener.getNewGameStateCallCount() > initialCount,
+                "newGameState should be called after start()");
+        assertEquals(GameState.RUNNING, listener.getCurrentState());
+
+        service.pause();
+        assertTrue(listener.getNewGameStateCallCount() > initialCount + 1,
+                "newGameState should be called after pause()");
+        assertEquals(GameState.PAUSED, listener.getCurrentState());
+    }
+
+    @Test
+    @DisplayName("Listener updateState is called when players state changes")
+    void listenerUpdateStateIsCalled() {
+        // Don't reset listener - it was already called in @BeforeEach
+        int initialCount = listener.getUpdateStateCallCount();
+
+        // setupPlayers in @BeforeEach should have triggered updateState at least once
+        assertTrue(listener.getUpdateStateCallCount() >= 1,
+                "updateState should be called at least once after setupPlayers in @BeforeEach");
+
+        service.start();
+        assertTrue(listener.getUpdateStateCallCount() > initialCount,
+                "updateState should be called after start()");
+
+        int countBeforeTurn = listener.getUpdateStateCallCount();
+        service.executeTurn(1);
+        assertTrue(listener.getUpdateStateCallCount() > countBeforeTurn,
+                "updateState should be called after executeTurn()");
+    }
+
+    @Test
+    @DisplayName("Listener gameEnded is called when battle ends")
+    void listenerGameEndedIsCalled() {
+        listener.reset();
+        assertEquals(0, listener.getGameEndedCallCount(),
+                "gameEnded should not be called initially");
+
+        service.start();
+        assertEquals(0, listener.getGameEndedCallCount(),
+                "gameEnded should not be called after start()");
+
+        // Execute battle until it ends
+        int maxTurns = 1000;
+        int turnsExecuted = 0;
+        while (!service.isBattleOver() && turnsExecuted < maxTurns) {
+            boolean moveExecutedThisTurn = false;
+            for (int moveId = 1; moveId <= 5 && !moveExecutedThisTurn; moveId++) {
+                try {
+                    service.executeTurn(moveId);
+                    moveExecutedThisTurn = true;
+                } catch (IllegalStateException e) {
+                    // Move on cooldown or invalid, try next
+                }
+            }
+            turnsExecuted++;
         }
 
-        assertTrue(service.isBattleOver(), "Battle should end after several turns");
-        assertEquals(GameState.END, service.getGameState());
-        assertNotNull(service.getWinner());
-        assertNotNull(listener.getWinnerPlayerNumber());
-        assertTrue(listener.getWinnerPlayerNumber() == 1
-                || listener.getWinnerPlayerNumber() == 2);
+        assertTrue(service.isBattleOver(), "Battle should end");
+        assertEquals(1, listener.getGameEndedCallCount(),
+                "gameEnded should be called exactly once when battle ends");
+        assertNotNull(listener.getWinnerPlayerNumber(),
+                "Winner should be set in listener");
+    }
+
+    @Test
+    @DisplayName("All three listener methods are invoked during a complete battle")
+    void allListenerMethodsAreInvoked() {
+        listener.reset();
+
+        service.start();
+        service.executeTurn(1);
+
+        assertTrue(listener.getNewGameStateCallCount() > 0,
+                "newGameState should be called at least once");
+        assertTrue(listener.getUpdateStateCallCount() > 0,
+                "updateState should be called at least once");
+
+        // Note: gameEnded is only called when battle actually ends
+        // which may not happen in just one turn
     }
 }

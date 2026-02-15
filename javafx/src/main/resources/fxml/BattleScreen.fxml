@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<fx:root prefHeight="1080.0" prefWidth="1920.0" style="-fx-background-color: white;" type="AnchorPane" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+
+    <children>
+        <AnchorPane fx:id="designPane" prefHeight="1080.0" prefWidth="1920.0">
+
+            <BorderPane prefHeight="1080.0" prefWidth="1920.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+
+                <!-- ===================== TOP: Turn Label ===================== -->
+                <top>
+                    <HBox alignment="CENTER_LEFT" spacing="15.0" style="-fx-padding: 15 90 0 90;" BorderPane.alignment="TOP_LEFT">
+                        <Label fx:id="turnLabel" text="Player 1 turn" textFill="RED">
+                            <font><Font name="System Bold" size="75.0" /></font>
+                        </Label>
+
+                        <!-- Spacer pushes the Pause button to the right -->
+                        <Region HBox.hgrow="ALWAYS" />
+
+                        <Button fx:id="pauseButton" alignment="CENTER" mnemonicParsing="false" onAction="#onActionPause" text="Pause" />
+                    </HBox>
+                </top>
+
+                <!-- ===================== CENTER: Arena ===================== -->
+                <center>
+                    <AnchorPane prefHeight="630.0" prefWidth="1920.0">
+
+                        <!-- Player 2 Status (oben rechts) -->
+                        <VBox fx:id="player2StatusBox" spacing="12.0" AnchorPane.rightAnchor="120.0" AnchorPane.topAnchor="53.0">
+                            <Label fx:id="player2NameLabel" text="Player 2" textFill="#006fff">
+                                <font><Font size="42.0" /></font>
+                            </Label>
+
+                            <StackPane>
+                                <ProgressBar fx:id="player2HpBar" prefHeight="27.0" prefWidth="300.0" progress="0.40" style="-fx-accent: #bfbfbf;" />
+                                <Region mouseTransparent="true" prefHeight="33.0" prefWidth="306.0" style="-fx-border-color: #111; -fx-border-width: 3; -fx-background-color: transparent;" />
+                            </StackPane>
+
+                            <HBox alignment="CENTER_LEFT" spacing="12.0">
+                                <Region fx:id="player2DebuffIcon" prefHeight="33.0" prefWidth="33.0" style="-fx-border-color: #111; -fx-border-width: 4; -fx-border-radius: 50; -fx-background-radius: 50; -fx-background-color: transparent;" />
+                                <Label fx:id="player2DebuffLabel" text="DEF +3" textFill="#18a600">
+                                    <font><Font size="24.0" /></font>
+                                </Label>
+                            </HBox>
+                        </VBox>
+
+                        <!-- Monster Player 2 (rechts, unter Status) -->
+                        <ImageView fx:id="player2MonsterImage" fitHeight="330.0" fitWidth="330.0" layoutX="1389.0" layoutY="207.0" pickOnBounds="true" preserveRatio="true" smooth="true" AnchorPane.rightAnchor="274.0" AnchorPane.topAnchor="207.0" />
+
+                        <!-- Monster Player 1 (links) -->
+                        <ImageView fx:id="player1MonsterImage" fitHeight="403.0" fitWidth="245.0" layoutX="314.0" layoutY="6.0" pickOnBounds="true" preserveRatio="true" smooth="true" AnchorPane.leftAnchor="314.0" AnchorPane.topAnchor="6.0" />
+
+                        <!-- Player 1 Status (links unten) -->
+                        <VBox fx:id="player1StatusBox" spacing="15.0" AnchorPane.bottomAnchor="23.0" AnchorPane.leftAnchor="135.0">
+
+                            <Label fx:id="player1NameLabel" text="Player 1" textFill="RED">
+                                <font><Font size="42.0" /></font>
+                            </Label>
+
+                            <StackPane alignment="CENTER_LEFT">
+                                <ProgressBar fx:id="player1HpBar" prefHeight="27.0" prefWidth="270.0" progress="0.35" style="-fx-accent: #bfbfbf;" />
+                                <Region mouseTransparent="true" prefHeight="33.0" prefWidth="276.0" style="-fx-border-color: #111; -fx-border-width: 3; -fx-background-color: transparent;" />
+                            </StackPane>
+
+                            <HBox alignment="CENTER_LEFT" spacing="12.0">
+                                <Region fx:id="player1BuffIcon" prefHeight="33.0" prefWidth="33.0" style="-fx-border-color: #111; -fx-border-width: 4; -fx-border-radius: 50; -fx-background-radius: 50; -fx-background-color: transparent;" />
+                                <Label fx:id="player1BuffLabel" text="" textFill="RED">
+                                    <font><Font size="24.0" /></font>
+                                </Label>
+                            </HBox>
+
+                        </VBox>
+
+                    </AnchorPane>
+                </center>
+
+                <!-- ===================== BOTTOM: Buttons ===================== -->
+                <bottom>
+                    <VBox spacing="18.0" style="-fx-padding: 15 60 38 60;">
+
+                        <!-- 2x2 Grid -->
+                        <GridPane hgap="30.0" vgap="24.0">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="50.0" />
+                                <ColumnConstraints percentWidth="50.0" />
+                            </columnConstraints>
+                            <rowConstraints>
+                                <RowConstraints />
+                                <RowConstraints />
+                            </rowConstraints>
+
+                            <StackPane GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                <Button fx:id="btnElementalAtk" maxWidth="Infinity" mnemonicParsing="false" prefHeight="117.0" style="-fx-background-color: #c51b1b; -fx-text-fill: white; -fx-font-size: 30px; -fx-font-weight: 700; -fx-border-color: #111; -fx-border-width: 3; -fx-background-radius: 9; -fx-border-radius: 9;" text="Fire Attack" />
+                                <Label fx:id="keyLabelElemental" style="-fx-padding: 9 0 0 18;" text="Q" textFill="#111111" StackPane.alignment="TOP_LEFT">
+                                    <font><Font name="System Bold" size="72.0" /></font>
+                                </Label>
+                            </StackPane>
+
+                            <StackPane GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                <Button fx:id="btnNormalAtk" maxWidth="Infinity" mnemonicParsing="false" prefHeight="117.0" style="-fx-background-color: #c51b1b; -fx-text-fill: white; -fx-font-size: 30px; -fx-font-weight: 700; -fx-border-color: #111; -fx-border-width: 3; -fx-background-radius: 9; -fx-border-radius: 9;" text="Dot Fire" />
+                                <Label fx:id="keyLabelNormal" style="-fx-padding: 9 0 0 18;" text="W" textFill="#111111" StackPane.alignment="TOP_LEFT">
+                                    <font><Font name="System Bold" size="72.0" /></font>
+                                </Label>
+                            </StackPane>
+
+                            <StackPane GridPane.columnIndex="0" GridPane.rowIndex="1">
+                                <Button fx:id="btnBuffCrit" maxWidth="Infinity" mnemonicParsing="false" prefHeight="117.0" style="-fx-background-color: #c51b1b; -fx-text-fill: white; -fx-font-size: 30px; -fx-font-weight: 700; -fx-border-color: #111; -fx-border-width: 3; -fx-background-radius: 9; -fx-border-radius: 9;" text="Critical Buff" />
+                                <Label fx:id="keyLabelBuff" style="-fx-padding: 9 0 0 18;" text="A" textFill="#111111" StackPane.alignment="TOP_LEFT">
+                                    <font><Font name="System Bold" size="72.0" /></font>
+                                </Label>
+                            </StackPane>
+
+                            <StackPane GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                <Button fx:id="btnDebuffHit" maxWidth="Infinity" mnemonicParsing="false" prefHeight="117.0" style="-fx-background-color: #c51b1b; -fx-text-fill: white; -fx-font-size: 30px; -fx-font-weight: 700; -fx-border-color: #111; -fx-border-width: 3; -fx-background-radius: 9; -fx-border-radius: 9;" text="Defense Debuff" />
+                                <Label fx:id="keyLabelDebuff" style="-fx-padding: 9 0 0 18;" text="S" textFill="#111111" StackPane.alignment="TOP_LEFT">
+                                    <font><Font name="System Bold" size="72.0" /></font>
+                                </Label>
+                            </StackPane>
+                        </GridPane>
+
+                        <StackPane>
+                            <Button fx:id="btnSpecialAtk" maxWidth="Infinity" mnemonicParsing="false" prefHeight="105.0" style="-fx-background-color: #8b00ff; -fx-text-fill: white; -fx-font-size: 30px; -fx-font-weight: 800; -fx-border-color: #111; -fx-border-width: 3; -fx-background-radius: 9; -fx-border-radius: 9;" text="Strong Fire Attack- 3/6" />
+                            <Label fx:id="keyLabelSpecial" style="-fx-padding: 3 0 0 18;" text="D" textFill="#111111" StackPane.alignment="TOP_LEFT">
+                                <font><Font name="System Bold" size="72.0" /></font>
+                            </Label>
+                        </StackPane>
+
+                    </VBox>
+                </bottom>
+
+            </BorderPane>
+
+        </AnchorPane>
+      <Label fx:id="battleMessageLabel" layoutX="950.0" layoutY="400.0" style="-fx-background-color: rgba(0,0,0,0.75);                          -fx-text-fill: white;                          -fx-padding: 12;                          -fx-font-size: 20px;                          -fx-background-radius: 10;" text="Label" visible="false">
+         <font>
+            <Font size="28.0" />
+         </font>
+      </Label>
+    </children>
+</fx:root>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<fx:root prefWidth="1920.0" prefHeight="1080.0"
+         type="AnchorPane"
+         xmlns="http://javafx.com/javafx/17.0.12"
+         xmlns:fx="http://javafx.com/fxml/1"
+         style="-fx-background-color: white;">
+
+    <children>
+
+        <!-- Design-Pane für Scale/Center (wie bei BattleScreen) -->
+        <AnchorPane fx:id="designPane" prefWidth="1920.0" prefHeight="1080.0">
+            <children>
+
+                <!-- Überschrift -->
+                <Label fx:id="resultLabel"
+                       layoutX="0.0" layoutY="60.0"
+                       prefWidth="1920.0"
+                       alignment="CENTER"
+                       text="Player 1 wins!"
+                       textFill="RED">
+                    <font>
+                        <Font name="System Bold" size="96.0"/>
+                    </font>
+                </Label>
+
+                <!-- Monster groß & exakt mittig -->
+                <ImageView fx:id="winnerMonsterImage"
+                           layoutX="780.0" layoutY="240.0"
+                           fitWidth="630.0" fitHeight="630.0"
+                           pickOnBounds="true"
+                           preserveRatio="true"
+                           smooth="true">
+                    <image>
+                        <Image url="@../Monster%20Sprites/FeuerMon.png"/>
+                    </image>
+                </ImageView>
+
+                <!-- Optional: Zusatzinfo -->
+                <Label fx:id="infoLabel"
+                       layoutX="0.0" layoutY="862.5"
+                       prefWidth="1920.0"
+                       alignment="CENTER"
+                       text="Press R to restart or ESC to exit"
+                       textFill="#333333">
+                    <font>
+                        <Font size="27.0"/>
+                    </font>
+                </Label>
+
+                <!-- Buttons unten: wie bei dir mit Rahmen -->
+                <Button fx:id="restartButton"
+                        layoutX="360.0" layoutY="930.0"
+                        prefWidth="540.0" prefHeight="105.0"
+                        mnemonicParsing="false"
+                        text="Restart"
+                        style="-fx-background-color: #c51b1b; -fx-text-fill: white;
+                               -fx-font-size: 30px; -fx-font-weight: 700;
+                               -fx-border-color: #111; -fx-border-width: 2;
+                               -fx-background-radius: 6; -fx-border-radius: 6;" />
+
+                <Button fx:id="exitButton"
+                        layoutX="1020.0" layoutY="930.0"
+                        prefWidth="540.0" prefHeight="105.0"
+                        mnemonicParsing="false"
+                        text="Exit Game"
+                        style="-fx-background-color: #c51b1b; -fx-text-fill: white;
+                               -fx-font-size: 30px; -fx-font-weight: 700;
+                               -fx-border-color: #111; -fx-border-width: 2;
+                               -fx-background-radius: 6; -fx-border-radius: 6;" />
+
+            </children>
+        </AnchorPane>
+
+    </children>
+</fx:root>
