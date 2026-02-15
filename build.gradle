@@ -40,4 +40,11 @@ allprojects {
         source = project(':apis').sourceSets.main.allJava
     }
 
+    testing {
+        suites {
+            test {
+                useJUnitJupiter()
+            }
+        }
+    }
 }

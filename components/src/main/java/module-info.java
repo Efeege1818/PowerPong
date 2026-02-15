@@ -1,11 +1,16 @@
 module devtools.components {
   exports de.hhn.it.devtools.components.example.coffeemakerservice.provider;
-    exports de.hhn.it.devtools.components.turnbasedbattle;
-    requires org.slf4j;
+  exports de.hhn.it.devtools.components.turnbasedbattle;
+
+  requires org.slf4j;
   requires devtools.apis;
   requires java.desktop;
-  provides  de.hhn.it.devtools.apis.examples.coffeemakerservice.CoffeeMakerService
+
+  provides de.hhn.it.devtools.apis.examples.coffeemakerservice.CoffeeMakerService
           with de.hhn.it.devtools.components.example.coffeemakerservice.provider.WnckCoffeeMakerService;
-  provides  de.hhn.it.devtools.apis.examples.coffeemakerservice.AdminCoffeeMakerService
+  provides de.hhn.it.devtools.apis.examples.coffeemakerservice.AdminCoffeeMakerService
           with de.hhn.it.devtools.components.example.coffeemakerservice.provider.WnckCoffeeMakerService;
-        }
+  provides de.hhn.it.devtools.apis.turnbasedbattle.TurnBasedBattleService
+          with de.hhn.it.devtools.components.turnbasedbattle.SimpleTurnBasedBattleService;
+
+}
