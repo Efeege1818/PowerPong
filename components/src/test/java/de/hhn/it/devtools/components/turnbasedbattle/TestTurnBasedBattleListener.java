@@ -17,6 +17,11 @@ public class TestTurnBasedBattleListener implements TurnBasedBattleListener {
     private volatile int player2Health;
     private volatile Integer winnerPlayerNumber;
 
+    // Counters to track listener method invocations
+    private volatile int newGameStateCallCount = 0;
+    private volatile int updateStateCallCount = 0;
+    private volatile int gameEndedCallCount = 0;
+
     /**
      * Stores the current game state so tests can assert on it.
      *
@@ -29,6 +34,7 @@ public class TestTurnBasedBattleListener implements TurnBasedBattleListener {
             throw new IllegalArgumentException("gameState must not be null");
         }
         this.currentState = gameState;
+        this.newGameStateCallCount++;
     }
 
     /**
@@ -52,6 +58,7 @@ public class TestTurnBasedBattleListener implements TurnBasedBattleListener {
         // Ich habs auskommentiert weil es falsch ist da der monster ein record ist und deshalb es keinen currentHp gibt
         //player1Health = player1.monster().currentHp();
         //player2Health = player2.monster().currentHp();
+        this.updateStateCallCount++;
     }
 
     /**
@@ -66,6 +73,7 @@ public class TestTurnBasedBattleListener implements TurnBasedBattleListener {
             throw new IllegalArgumentException("winnerPlayerNumber must be 1 or 2");
         }
         this.winnerPlayerNumber = winnerPlayerNumber;
+        this.gameEndedCallCount++;
     }
 
 
@@ -85,6 +93,18 @@ public class TestTurnBasedBattleListener implements TurnBasedBattleListener {
         return winnerPlayerNumber;
     }
 
+    public int getNewGameStateCallCount() {
+        return newGameStateCallCount;
+    }
+
+    public int getUpdateStateCallCount() {
+        return updateStateCallCount;
+    }
+
+    public int getGameEndedCallCount() {
+        return gameEndedCallCount;
+    }
+
     /**
      * Helper to reuse the same listener instance across multiple test cases.
      */
@@ -93,5 +113,8 @@ public class TestTurnBasedBattleListener implements TurnBasedBattleListener {
         player1Health = 0;
         player2Health = 0;
         winnerPlayerNumber = null;
+        newGameStateCallCount = 0;
+        updateStateCallCount = 0;
+        gameEndedCallCount = 0;
     }
 }

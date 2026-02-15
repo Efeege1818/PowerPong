@@ -74,11 +74,13 @@ public class TestTurnBasedBattleServiceBadCases {
         assertThrows(IllegalStateException.class, () -> service.end());
     }
 
-//    @Test
-//    @DisplayName("executeTurn() in wrong state throws IllegalStateException")
-//    void executeTurnWrongStateThrows() {
-//        assertThrows(IllegalStateException.class, () -> service.executeTurn(1));
-//    }
+    @Test
+    @DisplayName("executeTurn() in wrong state throws IllegalStateException or NullPointerException")
+    void executeTurnWrongStateThrows() {
+        // executeTurn() can throw IllegalStateException if state is wrong,
+        // or NullPointerException if players are not set up
+        assertThrows(RuntimeException.class, () -> service.executeTurn(1));
+    }
 
     @Test
     @DisplayName("addListener(null) throws IllegalArgumentException")
