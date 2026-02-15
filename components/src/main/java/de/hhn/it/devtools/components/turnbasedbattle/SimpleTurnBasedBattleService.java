@@ -160,6 +160,7 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
 
   @Override
   public GameState getGameState() {
+    logger.info("GameState is now " + gameState);
     return gameState;
   }
 
@@ -219,31 +220,37 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
 
   @Override
   public Player getCurrentPlayer() {
+    logger.debug("Current player is " + battleManager.getCurrentPlayer());
     return battleManager.getCurrentPlayer();
   }
 
   @Override
   public Player getPlayer1() {
+    logger.debug("Player 1: " + player1);
     return player1;
   }
 
   @Override
   public Player getPlayer2() {
+    logger.debug("Player 2: " + player2);
     return player2;
   }
 
   @Override
   public boolean isBattleOver() {
+    logger.debug("Is battle over status: " + battleManager.isBattleOver());
     return battleManager.isBattleOver();
   }
 
   @Override
   public int getTurnCount() {
+    logger.debug("Turn count is " + battleManager.getTurnCount());
     return battleManager.getTurnCount();
   }
 
   @Override
   public Player getWinner() {
+    logger.debug("Winner is " + battleManager.getWinner());
     return battleManager.getWinner();
   }
 
