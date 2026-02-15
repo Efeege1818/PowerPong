@@ -82,8 +82,7 @@ public class SimpleScreenManager implements ScreenManager {
 
   @Override
   public void switchTo(String fromScreen, String toScreen) throws UnknownTransitionException {
-    logger.info("SimpleScreenManager: switchTo, fromScreen = {}, toScreen = {}",
-            fromScreen, toScreen);
+    logger.info("switchTo: fromScreen={}, toScreen={}", fromScreen, toScreen);
 
     switch (toScreen) {
       case SelectScreen.SCREEN_NAME:
