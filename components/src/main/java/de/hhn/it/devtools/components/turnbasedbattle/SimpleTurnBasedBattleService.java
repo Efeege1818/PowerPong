@@ -274,31 +274,6 @@ public class SimpleTurnBasedBattleService implements TurnBasedBattleService {
     return battleManager.isElementEffective(current, opponent);
   }
 
-  // Legacy methods for backward compatibility (internal use only)
-  public SimpleMonster getCurrentMonsterAsSimpleMonster() {
-    logger.debug("SimpleTurnBasedBattleService: getCurrentMonsterAsSimpleMonster");
-
-    return battleManager.getCurrentMonster();
-  }
-
-  public SimpleMonster getOpponentMonsterAsSimpleMonster() {
-    logger.debug("SimpleTurnBasedBattleService: getOpponentMonsterAsSimpleMonster");
-
-    return battleManager.getOpponentMonster();
-  }
-
-  public SimpleMonster getPlayer1SimpleMonster() {
-    logger.debug("SimpleTurnBasedBattleService: getPlayer1SimpleMonster");
-
-    return battleManager.getPlayer1Monster();
-  }
-
-  public SimpleMonster getPlayer2SimpleMonster() {
-    logger.debug("SimpleTurnBasedBattleService: getPlayer2SimpleMonster");
-
-    return battleManager.getPlayer2Monster();
-  }
-
   @Override
   public MonsterBattleState getCurrentMonster() {
     logger.debug("SimpleTurnBasedBattleService: getCurrentMonster");

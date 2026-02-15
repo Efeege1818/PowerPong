@@ -69,17 +69,36 @@ public class SimpleBattleManager implements BattleManager {
 
   @Override
   public Player getCurrentPlayer() {
-    logger.debug("SimpleBattleManager: getCurrentPlayer, currentPlayer = {}", currentPlayer.playerId());
+    logger.debug(
+            "SimpleBattleManager: getCurrentPlayer, currentPlayer = {}",
+            currentPlayer.playerId()
+    );
     return currentPlayer;
   }
 
+  /**
+   * Returns the runtime monster representing the current player's monster.
+   *
+   * @return the current SimpleMonster instance used in the battle
+   */
   public SimpleMonster getCurrentMonster() {
-    logger.debug("SimpleBattleManager: getCurrentMonster, monster = {}", currentMonster.getName());
+    logger.debug(
+            "SimpleBattleManager: getCurrentMonster, monster = {}",
+            currentMonster.getName()
+    );
     return currentMonster;
   }
 
+  /**
+   * Returns the runtime monster representing the opponent player's monster.
+   *
+   * @return the opponent SimpleMonster instance used in the battle
+   */
   public SimpleMonster getOpponentMonster() {
-    logger.debug("SimpleBattleManager: getOpponentMonster, monster = {}", opponentMonster.getName());
+    logger.debug(
+            "SimpleBattleManager: getOpponentMonster, monster = {}",
+            opponentMonster.getName()
+    );
 
     return opponentMonster;
   }
