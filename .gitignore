@@ -24,3 +24,5 @@ bin/
 
 # MicroProject specific files
 coffeemaker.ser
+
+.vscode/*
