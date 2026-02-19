@@ -16,6 +16,8 @@ public interface ConnectFourService {
    */
   void startGame(GameConfiguration configuration);
 
+  void registerListener(GameListener listener) throws OperationNotSupportedException;
+
   /**
    * Attempts to drop the current player's chip into the specified column.
    * This operation handles turn changes and notifies listeners of board updates.
@@ -37,21 +39,45 @@ public interface ConnectFourService {
    *
    * @return The {@link Player} whose turn it is.
    */
-  Player getCurrentPlayer();
+  Player getCurrentPlayer() throws OperationNotSupportedException;
 
   /**
    * Checks if the last move resulted in a win for the current or previous player.
    *
    * @return {@code true} if a winning condition has been met, {@code false} otherwise.
    */
-  boolean checkForWin();
+  boolean checkForWin() throws OperationNotSupportedException;
+
+
+  /**
+   * Checks specifically for a horizontal win condition (4 chips in a row horizontally).
+   *
+   * @return {@code true} if a horizontal win is detected.
+   */
+  boolean checkHorizontal();
+
+  /**
+   * Checks specifically for a vertical win condition (4 chips in a row vertically).
+   *
+   * @return {@code true} if a vertical win is detected.
+   */
+  boolean checkVertical();
+
+  /**
+   * Checks specifically for a diagonal win condition (both directions).
+   *
+   * @return {@code true} if a diagonal win is detected.
+   */
+  boolean checkDiagonal();
+
+  // -------------------------------------------------------------------------
 
   /**
    * Checks if the game board is full and no more moves can be made, resulting in a draw.
    *
    * @return {@code true} if the game has ended in a draw, {@code false} otherwise.
    */
-  boolean checkForDraw();
+  boolean checkForDraw() throws OperationNotSupportedException;
 
   /**
    * Registers a listener to receive notifications about game state changes (e.g., turn change, board update).
@@ -66,4 +92,6 @@ public interface ConnectFourService {
    * @param listener The {@link GameListener} to remove.
    */
   void removeGameListener(GameListener listener);
+
+  void applyToxicDecay() throws OperationNotSupportedException;
 }

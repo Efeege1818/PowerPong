@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="de.hhn.it.devtools.ui.fourconnect.controller.SelectController"
+            prefWidth="760" prefHeight="420"
+            style="-fx-background-color: #eaeaea;">
+
+  <top>
+    <Label text="Connect Four Toxic - Select"
+           BorderPane.alignment="CENTER"
+           style="-fx-padding: 10; -fx-font-size: 16px; -fx-text-fill: #333333;"/>
+  </top>
+
+  <center>
+    <VBox alignment="TOP_CENTER" spacing="18">
+      <padding>
+        <Insets top="18" right="18" bottom="18" left="18"/>
+      </padding>
+
+      <Label text="Player 1: Select your Character"
+             prefWidth="650"
+             alignment="CENTER"
+             style="-fx-background-color: #0a2a66;
+                    -fx-text-fill: white;
+                    -fx-font-size: 24px;
+                    -fx-font-weight: bold;
+                    -fx-padding: 18 10 18 10;
+                    -fx-background-radius: 10;"/>
+
+      <HBox alignment="CENTER" spacing="30">
+        <Button text="RED"
+                onAction="#selectRed"
+                prefWidth="300" prefHeight="120"
+                style="-fx-background-color: #ff1a1a;
+                       -fx-text-fill: white;
+                       -fx-font-size: 26px;
+                       -fx-font-weight: bold;
+                       -fx-background-radius: 6;"/>
+
+        <Button text="YELLOW"
+                onAction="#selectYellow"
+                prefWidth="300" prefHeight="120"
+                style="-fx-background-color: #ffc400;
+                       -fx-text-fill: black;
+                       -fx-font-size: 26px;
+                       -fx-font-weight: bold;
+                       -fx-background-radius: 6;"/>
+      </HBox>
+
+      <Button text="Back"
+              onAction="#back"
+              prefWidth="140" prefHeight="42"
+              style="-fx-background-color: #d0d0d0;
+                     -fx-text-fill: #222;
+                     -fx-font-size: 16px;
+                     -fx-background-radius: 6;"/>
+    </VBox>
+  </center>
+
+</BorderPane>
