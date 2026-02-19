@@ -14,4 +14,5 @@ module devtools.apis {
         exports de.hhn.it.devtools.apis.powerPong;
         exports de.hhn.it.devtools.apis.turnbasedbattle;
         exports de.hhn.it.devtools.apis.turnbasedbattle.move;
+        exports de.hhn.it.devtools.apis.fourconnect;
 }
