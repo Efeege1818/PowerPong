@@ -345,7 +345,7 @@ public class ConnectFourServiceImpl implements ConnectFourService {
 
   /**
    * Returns the current player.
-   *
+   *git branch
    * @return the current player
    * @throws OperationNotSupportedException if the game has not been started
    */

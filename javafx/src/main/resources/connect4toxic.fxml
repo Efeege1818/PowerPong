@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="12" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="de.hhn.it.devtools.javafx.fourconnect.controller.Connect4ToxicController">
+
+    <Label text="Connect4Toxic"/>
+
+    <HBox spacing="12" alignment="CENTER_LEFT">
+        <Label text="Status:"/>
+        <Label fx:id="statusLabel" text="-"/>
+    </HBox>
+
+    <Label fx:id="messageLabel" text=""/>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Toxic Fields:"/>
+        <Spinner fx:id="toxicCountSpinner" prefWidth="120"/>
+        <Label text="Decay Turns:"/>
+        <Spinner fx:id="decayTurnsSpinner" prefWidth="120"/>
+        <Button fx:id="startButton" text="Start" onAction="#onStartGame"/>
+    </HBox>
+
+    <Separator/>
+
+    <Label text="Spalten:"/>
+    <HBox fx:id="dropButtonsBox" spacing="6" />
+
+    <Label text="Board:"/>
+    <GridPane fx:id="boardGrid" hgap="4" vgap="4"/>
+
+</VBox>
