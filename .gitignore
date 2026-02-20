@@ -25,4 +25,4 @@ bin/
 # MicroProject specific files
 coffeemaker.ser
 
-.vscode/*
+.vscode/*.DS_Store
