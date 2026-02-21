@@ -6,6 +6,8 @@ module devtools.javafx {
   requires javafx.fxml;
   requires javafx.graphics;
 
+  requires java.desktop;
+
   uses de.hhn.it.devtools.apis.examples.coffeemakerservice.CoffeeMakerService;
   uses de.hhn.it.devtools.apis.examples.coffeemakerservice.AdminCoffeeMakerService;
 
