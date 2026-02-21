@@ -6,7 +6,8 @@ import de.hhn.it.devtools.components.fourconnect.provider.ConnectFourServiceImpl
 public final class ServiceProvider {
 	private static ConnectFourService INSTANCE;
 
-	private ServiceProvider() {}
+	private ServiceProvider() {
+	}
 
 	public static ConnectFourService getConnectFourService() {
 		if (INSTANCE == null) {
