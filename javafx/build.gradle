@@ -10,7 +10,7 @@ version = "1.0"
 
 javafx {
     version = "21.0.1"
-    modules = [ "javafx.controls", "javafx.fxml" ]
+    modules = [ "javafx.controls", "javafx.fxml", "javafx.graphics", "javafx.media"]
 }
 
 dependencies {
@@ -22,7 +22,7 @@ dependencies {
 
 application {
     mainModule = "devtools.javafx"
-    mainClass = "de.hhn.it.devtools.javafx.fourconnect.FourConnectJavaFxApp"
+    mainClass = "de.hhn.it.devtools.javafx.Main"
     applicationDefaultJvmArgs = ['-ea']
 }
 

@@ -5,6 +5,8 @@ module devtools.javafx {
   requires javafx.controls;
   requires javafx.fxml;
   requires javafx.graphics;
+  requires javafx.media;
+
 
   requires java.desktop;
 
@@ -16,7 +18,7 @@ module devtools.javafx {
   opens de.hhn.it.devtools.javafx.controllers.template to javafx.fxml;
 
 
-  opens de.hhn.it.devtools.javafx.fourconnect to javafx.fxml;
+
   opens de.hhn.it.devtools.javafx.fourconnect.controller to javafx.fxml;
 
   exports de.hhn.it.devtools.javafx;
@@ -25,4 +27,5 @@ module devtools.javafx {
 
 
   exports de.hhn.it.devtools.javafx.fourconnect;
+
 }

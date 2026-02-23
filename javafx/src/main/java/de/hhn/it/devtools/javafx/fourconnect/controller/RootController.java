@@ -25,11 +25,11 @@ public class RootController {
 	}
 
 	private void showConnect4() {
-		setContent("/connect4.fxml");
+		setContent("/fxml/connect4.fxml");
 	}
 
 	private void showConnect4Toxic() {
-		setContent("/connect4toxic.fxml");
+		setContent("/fxml/connect4toxic.fxml");
 	}
 
 	private void setContent(String fxmlPath) {

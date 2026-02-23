@@ -61,6 +61,7 @@ public class Main extends Application {
     addModule("TowerDefense");
     addModule("PowerPong");
     addModule("TurnBasedBattle");
+    addModule("FourConnect");
   }
 
   @Override
