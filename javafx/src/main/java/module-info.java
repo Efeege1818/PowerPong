@@ -16,6 +16,7 @@ module devtools.javafx {
   opens de.hhn.it.devtools.javafx.controllers to javafx.fxml;
   opens de.hhn.it.devtools.javafx.coffeemaker.view to javafx.fxml;
   opens de.hhn.it.devtools.javafx.controllers.template to javafx.fxml;
+  opens de.hhn.it.devtools.javafx.powerpong.view to javafx.fxml;
 
 
 
@@ -24,6 +25,7 @@ module devtools.javafx {
   exports de.hhn.it.devtools.javafx;
   exports de.hhn.it.devtools.javafx.controllers;
   exports de.hhn.it.devtools.javafx.coffeemaker.view;
+
 
 
   exports de.hhn.it.devtools.javafx.fourconnect;

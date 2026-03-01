@@ -5,6 +5,7 @@ module devtools.components {
   exports de.hhn.it.devtools.components.shapesurvivor.helper;
   exports de.hhn.it.devtools.components.spaceinvaders;
   exports de.hhn.it.devtools.components.towerdefense;
+  exports de.hhn.it.devtools.components.powerpong.provider;
 
 
 
