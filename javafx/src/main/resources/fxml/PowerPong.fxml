@@ -2,6 +2,6 @@
 
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane fx:id="powerPongAnchorPane" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/10.0.1" prefHeight="600.0" prefWidth="800.0" fx:controller="de.hhn.it.devtools.javafx.powerpong.PowerPongServiceController"
+<AnchorPane fx:id="powerPongAnchorPane" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/10.0.1" prefHeight="600.0" prefWidth="800.0" fx:controller="de.hhn.it.devtools.javafx.controllers.PowerPongServiceController"
             style="-fx-background-color: rgb(5, 5, 25);">
 </AnchorPane>

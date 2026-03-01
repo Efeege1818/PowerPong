@@ -1,11 +1,12 @@
 package de.hhn.it.devtools.javafx.fourconnect.controller;
 
+import de.hhn.it.devtools.javafx.controllers.Controller;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.layout.StackPane;
 
-public class RootController {
+public class RootController extends Controller {
 
 	@FXML private StackPane contentPane;
 
