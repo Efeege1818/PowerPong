@@ -15,8 +15,8 @@ import java.util.logging.Logger;
 /**
  * Concrete implementation of the {@link ConnectFourService}.
  *
- * <p>This class manages the game lifecycle, chip placement, win/draw detection,
- * and toxic field decay/explosion behavior.
+ * <p>This class manages the game lifecycle, chip placement, win/draw
+ * detection, and toxic field decay/explosion behavior.
  */
 public class ConnectFourServiceImpl implements ConnectFourService {
 
@@ -47,7 +47,8 @@ public class ConnectFourServiceImpl implements ConnectFourService {
   /**
    * Starts a new game with the given configuration.
    *
-   * <p>The board is cleared, up to 3 toxic fields are placed, and Player 1 (red) starts.
+   * <p>The board is cleared, the configured number of toxic fields is placed,
+   * and Player 1 (red) starts.
    *
    * @param configuration the game configuration
    */
@@ -58,7 +59,7 @@ public class ConnectFourServiceImpl implements ConnectFourService {
     board.clearBoard();
 
     int requested = configuration != null ? configuration.getToxicFieldCount() : 3;
-    board.placeRandomToxicZones(Math.min(3, requested));
+    board.placeRandomToxicZones(requested);
 
     currentPlayer = player1;
     gameActive = true;
@@ -345,8 +346,8 @@ public class ConnectFourServiceImpl implements ConnectFourService {
 
   /**
    * Returns the current player.
-   *git branch
-   *  @return the current player
+   *
+   * @return the current player
    * @throws OperationNotSupportedException if the game has not been started
    */
   @Override

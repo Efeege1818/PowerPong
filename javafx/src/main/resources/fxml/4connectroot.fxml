@@ -1,23 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.StackPane?>
 
-<BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-            fx:controller="de.hhn.it.devtools.javafx.fourconnect.controller.RootController">
-
-    <!-- LEFT MENU -->
-    <left>
-        <VBox spacing="10" prefWidth="220" style="-fx-padding: 16; -fx-border-color: #cccccc; -fx-border-width: 0 1 0 0;">
-            <Label text="Menü"/>
-            <Button text="Connect4" onAction="#onShowConnect4"/>
-            <Button text="Connect4Toxic" onAction="#onShowConnect4Toxic"/>
-        </VBox>
-    </left>
-
-    <!-- RIGHT CONTENT -->
-    <center>
-        <StackPane fx:id="contentPane" style="-fx-padding: 16;"/>
-    </center>
-
-</BorderPane>
+<StackPane xmlns="http://javafx.com/javafx/21"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:id="contentPane"
+           fx:controller="de.hhn.it.devtools.javafx.fourconnect.controller.RootController"
+           style="-fx-padding: 16;"/>

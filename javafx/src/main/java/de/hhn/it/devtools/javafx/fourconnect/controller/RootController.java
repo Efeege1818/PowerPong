@@ -8,25 +8,12 @@ import javafx.scene.layout.StackPane;
 
 public class RootController extends Controller {
 
-	@FXML private StackPane contentPane;
+	@FXML
+	private StackPane contentPane;
 
 	@FXML
 	private void initialize() {
-		showConnect4(); // Default-Ansicht
-	}
-
-	@FXML
-	private void onShowConnect4() {
-		showConnect4();
-	}
-
-	@FXML
-	private void onShowConnect4Toxic() {
 		showConnect4Toxic();
-	}
-
-	private void showConnect4() {
-		setContent("/fxml/connect4.fxml");
 	}
 
 	private void showConnect4Toxic() {
