@@ -20,6 +20,22 @@ dependencies {
 
 }
 
+sourceSets {
+    main {
+        java {
+            setSrcDirs(['src/main/java'])
+            include 'module-info.java'
+            include 'de/hhn/it/devtools/javafx/Main.java'
+            include 'de/hhn/it/devtools/javafx/powerpong/**'
+        }
+        resources {
+            setSrcDirs(['src/main/resources'])
+            include 'fxml/powerpong/**'
+            include 'simplelogger.properties'
+        }
+    }
+}
+
 application {
     mainModule = "devtools.javafx"
     mainClass = "de.hhn.it.devtools.javafx.Main"
@@ -29,6 +45,6 @@ application {
 
 jlink {
     launcher {
-        name = "devtools"
+        name = "powerpong"
     }
 }

@@ -1,4 +1,4 @@
-rootProject.name = 'gaming-dvtls-25-ws'
+rootProject.name = 'powerpong'
 
 
-include ':apis', ':components', ':javafx',"ui"
+include ':apis', ':components', ':javafx'

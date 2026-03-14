@@ -1,6 +1,5 @@
 plugins {
     id 'java-library'
-    id 'application'
     id 'checkstyle'
     id 'jacoco'
     id 'pmd'
@@ -18,14 +17,24 @@ dependencies {
     // see also the dependencies in build.gradle (root)
 }
 
-application {
-    // JPMS module
-    mainModule = 'devtools.components'
-    mainClass = 'de.hhn.it.devtools.components.fourconnect.console.ConsoleMain'
-}
-
 test {
     useJUnitPlatform()
+}
+
+sourceSets {
+    main {
+        java {
+            setSrcDirs(['src/main/java'])
+            include 'module-info.java'
+            include 'de/hhn/it/devtools/components/powerPong/provider/**'
+        }
+    }
+    test {
+        java {
+            setSrcDirs(['src/test/java'])
+            include 'de/hhn/it/devtools/components/powerPong/**'
+        }
+    }
 }
 
 pmd {

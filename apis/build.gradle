@@ -12,3 +12,20 @@ repositories {
 dependencies {
     // empty (root manages)
 }
+
+sourceSets {
+    main {
+        java {
+            setSrcDirs(['src/main/java'])
+            include 'module-info.java'
+            include 'de/hhn/it/devtools/apis/exceptions/**'
+            include 'de/hhn/it/devtools/apis/powerPong/**'
+        }
+    }
+    test {
+        java {
+            setSrcDirs(['src/test/java'])
+            include 'de/hhn/it/devtools/apis/powerPong/**'
+        }
+    }
+}
